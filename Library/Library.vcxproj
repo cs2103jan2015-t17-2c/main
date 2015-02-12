@@ -62,6 +62,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="TimeMaster.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="TimeMaster.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
