@@ -1,5 +1,8 @@
 #pragma once
 #include <list>
+#include <iostream>
+#include <Windows.h>
+#include <boost\date_time.hpp>
 
 class Task{
 	public:
@@ -9,8 +12,8 @@ class Task{
 	int endTime;
 	bool hasDeadline;
 	std::string taskDescription;
-
 };
+
 class TimeMaster{
 private:
 	std::list<Task> timedTasks;

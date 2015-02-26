@@ -1,7 +1,14 @@
 #include "TimeMaster.h"
 
 int main() {
-
+	while(true)
+    {
+        if(GetAsyncKeyState('A'))
+        {
+			std::cout << "lol\n";
+			system("pause");
+        }
+    }
 	return 0;
 }
 
