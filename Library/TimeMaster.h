@@ -1,20 +1,26 @@
 #pragma once
 #include <list>
-struct Task{
 
+class Task{
+	public:
+	std::string startDate;
 	int startTime;
+	std::string endDate;
 	int endTime;
+	bool hasDeadline;
 	std::string taskDescription;
 
 };
 class TimeMaster{
 private:
-	std::list<Task> tasksForTheYear;
+	std::list<Task> timedTasks;
+	std::list<Task> floatingTasks;
 
 public:
 	TimeMaster(void);
 	~TimeMaster(void);
 
+	void parseEntry(std::string);
 	void addTask();
 	void addFloating();
 	void addBeforeSpecific();
@@ -25,5 +31,7 @@ public:
 	void undoEntry();
 	void searchEntry();
 
-};
+	bool listIsNotEmpty(std::list<Task> &);
+	void clearList(std::list<Task> &);
 
+};
