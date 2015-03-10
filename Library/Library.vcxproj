@@ -40,6 +40,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LibraryPath>C:\local\boost_1_57_0\stage\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\local\boost_1_57_0;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -64,10 +65,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="TMmemory.h" />
     <ClInclude Include="TimeMaster.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TimeMaster.cpp" />
+    <ClCompile Include="TMmemory.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
