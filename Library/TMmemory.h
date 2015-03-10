@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-class TaskList{
+class TMTaskList{
 private:
 	//Contains all the task for the current year
 	vector<Task> timedAndDeadline; 
@@ -20,17 +20,14 @@ public:
 	//Constructor creates a file storing all tasks of the year at a specified folder.
 	void setTaskID(Task task);
 	void addTask(Task task);
-	void updateTask(int taskID, string componentOfTask, string changeTo);
-	void removeTask(int taskID);
+	void updateTask(string componentOfTask, string changeTo);
+	void removeTask();
 	void archiveAllTasks(vec<int> archiveExceptionsID);
 	void archiveOneTask();
 	//Done once a year on the first day of every year 
 	void addRepeatingTasksToList();
 	string searchTasks(string keyword, bool isCaseSensitive);
-	void saveToFile (vec<Task> timedAndDeadline, vec<Task> floating, vec<Task> repeatingTasks);
 	void loadFromFile();
 }
-
-
 
 #endif _TMMEMORY_H_
