@@ -18,9 +18,24 @@
     <ClInclude Include="TimeMaster.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TMParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMTask.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMTaskTime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TimeMaster.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TMTaskTime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TMTask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

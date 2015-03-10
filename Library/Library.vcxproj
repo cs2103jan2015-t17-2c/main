@@ -64,10 +64,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="TMTask.h" />
+    <ClInclude Include="TMParser.h" />
     <ClInclude Include="TimeMaster.h" />
+    <ClInclude Include="TMTaskTime.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TimeMaster.cpp" />
+    <ClCompile Include="TMTask.cpp" />
+    <ClCompile Include="TMTaskTime.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
