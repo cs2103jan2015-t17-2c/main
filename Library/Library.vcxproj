@@ -40,6 +40,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LibraryPath>C:\local\boost_1_57_0\stage\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\local\boost_1_57_0;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -64,15 +65,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ClInclude Include="TMTask.h" />
     <ClInclude Include="TMParser.h" />
+=======
+    <ClInclude Include="TMmemory.h" />
+>>>>>>> 14880f5ee5e6ed8fa4bf4e0e871305f6b696eaa9
     <ClInclude Include="TimeMaster.h" />
     <ClInclude Include="TMTaskTime.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TimeMaster.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="TMTask.cpp" />
     <ClCompile Include="TMTaskTime.cpp" />
+=======
+    <ClCompile Include="TMmemory.cpp" />
+>>>>>>> 14880f5ee5e6ed8fa4bf4e0e871305f6b696eaa9
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
