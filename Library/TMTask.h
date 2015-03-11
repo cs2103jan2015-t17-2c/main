@@ -9,10 +9,12 @@ protected:
     TMTaskTime _taskTime;
     bool _isCompleted;
 
-    enum TaskType {
+public:
+     enum TaskType {
         Timed, WithDeadline, Floating, Repeated
     };
 
+protected:
     TaskType _taskType;
 
 public:

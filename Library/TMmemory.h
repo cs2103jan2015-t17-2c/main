@@ -19,14 +19,14 @@ private:
 public:
 	//Constructor creates a file storing all tasks of the year at a specified folder.
 	void setTaskID(Task task);
-	void addTask(Task task);
+	void addTask(TMTask task);
 	void updateTask(string componentOfTask, string changeTo);
 	void removeTask();
-	void archiveAllTasks(vec<int> archiveExceptionsID);
+	void archiveAllTasks();
 	void archiveOneTask();
 	//Done once a year on the first day of every year 
 	void addRepeatingTasksToList();
-	string searchTasks(string keyword, bool isCaseSensitive);
+	string searchTasks(string keyword);
 	void loadFromFile();
 }
 
