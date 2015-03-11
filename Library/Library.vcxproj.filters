@@ -18,7 +18,21 @@
     <ClInclude Include="TimeMaster.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="TMExecutor.h">
+=======
+<<<<<<< HEAD
+    <ClInclude Include="TMParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMTask.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMTaskTime.h">
+=======
+    <ClInclude Include="TMmemory.h">
+>>>>>>> 14880f5ee5e6ed8fa4bf4e0e871305f6b696eaa9
+>>>>>>> 05f92c7d025bb285c364c466ce41027529a93d39
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -26,7 +40,18 @@
     <ClCompile Include="TimeMaster.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="TMExecutor.cpp">
+=======
+<<<<<<< HEAD
+    <ClCompile Include="TMTaskTime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TMTask.cpp">
+=======
+    <ClCompile Include="TMmemory.cpp">
+>>>>>>> 14880f5ee5e6ed8fa4bf4e0e871305f6b696eaa9
+>>>>>>> 05f92c7d025bb285c364c466ce41027529a93d39
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
