@@ -64,6 +64,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="TMRecurringTask.h" />
     <ClInclude Include="TMTask.h" />
     <ClInclude Include="TMParser.h" />
     <ClInclude Include="TimeMaster.h" />
@@ -71,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TimeMaster.cpp" />
+    <ClCompile Include="TMRecurringTask.cpp" />
     <ClCompile Include="TMTask.cpp" />
     <ClCompile Include="TMTaskTime.cpp" />
   </ItemGroup>
