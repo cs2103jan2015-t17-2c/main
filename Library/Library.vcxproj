@@ -69,12 +69,14 @@
     <ClInclude Include="TMParser.h" />
     <ClInclude Include="TimeMaster.h" />
     <ClInclude Include="TMTaskTime.h" />
+    <ClInclude Include="TMTimeParser.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TimeMaster.cpp" />
     <ClCompile Include="TMRecurringTask.cpp" />
     <ClCompile Include="TMTask.cpp" />
     <ClCompile Include="TMTaskTime.cpp" />
+    <ClCompile Include="TMTimeParser.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
