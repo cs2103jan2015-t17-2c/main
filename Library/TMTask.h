@@ -12,15 +12,15 @@ protected:
     std::string _taskDescription;
     TMTaskTime _taskTime;
     bool _isCompleted;
-<<<<<<< HEAD
+
 
 public:
      enum TaskType {
         Timed, WithDeadline, Floating, Repeated
     };
-=======
+
     bool _isConfirmed;
->>>>>>> c9abfcfc5d5a81c5f1ca65ec7476325ce86c1365
+
 
 protected:
     TaskType _taskType;
