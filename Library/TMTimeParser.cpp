@@ -40,10 +40,16 @@ void TMTimeParser::setEndTime(std::string newEndTime) {
     _endTime = newEndTime;
 }
 
-    //extract information from user's entry
+//extract information from user's entry if not floating task
 void TMTimeParser::extractStartTime(std::string remainingEntry) {
     //search for keyword at/from
+    std::size_t atToken = remainingEntry.find("at");
+    std::size_t fromToken = remainingEntry.find("from");
+
     //followed by numerical token from string
+    if(atToken != std::string::npos || fromToken != std::string::npos) {
+        std::size_t 
+        std::string tokenAfterKey = 
     //check if there is '' for places with times in their names or if the user wants
     //a preset time time at an ungodly hour e.g. 4am
 }
