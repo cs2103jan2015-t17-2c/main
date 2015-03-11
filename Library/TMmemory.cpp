@@ -7,7 +7,7 @@
 using namespace std;
 
 
-void TMTaskList :: addTask (Task task)
+void TMTaskList :: addTask (TMTask task)
 {
 	if (task.TaskType = timed || task.TaskType = deadline)
 	{

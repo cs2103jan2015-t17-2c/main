@@ -1,19 +1,26 @@
+#ifndef TMPARSER_H
+#define TMPARSER_H
+
 #include "TMTask.h"
 #include "TMRecurringTask.h"
 #include "TMTaskTime.h"
+#include "TMTimeParser.h"
 
 class TMParser {
-private:
+public:
+    TMParser();
+    
     enum CommandTypes {
-        Add, Delete, Undo, Complete, Incomplete, Search, Edit, Store
+        Add, Delete, Undo, Complete, Incomplete, Search, Edit, Store, Invalid
     };
 
-    TMParser::CommandTypes _commandType;
 
-public:
-    std::string extractCommand();
+    std::string extractCommand(std::string);
+    std::string extractEntryAfterCommand(std::string);
 
+    CommandTypes determineCommandType(std::string);
 
-    CommandTypes determineCommand(std::string);
+    TMTask parseTaskInfo(std::string);
 
 };
+#endif

@@ -9,7 +9,7 @@
 
 class TMExecutor{
 	public:
-	void addTimedAndDeadline(Task task, TaskList tasklist);
+	void addTimedAndDeadline(TMTask task, TaskList tasklist);
 	void addFloating(Task task, TaskList tasklist);
 	void blockMultiple(vec<Task> tasks, TaskList tasklist);
 	void freeMultiple(vec<Task> confirmedTasks, TaskList tasklist);

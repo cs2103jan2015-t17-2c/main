@@ -1,6 +1,8 @@
 #ifndef TMTASKTIME_H
 #define TMTASKTIME_H
 #include <string>
+#include <iostream>
+#include <locale>
 #include <boost\date_time.hpp>
 
 class TMTaskTime{
@@ -12,16 +14,16 @@ private:
 
 public:
     TMTaskTime();
-    TMTaskTime(std::string, int, std::string, int);
+    TMTaskTime(std::string, std::string, std::string, std::string);
 
     std::string getStartDate();
-    int getStartTime();
+    std::string getStartTime();
     std::string getEndDate();
-    int getEndTime();
+    std::string getEndTime();
 
     void setStartDate(std::string);
-    void setStartTime(int);
+    void setStartTime(std::string);
     void setEndDate(std::string);
-    void setEndTime(int);
+    void setEndTime(std::string);
 };
 #endif
