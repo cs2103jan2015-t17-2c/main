@@ -30,6 +30,13 @@
     <ClInclude Include="TMRecurringTask.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TMExecutor.h">
+	<Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMmemory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TimeMaster.cpp">
@@ -42,6 +49,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TMRecurringTask.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TMExecutor.cpp">
+	<Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TMmemory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
