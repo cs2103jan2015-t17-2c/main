@@ -1,10 +1,9 @@
 #include "TMTask.h"
 
-TMTask::TMTask(std::string taskDescription, TMTaskTime taskTime, TaskType taskType){
+TMTask::TMTask(std::string taskDescription,TMTaskTime taskTime,bool isCompleted){
     _taskDescription = taskDescription;
     _taskTime = taskTime;
-    _isCompleted = false;   //by default all tasks when created are presumed to be uncompleted
-    _taskType = taskType;
+    _isCompleted = isCompleted;
 }
 
 std::string TMTask::getTaskDescription(){
@@ -17,10 +16,6 @@ TMTaskTime TMTask::getTaskTime(){
 
 bool TMTask::isCompleted(){
     return _isCompleted;
-}
-
-TMTask::TaskType TMTask::getTaskType(){
-    return _taskType;
 }
 
 void TMTask::setTaskDescription(std::string newTaskDescription){
@@ -39,7 +34,5 @@ void TMTask::setAsIncompleted(){
     _isCompleted = false;
 }
 
-void TMTask::setTaskType(TaskType newTaskType){
-    _taskType = newTaskType;
-}
+
     

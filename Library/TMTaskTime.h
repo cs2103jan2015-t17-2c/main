@@ -1,14 +1,13 @@
 #ifndef TMTASKTIME_H
 #define TMTASKTIME_H
 #include <string>
-#include <boost\date_time.hpp>
 
 class TMTaskTime{
 private:
-    boost::gregorian::date _startDate;
-    boost::posix_time::ptime _startTime;
-    boost::gregorian::date _endDate;
-    boost::posix_time::ptime _endTime;
+    std::string _startDate;
+    int _startTime;
+    std::string _endDate;
+    int _endTime;
 
 public:
     TMTaskTime();
