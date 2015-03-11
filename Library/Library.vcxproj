@@ -65,8 +65,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="TimeMaster.h" />
+    <ClInclude Include="TMExecutor.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="TMExecutor.cpp" />
     <ClCompile Include="TimeMaster.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
