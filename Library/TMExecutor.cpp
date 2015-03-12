@@ -1,10 +1,24 @@
 #include <vector>
 #include <iostream>
+#include <string>
 #include "TMExecutor.h"
 #include "TMTask.h"
 #include "TMTaskList.h"
 #include <boost\date_time.hpp>
 
+void TMExecutor::sortCommandToFunctions(std::string command, TMTask task, TMTaskList tasklist) {
+	if (command == 'add') {
+		addTask(task, tasklist);
+	}
+
+	if (command == 'block') {
+		blockMultiple(tasks, tasklist);
+	}
+
+	if (command == 'freeup') {
+		freeMultiple(confirmedTasks, tasklist);
+	}
+}
 
 void TMExecutor::addTask(TMTask task, TMTaskList tasklist) {
 	tasklist.addTask(task);
