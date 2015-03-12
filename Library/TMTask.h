@@ -4,25 +4,15 @@
 #include "TMTaskTime.h"
 
 enum TaskType {
-    Timed, WithDeadline, Floating, Repeated
+    Timed, WithDeadline, Floating
 };
 
 class TMTask{
-protected:
+private:
     std::string _taskDescription;
     TMTaskTime _taskTime;
     bool _isCompleted;
-
-
-public:
-     enum TaskType {
-        Timed, WithDeadline, Floating, Repeated
-    };
-
     bool _isConfirmed;
-
-
-protected:
     TaskType _taskType;
 
 public:
@@ -37,6 +27,8 @@ public:
     void setTaskTime(TMTaskTime);
     void setAsCompleted();
     void setAsIncompleted();
+    void setAsConfirmed();
+    void setAsUnconfirmed();
     void setTaskType(TaskType);
 };
 #endif

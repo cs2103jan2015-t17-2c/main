@@ -50,14 +50,17 @@ void TMmemory :: archiveAllTasks()
 	writeToFile << timedAndDeadline.size() <<endl;
 	for(int i =0; i < timedAndDeadline.size(); ++i)
 	{
-		writeToFile << timedAndDeadline[i].getTaskDescription() << "\t" << timedAndDeadline[i].getTaskTime << endl;
+		writeToFile << timedAndDeadline[i].getTaskDescription() << " " << timedAndDeadline[i].getTaskTime().getStartDate() << 
+			" " << timedAndDeadline[i].getTaskTime().getStartTime() << 
+			" " << timedAndDeadline[i].getTaskTime().getEndDate() <<
+			" " << timedAndDeadline[i].getTaskTime().getEndTime() <<endl;
 	}
 	
 	writeToFile << "Tasks Without Deadline:" <<endl;
 	writeToFile <<floating.size()<<endl;
 	for(int j=0; j < floating.size(); ++j)
 	{
-		writeToFile << floating[j].getTaskDescription() << "\t" << floating[j].getTaskTime << endl;
+		writeToFile << floating[j].getTaskDescription() << endl;
 	}
 	writeToFile.close();
 }
