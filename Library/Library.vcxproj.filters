@@ -27,9 +27,6 @@
     <ClInclude Include="TMTaskTime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TMRecurringTask.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TMExecutor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -48,9 +45,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TMTask.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TMRecurringTask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TMExecutor.cpp">

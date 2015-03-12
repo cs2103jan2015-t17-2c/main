@@ -116,9 +116,9 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
 //             : use only when in adding or editing information
 TMTask TMParser::parseTaskInfo(std::string taskInfo) {
     if(isDeadlinedTask(taskInfo)){
-        parseDeadlinedTaskInfo(taskInfo));
+        parseDeadlinedTaskInfo(taskInfo);
     } else if(isTimedTask(taskInfo)) {
-        parseTimedTaskInfo(taskInfo));
+        parseTimedTaskInfo(taskInfo);
     } else {
         parseFloatingTaskInfo(taskInfo);
     }
@@ -130,27 +130,31 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::string taskInfo) {
     std::string dayToMeet = "";
     std::string timeToMeet = "";
     std::string remainingEntry = taskInfo;
+    bool deadlineFound = false;
 
     int startOfTokenBefore = remainingEntry.find(TOKEN_BEFORE);
 
-    while(startOfTokenBefore != std::string::npos) {
+    while(startOfTokenBefore != std::string::npos && !deadlineFound) {
         std::string wordAfterTokenBefore = parseSecondToken(remainingEntry.substr(startOfTokenBefore));
         
         if(isDate(wordAfterTokenBefore)) {
             dateToMeet = wordAfterTokenBefore;
+            deadlineFound = true;
         } else if (isDay(wordAfterTokenBefore)) {
             //need to convert to date
             dayToMeet = wordAfterTokenBefore;
+            deadlineFound = true;
         }  else if (isWordNext(wordAfterTokenBefore)) {
             if(
         }  else if (isTime(wordAfterTokenBefore)) {
             timeToMeet = wordAfterTokenBefore;
+            deadlineFound = true;
         } else {
             startOfTokenBefore = remainingEntry.find(TOKEN_BEFORE,startOfTokenBefore+1);
         }
     }
 
-
+}
             
 bool TMParser::isDeadlinedTask(std::string taskInfo) {
     std::string remainingEntry = taskInfo;
@@ -299,7 +303,8 @@ bool TMParser::isTime(std::string token) {
 }
 
 bool TMParser::isWordNext(std::string token) {
-    return token == 
+    return token == TOKEN_NEXT;
+}
 
 std::string TMParser::parseFirstToken(std::string remainingEntry) {
     if(remainingEntry != "") {
@@ -337,7 +342,7 @@ std::string TMParser::parseSecondToken(std::string remainingEntry) {
 std::string TMParser::parseNthToken(std::string remainingEntry, int n) {
     if(remainingEntry != "") {
         std::string token;
-        istringstream in(remainingEntry);
+        std::istringstream in(remainingEntry);
         for(int i = 0; i < n; i++) {
             in >> token;
         }
@@ -346,15 +351,13 @@ std::string TMParser::parseNthToken(std::string remainingEntry, int n) {
 }
 
 int TMParser::numberOfWords(std::string remainingEntry) {
+    int count = 0;
     if(remainingEntry != ""){
         std::string token;
-        int count = 0;
-        istringstream in(remainingEntry);
+        std::istringstream in(remainingEntry);
         while(in >> token) {
             count++;
         }
-    } else {
-        count = 0;
     }
     return count;
 }

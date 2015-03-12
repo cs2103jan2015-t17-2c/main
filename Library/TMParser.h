@@ -2,7 +2,6 @@
 #define TMPARSER_H
 
 #include "TMTask.h"
-#include "TMRecurringTask.h"
 #include "TMTaskTime.h"
 #include "TMTimeParser.h"
 #include <iostream>
