@@ -65,23 +65,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="TMRecurringTask.h" />
     <ClInclude Include="TMTask.h" />
     <ClInclude Include="TMParser.h" />
-    <ClInclude Include="TimeMaster.h" />
     <ClInclude Include="TMTaskTime.h" />
     <ClInclude Include="TMExecutor.h" />
-    <ClInclude Include="TMmemory.h" />
+    <ClInclude Include="TMTaskList.h" />
     <ClInclude Include="TMTimeParser.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TimeMaster.cpp" />
     <ClCompile Include="TMParser.cpp" />
-    <ClCompile Include="TMRecurringTask.cpp" />
     <ClCompile Include="TMTask.cpp" />
     <ClCompile Include="TMTaskTime.cpp" />
     <ClCompile Include="TMExecutor.cpp" />
-    <ClCompile Include="TMmemory.cpp" />
+    <ClCompile Include="TMTaskList.cpp" />
     <ClCompile Include="TMTimeParser.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

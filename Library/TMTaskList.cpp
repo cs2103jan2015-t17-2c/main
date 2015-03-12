@@ -1,7 +1,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include "TMmemory.h"
+#include "TMTaskList.h"
 #include "TMTask.h"
 #include "TMParser.h"
 
@@ -9,7 +9,7 @@
 using namespace std;
 
 
-void TMmemory :: addTask (TMTask task)
+void TMTaskList :: addTask (TMTask task)
 {
 	
 	if (task.getTaskType() == TMTask::TaskType::Timed  || task.getTaskType() == TMTask::TaskType::WithDeadline)
@@ -26,7 +26,7 @@ void TMmemory :: addTask (TMTask task)
 	}
 }
 
-void TMmemory :: removeTask()
+void TMTaskList :: removeTask()
 {
 	int taskNumber;
 	cin>>taskNumber;
@@ -42,7 +42,7 @@ void TMmemory :: removeTask()
 	}
 }
 
-void TMmemory :: archiveAllTasks()
+void TMTaskList :: archiveAllTasks()
 {
 	ofstream writeToFile;
 	writeToFile.open("TMStorage.txt");
@@ -65,7 +65,7 @@ void TMmemory :: archiveAllTasks()
 	writeToFile.close();
 }
 
-void TMmemory :: loadFromFile()
+void TMTaskList :: loadFromFile()
 {
 	ifstream readFromFile;
 	string unusedLines;
@@ -92,7 +92,7 @@ void TMmemory :: loadFromFile()
 }
 
 
-string TMmemory :: searchTasks (string keyword)
+string TMTaskList :: searchTasks (string keyword)
 {
 	vector<TMTask> searchResults;
 	for (int i = 0; i<timedAndDeadline.size();++i){

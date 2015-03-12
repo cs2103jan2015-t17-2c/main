@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TimeMaster.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TMParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -27,16 +24,13 @@
     <ClInclude Include="TMTaskTime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TMRecurringTask.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TMExecutor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TMmemory.h">
+    <ClInclude Include="TMTimeParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TMTimeParser.h">
+    <ClInclude Include="TMTaskList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,19 +44,16 @@
     <ClCompile Include="TMTask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TMRecurringTask.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TMExecutor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TMmemory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TMTimeParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TMParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TMTaskList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
