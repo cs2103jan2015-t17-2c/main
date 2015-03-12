@@ -73,7 +73,12 @@ std::string TMTimeParser::extractStartDate(std::string remainingEntry) {
         startDate = remainingEntry.substr(startOfTokenAfterOn,endOfTokenAfterOn-startOfTokenAfterOn);
     } else {
         boost::gregorian::date today = boost::gregorian::day_clock::local_day();
-        startDate = boost::gregorian::to_iso_extended_string(today);
+        std::string tempDate = boost::gregorian::to_iso_string(today);
+        startDate = tempDate.substr(6,2)
+                    + "-"
+                    + tempDate.substr(4,2)
+                    + "-"
+                    + tempDate.substr(0,4);
     }
 
     return startDate;
