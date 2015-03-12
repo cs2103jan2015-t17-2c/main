@@ -42,7 +42,8 @@ public:
     std::string parseSecondToken(std::string);
     std::string parseNthToken(std::string, int);
     int numberOfWords(std::string);
-    int dayOfWeek(std::string); //0 for Sunday and 6 for Saturday
+    //0 for Sunday and 6 for Saturday
+    int dayOfWeek(std::string); 
 
     int parseTaskPositionNo(std::string);
     std::string parseSearchKey(std::string);
