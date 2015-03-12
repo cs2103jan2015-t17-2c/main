@@ -1,9 +1,6 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include "TMExecutor.h"
-#include "TMTask.h"
-#include "TMmemory.h"
 #include <boost\date_time.hpp>
 
 void TMExecutor::sortCommandToFunctions(std::string command, TMTask task, TMTaskList tasklist) {
@@ -42,7 +39,7 @@ void TMExecutor::freeMultiple(vector<TMTask> confirmedTasks, TMTaskList tasklist
 	}
 
 	iter = confirmedTasks.begin();
-	string taskDescriptionOfConfirmed = (*iter).getTaskDescription();
+	std::string taskDescriptionOfConfirmed = (*iter).getTaskDescription();
 
 	//Delete unconfirmed tasks
 	for (iter = tasklist.begin(); iter != tasklist.end(); ++iter) {
@@ -53,23 +50,38 @@ void TMExecutor::freeMultiple(vector<TMTask> confirmedTasks, TMTaskList tasklist
 }
 
 
-void TMExecutor::updateTaskDetail(TMTask task, string component, string changeTo, TMTaskList tasklist) {
+void TMExecutor::updateTaskDetail(TMTask task, std::string component, std::string changeTo, TMTaskList tasklist) {
 	tasklist.updateTask(tasklist.searchOneTask(task), component, changeTo);
 }
-	
-void TMExecutor::markAllAsDone(Time todaysDate, TMTaskList tasklist) {}
+
+//Mark all tasks that are due today as done
+void TMExecutor::markAllAsDone(Time todaysDate, TMTaskList tasklist) {
+	date dateToday(day_clock::local_day());
+	vector<TMTask> iterator::iter;
+	for (iter = tasklist.begin(); iter != tasklist.end(); ++iter) {
+		if ((*iter).getTaskEndDate() == dateToday) {
+			(*iter).setAsCompleted(); 
+		}
+	}
+}
 	
 
 void TMExecutor::deleteTask(TMTask task, TMTaskList tasklist) {
 	tasklist.removeTask(tasklist.searchOneTask(task));
 }
 
-void TMExecutor::undoLast() {}
+//void TMExecutor::undoLast() {}
 	
-void TMExecutor::string searchFreeTime() {}
+void TMExecutor::std::string searchFreeTime(TMTaskList tasklist) {
+	vector<TMTask> iterator::iter;
+	for (iter = tasklist.begin(); iter != tasklist.end(); ++iter) {
+	cout << (*iter).getEndTime() << " " << (*iter).getEndDate();
+	++iter;
+	cout << " ~ " << (*iter).getStartTime() << " " << (*iter).getStartDate(); }
+}
 	
-void TMExecutor::searchEntry(string keyword, bool isCaseSensitive=false, TMTaskList tasklist) {
+void TMExecutor::searchEntry(std::string keyword, bool isCaseSensitive=false, TMTaskList tasklist) {
 		std::cout << tasklist.searchTasks(keyword, isCaseSensitive) << endl;
 }
 
-void TMExecutor::saveAt(string directory) {}
+//void TMExecutor::saveAt(std::string directory) {}

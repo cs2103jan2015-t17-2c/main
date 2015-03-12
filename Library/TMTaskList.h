@@ -1,5 +1,5 @@
-#ifndef _TMMEMORY_H_
-#define _TMMEMORY_H_
+#ifndef _TMTaskList_H_
+#define _TMTaskList_H_
 
 #include <fstream>
 #include <vector>
@@ -8,7 +8,7 @@
 
 using namespace std;
 
-class TMmemory{
+class TMTaskList{
 private:
 	//Contains all the task for the current year
 	vector<TMTask> timedAndDeadline; 
@@ -17,7 +17,6 @@ private:
 	vector<TMTask> repeatingTasks;
 	int sizeOfTimedAndDeadline;
 	int sizeOfFloating;
-	int nextTaskID = 1;
 
 public:
 	//Constructor creates a file storing all tasks of the year at a specified folder.
@@ -33,4 +32,4 @@ public:
 	void loadFromFile();
 };
 
-#endif _TMMEMORY_H_
+#endif _TMTaskList_H_
