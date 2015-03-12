@@ -116,13 +116,14 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
 //             : use only when in adding or editing information
 TMTask TMParser::parseTaskInfo(std::string taskInfo) {
     if(isDeadlinedTask(taskInfo)){
-        parseDeadlinedTaskInfo(taskInfo);
+        return parseDeadlinedTaskInfo(taskInfo);
     } else if(isTimedTask(taskInfo)) {
-        parseTimedTaskInfo(taskInfo);
+        return parseTimedTaskInfo(taskInfo);
     } else {
-        parseFloatingTaskInfo(taskInfo);
+        return parseFloatingTaskInfo(taskInfo);
     }
 }
+
 //Preconditions:task is deadlined task use isDeadlinedTask to check
 TMTask TMParser::parseDeadlinedTaskInfo(std::string taskInfo) {
     TaskType taskType = TaskType::WithDeadline;
@@ -145,15 +146,22 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::string taskInfo) {
             dayToMeet = wordAfterTokenBefore;
             deadlineFound = true;
         }  else if (isWordNext(wordAfterTokenBefore)) {
-            if(
+           if(numberOfWords(remainingEntry.substr(startOfTokenBefore)) >= 2) {
+               if(isDay(parseNthToken(remainingEntry.substr(startOfTokenBefore),2))) {
+                   std::string day = parseNthToken(remainingEntry.substr(startOfTokenBefore),2);
+                   boost::gregorian::date today = boost::gregorian::day_clock::local_day();
+                   boost::gregorian::greg_weekday day(dayOfWeek(day));
+                   boost::gregorian::date dateTM = boost::gregorian::next_weekday(today, day);
+                   date 
         }  else if (isTime(wordAfterTokenBefore)) {
             timeToMeet = wordAfterTokenBefore;
             deadlineFound = true;
         } else {
             startOfTokenBefore = remainingEntry.find(TOKEN_BEFORE,startOfTokenBefore+1);
         }
+        }
     }
-
+    }
 }
             
 bool TMParser::isDeadlinedTask(std::string taskInfo) {
@@ -360,6 +368,24 @@ int TMParser::numberOfWords(std::string remainingEntry) {
         }
     }
     return count;
+}
+
+int TMParser::dayOfWeek(std::string day) {
+    if(day == DAY_SUN||day == DAY_SUNDAY) {
+        return 0;
+    } else if (day == DAY_MON||day == DAY_MONDAY) {
+        return 1;
+    } else if (day == DAY_TUE||day == DAY_TUESDAY) {
+        return 2;
+    } else if (day == DAY_WED||day == DAY_WEDNESDAY) {
+        return 3;
+    } else if (day == DAY_THU||day == DAY_THURSDAY) {
+        return 4;
+    } else if (day == DAY_FRI||day == DAY_FRIDAY) {
+        return 5;
+    } else if (day == DAY_SAT||day == DAY_SATURDAY) {
+        return 6;
+    }
 }
 
 int TMParser::parseTaskPositionNo(std::string userEntry) {

@@ -29,6 +29,6 @@ public:
 	void addRepeatingTasksToList();
 	string searchTasks(string keyword);
 	void loadFromFile();
-}
+};
 
 #endif _TMTaskList_H_
