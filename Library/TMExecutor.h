@@ -9,7 +9,6 @@
 #include "TMTaskList.h"
 #include "TMTask.h"
 
-
 class TMExecutor{
 	public:
 	void sortCommandToFunctions(std::string command, TMTask task, TMTaskList tasklist);
