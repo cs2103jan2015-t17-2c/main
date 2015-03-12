@@ -116,11 +116,11 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
 //             : use only when in adding or editing information
 TMTask TMParser::parseTaskInfo(std::string taskInfo) {
     if(isDeadlinedTask(taskInfo)){
-        parseDeadlinedTaskInfo(taskInfo);
+        return parseDeadlinedTaskInfo(taskInfo);
     } else if(isTimedTask(taskInfo)) {
-        parseTimedTaskInfo(taskInfo);
+        return parseTimedTaskInfo(taskInfo);
     } else {
-        parseFloatingTaskInfo(taskInfo);
+        return parseFloatingTaskInfo(taskInfo);
     }
 }
 //Preconditions:task is deadlined task use isDeadlinedTask to check
@@ -145,7 +145,11 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::string taskInfo) {
             dayToMeet = wordAfterTokenBefore;
             deadlineFound = true;
         }  else if (isWordNext(wordAfterTokenBefore)) {
-            if(
+           if(numberOfWords(remainingEntry.substr(startOfTokenBefore)) >= 2) {
+               if(isDay(parseNthToken(remainingEntry.substr(startOfTokenBefore),2))) {
+                   std::string day = parseNthToken(remainingEntry.substr(startOfTokenBefore),2);
+                   boost::gregorian::date today = boost::gregorian::day_clock::local_day();
+
         }  else if (isTime(wordAfterTokenBefore)) {
             timeToMeet = wordAfterTokenBefore;
             deadlineFound = true;
