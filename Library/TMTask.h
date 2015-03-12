@@ -21,6 +21,7 @@ public:
     std::string getTaskDescription();
     TMTaskTime getTaskTime();
     bool isCompleted();
+	bool isConfirmed();
     TaskType getTaskType();
 
     void setTaskDescription(std::string);

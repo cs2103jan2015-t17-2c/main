@@ -11,17 +11,25 @@
 
 class TMExecutor{
 	public:
-	void sortCommandToFunctions(std::string command, TMTask task, TMTaskList tasklist);
-	void addTask(TMTask task, TMTaskList tasklist);
-	void blockMultiple(vector<TMTask> tasks, TMTaskList tasklist) ;
-	void freeMultiple(vector<TMTask> confirmedTasks, TMTaskList tasklist);
-	void updateTaskDetail(TMTask task, std::string component, std::string changeTo, TMTaskList tasklist);
-	void markAllAsDone(TMTaskList tasklist);
-	void deleteTask(TMTask task, TMTaskList tasklist);
-	//void undoLast();
-	void string searchFreeTime(TMTaskList tasklist);
-	void searchEntry(std::string keyword, bool isCaseSensitive=false, TMTaskList tasklist);
+	
+	void sortCommandToFunctions(std::string command, std::vector<TMTask> tasks, TMTaskList tasklist);
+	
+	void addTasks(std::vector<TMTask> tasks, TMTaskList tasklist);
+	
+	void updateOneTask(TMTask task, std::string component, std::string changeTo, TMTaskList tasklist);
+	
+	void deleteOneTask(TMTask task, TMTaskList tasklist);
+
+	void markTodaysTasksAsDone(TMTaskList tasklist);
+
+	void searchKeyword(std::string keyword, TMTaskList tasklist);
+
+	void searchFreeTime(TMTaskList tasklist);
+
+	void freeUnconfirmed(std::vector<TMTask> confirmedTasks, TMTaskList tasklist);
+
 	//void saveAt(std::string directory);
+	//void undoLast();
 };
 
 #endif
