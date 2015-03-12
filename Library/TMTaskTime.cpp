@@ -1,10 +1,15 @@
 #include "TMTaskTime.h"
 
+const std::locale facet(std::locale::classic(), new boost::gregorian::date_facet("%d-%m-%Y"));
+
 TMTaskTime::TMTaskTime(){
 }
 
 TMTaskTime::TMTaskTime(std::string startDate, std::string startTime, std::string endDate,
                        std::string endTime){
+    boost::gregorian::date_facet *facet = new boost::gregorian::date_facet("%d-%m-%Y");
+    std::cout.imbue(std::locale(std::cout.getloc(), facet));
+
     _startDate = boost::gregorian::from_undelimited_string(startDate);
 
     if(startTime.size() == 4){
@@ -31,7 +36,11 @@ TMTaskTime::TMTaskTime(std::string startDate, std::string startTime, std::string
 }
 
 std::string TMTaskTime::getStartDate(){
-    return boost::gregorian::to_iso_extended_string(_startDate);
+    std::stringstream stream;
+    stream.imbue(facet);
+    stream << _startDate;
+
+    return stream.str();
 }
 
 std::string TMTaskTime::getStartTime(){
@@ -45,7 +54,12 @@ std::string TMTaskTime::getStartTime(){
 }
 
 std::string TMTaskTime::getEndDate(){
-    return boost::gregorian::to_iso_extended_string(_endDate);
+    std::stringstream stream;
+    stream.imbue(facet);
+    stream << _endDate;
+
+    return stream.str();
+    //return boost::gregorian::to_iso_extended_string(_endDate);
 }
 
 std::string TMTaskTime::getEndTime(){

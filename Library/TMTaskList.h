@@ -31,6 +31,6 @@ public:
 	void addRepeatingTasksToList();
 	string searchTasks(string keyword);
 	void loadFromFile();
-}
+};
 
 #endif _TMMEMORY_H_
