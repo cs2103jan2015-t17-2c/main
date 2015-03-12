@@ -108,6 +108,48 @@ bool TMParser::isRepeatedTask(std::string taskInfo) {
     return false;
 }
 
+bool TMParser::isDeadlinedTask(std::string taskInfo) {
+    std::string remainingEntry = taskInfo;
+    int startOfTokenBefore = remainingEntry.find(TOKEN_BEFORE);
+
+    while(startOfTokenBefore != std::string::npos) {
+        std::string wordAfterTokenBefore;
+        remainingEntry = remainingEntry.substr(startOfTokenBefore);
+        remainingEntry = removeFirstToken(remainingEntry,TOKEN_BEFORE);
+        wordAfterTokenBefore = parseFirstToken(remainingEntry);
+
+        if(isDate(wordAfterTokenBefore)||isDay(wordAfterTokenBefore)) {
+            return true;
+        } else if(isTime(wordAfterTokenBefore)) {
+            return true;
+        } else {
+            startOfTokenBefore = remainingEntry.find(TOKEN_BEFORE);
+        }
+    }
+
+    return false;
+}
+
+bool TMParser::isTimedTask(std::string taskInfo) {
+    std::string remainingEntry = taskInfo;
+    int startOfTokenOn = remainingEntry.find(TOKEN_ON);
+
+    while(startOfTokenOn != std::string::npos) {
+        std::string wordAfterTokenOn;
+        remainingEntry = remainingEntry.substr(startOfTokenOn);
+        remainingEntry = removeFirstToken(remainingEntry,TOKEN_ON);
+        wordAfterTokenOn = parseFirstToken(remainingEntry);
+
+        if(isDay(wordAfterTokenOn)||isDate(wordAfterTokenOn)) {
+            return true;
+        } else {
+            startOfTokenOn = remainingEntry.find(TOKEN_ON);
+        }
+    }
+
+    return false;
+}
+
 bool TMParser::isInteger(std::string token) {
     for(std::string::iterator it = token.begin(); it < token.end(); it++) {
         if(!isdigit(*it)) {
@@ -130,18 +172,6 @@ bool TMParser::isPeriod(std::string token) {
        token == PERIOD_YEARS) {
            return true; } else {
                return false;}
-}
-
-bool TMParser::isDeadlinedTask(std::string taskInfo) {
-    std::string remainingEntry = taskInfo;
-    int startOfTokenBefore = remainingEntry.find(TOKEN_BEFORE);
-
-    while(startOfTokenBefore != std::string::npos) {
-        std::string wordAfterTokenBefore;
-        remainingEntry = remainingEntry.substr(startOfTokenBefore);
-        remainingEntry = removeFirstToken(remainingEntry,TOKEN_BEFORE);
-        wordAfterTokenBefore = parseFirstToken(remainingEntry);
-    }
 }
 
 bool TMParser::isDate(std::string token) {
@@ -223,14 +253,31 @@ bool TMParser::isTime(std::string token) {
 }
 
 std::string TMParser::parseFirstToken(std::string remainingEntry) {
-    return remainingEntry.substr(0,remainingEntry.find_first_of(" ",0));
+    int posOfFirstSpace = remainingEntry.find_first_of(" ",0);
+    if(posOfFirstSpace != std::string::npos) {
+        return remainingEntry.substr(0,remainingEntry.find_first_of(" ",0));
+    } else {
+        return "";
+    }
 }
 
 std::string TMParser::parseSecondToken(std::string remainingEntry) {
     int posOfFirstSpace = remainingEntry.find_first_of(" ",0);
-    int posOfFirstCharOfSecondToken = remainingEntry.find_first_not_of(" ",posOfFirstSpace);
-    int posOfSpaceAfterSecondToken = remainingEntry.find_first_of(" ",posOfFirstCharOfSecondToken);
-    return remainingEntry.substr(posOfFirstCharOfSecondToken,posOfSpaceAfterSecondToken-posOfFirstCharOfSecondToken);
+    if(posOfFirstSpace != std::string::npos) {
+        int posOfFirstCharOfSecondToken = remainingEntry.find_first_not_of(" ",posOfFirstSpace);
+        if(posOfFirstCharOfSecondToken != std::string::npos) {
+            int posOfSpaceAfterSecondToken = remainingEntry.find_first_of(" ",posOfFirstCharOfSecondToken);
+            if (posOfSpaceAfterSecondToken != std::string::npos) {
+                return remainingEntry.substr(posOfFirstCharOfSecondToken,posOfSpaceAfterSecondToken-posOfFirstCharOfSecondToken);
+            } else {
+                return "";
+            }
+        } else {
+            return "";
+        }
+    } else {
+        return "";
+    }
 }
 
 int TMParser::parseTaskPositionNo(std::string entryAfterCommand) {
@@ -247,23 +294,53 @@ std::string TMParser::parseDirectory(std::string entryAfterCommand) {
 
 std::string TMParser::removeFirstToken(std::string remainingEntry, std::string token) {
     int tokenLength = token.size();
-    return remainingEntry.substr(0,tokenLength);
+    remainingEntry = remainingEntry.substr(tokenLength);
+    if(remainingEntry != "") {
+        int posOfFirstChar = remainingEntry.find_first_not_of(" ",0);
+        return remainingEntry.substr(posOfFirstChar);
+    } else {
+        return "";
+    }
 }
 
 std::string TMParser::removeFirstWord(std::string remainingEntry) {
     std::string entryAfterRemovalofFirstWord = clearFirstWord(remainingEntry);
-    std::string entryAfterRemovalOfFrontSpaces = clearFrontSpaces(entryAfterRemovalofFirstWord);
-    return entryAfterRemovalOfFrontSpaces;
+    if(entryAfterRemovalofFirstWord != "") {
+        std::string entryAfterRemovalOfFrontSpaces = clearFrontSpaces(entryAfterRemovalofFirstWord);
+        if(entryAfterRemovalOfFrontSpaces != "") {
+            return entryAfterRemovalOfFrontSpaces;
+        } else {
+            return "";
+        }
+    } else {
+        return "";
     }
+}
 
 std::string TMParser::clearFirstWord(std::string remainingEntry) {
-    int posOfFirstChar = remainingEntry.find_first_not_of(" ",0);
-    int posOfSpaceAfterFirstChar = remainingEntry.find_first_of(" ",posOfFirstChar);
-    return remainingEntry.substr(posOfFirstChar,posOfSpaceAfterFirstChar-posOfFirstChar);
+    if(remainingEntry != "") {
+        int posOfFirstChar = remainingEntry.find_first_not_of(" ",0);
+        if(posOfFirstChar != std::string::npos) {
+            int posOfSpaceAfterFirstWord = remainingEntry.find_first_of(" ",posOfFirstChar);
+            if(posOfSpaceAfterFirstWord != std::string::npos) {
+                return remainingEntry.substr(posOfSpaceAfterFirstWord);
+            } else {
+                return "";
+            }
+        } else {
+            return "";
+        }
+    } else {
+        return "";
+    }
 }
  
 std::string TMParser::clearFrontSpaces(std::string remainingEntry) {
     int posOfFirstChar = remainingEntry.find_first_not_of(" ",0);
-    return remainingEntry.substr(0,posOfFirstChar);
+    if(posOfFirstChar != std::string::npos) {
+        return remainingEntry.substr(posOfFirstChar);
+    } else {
+        return "";
+    }
 }
 
