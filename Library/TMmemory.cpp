@@ -3,12 +3,13 @@
 #include <string>
 #include "TMmemory.h"
 #include "TMTask.h"
+#include "TMParser.h"
 
 
 using namespace std;
 
 
-void TMTaskList :: addTask (TMTask task)
+void TMmemory :: addTask (TMTask task)
 {
 	
 	if (task.getTaskType() == TMTask::TaskType::Timed  || task.getTaskType() == TMTask::TaskType::WithDeadline)
@@ -25,7 +26,7 @@ void TMTaskList :: addTask (TMTask task)
 	}
 }
 
-void TMTaskList :: removeTask()
+void TMmemory :: removeTask()
 {
 	int taskNumber;
 	cin>>taskNumber;
@@ -41,7 +42,7 @@ void TMTaskList :: removeTask()
 	}
 }
 
-void TMTaskList :: archiveAllTasks()
+void TMmemory :: archiveAllTasks()
 {
 	ofstream writeToFile;
 	writeToFile.open("TMStorage.txt");
@@ -49,43 +50,46 @@ void TMTaskList :: archiveAllTasks()
 	writeToFile << timedAndDeadline.size() <<endl;
 	for(int i =0; i < timedAndDeadline.size(); ++i)
 	{
-		writeToFile << timedAndDeadline[i].getTaskDescription() << endl << timedAndDeadline[i].getTaskTime << endl;
+		writeToFile << timedAndDeadline[i].getTaskDescription() << "\t" << timedAndDeadline[i].getTaskTime << endl;
 	}
 	
 	writeToFile << "Tasks Without Deadline:" <<endl;
 	writeToFile <<floating.size()<<endl;
 	for(int j=0; j < floating.size(); ++j)
 	{
-		writeToFile << floating[j].getTaskDescription() << endl << floating[j].getTaskTime << endl;
+		writeToFile << floating[j].getTaskDescription() << "\t" << floating[j].getTaskTime << endl;
 	}
 	writeToFile.close();
 }
 
-void TMTaskList :: loadFromFile()
+void TMmemory :: loadFromFile()
 {
 	ifstream readFromFile;
 	string unusedLines;
+	string entryTimedAndDeadline;
+	string entryFloating;
+	TMParser parseTimedAndDeadline,parseFloating;
 	readFromFile.open("TMStorage.txt");
 	getline(readFromFile,unusedLines);
 	int sizeTimed;
 	cin>>sizeTimed;
 	for (int i=0; i < sizeTimed; ++i)
 	{
-		getline(readFromFile,timedAndDeadline[i].taskDescription);
-		getline(readFromFile,unusedLines); //for now this function will only load task description
+		getline(readFromFile,entryTimedAndDeadline);
+		parseTimedAndDeadline.parseTaskInfo(entryTimedAndDeadline);
 	}
 	getline(readFromFile,unusedLines);
 	int sizeFloating;
 	cin>>sizeFloating;
 	for (int j=0;j < sizeFloating;++j)
 	{
-		getline(readFromFile,floating[j].taskDescription);
-		getline(readFromFile,unusedLines);
+		getline(readFromFile,entryFloating);
+		parseFloating.parseTaskInfo(entryFloating);
 	}
 }
 
 
-string TMTaskList :: searchTasks (string keyword)
+string TMmemory :: searchTasks (string keyword)
 {
 	vector<TMTask> searchResults;
 	for (int i = 0; i<timedAndDeadline.size();++i){
@@ -97,7 +101,6 @@ string TMTaskList :: searchTasks (string keyword)
 		{searchResults.push_back(floating[j]);}
 	}
 	
-	for (int k=0; k<searchResults.size();++k){
-		printEntry(searchResults); //UI
-	}
+	//for (int k=0; k<searchResults.size();++k){
+	//}
 }

@@ -3,19 +3,19 @@
 #include "TMTask.h"
 #include "TMmemory.h"
 
-void TMExecutor::addTask(Task task, TaskList tasklist) {
+void TMExecutor::addTask(TMTask task, TaskList tasklist) {
 	tasklist.addTask(task);
 }
 
-void TMExecutor::blockMultiple(vec<Task> tasks, TaskList tasklist) {
-	vec<Task> iterator::iter;
+void TMExecutor::blockMultiple(vector<TMTask> tasks, TaskList tasklist) {
+	vector<TMTask> iterator::iter;
 	for (iter = tasks.begin(); iter != tasks.end(); ++iter) {
 		tasklist.addTask(*iter);
 	}
 }
 
-void TMExecutor::freeMultiple(vec<Task> confirmedTasks, TaskList tasklist) {
-	vec<Task> iterator::iter;
+void TMExecutor::freeMultiple(vector<TMTask> confirmedTasks, TaskList tasklist) {
+	vector<TMTask> iterator::iter;
 
 	for (iter = confirmedTasks.begin(); iter != confirmedTasks.end(); ++iter) {
 		tasklist.updateTask(tasklist.searchOneTask(*iter), isPermanent, true);
@@ -32,18 +32,18 @@ void TMExecutor::freeMultiple(vec<Task> confirmedTasks, TaskList tasklist) {
 	}
 }
 
-void TMExecutor::updateTaskDetail(Task task, string component, string changeTo, TaskList tasklist) {
+void TMExecutor::updateTaskDetail(TMTask task, string component, string changeTo, TaskList tasklist) {
 	tasklist.updateTask(tasklist.searchOneTask(task), component, changeTo);
 }
 	
 void TMExecutor::markAllAsDone(Time todaysDate, TaskList tasklist) {
 	}
 	
-void TMExecutor::deleteTask(Task task, TaskList tasklist) {
+void TMExecutor::deleteTask(TMTask task, TaskList tasklist) {
 	tasklist.removeTask(tasklist.searchOneTask(task));
 }
 	void TMExecutor::undoLast;
 	void TMExecutor::string searchFreeTime();
 	void TMExecutor::searchEntry;
 	void TMExecutor::saveAt(string directory);
-	void TMExecutor::repeatTask(Task task, TaskList tasklist);
+	void TMExecutor::repeatTask(TMTask task, TaskList tasklist);
