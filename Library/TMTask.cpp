@@ -4,6 +4,7 @@ TMTask::TMTask(std::string taskDescription, TMTaskTime taskTime, TaskType taskTy
     _taskDescription = taskDescription;
     _taskTime = taskTime;
     _isCompleted = false;   //by default all tasks when created are presumed to be uncompleted
+    _isConfirmed = true;
     _taskType = taskType;
 }
 
@@ -37,6 +38,14 @@ void TMTask::setAsCompleted(){
 
 void TMTask::setAsIncompleted(){
     _isCompleted = false;
+}
+
+void TMTask::setAsConfirmed() {
+    _isConfirmed = true;
+}
+
+void TMTask::setAsUnconfirmed() {
+    _isConfirmed = false;
 }
 
 void TMTask::setTaskType(TaskType newTaskType){
