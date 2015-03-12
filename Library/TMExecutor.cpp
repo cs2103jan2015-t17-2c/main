@@ -1,7 +1,7 @@
 #include <vector>
 #include <iostream>
 #include "TMTask.h"
-#include "TMTaskList.h"
+#include "TMmemory.h"
 
 void TMExecutor::addTask(Task task, TaskList tasklist) {
 	tasklist.addTask(task);
