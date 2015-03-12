@@ -1,7 +1,10 @@
 #include <vector>
 #include <iostream>
+#include "TMExecutor.h"
 #include "TMTask.h"
 #include "TMmemory.h"
+#include <boost\date_time.hpp>
+
 
 void TMExecutor::addTask(TMTask task, TMTaskList tasklist) {
 	tasklist.addTask(task);
