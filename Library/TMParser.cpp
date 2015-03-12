@@ -132,6 +132,96 @@ bool TMParser::isPeriod(std::string token) {
                return false;}
 }
 
+bool TMParser::isDeadlinedTask(std::string taskInfo) {
+    std::string remainingEntry = taskInfo;
+    int startOfTokenBefore = remainingEntry.find(TOKEN_BEFORE);
+
+    while(startOfTokenBefore != std::string::npos) {
+        std::string wordAfterTokenBefore;
+        remainingEntry = remainingEntry.substr(startOfTokenBefore);
+        remainingEntry = removeFirstToken(remainingEntry,TOKEN_BEFORE);
+        wordAfterTokenBefore = parseFirstToken(remainingEntry);
+    }
+}
+
+bool TMParser::isDate(std::string token) {
+    //DDMMYYYY
+    //need more rigorous testing of dates
+    int lengthOfToken = token.size();
+    if(lengthOfToken != 8) {
+        return false;
+    } else {
+        for(std::string::iterator it = token.begin(); it < token.end(); it++) {
+            if(!isdigit(*it)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool TMParser::isDay(std::string token) {
+    if(token == DAY_MON||
+       token == DAY_MONDAY||
+       token == DAY_TUE||
+       token == DAY_TUESDAY||
+       token == DAY_WED||
+       token == DAY_WEDNESDAY||
+       token == DAY_THU||
+       token == DAY_THURSDAY||
+       token == DAY_FRI||
+       token == DAY_FRIDAY||
+       token == DAY_SAT||
+       token == DAY_SATURDAY||
+       token == DAY_SUN||
+       token== DAY_SUNDAY) {
+           return true;
+    } else {
+        return false;
+    }
+}
+
+bool TMParser::isTime(std::string token) {
+    //format: 10/ 1030/ 10:30
+    int lengthOfToken = token.size();
+    if(lengthOfToken == 2){
+        int hour = std::stoi(token);
+        if(hour >= 0 && hour <= 23) {
+            return true;
+        } else {
+            return false;
+        }
+    } else if (lengthOfToken = 4) {
+        int hour = std::stoi(token.substr(0,2));
+        if(hour >= 0 && hour <= 23) {
+            int minute = std::stoi(token.substr(2,2));
+            if(minute >= 0 && minute <= 59) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    } else if (lengthOfToken = 5) {
+        if(token[2] == ':') {
+            int hour = std::stoi(token.substr(0,2));
+            if(hour >= 0 && hour <= 23) {
+                int minute = std::stoi(token.substr(3,2));
+                if(minute >= 0 && minute <= 59) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+}
+
 std::string TMParser::parseFirstToken(std::string remainingEntry) {
     return remainingEntry.substr(0,remainingEntry.find_first_of(" ",0));
 }

@@ -26,10 +26,15 @@ public:
     TMTask parseTimedTaskInfo(std::string);
     TMTask parseFloatingTaskInfo(std::string);
 
+    bool isRepeatedTask(std::string);
     bool isInteger(std::string);
     bool isPeriod(std::string);
-    bool isRepeatedTask(std::string);
+
     bool isDeadlinedTask(std::string);
+    bool isDate(std::string);
+    bool isDay(std::string);
+    bool isTime(std::string);
+
     bool isTimedTask(std::string);
 
     std::string parseFirstToken(std::string);
