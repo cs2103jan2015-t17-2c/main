@@ -3,16 +3,26 @@
 #include <string>
 #include "TMTaskTime.h"
 
+enum TaskType {
+    Timed, WithDeadline, Floating, Repeated
+};
+
 class TMTask{
 protected:
     std::string _taskDescription;
     TMTaskTime _taskTime;
     bool _isCompleted;
 
-    enum TaskType {
+
+public:
+     enum TaskType {
         Timed, WithDeadline, Floating, Repeated
     };
 
+    bool _isConfirmed;
+
+
+protected:
     TaskType _taskType;
 
 public:

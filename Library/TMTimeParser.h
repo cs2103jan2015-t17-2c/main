@@ -1,6 +1,5 @@
 #ifndef TMTIMEPARSER_H
 #define TMTIMEPARSER_H
-
 #include <boost\date_time.hpp>
 
 class TMTimeParser {

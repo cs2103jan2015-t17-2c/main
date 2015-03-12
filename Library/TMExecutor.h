@@ -1,24 +1,24 @@
 #pragma once
 #include <vector>
 #include <iostream>
+#include <string>
 #include "TMTask.h"
-#include "TMTaskList.h"
-
+#include "TMmemory.h"
 #include <boost\date_time.hpp>
 
 
 class TMExecutor{
 	public:
-	void addTimedAndDeadline(TMTask task, TaskList tasklist);
-	void addFloating(Task task, TaskList tasklist);
-	void blockMultiple(vec<Task> tasks, TaskList tasklist);
-	void freeMultiple(vec<Task> confirmedTasks, TaskList tasklist);
-	void updateTaskDetail(Task task, string component, string changeTo);
-	void markAllAsDone(Time todaysDate, TaskList tasklist);
-	void deleteTask(Task task, TaskList tasklist);
-	void undoLast
-	void string searchFreeTime();
-	void searchEntry
+	void addTimedAndDeadline(TMTask task, TMmemory tasklist);
+	void addFloating(TMTask task, TMmemory tasklist);
+	void blockMultiple(vector<TMTask> tasks, TMmemory tasklist);
+	void freeMultiple(vector<TMTask> confirmedTasks, TMmemory tasklist);
+	void updateTaskDetail(TMTask task, string component, string changeTo);
+	void markAllAsDone(Time todaysDate, TMmemory tasklist);
+	void deleteTask(TMTask task, TMmemory tasklist);
+	void undoLast();
+	void searchFreeTime();
+	void searchEntry();
 	void saveAt(string directory);
-	void repeatTask(Task task, TaskList tasklist);
+	void repeatTask(TMTask task, TMmemory tasklist);
 };
