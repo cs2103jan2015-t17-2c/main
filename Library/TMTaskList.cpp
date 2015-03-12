@@ -23,23 +23,20 @@ void TMTaskList :: addTask (TMTask task)
 	}
 }
 
-void TMTaskList :: removeTask()
-{
-	int taskNumber;
-	cin>>taskNumber;
-	
-	if (taskNumber <= timedAndDeadline.size())
+void TMTaskList :: removeTask(int positionIndex)
+{	
+	if (positionIndex <= timedAndDeadline.size())
 	{
-		timedAndDeadline.erase(timedAndDeadline.begin()+taskNumber);
+		timedAndDeadline.erase(timedAndDeadline.begin() + positionIndex);
 	}
 	else
 	{
-		int floatingTaskNumber = taskNumber - timedAndDeadline.size();
-		floating.erase(floating.begin()+floatingTaskNumber);
+		int floatingTaskNumber = positionIndex - timedAndDeadline.size();
+		floating.erase(floating.begin() + floatingTaskNumber);
 	}
 }
 
-void TMTaskList :: archiveAllTasks()
+/*void TMTaskList :: archiveAllTasks()
 {
 	ofstream writeToFile;
 	writeToFile.open("TMStorage.txt");
@@ -87,27 +84,33 @@ void TMTaskList :: loadFromFile()
 		parseFloating.parseTaskInfo(entryFloating);
 	}
 }
+*/
 
-
-string TMTaskList :: searchTasks (string keyword)
+string TMTaskList :: searchTasks(string keyword)
 {
 	vector<TMTask> searchResults;
-	int positionTimed,positionFloating;
-	for (int i = 0; i<timedAndDeadline.size();++i){
+	int positionTimed, positionFloating;
+	//Search for keyword in timedAndDeadline vector
+	for (int i = 0; i<timedAndDeadline.size(); ++i) {
 		positionTimed = timedAndDeadline[i].getTaskDescription().find(keyword);
-		if (positionTimed != string::npos)
+		if (positionTimed != string::npos) {
 			searchResults.push_back(timedAndDeadline[i]);
+		}
 	}
-	for (int j = 0; j<floating.size();++j){
+
+	//Search for keyword in floating vector
+	for (int j = 0; j<floating.size(); ++j) {
 		positionFloating = floating[j].getTaskDescription().find(keyword);
-		if (positionFloating != string::npos)
+		if (positionFloating != string::npos) {
 			searchResults.push_back(floating[j]);
+		}
 	}
 	
-	for (int k=0; k<searchResults.size();++k){
-		cout << searchResults[k].getTaskDescription() << " " << searchResults[k].getTaskTime().getStartDate() << 
-			" " << searchResults[k].getTaskTime().getStartTime() << 
-			" " << searchResults[k].getTaskTime().getEndDate() <<
-			" " << searchResults[k].getTaskTime().getEndTime() <<endl;
-}
+	for (int k=0; k<searchResults.size(); ++k) {
+		cout << searchResults[k].getTaskDescription() << " " 
+		<< searchResults[k].getTaskTime().getStartDate() << " "
+		<< searchResults[k].getTaskTime().getStartTime() << " " 
+		<< searchResults[k].getTaskTime().getEndDate() << " " 
+		<< searchResults[k].getTaskTime().getEndTime() <<endl;
+	}
 }

@@ -55,7 +55,7 @@ void TMExecutor::updateTaskDetail(TMTask task, std::string component, std::strin
 }
 
 //Mark all tasks that are due today as done
-void TMExecutor::markAllAsDone(Time todaysDate, TMTaskList tasklist) {
+void TMExecutor::markAllAsDone(TMTaskList tasklist) {
 	date dateToday(day_clock::local_day());
 	vector<TMTask> iterator::iter;
 	for (iter = tasklist.begin(); iter != tasklist.end(); ++iter) {

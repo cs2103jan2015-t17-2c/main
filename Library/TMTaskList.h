@@ -1,5 +1,5 @@
-#ifndef _TMTaskList_H_
-#define _TMTaskList_H_
+#ifndef TMTASKLIST_H
+#define TMTASKLIST_H
 
 #include <fstream>
 #include <vector>
@@ -14,7 +14,6 @@ private:
 	vector<TMTask> timedAndDeadline; 
 	//Contains all floating tasks from the beginning of use unless task is completed or deleted
 	vector<TMTask> floating; 
-	vector<TMTask> repeatingTasks;
 	int sizeOfTimedAndDeadline;
 	int sizeOfFloating;
 
