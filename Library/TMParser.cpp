@@ -10,6 +10,9 @@ const std::string CMD_SEARCH = "search";
 const std::string CMD_EDIT = "edit";
 const std::string CMD_STORE = "store";
 
+const std::string DAY_YESTERDAY = "yesterday";
+const std::string DAY_TODAY = "today";
+const std::string DAY_TOMORROW = "tomorrow";
 const std::string DAY_MONDAY = "monday";
 const std::string DAY_TUESDAY = "tuesday";
 const std::string DAY_WEDNESDAY = "wednesday";
@@ -29,6 +32,8 @@ const std::string DAY_SUN = "sun";
 const std::string TOKEN_EVERY = "every";
 const std::string TOKEN_BEFORE = "before";
 const std::string TOKEN_ON = "on";
+const std::string TOKEN_FOR = "for";
+const std::string TOKEN_NEXT = "next";
 
 const std::string PERIOD_HOUR = "hour";
 const std::string PERIOD_HOURS = "hours";
@@ -46,14 +51,42 @@ TMParser::TMParser() {
 
 std::string TMParser::extractCommand(std::string userEntry) {
     std::string command;
-    command = userEntry.substr(0,userEntry.find(' '));
+    userEntry = clearFrontSpaces(userEntry);
+    if(userEntry != "") {
+        int posOfFirstSpaceAfterCommand = userEntry.find(' ');
+        //case where there is more than one word
+        if(posOfFirstSpaceAfterCommand != std::string::npos) {
+            command = userEntry.substr(0,posOfFirstSpaceAfterCommand);
+        } else { //case where there is only one word
+            command = userEntry;
+        }
+    } else { //case where input is an empty string
+        command = "";
+    }
+
     return command;
 }
 
+//used on full entry in which command is within
 std::string TMParser::extractEntryAfterCommand(std::string userEntry) {
     std::string entryAfterCommand;
-    //assume that the user would separate each word with only a space
-    entryAfterCommand = userEntry.substr(userEntry.find_first_of(" ") + 1);
+    userEntry = clearFrontSpaces(userEntry);
+    if(userEntry != "") {
+        int posOfFirstSpace = userEntry.find_first_of(" ",0);
+        if(posOfFirstSpace != std::string::npos) {
+            int posOfFirstCharAfterFirstSpace = userEntry.find_first_not_of(" ",posOfFirstSpace);
+            if(posOfFirstCharAfterFirstSpace != std::string::npos) {
+                entryAfterCommand = userEntry.substr(posOfFirstCharAfterFirstSpace);
+            } else {
+                entryAfterCommand = "";
+            }
+        } else {
+            entryAfterCommand = "";
+        }
+    } else {
+        entryAfterCommand = "";
+    }
+
     return entryAfterCommand;
 }
 
@@ -79,35 +112,46 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
     }
 }
 
+//Preconditions: taskInfo contains only the entry after command. use extractEntryAfterCommand 1st
+//             : use only when in adding or editing information
 TMTask TMParser::parseTaskInfo(std::string taskInfo) {
-
+    if(isDeadlinedTask(taskInfo)){
+        parseDeadlinedTaskInfo(taskInfo));
+    } else if(isTimedTask(taskInfo)) {
+        parseTimedTaskInfo(taskInfo));
+    } else {
+        parseFloatingTaskInfo(taskInfo);
+    }
 }
-
-bool TMParser::isRepeatedTask(std::string taskInfo) {
+//Preconditions:task is deadlined task use isDeadlinedTask to check
+TMTask TMParser::parseDeadlinedTaskInfo(std::string taskInfo) {
+    TaskType taskType = TaskType::WithDeadline;
+    std::string dateToMeet = "";
+    std::string dayToMeet = "";
+    std::string timeToMeet = "";
     std::string remainingEntry = taskInfo;
-    int startOfTokenEvery = remainingEntry.find(TOKEN_EVERY);
 
-    while(startOfTokenEvery != std::string::npos) {
-        std::string wordAfterTokenEvery;
-        remainingEntry = remainingEntry.substr(startOfTokenEvery);
-        remainingEntry = removeFirstToken(remainingEntry,TOKEN_EVERY);
-        wordAfterTokenEvery = parseFirstToken(remainingEntry);
+    int startOfTokenBefore = remainingEntry.find(TOKEN_BEFORE);
 
-        if(isInteger(wordAfterTokenEvery)) {
-            std::string wordAfterTokenInteger = parseSecondToken(remainingEntry);
-            if(isPeriod(wordAfterTokenInteger)) {
-                return true;
-            }
-        } else if(isPeriod(wordAfterTokenEvery)) {
-            return true;
+    while(startOfTokenBefore != std::string::npos) {
+        std::string wordAfterTokenBefore = parseSecondToken(remainingEntry.substr(startOfTokenBefore));
+        
+        if(isDate(wordAfterTokenBefore)) {
+            dateToMeet = wordAfterTokenBefore;
+        } else if (isDay(wordAfterTokenBefore)) {
+            //need to convert to date
+            dayToMeet = wordAfterTokenBefore;
+        }  else if (isWordNext(wordAfterTokenBefore)) {
+            if(
+        }  else if (isTime(wordAfterTokenBefore)) {
+            timeToMeet = wordAfterTokenBefore;
         } else {
-            startOfTokenEvery = remainingEntry.find(TOKEN_EVERY);
+            startOfTokenBefore = remainingEntry.find(TOKEN_BEFORE,startOfTokenBefore+1);
         }
     }
 
-    return false;
-}
 
+            
 bool TMParser::isDeadlinedTask(std::string taskInfo) {
     std::string remainingEntry = taskInfo;
     int startOfTokenBefore = remainingEntry.find(TOKEN_BEFORE);
@@ -120,7 +164,7 @@ bool TMParser::isDeadlinedTask(std::string taskInfo) {
 
         if(isDate(wordAfterTokenBefore)||isDay(wordAfterTokenBefore)) {
             return true;
-        } else if(isTime(wordAfterTokenBefore)) {
+        } else if (isTime(wordAfterTokenBefore)) {
             return true;
         } else {
             startOfTokenBefore = remainingEntry.find(TOKEN_BEFORE);
@@ -233,7 +277,7 @@ bool TMParser::isTime(std::string token) {
         } else {
             return false;
         }
-    } else if (lengthOfToken = 5) {
+    } else if(lengthOfToken = 5) {
         if(token[2] == ':') {
             int hour = std::stoi(token.substr(0,2));
             if(hour >= 0 && hour <= 23) {
@@ -249,13 +293,22 @@ bool TMParser::isTime(std::string token) {
         } else {
             return false;
         }
+    } else {
+        return false;
     }
 }
 
+bool TMParser::isWordNext(std::string token) {
+    return token == 
+
 std::string TMParser::parseFirstToken(std::string remainingEntry) {
-    int posOfFirstSpace = remainingEntry.find_first_of(" ",0);
-    if(posOfFirstSpace != std::string::npos) {
-        return remainingEntry.substr(0,remainingEntry.find_first_of(" ",0));
+    if(remainingEntry != "") {
+        int posOfFirstSpace = remainingEntry.find_first_of(" ",0);
+        if(posOfFirstSpace != std::string::npos) {
+            return remainingEntry.substr(0,posOfFirstSpace);
+        } else {
+            return remainingEntry;
+        }
     } else {
         return "";
     }
@@ -280,31 +333,68 @@ std::string TMParser::parseSecondToken(std::string remainingEntry) {
     }
 }
 
-int TMParser::parseTaskPositionNo(std::string entryAfterCommand) {
-    return std::stoi(entryAfterCommand);
+//Precondition: n <= numberOfWords
+std::string TMParser::parseNthToken(std::string remainingEntry, int n) {
+    if(remainingEntry != "") {
+        std::string token;
+        istringstream in(remainingEntry);
+        for(int i = 0; i < n; i++) {
+            in >> token;
+        }
+        return token;
+    }
 }
 
-std::string TMParser::parseSearchKey(std::string entryAfterCommand) {
-    return entryAfterCommand;
+int TMParser::numberOfWords(std::string remainingEntry) {
+    if(remainingEntry != ""){
+        std::string token;
+        int count = 0;
+        istringstream in(remainingEntry);
+        while(in >> token) {
+            count++;
+        }
+    } else {
+        count = 0;
+    }
+    return count;
 }
 
-std::string TMParser::parseDirectory(std::string entryAfterCommand) {
-    return entryAfterCommand;
+int TMParser::parseTaskPositionNo(std::string userEntry) {
+    std::string taskPositionNo = extractEntryAfterCommand(userEntry);
+    return std::stoi(taskPositionNo);
 }
 
+std::string TMParser::parseSearchKey(std::string userEntry) {
+    std::string searchKey = extractEntryAfterCommand(userEntry);
+    return searchKey;
+}
+
+std::string TMParser::parseDirectory(std::string userEntry) {
+    std::string directory = extractEntryAfterCommand(userEntry);
+    return directory;
+}
+
+//preconditions: none
+//for situation where there is everyday so we won't clear everyday but just every
 std::string TMParser::removeFirstToken(std::string remainingEntry, std::string token) {
     int tokenLength = token.size();
     remainingEntry = remainingEntry.substr(tokenLength);
     if(remainingEntry != "") {
+        //skip front spaces
         int posOfFirstChar = remainingEntry.find_first_not_of(" ",0);
-        return remainingEntry.substr(posOfFirstChar);
+        if(posOfFirstChar != std::string::npos) {
+            return remainingEntry.substr(posOfFirstChar);
+        } else {
+            return "";
+        }
     } else {
         return "";
     }
 }
 
 std::string TMParser::removeFirstWord(std::string remainingEntry) {
-    std::string entryAfterRemovalofFirstWord = clearFirstWord(remainingEntry);
+    std::string entryAfterRemovalOfFrontSpaces = clearFrontSpaces(remainingEntry);
+    std::string entryAfterRemovalofFirstWord = clearFirstWord(entryAfterRemovalOfFrontSpaces);
     if(entryAfterRemovalofFirstWord != "") {
         std::string entryAfterRemovalOfFrontSpaces = clearFrontSpaces(entryAfterRemovalofFirstWord);
         if(entryAfterRemovalOfFrontSpaces != "") {
@@ -317,6 +407,7 @@ std::string TMParser::removeFirstWord(std::string remainingEntry) {
     }
 }
 
+//Preconditions: there are no spaces at the front
 std::string TMParser::clearFirstWord(std::string remainingEntry) {
     if(remainingEntry != "") {
         int posOfFirstChar = remainingEntry.find_first_not_of(" ",0);
@@ -337,9 +428,9 @@ std::string TMParser::clearFirstWord(std::string remainingEntry) {
  
 std::string TMParser::clearFrontSpaces(std::string remainingEntry) {
     int posOfFirstChar = remainingEntry.find_first_not_of(" ",0);
-    if(posOfFirstChar != std::string::npos) {
+    if(posOfFirstChar != std::string::npos) { //case where there is a char 
         return remainingEntry.substr(posOfFirstChar);
-    } else {
+    } else { //case where all spaces
         return "";
     }
 }
