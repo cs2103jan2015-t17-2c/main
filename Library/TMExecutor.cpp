@@ -2,6 +2,7 @@
 #include <iostream>
 #include "TMTask.h"
 #include "TMmemory.h"
+#include "TMExecutor.h"
 
 void TMExecutor::addTask(TMTask task, TaskList tasklist) {
 	tasklist.addTask(task);
