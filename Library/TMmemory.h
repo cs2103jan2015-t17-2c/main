@@ -4,21 +4,24 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include "TMTask.h"
 
-class TMTaskList{
+using namespace std;
+
+class TMmemory{
 private:
 	//Contains all the task for the current year
-	vector<Task> timedAndDeadline; 
+	vector<TMTask> timedAndDeadline; 
 	//Contains all floating tasks from the beginning of use unless task is completed or deleted
-	vector<Task> floating; 
-	vector<Task> repeatingTasks;
+	vector<TMTask> floating; 
+	vector<TMTask> repeatingTasks;
 	int sizeOfTimedAndDeadline;
 	int sizeOfFloating;
 	int nextTaskID = 1;
 
 public:
 	//Constructor creates a file storing all tasks of the year at a specified folder.
-	void setTaskID(Task task);
+	void setTaskID(TMTask task);
 	void addTask(TMTask task);
 	void updateTask(string componentOfTask, string changeTo);
 	void removeTask();
