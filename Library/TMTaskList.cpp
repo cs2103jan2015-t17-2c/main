@@ -1,5 +1,6 @@
 #include <fstream>
 #include <vector>
+#include <algorithm>
 #include <string>
 #include "TMTaskList.h"
 #include "TMTask.h"
@@ -12,17 +13,13 @@ using namespace std;
 void TMTaskList :: addTask (TMTask task)
 {
 	
-	if (task.getTaskType() == TMTask::TaskType::Timed  || task.getTaskType() == TMTask::TaskType::WithDeadline)
+	if (task.getTaskType() == TaskType::Timed  || task.getTaskType() == TaskType::WithDeadline)
 	{
 		timedAndDeadline.push_back(task);
 	}
-	if (task.getTaskType() == TMTask::TaskType::Floating)
+	if (task.getTaskType() == TaskType::Floating)
 	{
 		floating.push_back(task);
-	}
-	if (task.getTaskType() == TMTask::TaskType::Repeated)
-	{
-		repeatingTasks.push_back(task);
 	}
 }
 
@@ -95,15 +92,22 @@ void TMTaskList :: loadFromFile()
 string TMTaskList :: searchTasks (string keyword)
 {
 	vector<TMTask> searchResults;
+	int positionTimed,positionFloating;
 	for (int i = 0; i<timedAndDeadline.size();++i){
-		if(timedAndDeadline[i].getTaskDescription() == keyword)
-		{searchResults.push_back(timedAndDeadline[i]);}
+		positionTimed = timedAndDeadline[i].getTaskDescription().find(keyword);
+		if (positionTimed != string::npos)
+			searchResults.push_back(timedAndDeadline[i]);
 	}
 	for (int j = 0; j<floating.size();++j){
-		if(floating[j].getTaskDescription() == keyword)
-		{searchResults.push_back(floating[j]);}
+		positionFloating = floating[j].getTaskDescription().find(keyword);
+		if (positionFloating != string::npos)
+			searchResults.push_back(floating[j]);
 	}
 	
-	//for (int k=0; k<searchResults.size();++k){
-	//}
+	for (int k=0; k<searchResults.size();++k){
+		cout << searchResults[k].getTaskDescription() << " " << searchResults[k].getTaskTime().getStartDate() << 
+			" " << searchResults[k].getTaskTime().getStartTime() << 
+			" " << searchResults[k].getTaskTime().getEndDate() <<
+			" " << searchResults[k].getTaskTime().getEndTime() <<endl;
+}
 }
