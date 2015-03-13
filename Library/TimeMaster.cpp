@@ -12,7 +12,6 @@ int main() {
 	TMTaskList tasklist;
 	TMParser parser;
 	TMExecutor executor;
-    std::vector vectorOfTasks<TMTask>;
 
 	std::string userInput;
 	tasklist.loadFromFile();
@@ -24,9 +23,9 @@ int main() {
 		getline(std :: cin, userInput);
 
 		std::string command = parser.extractCommand(userInput);
-		TMTask task = parser.parseTaskInfo(userInput);
+		std::vector<TMTask> taskVector = parser.parseTaskInfo(userInput);
 
-		executor.sortCommandToFunctions(command, task, tasklist);
+		executor.sortCommandToFunctions(command, taskVector, tasklist);
     }
 	
 	std::atexit(tasklist.archiveAll);
