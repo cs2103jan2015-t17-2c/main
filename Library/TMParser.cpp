@@ -50,10 +50,10 @@ TMParser::TMParser() {
 
 //Preconditions: none (works for both with spaces and without in front)
 std::string TMParser::extractCommand(std::string userEntry) {
-    std::string command;
+    std::string command = "";
     userEntry = clearFrontSpaces(userEntry);
     if(userEntry != "") {
-        int posOfFirstSpaceAfterCommand = userEntry.find(' ');
+        int posOfFirstSpaceAfterCommand = userEntry.find(" ");
         //case where there is more than one word
         if(posOfFirstSpaceAfterCommand != std::string::npos) {
             command = userEntry.substr(0,posOfFirstSpaceAfterCommand);
@@ -282,7 +282,7 @@ TMTask TMParser::parseTimedTaskInfo(std::string taskInfo){
 
 TMTask TMParser::parseFloatingTaskInfo(std::string taskInfo) {
     TaskType taskType = TaskType::Floating;
-    TMTaskTime taskTime("","","","");
+    TMTaskTime taskTime;
     TMTask task(taskInfo,taskTime,taskType);
 
     return task;

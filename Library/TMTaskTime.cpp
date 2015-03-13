@@ -3,6 +3,12 @@
 const std::locale facet(std::locale::classic(), new boost::gregorian::date_facet("%d-%m-%Y"));
 
 TMTaskTime::TMTaskTime(){
+    boost::gregorian::date startDate(boost::gregorian::not_a_date_time);
+    _startDate = startDate;
+    _startTime = boost::posix_time::not_a_date_time;
+    boost::gregorian::date endDate(boost::gregorian::not_a_date_time);
+    _endDate = endDate;
+    _endTime = boost::posix_time::not_a_date_time;
 }
 
 TMTaskTime::TMTaskTime(std::string startDate, std::string startTime, std::string endDate,

@@ -22,7 +22,7 @@ int main() {
     std::cout << "Welcome to TimeMaster. Please enter your command" << std::endl;
     std::getline(std :: cin, userInput);
 
-	taskList.loadFromFile();
+	//taskList.loadFromFile();
 	
 	while(userInput != "quit") {
         /*if(GetAsyncKeyState('exit')) {
@@ -30,9 +30,12 @@ int main() {
 		}*/
 
 		std::string command = parser.extractCommand(userInput);
-		std::vector<TMTask> taskVector = parser.parseTaskInfo(userInput);
+
+        //use extractEntryAfterCommand first read preconditions
+		std::vector<TMTask> taskVector = parser.parseTaskInfo(parser.extractEntryAfterCommand(userInput));
 
 		executor.sortCommandToFunctions(command, taskVector, taskList);
+
         taskList.displayAllTasks();
         std::cout << "Welcome to TimeMaster. Please enter your command" << std::endl;
 		getline(std :: cin, userInput);
