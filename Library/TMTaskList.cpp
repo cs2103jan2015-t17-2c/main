@@ -207,7 +207,23 @@
 		}
 	}
 
-	void TMTaskList::displayAllTasks() {}	//YET TO CODE
+	void TMTaskList::displayAllTasks() {
+		std::cout << "Tasks With Deadline:"  <<std::endl;
+		std::cout << timedAndDeadline.size() <<std::endl;
+		for(int i =0; i < timedAndDeadline.size(); ++i)
+		{
+			std::cout << timedAndDeadline[i].getTaskDescription() << " " << timedAndDeadline[i].getTaskTime().getStartDate() << 
+				" " << timedAndDeadline[i].getTaskTime().getStartTime() << 
+				" " << timedAndDeadline[i].getTaskTime().getEndDate() <<
+				" " << timedAndDeadline[i].getTaskTime().getEndTime() <<std::endl;
+		}
+	
+		std::cout << "Tasks Without Deadline:" <<std::endl;
+		for(int j=0; j < floating.size(); ++j)
+		{
+			std::cout << floating[j].getTaskDescription() << std::endl;
+		}
+	}	
 	
 	
 	void TMTaskList::chronoSort() {
