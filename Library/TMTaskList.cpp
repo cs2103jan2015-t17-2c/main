@@ -148,9 +148,11 @@
 			timedAndDeadline.push_back(task);
 			chronoSort();
 			archiveAll();
+			displayAllTasks();
 		} else {
 			floating.push_back(task);
 			archiveAll();
+			displayAllTasks();
 		}
 
 	}
@@ -219,6 +221,7 @@
 		}
 	
 		std::cout << "Tasks Without Deadline:" <<std::endl;
+		std::cout << floating.size() <<std::endl;
 		for(int j=0; j < floating.size(); ++j)
 		{
 			std::cout << floating[j].getTaskDescription() << std::endl;

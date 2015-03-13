@@ -25,7 +25,7 @@ void TMExecutor::addTasks(std::vector<TMTask> tasks, TMTaskList tasklist) {
 	for (iter = tasks.begin(); iter != tasks.end(); ++iter) {
 		tasklist.addTask(*iter);
 	}
-	tasks.clear();
+	 tasks.clear();
 }
 
 

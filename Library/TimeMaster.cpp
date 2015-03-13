@@ -36,7 +36,7 @@ int main() {
 
 		executor.sortCommandToFunctions(command, taskVector, taskList);
 
-        taskList.displayAllTasks();
+        //taskList.displayAllTasks();
         std::cout << "Welcome to TimeMaster. Please enter your command" << std::endl;
 		getline(std :: cin, userInput);
     }
