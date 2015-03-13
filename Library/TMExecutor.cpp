@@ -54,9 +54,9 @@ void TMExecutor::searchKeyword(std::string keyword, TMTaskList tasklist) {
 	}
 }
 	
-void TMExecutor::searchFreeTime(TMTaskList tasklist) {
+/*void TMExecutor::searchFreeTime(TMTaskList tasklist) {
 	std::cout << tasklist.freeTimeSearch() << std::endl;
-}
+}*/
 	
 void TMExecutor::freeUnconfirmed(std::vector<TMTask> confirmedTasks, TMTaskList tasklist) {
 	std::vector<TMTask>::iterator tasksIter;

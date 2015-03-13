@@ -13,10 +13,18 @@
 			return false;
 		}
 
-		if (task1.getTaskTime() != task2.getTaskTime()) { //TO IMPLEMENT FUNCTION TO COMPARE TASKTIME
+		if (task1.getTaskTime().getStartDate() != task2.getTaskTime().getStartDate()) { //TO IMPLEMENT FUNCTION TO COMPARE TASKTIME
 			return false;
 		}
-    
+		if (task1.getTaskTime().getStartTime() != task2.getTaskTime().getStartTime()) { //TO IMPLEMENT FUNCTION TO COMPARE TASKTIME
+			return false;
+		}
+		if (task1.getTaskTime().getEndDate() != task2.getTaskTime().getEndDate()) { //TO IMPLEMENT FUNCTION TO COMPARE TASKTIME
+			return false;
+		}
+		if (task1.getTaskTime().getEndTime() != task2.getTaskTime().getEndTime()) { //TO IMPLEMENT FUNCTION TO COMPARE TASKTIME
+			return false;
+		}
 		if (task1.isCompleted() != task2.isCompleted()) {
 			return false;
 		}
@@ -123,7 +131,10 @@
 				std::vector<TMTask>::iterator iter;
 				for (iter = clashesWith.begin(); iter != clashesWith.end(); ++iter) {
 					std::string taskDetails;
-					taskDetails = (*iter).getTaskDescription() + " " + (*iter).getTaskTime(); //TO IMPLEMENT NEW METHODS IN TMTASK
+					taskDetails = (*iter).getTaskDescription() + " " + (*iter).getTaskTime().getStartDate()
+						+ " " + (*iter).getTaskTime().getStartTime()
+						+ " " + (*iter).getTaskTime().getEndDate()
+						+ " " + (*iter).getTaskTime().getEndTime(); //TO IMPLEMENT NEW METHODS IN TMTASK
 					std::cout << taskDetails << std::endl;
 				}
 				std::cout << "Do you want to add this task despite clashes? (Y/N)" << std::endl;
@@ -298,14 +309,14 @@
 		return aCopy;
 	}
 	
-	std::string TMTaskList::freeTimeSearch() {
+	/*std::string TMTaskList::freeTimeSearch() {
 		std::vector<TMTask>::iterator iter;
 		for (iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
 		std::cout << (*iter).getTaskTime().getEndDate() << " " << (*iter).getTaskTime().getEndTime();
 		++iter;
 		std::cout << " ~ " << (*iter).getTaskTime().getStartDate() << " " << (*iter).getTaskTime().getStartTime() << std::endl;
 		}
-	}
+	}*/
 
 	void TMTaskList::loadFromFile() {
 		std::ifstream readFromFile;
