@@ -1,9 +1,20 @@
 #include "TMTask.h"
-
+//constructor for deadlined tasks and timed tasks
 TMTask::TMTask(std::string taskDescription, TMTaskTime taskTime, TaskType taskType){
     _taskDescription = taskDescription;
     _taskTime = taskTime;
-    _isCompleted = false;   //by default all tasks when created are presumed to be uncompleted
+    //by default all tasks when created are presumed to be uncompleted
+    _isCompleted = false;   
+    _isConfirmed = true;
+    _taskType = taskType;
+}
+
+//constructor for floating tasks
+TMTask::TMTask(std::string taskDescription, TaskType taskType) {
+    _taskDescription = taskDescription;
+    TMTaskTime taskTime("","","","");
+    _taskTime = taskTime;
+    _isCompleted = false;
     _isConfirmed = true;
     _taskType = taskType;
 }
@@ -20,7 +31,7 @@ bool TMTask::isCompleted(){
     return _isCompleted;
 }
 
-TMTask::TaskType TMTask::getTaskType(){
+TaskType TMTask::getTaskType(){
     return _taskType;
 }
 

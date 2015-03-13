@@ -16,7 +16,10 @@ private:
     TaskType _taskType;
 
 public:
+    //constructor for deadlined tasks and timed tasks
     TMTask(std::string, TMTaskTime, TaskType);
+    //constructor for floating tasks
+    TMTask(std::string, TaskType);
 
     std::string getTaskDescription();
     TMTaskTime getTaskTime();
@@ -25,6 +28,7 @@ public:
     TaskType getTaskType();
 
     void setTaskDescription(std::string);
+    //Preconditions: TMTaskTime must be created prior to setting
     void setTaskTime(TMTaskTime);
     void setAsCompleted();
     void setAsIncompleted();
