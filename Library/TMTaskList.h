@@ -82,6 +82,7 @@ public:
 	std::string freeTimeSearch();
 
 	//Save functions//
+	void archiveAll();
 	void loadFromFile();
 };
 

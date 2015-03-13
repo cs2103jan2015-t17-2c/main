@@ -135,8 +135,10 @@
 			}
 			timedAndDeadline.push_back(task);
 			chronoSort();
+			archiveAll();
 		} else {
 			floating.push_back(task);
+			archiveAll();
 		}
 
 	}
@@ -244,7 +246,7 @@
 		tasks.clear();
 	}
 
-	void TMTaskList::archiveTodaysTasks() {
+	/*void TMTaskList::archiveTodaysTasks() {
 		date dateToday(day_clock::local_day());
 		std::vector<TMTask>::iterator iter;
 		for (iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
@@ -252,14 +254,14 @@
 				archiveOneTask(getPositionIndexFromTask(*iter)); 
 			}
 		}
-	}
+	}*/
 
-	void TMTaskList::archiveOneTask(int positionIndex) {
+	/*void TMTaskList::archiveOneTask(int positionIndex) {
 		TMTask task = getTaskFromPositionIndex(positionIndex);
 		task.setAsCompleted();
 		archived.push_back(task);
 		removeTask(positionIndex);
-	}
+	}*/
 	
 	std::vector<int> TMTaskList::keywordSearch(std::string keyword) {
 		std::string lowerKeyword = toLower(keyword);
@@ -303,74 +305,50 @@
 		}
 	}
 
-	/*void TMTaskList::loadFromFile() {
-		ifstream readFromFile;
-		string unusedLines;
-		string entryTimedAndDeadline;
-		string entryFloating;
+	void TMTaskList::loadFromFile() {
+		std::ifstream readFromFile;
+		std::string unusedLines;
+		std::string entryTimedAndDeadline;
+		std::string entryFloating;
 		TMParser parseTimedAndDeadline,parseFloating;
 		readFromFile.open("TMStorage.txt");
 		getline(readFromFile,unusedLines);
 		int sizeTimed;
-		cin>>sizeTimed;
-		for (int i=0; i < sizeTimed; ++i)
-		{
+		std :: cin>>sizeTimed;
+		for (int i=0; i < sizeTimed; ++i){
 			getline(readFromFile,entryTimedAndDeadline);
 			parseTimedAndDeadline.parseTaskInfo(entryTimedAndDeadline);
 		}
 		getline(readFromFile,unusedLines);
 		int sizeFloating;
-		cin>>sizeFloating;
-		for (int j=0;j < sizeFloating;++j)
-		{
+		std :: cin>>sizeFloating;
+		for (int j=0;j < sizeFloating;++j){
 			getline(readFromFile,entryFloating);
 			parseFloating.parseTaskInfo(entryFloating);
 		}
-	} */
+		readFromFile.close();
+	} 
 
 
-	/*ofstream writeToFile;
-		writeToFile.open("TMStorage.txt");
-		writeToFile << "Tasks With Deadline:" << endl;
-		writeToFile << timedAndDeadline.size() <<endl;
+	void TMTaskList::archiveAll(){
+		std::ofstream writeToFile;
+		writeToFile.open("TMStorage.txt", std::ofstream::trunc);
+		writeToFile << "Tasks With Deadline:"  <<std::endl;
+		writeToFile << timedAndDeadline.size() <<std::endl;
 		for(int i =0; i < timedAndDeadline.size(); ++i)
 		{
 			writeToFile << timedAndDeadline[i].getTaskDescription() << " " << timedAndDeadline[i].getTaskTime().getStartDate() << 
 				" " << timedAndDeadline[i].getTaskTime().getStartTime() << 
 				" " << timedAndDeadline[i].getTaskTime().getEndDate() <<
-				" " << timedAndDeadline[i].getTaskTime().getEndTime() <<endl;
+				" " << timedAndDeadline[i].getTaskTime().getEndTime() <<std::endl;
 		}
 	
-		writeToFile << "Tasks Without Deadline:" <<endl;
-		writeToFile <<floating.size()<<endl;
+		writeToFile << "Tasks Without Deadline:" <<std::endl;
+		writeToFile <<floating.size()<<std::endl;
 		for(int j=0; j < floating.size(); ++j)
 		{
-			writeToFile << floating[j].getTaskDescription() << endl;
+			writeToFile << floating[j].getTaskDescription() << std::endl;
 		}
-		writeToFile.close();*/
+		writeToFile.close();
+	}
 
-	/*std::vector<TMTask> searchResults;
-		int positionTimed, positionFloating;
-		//Search for keyword in timedAndDeadline std::vector
-		for (int i = 0; i<timedAndDeadline.size(); ++i) {
-			positionTimed = timedAndDeadline[i].getTaskDescription().find(keyword);
-			if (positionTimed != string::npos) {
-				searchResults.push_back(timedAndDeadline[i]);
-			}
-		}
-
-		//Search for keyword in floating std::vector
-		for (int j = 0; j<floating.size(); ++j) {
-			positionFloating = floating[j].getTaskDescription().find(keyword);
-			if (positionFloating != string::npos) {
-				searchResults.push_back(floating[j]);
-			}
-		}
-	
-		for (int k=0; k<searchResults.size(); ++k) {
-			cout << searchResults[k].getTaskDescription() << " " 
-			<< searchResults[k].getTaskTime().getStartDate() << " "
-			<< searchResults[k].getTaskTime().getStartTime() << " " 
-			<< searchResults[k].getTaskTime().getEndDate() << " " 
-			<< searchResults[k].getTaskTime().getEndTime() <<endl;
-		}*/
