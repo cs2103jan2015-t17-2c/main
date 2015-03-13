@@ -33,10 +33,12 @@ int main() {
 
         //use extractEntryAfterCommand first read preconditions
 		std::vector<TMTask> taskVector = parser.parseTaskInfo(parser.extractEntryAfterCommand(userInput));
-
+        std::cout << "in TimeMaster: " << taskVector[0].getTaskDescription() << std::endl;
 		executor.sortCommandToFunctions(command, taskVector, taskList);
 
+        std::cout << std::endl;
         taskList.displayAllTasks();
+        std::cout << std::endl;
         std::cout << "Welcome to TimeMaster. Please enter your command" << std::endl;
 		getline(std :: cin, userInput);
     }
