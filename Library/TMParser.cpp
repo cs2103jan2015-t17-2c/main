@@ -114,14 +114,17 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
 
 //Preconditions: taskInfo contains only the entry after command. use extractEntryAfterCommand 1st
 //             : use only when in adding or editing information
-TMTask TMParser::parseTaskInfo(std::string taskInfo) {
+std::vector<TMTask> TMParser::parseTaskInfo(std::string taskInfo) {
+    std::vector<TMTask> task;
     if(isDeadlinedTask(taskInfo)){
-        return parseDeadlinedTaskInfo(taskInfo);
+        task.push_back(parseDeadlinedTaskInfo(taskInfo));
     } else if(isTimedTask(taskInfo)) {
-        return parseTimedTaskInfo(taskInfo);
+        task.push_back(parseTimedTaskInfo(taskInfo));
     } else {
-        return parseFloatingTaskInfo(taskInfo);
+        task.push_back(parseFloatingTaskInfo(taskInfo));
     }
+
+    return task;
 }
 
 //Preconditions:task is deadlined task use isDeadlinedTask to check

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
+#include <vector>
 #include <Windows.h>
 #include "TMTaskList.h"
 #include "TMParser.h"
@@ -11,6 +12,7 @@ int main() {
 	TMTaskList tasklist;
 	TMParser parser;
 	TMExecutor executor;
+    std::vector vectorOfTasks<TMTask>;
 
 	std::string userInput;
 	tasklist.loadFromFile();
