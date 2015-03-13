@@ -39,9 +39,11 @@ void TMExecutor::deleteOneTask(TMTask task, TMTaskList tasklist) {
 }
 
 //Mark all tasks that are due today as done
+/*
 void TMExecutor::markTodaysTasksAsDone(TMTaskList tasklist) {
 	tasklist.archiveTodaysTasks();
 }
+*/
 
 void TMExecutor::searchKeyword(std::string keyword, TMTaskList tasklist) {
 	std::vector<int> searchResults;

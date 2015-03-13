@@ -20,7 +20,8 @@ class TMExecutor{
 	
 	void deleteOneTask(TMTask task, TMTaskList tasklist);
 
-	void markTodaysTasksAsDone(TMTaskList tasklist);
+    //incomplete
+	//void markTodaysTasksAsDone(TMTaskList tasklist);
 
 	void searchKeyword(std::string keyword, TMTaskList tasklist);
 

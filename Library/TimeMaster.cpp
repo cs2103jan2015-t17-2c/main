@@ -7,30 +7,35 @@
 #include "TMParser.h"
 #include "TMExecutor.h"
 
-TMTaskList tasklist;
+TMTaskList taskList;
 
 void saveUponExit (){
-	tasklist.archiveAll();
+	taskList.archiveAll();
 }
 
 int main() {
 	
 	TMParser parser;
 	TMExecutor executor;
+    std::string userInput;
 
-	std::string userInput;
-	tasklist.loadFromFile();
-	std::cout << "Welcome to TimeMaster. Please enter your command" << std::endl;
-	while(true) {
-        if(GetAsyncKeyState('exit')) {
+    std::cout << "Welcome to TimeMaster. Please enter your command" << std::endl;
+    std::getline(std :: cin, userInput);
+
+	taskList.loadFromFile();
+	
+	while(userInput != "quit") {
+        /*if(GetAsyncKeyState('exit')) {
 			break;
-		}
-		getline(std :: cin, userInput);
+		}*/
 
 		std::string command = parser.extractCommand(userInput);
 		std::vector<TMTask> taskVector = parser.parseTaskInfo(userInput);
 
-		executor.sortCommandToFunctions(command, taskVector, tasklist);
+		executor.sortCommandToFunctions(command, taskVector, taskList);
+        taskList.displayAllTasks();
+        std::cout << "Welcome to TimeMaster. Please enter your command" << std::endl;
+		getline(std :: cin, userInput);
     }
 	
 	std::atexit(saveUponExit);

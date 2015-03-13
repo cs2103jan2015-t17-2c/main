@@ -31,6 +31,10 @@ bool TMTask::isCompleted(){
     return _isCompleted;
 }
 
+bool TMTask::isConfirmed(){
+    return _isConfirmed;
+}
+
 TaskType TMTask::getTaskType(){
     return _taskType;
 }
