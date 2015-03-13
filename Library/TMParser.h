@@ -6,6 +6,7 @@
 #include "TMTimeParser.h"
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 class TMParser {
 public:
@@ -22,7 +23,7 @@ public:
     CommandTypes determineCommandType(std::string);
     
     //parse relevant info into the respective tasks
-    TMTask parseTaskInfo(std::string);
+    std::vector<TMTask> parseTaskInfo(std::string);
     TMTask parseDeadlinedTaskInfo(std::string);
     TMTask parseTimedTaskInfo(std::string);
     TMTask parseFloatingTaskInfo(std::string);
