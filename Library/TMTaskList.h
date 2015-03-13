@@ -79,7 +79,7 @@ public:
 	std::string toLower(std::string toBeConverted);
 
 	//Postcondition: Returns a string consisting all the timings in which the user is free
-	std::string freeTimeSearch();
+	//std::string freeTimeSearch();
 
 	//Save functions//
 	void archiveAll();

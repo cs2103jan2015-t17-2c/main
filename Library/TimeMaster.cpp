@@ -7,9 +7,14 @@
 #include "TMParser.h"
 #include "TMExecutor.h"
 
+TMTaskList tasklist;
+
+void saveUponExit (){
+	tasklist.archiveAll();
+}
 
 int main() {
-	TMTaskList tasklist;
+	
 	TMParser parser;
 	TMExecutor executor;
 
@@ -28,6 +33,6 @@ int main() {
 		executor.sortCommandToFunctions(command, taskVector, tasklist);
     }
 	
-	std::atexit(tasklist.archiveAll);
+	std::atexit(saveUponExit);
 	return 0;
 }
