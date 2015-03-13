@@ -117,6 +117,7 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
 std::vector<TMTask> TMParser::parseTaskInfo(std::string taskInfo) {
     std::vector<TMTask> task;
     if(isDeadlinedTask(taskInfo)){
+        std::cout << "IS DEADLINE\n";
         task.push_back(parseDeadlinedTaskInfo(taskInfo));
     } else if(isTimedTask(taskInfo)) {
         task.push_back(parseTimedTaskInfo(taskInfo));
@@ -138,11 +139,14 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::string taskInfo) {
     bool deadlineFound = false;
 
     int startOfTokenBefore = remainingEntry.find(TOKEN_BEFORE);
-
+    std::cout << "position of start of word before: " << startOfTokenBefore << std::endl;
     while(startOfTokenBefore != std::string::npos && !deadlineFound) {
         std::string wordAfterTokenBefore = parseSecondToken(remainingEntry.substr(startOfTokenBefore));
+        //
+        std::cout << "word after word before: " << wordAfterTokenBefore << std::endl;
         int positionOfWordAfterBefore = remainingEntry.find(wordAfterTokenBefore,startOfTokenBefore);
-
+        //
+        std::cout << "position of start of word after before: " << positionOfWordAfterBefore << std::endl;
         if(positionOfWordAfterBefore != std::string::npos) {
             if(isDate(wordAfterTokenBefore)) {
                 dateToMeet = wordAfterTokenBefore;
@@ -170,6 +174,8 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::string taskInfo) {
                     }
                 }
             } else if (isTime(wordAfterTokenBefore)) {
+                //
+                std::cout << "IS TIME\n";
                 timeToMeet = wordAfterTokenBefore;
                 //check for word on
                 deadlineFound = true;
@@ -192,9 +198,11 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::string taskInfo) {
     int lengthOfBeforeAndInfo = entryToRemove.length() + count;
 
     remainingEntry.erase(startOfTokenBefore,lengthOfBeforeAndInfo);
-
+    //
+    std::cout << remainingEntry << std::endl;
     taskDescription = remainingEntry;
-
+    //case 1: time but no date assume it is today if time hasn't passed or else tomorrow
+    
     TMTaskTime taskTime(dateToMeet,timeToMeet,dateToMeet,timeToMeet);
     TMTask task(taskDescription,taskTime,taskType);
 
@@ -452,6 +460,8 @@ std::string TMParser::parseFirstToken(std::string remainingEntry) {
 }
 
 std::string TMParser::parseSecondToken(std::string remainingEntry) {
+    //
+    std::cout << "remaining entry: " << remainingEntry << std::endl;
     int posOfFirstSpace = remainingEntry.find_first_of(" ",0);
     if(posOfFirstSpace != std::string::npos) {
         int posOfFirstCharOfSecondToken = remainingEntry.find_first_not_of(" ",posOfFirstSpace);
@@ -460,7 +470,7 @@ std::string TMParser::parseSecondToken(std::string remainingEntry) {
             if (posOfSpaceAfterSecondToken != std::string::npos) {
                 return remainingEntry.substr(posOfFirstCharOfSecondToken,posOfSpaceAfterSecondToken-posOfFirstCharOfSecondToken);
             } else {
-                return "";
+                return remainingEntry.substr(posOfFirstCharOfSecondToken);
             }
         } else {
             return "";
