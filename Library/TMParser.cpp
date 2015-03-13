@@ -151,9 +151,9 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::string taskInfo) {
             } else if (isWordNext(wordAfterTokenBefore)) {
                 if(numberOfWords(remainingEntry.substr(positionOfWordAfterBefore)) >= 2) {
                     if(isDay(parseNthToken(remainingEntry.substr(positionOfWordAfterBefore),2))) {
-                        std::string day = parseNthToken(remainingEntry.substr(positionOfWordAfterBefore),2);
+                        std::string stringDay = parseNthToken(remainingEntry.substr(positionOfWordAfterBefore),2);
                         boost::gregorian::date today = boost::gregorian::day_clock::local_day();
-                        boost::gregorian::greg_weekday day(dayOfWeek(day));
+                        boost::gregorian::greg_weekday day(dayOfWeek(stringDay));
                         boost::gregorian::date dateTM = boost::gregorian::next_weekday(today, day);
                         std::string tempDate = boost::gregorian::to_iso_string(dateTM);
                         dateToMeet = tempDate.substr(6,2)
