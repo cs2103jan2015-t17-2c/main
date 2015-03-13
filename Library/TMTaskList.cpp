@@ -12,7 +12,7 @@
 			return false;
 		}
 
-		if (task1.getTaskTime() != task2.getTaskTime()) {
+		if (task1.getTaskTime() != task2.getTaskTime()) { //TO IMPLEMENT FUNCTION TO COMPARE TASKTIME
 			return false;
 		}
     
@@ -31,7 +31,49 @@
 		return true;
 	}
 
-	//Returns 0 if the position index is not found
+	bool TMTaskList::hasClash(TMTask task) {
+		std::vector<TMTask>::iterator iter;
+		for (iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
+			if (startsEarlierThan(task, *iter)) {
+				if (isTwoClash(task, *iter)) {
+					return true;
+				}
+			} else {
+				if (isTwoClash(task, *iter)) {
+					return true;
+				}
+			}
+		}	
+	return false;
+	}
+
+	bool TMTaskList::isTwoClash(TMTask task1, TMTask task2) {
+
+		if (task1.getTaskTime().getEndDate() == task2.getTaskTime().getStartDate()) {
+			return ( task1.getTaskTime().getEndTime() > task2.getTaskTime().getStartTime() );
+		} else {
+			( task1.getTaskTime().getEndDate() > task2.getTaskTime().getStartDate() );
+		}
+	}
+
+	std::vector<TMTask> TMTaskList::findClashes(TMTask task) {
+		std::vector<TMTask> clashes;
+		std::vector<TMTask>::iterator iter;
+		for (iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
+			if (startsEarlierThan(task, *iter)) {
+				if (isTwoClash(task, *iter)) {
+					clashes.push_back(*iter);
+				}
+			} else {
+				if (isTwoClash(task, *iter)) {
+					clashes.push_back(*iter);
+				}
+			}
+		}
+	return clashes;
+	}
+
+	
 	int TMTaskList::getPositionIndexFromTask(TMTask task) {
 		std::vector<TMTask>::iterator iter;
 		int positionIndex = 1;
@@ -53,77 +95,241 @@
 		return 0;
 	}	
 	TMTask TMTaskList::getTaskFromPositionIndex(int positionIndex) {
-		if (positionIndex == sizeOfTimedAndDeadline) {
+		if (positionIndex == timedAndDeadline.size()) {
 			return timedAndDeadline.back();
 		}
 
-		if (positionIndex == sizeOfTimedAndDeadline + sizeOfFloating) {
+		if (positionIndex == timedAndDeadline.size() + floating.size()) {
 			return floating.back();
 		}
 
-		if (positionIndex < sizeOfTimedAndDeadline) {
-			return timedAndDeadline[positionIndex];
+		if (positionIndex < timedAndDeadline.size()) {
+			return timedAndDeadline[positionIndex - 1];
 		}
 
-		if (positionIndex < sizeOfTimedAndDeadline + sizeOfFloating) {
-			return floating[positionIndex - sizeOfTimedAndDeadline];
+		if (positionIndex < timedAndDeadline.size() + floating.size()) {
+			return floating[positionIndex - timedAndDeadline.size() - 1];
 		}
 	}
 
 	void TMTaskList::addTask (TMTask task) {
 	
 		if (task.getTaskType() == TaskType::Timed  || task.getTaskType() == TaskType::WithDeadline) {
+			if (hasClash(task)) {
+				std::vector<TMTask> clashesWith;
+				clashesWith = findClashes(task);
+				std::cout << "Clashes in timing of the following tasks:" << std::endl;
+				std::vector<TMTask>::iterator iter;
+				for (iter = clashesWith.begin(); iter != clashesWith.end(); ++iter) {
+					std::string taskDetails;
+					taskDetails = (*iter).getTaskDescription() + " " + (*iter).getTaskTime(); //TO IMPLEMENT NEW METHODS IN TMTASK
+					std::cout << taskDetails << std::endl;
+				}
+				std::cout << "Do you want to add this task despite clashes? (Y/N)" << std::endl;
+				std::string usersReply;
+				std::cin >> usersReply;
+
+				if (usersReply == "n" || usersReply == "N") {
+					return;
+				}
+			}
 			timedAndDeadline.push_back(task);
-		}
-		if (task.getTaskType() == TaskType::Floating) {
+			chronoSort();
+		} else {
 			floating.push_back(task);
 		}
-	
+
 	}
 
-	void TMTaskList::updateTask(int positionIndex, std::string componentOfTask, std::string changeTo) {}
+	void TMTaskList::updateTask(int positionIndex, std::string componentOfTask, std::string changeTo) {
+		if (positionIndex <= timedAndDeadline.size()) {
+			TMTask task = timedAndDeadline[positionIndex-1];
+
+			if (componentOfTask == "desc") {
+				task.setTaskDescription(changeTo);
+			}
+			if (componentOfTask == "time") {
+				//YET TO CODE
+			}
+			if (componentOfTask == "completion") {
+				if (changeTo == "1") {
+					task.setAsCompleted();
+				}
+				if (changeTo == "0") {
+					task.setAsIncompleted();
+				}
+			}
+			if (componentOfTask == "confirmation") {
+				if (changeTo == "1") {
+					task.setAsConfirmed();
+				}
+				if (changeTo == "0") {
+					task.setAsUnconfirmed();
+				}
+			}
+			
+		} else if (positionIndex <= timedAndDeadline.size() + floating.size()) {
+			TMTask task = floating[positionIndex-floating.size()-1];
+			if (componentOfTask == "desc") {
+				task.setTaskDescription(changeTo);
+			}
+			if (componentOfTask == "completion") {
+				if (changeTo == "1") {
+					task.setAsCompleted();
+				}
+				if (changeTo == "0") {
+					task.setAsIncompleted();
+				}
+			}
+		}
+	}
 
 	void TMTaskList::removeTask(int positionIndex) {	
 		if (positionIndex <= timedAndDeadline.size()) {
-			timedAndDeadline.erase(timedAndDeadline.begin() + positionIndex);
-		} else {
+			timedAndDeadline.erase(timedAndDeadline.begin() + positionIndex - 1);
+		} else if (positionIndex <= timedAndDeadline.size() + floating.size()) {
 			int floatingTaskNumber = positionIndex - timedAndDeadline.size();
-			floating.erase(floating.begin() + floatingTaskNumber);
+			floating.erase(floating.begin() + floatingTaskNumber - 1);
 		}
 	}
 
-	void TMTaskList::displayAllTasks() {}
-	void TMTaskList::sortTasksAccDate() {}
+	void TMTaskList::displayAllTasks() {}	//YET TO CODE
+	
+	
+	void TMTaskList::chronoSort() {
+		std::vector<TMTask>::iterator iter;
+		for (iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
+			std::iter_swap(iter, findEarliestTaskIter(iter));
+		}
+		std::cout << "Chronological sort completed." <<std:: endl;
+		
+	}
+
+	std::vector<TMTask>::iterator TMTaskList::findEarliestTaskIter(std::vector<TMTask>::iterator unsortedStart) {
+									TMTask earliestTask = *unsortedStart;
+									std::vector<TMTask>::iterator earliestTaskIter;
+									earliestTaskIter = unsortedStart;
+									std::vector<TMTask>::iterator iter;
+		
+									for (iter = unsortedStart; iter != timedAndDeadline.end(); ++iter) {
+										if (startsEarlierThan(*iter, earliestTask)) {
+											earliestTask = *iter;
+											earliestTaskIter = iter;
+										}
+									}
+
+									return earliestTaskIter;
+	}
+
+	bool TMTaskList::startsEarlierThan(TMTask task1, TMTask task2) {
+		std::string task1StartDate = task1.getTaskTime().getStartDate();
+		std::string task2StartDate = task2.getTaskTime().getStartDate();
+
+		if (task1StartDate < task2StartDate) {
+			return true;
+		} else if (task1StartDate == task2StartDate) {
+			return (task1.getTaskTime().getStartTime() <  task2.getTaskTime().getStartTime());
+		}
+
+		return false;
+	}
+
+	void TMTaskList::alphaSort() {}		//YET TO CODE
 
 	void TMTaskList::blockMultiple(std::vector<TMTask> tasks, TMTaskList tasklist) {
 		std::vector<TMTask>::iterator iter;
 		for (iter = tasks.begin(); iter != tasks.end(); ++iter) {
 			tasklist.addTask(*iter);
 		}
-	}
-
-	void TMTaskList::freeMultiple(std::vector<TMTask> confirmedTasks, TMTaskList tasklist) {
-		std::vector<TMTask>::iterator iter;
-
-		//Mark confirmed tasks as confirmed
-		for (iter = confirmedTasks.begin(); iter != confirmedTasks.end(); ++iter) {
-			tasklist.updateTask(tasklist.searchOneTask(*iter), "isConfirmed", true);
-			++iter;
-		}
-
-		iter = confirmedTasks.begin();
-		std::string taskDescriptionOfConfirmed = (*iter).getTaskDescription();
-
-		//Delete unconfirmed tasks
-		for (iter = tasklist.begin(); iter != tasklist.end(); ++iter) {
-			if ( (*iter).getTaskDescription() == taskDescriptionOfConfirmed && (*iter).getIsConfirmed() == false ) {
-				tasklist.removeTask(tasklist.searchOneTask(*iter));
-			} 
-		}
+		tasks.clear();
 	}
 
 	void TMTaskList::archiveTodaysTasks() {
-		ofstream writeToFile;
+		date dateToday(day_clock::local_day());
+		std::vector<TMTask>::iterator iter;
+		for (iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
+			if ((*iter).getTaskTime().getEndDate() == dateToday) { //THINK OF HOW TO CONVERT DATETODAY TO STRING
+				archiveOneTask(getPositionIndexFromTask(*iter)); 
+			}
+		}
+	}
+
+	void TMTaskList::archiveOneTask(int positionIndex) {
+		TMTask task = getTaskFromPositionIndex(positionIndex);
+		task.setAsCompleted();
+		archived.push_back(task);
+		removeTask(positionIndex);
+	}
+	
+	std::vector<int> TMTaskList::keywordSearch(std::string keyword) {
+		std::string lowerKeyword = toLower(keyword);
+		
+		std::vector<std::string> taskDescInLower;
+		std::vector<TMTask>::iterator iter;
+		std::vector<int> searchResults;
+		int posIndexCounter = 1;
+
+		for (iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
+			taskDescInLower.push_back(toLower((*iter).getTaskDescription()));
+		}
+		for (iter = floating.begin(); iter != floating.end(); ++iter) {
+			taskDescInLower.push_back(toLower((*iter).getTaskDescription()));
+		}
+
+		std::vector<std::string>::iterator iterForLower;
+		for (iterForLower = taskDescInLower.begin(); iterForLower != taskDescInLower.end(); ++iterForLower) {
+			std::string searchLine = *iterForLower;
+			if ( std::search(searchLine.begin(), searchLine.end(), lowerKeyword.begin(), lowerKeyword.end()) != searchLine.end() ) {
+				searchResults.push_back(posIndexCounter);
+			}
+			posIndexCounter++;
+		}
+	
+		return searchResults;
+	}
+
+	std::string TMTaskList::toLower(std::string toBeConverted) {
+		std::string aCopy = toBeConverted;
+		transform(aCopy.begin(), aCopy.end(), aCopy.begin(), ::tolower);
+		return aCopy;
+	}
+	
+	std::string TMTaskList::freeTimeSearch() {
+		std::vector<TMTask>::iterator iter;
+		for (iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
+		std::cout << (*iter).getTaskTime().getEndDate() << " " << (*iter).getTaskTime().getEndTime();
+		++iter;
+		std::cout << " ~ " << (*iter).getTaskTime().getStartDate() << " " << (*iter).getTaskTime().getStartTime() << std::endl;
+		}
+	}
+
+	/*void TMTaskList::loadFromFile() {
+		ifstream readFromFile;
+		string unusedLines;
+		string entryTimedAndDeadline;
+		string entryFloating;
+		TMParser parseTimedAndDeadline,parseFloating;
+		readFromFile.open("TMStorage.txt");
+		getline(readFromFile,unusedLines);
+		int sizeTimed;
+		cin>>sizeTimed;
+		for (int i=0; i < sizeTimed; ++i)
+		{
+			getline(readFromFile,entryTimedAndDeadline);
+			parseTimedAndDeadline.parseTaskInfo(entryTimedAndDeadline);
+		}
+		getline(readFromFile,unusedLines);
+		int sizeFloating;
+		cin>>sizeFloating;
+		for (int j=0;j < sizeFloating;++j)
+		{
+			getline(readFromFile,entryFloating);
+			parseFloating.parseTaskInfo(entryFloating);
+		}
+	} */
+
+
+	/*ofstream writeToFile;
 		writeToFile.open("TMStorage.txt");
 		writeToFile << "Tasks With Deadline:" << endl;
 		writeToFile << timedAndDeadline.size() <<endl;
@@ -141,21 +347,9 @@
 		{
 			writeToFile << floating[j].getTaskDescription() << endl;
 		}
-		writeToFile.close();
-	
-	/*date dateToday(day_clock::local_day());
-	std::vector<TMTask> iterator::iter;
-	for (iter = tasklist.begin(); iter != tasklist.end(); ++iter) {
-		if ((*iter).getTaskEndDate() == dateToday) {
-			(*iter).setAsCompleted(); 
-		}
-	}*/
-	}
+		writeToFile.close();*/
 
-	void TMTaskList::archiveOneTask() {}
-	
-	std::vector<int> TMTaskList::keywordSearch(std::string keyword) {
-		std::vector<TMTask> searchResults;
+	/*std::vector<TMTask> searchResults;
 		int positionTimed, positionFloating;
 		//Search for keyword in timedAndDeadline std::vector
 		for (int i = 0; i<timedAndDeadline.size(); ++i) {
@@ -179,41 +373,4 @@
 			<< searchResults[k].getTaskTime().getStartTime() << " " 
 			<< searchResults[k].getTaskTime().getEndDate() << " " 
 			<< searchResults[k].getTaskTime().getEndTime() <<endl;
-		}
-	}
-	
-	std::string TMTaskList::freeTimeSearch() {
-		std::vector<TMTask>::iterator iter;
-		for (iter = tasklist.begin(); iter != tasklist.end(); ++iter) {
-		cout << (*iter).getEndTime() << " " << (*iter).getEndDate();
-		++iter;
-		cout << " ~ " << (*iter).getStartTime() << " " << (*iter).getStartDate(); 
-	}
-
-	void TMTaskList::loadFromFile() {
-		ifstream readFromFile;
-		string unusedLines;
-		string entryTimedAndDeadline;
-		string entryFloating;
-		TMParser parseTimedAndDeadline,parseFloating;
-		readFromFile.open("TMStorage.txt");
-		getline(readFromFile,unusedLines);
-		int sizeTimed;
-		cin>>sizeTimed;
-		for (int i=0; i < sizeTimed; ++i)
-		{
-			getline(readFromFile,entryTimedAndDeadline);
-			parseTimedAndDeadline.parseTaskInfo(entryTimedAndDeadline);
-		}
-		getline(readFromFile,unusedLines);
-		int sizeFloating;
-		cin>>sizeFloating;
-		for (int j=0;j < sizeFloating;++j)
-		{
-			getline(readFromFile,entryFloating);
-			parseFloating.parseTaskInfo(entryFloating);
-		}
-	}
-
-
-	
+		}*/

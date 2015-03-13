@@ -28,8 +28,9 @@ class TMExecutor{
 
 	void freeUnconfirmed(std::vector<TMTask> confirmedTasks, TMTaskList tasklist);
 
-	//void saveAt(std::string directory);
-	//void undoLast();
+	void saveAt(std::string directory);
+	
+	void undoLast();
 };
 
 #endif
