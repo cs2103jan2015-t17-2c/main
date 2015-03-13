@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <boost\date_time.hpp>
 
 #include "TMTaskList.h"
 #include "TMTask.h"
@@ -251,7 +252,8 @@
 		std::vector<TMTask>::iterator iter;
 		for (iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
 			if ((*iter).getTaskTime().getEndDate() == dateToday) { //THINK OF HOW TO CONVERT DATETODAY TO STRING
-				archiveOneTask(getPositionIndexFromTask(*iter)); 
+				
+                archiveOneTask(getPositionIndexFromTask(*iter)); 
 			}
 		}
 	}*/
