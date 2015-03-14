@@ -25,10 +25,12 @@ void TMExecutor::addTasks(std::vector<TMTask> tasks, TMTaskList &tasklist) {
 	for (iter = tasks.begin(); iter != tasks.end(); ++iter) {
 		tasklist.addTask(*iter);
 	}
-	 tasks.clear();
+	
+	tasks.clear();
+	std::cout << "Current schedule: " << std::endl;
+	tasklist.displayAllTasks();
+	 
 }
-
-
 
 void TMExecutor::updateOneTask(TMTask task, std::string component, std::string changeTo, TMTaskList &tasklist) {
 	tasklist.updateTask(tasklist.getPositionIndexFromTask(task), component, changeTo);
@@ -38,30 +40,27 @@ void TMExecutor::deleteOneTask(TMTask task, TMTaskList &tasklist) {
 	tasklist.removeTask(tasklist.getPositionIndexFromTask(task));
 }
 
-//Mark all tasks that are due today as done
-/*
 void TMExecutor::markTodaysTasksAsDone(TMTaskList tasklist) {
-	tasklist.archiveTodaysTasks();
+	/*tasklist.archiveTodaysTasks();*/
 }
-*/
 
 void TMExecutor::searchKeyword(std::string keyword, TMTaskList &tasklist) {
-	std::vector<int> searchResults;
+	/*std::vector<int> searchResults;
 	searchResults = tasklist.keywordSearch(keyword);
 
 	std::vector<int>::iterator resultsIter;
 	for (resultsIter = searchResults.begin(); resultsIter != searchResults.end(); ++resultsIter) {
 		TMTask result = tasklist.getTaskFromPositionIndex(*resultsIter);
 		std::cout << *resultsIter << ". " << result.getTaskDescription() << std::endl;
-	}
+	}*/
 }
 	
-/*void TMExecutor::searchFreeTime(TMTaskList tasklist) {
-	std::cout << tasklist.freeTimeSearch() << std::endl;
-}*/
+void TMExecutor::searchFreeTime(TMTaskList tasklist) {
+	/*std::cout << tasklist.freeTimeSearch() << std::endl;*/
+}
 	
 void TMExecutor::freeUnconfirmed(std::vector<TMTask> confirmedTasks, TMTaskList &tasklist) {
-	std::vector<TMTask>::iterator tasksIter;
+	/*std::vector<TMTask>::iterator tasksIter;
 	for (tasksIter = confirmedTasks.begin(); tasksIter != confirmedTasks.end(); ++tasksIter) {
 			updateOneTask(*tasksIter, "isConfirmed", "true", tasklist);
 		}
@@ -74,8 +73,9 @@ void TMExecutor::freeUnconfirmed(std::vector<TMTask> confirmedTasks, TMTaskList 
 		if ( !(task.isConfirmed()) ) {
 			tasklist.removeTask(*resultsIter);
 		}
-	}
+	}*/
 }
 
 void TMExecutor::saveAt(std::string directory) {} //YET TO CODE
+
 void TMExecutor::undoLast() {} //YET TO CODE

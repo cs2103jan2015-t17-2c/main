@@ -20,12 +20,12 @@ class TMExecutor{
 	
 	void deleteOneTask(TMTask task, TMTaskList &tasklist);
 
-    //incomplete
-	//void markTodaysTasksAsDone(TMTaskList tasklist);
+	//Mark all tasks that are due today as done
+	void markTodaysTasksAsDone(TMTaskList tasklist);
 
 	void searchKeyword(std::string keyword, TMTaskList &tasklist);
 
-	void searchFreeTime(TMTaskList &tasklist);
+	void searchFreeTime(TMTaskList tasklist);
 
 	void freeUnconfirmed(std::vector<TMTask> confirmedTasks, TMTaskList &tasklist);
 
