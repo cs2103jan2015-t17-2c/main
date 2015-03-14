@@ -9,8 +9,8 @@
 
 TMTaskList taskList;
 
-void saveUponExit (){
-	taskList.archiveAll();
+void saveUponExit () {
+	taskList.writeToFile();
 }
 
 int main() {
@@ -33,7 +33,7 @@ int main() {
 
         //use extractEntryAfterCommand first read preconditions
 		std::vector<TMTask> taskVector = parser.parseTaskInfo(parser.extractEntryAfterCommand(userInput));
-        std::cout << "in TimeMaster: " << taskVector[0].getTaskDescription() << std::endl;
+        std::cout << "TASK DESCRIPTION: " << taskVector[0].getTaskDescription() << std::endl;
 		executor.sortCommandToFunctions(command, taskVector, taskList);
 
 
