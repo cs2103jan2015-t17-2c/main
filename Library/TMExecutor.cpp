@@ -4,7 +4,7 @@
 #include "TMExecutor.h"
 #include <boost\date_time.hpp>
 
-void TMExecutor::sortCommandToFunctions(std::string command, std::vector<TMTask> tasks, TMTaskList tasklist) {
+void TMExecutor::sortCommandToFunctions(std::string command, std::vector<TMTask> tasks, TMTaskList &tasklist) {
 	if (command == "add" || command == "blockmultiple") {
 		addTasks(tasks, tasklist);
 	}
@@ -20,7 +20,7 @@ void TMExecutor::sortCommandToFunctions(std::string command, std::vector<TMTask>
 
 }
 
-void TMExecutor::addTasks(std::vector<TMTask> tasks, TMTaskList tasklist) {
+void TMExecutor::addTasks(std::vector<TMTask> tasks, TMTaskList &tasklist) {
 	std::vector<TMTask>::iterator iter;
 	for (iter = tasks.begin(); iter != tasks.end(); ++iter) {
 		tasklist.addTask(*iter);
@@ -30,11 +30,11 @@ void TMExecutor::addTasks(std::vector<TMTask> tasks, TMTaskList tasklist) {
 
 
 
-void TMExecutor::updateOneTask(TMTask task, std::string component, std::string changeTo, TMTaskList tasklist) {
+void TMExecutor::updateOneTask(TMTask task, std::string component, std::string changeTo, TMTaskList &tasklist) {
 	tasklist.updateTask(tasklist.getPositionIndexFromTask(task), component, changeTo);
 }
 
-void TMExecutor::deleteOneTask(TMTask task, TMTaskList tasklist) {
+void TMExecutor::deleteOneTask(TMTask task, TMTaskList &tasklist) {
 	tasklist.removeTask(tasklist.getPositionIndexFromTask(task));
 }
 
@@ -45,7 +45,7 @@ void TMExecutor::markTodaysTasksAsDone(TMTaskList tasklist) {
 }
 */
 
-void TMExecutor::searchKeyword(std::string keyword, TMTaskList tasklist) {
+void TMExecutor::searchKeyword(std::string keyword, TMTaskList &tasklist) {
 	std::vector<int> searchResults;
 	searchResults = tasklist.keywordSearch(keyword);
 
@@ -60,7 +60,7 @@ void TMExecutor::searchKeyword(std::string keyword, TMTaskList tasklist) {
 	std::cout << tasklist.freeTimeSearch() << std::endl;
 }*/
 	
-void TMExecutor::freeUnconfirmed(std::vector<TMTask> confirmedTasks, TMTaskList tasklist) {
+void TMExecutor::freeUnconfirmed(std::vector<TMTask> confirmedTasks, TMTaskList &tasklist) {
 	std::vector<TMTask>::iterator tasksIter;
 	for (tasksIter = confirmedTasks.begin(); tasksIter != confirmedTasks.end(); ++tasksIter) {
 			updateOneTask(*tasksIter, "isConfirmed", "true", tasklist);
