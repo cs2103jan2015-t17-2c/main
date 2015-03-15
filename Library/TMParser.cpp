@@ -48,6 +48,60 @@ const std::string PERIOD_YEARS = "years";
 TMParser::TMParser() {
 }
 
+//Preconditions: string parameter string
+//Postconditions: returns vector of strings
+std::vector<std::string> TMParser::getTokenizedUserEntry(std::string userEntry){
+std::vector<std::string> tokenizedUserEntry;
+    //to keep track of current position
+    int positionOfFrontChar = 0;
+    int positionOfBackChar = 0;
+    std::string token;
+    if(userEntry == "") {
+        return tokenizedUserEntry;
+    } else {
+
+        positionOfFrontChar = userEntry.find_first_not_of(" ",positionOfFrontChar);
+
+        if(positionOfFrontChar == std::string::npos){
+            return tokenizedUserEntry;
+        } else {
+
+            while(positionOfFrontChar != std::string::npos) {
+                if(userEntry[positionOfFrontChar] == '"'){
+                    positionOfBackChar = userEntry.find_first_of("\"",positionOfFrontChar+1);
+                    if(positionOfBackChar != std::string::npos) {
+                        token = userEntry.substr(positionOfFrontChar+1,positionOfBackChar - positionOfFrontChar - 1);
+                        tokenizedUserEntry.push_back(token);
+                        positionOfBackChar++;
+                    } else {
+                        //print invalid;
+                        //return empty vector;
+                        cout << "close inverted commas missing\n";
+                        return std::vector<std::string>();
+                    }
+                } else {
+                    positionOfBackChar = userEntry.find_first_of(" ",positionOfFrontChar);
+                    if(positionOfBackChar != std::string::npos) {
+                        token = userEntry.substr(positionOfFrontChar,positionOfBackChar - positionOfFrontChar);
+                        tokenizedUserEntry.push_back(token);
+                    } else {
+                        token = userEntry.substr(positionOfFrontChar);
+                        tokenizedUserEntry.push_back(token);
+                        break;
+                    }
+                }
+
+                positionOfFrontChar = userEntry.find_first_not_of(" ",positionOfBackChar);
+            }
+        }
+    }
+
+    return tokenizedUserEntry;
+}
+
+
+
+
 //Preconditions: none (works for both with spaces and without in front)
 std::string TMParser::extractCommand(std::string userEntry) {
     std::string command = "";
@@ -522,9 +576,13 @@ int TMParser::dayOfWeek(std::string day) {
     }
 }
 
-int TMParser::parseTaskPositionNo(std::string userEntry) {
+std::vector<int> TMParser::parseTaskPositionNo(std::string userEntry) {
+    int intTaskPositionNo;
+    std::vector<int> vectorTaskPositionNo;
     std::string taskPositionNo = extractEntryAfterCommand(userEntry);
-    return std::stoi(taskPositionNo);
+    intTaskPositionNo = std::stoi(taskPositionNo);
+    vectorTaskPositionNo.push_back(intTaskPositionNo);
+    return vectorTaskPositionNo;
 }
 
 std::string TMParser::parseSearchKey(std::string userEntry) {

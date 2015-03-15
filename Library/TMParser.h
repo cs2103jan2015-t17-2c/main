@@ -16,7 +16,7 @@ public:
         Add, Delete, Undo, Complete, Incomplete, Search, Edit, Store, Invalid
     };
 
-
+    std::vector<std::string> getTokenizedUserEntry(std::string);
     std::string extractCommand(std::string);
     std::string extractEntryAfterCommand(std::string);
 
@@ -46,7 +46,7 @@ public:
     //0 for Sunday and 6 for Saturday
     int dayOfWeek(std::string); 
 
-    int parseTaskPositionNo(std::string);
+    std::vector<int> parseTaskPositionNo(std::string);
     std::string parseSearchKey(std::string);
     std::string parseDirectory(std::string);
 
