@@ -36,7 +36,8 @@ public:
     bool isPeriod(std::string);
     bool isDate(std::string);
     bool isDay(std::string);
-    bool isTime(std::string);
+    bool is12HTime(std::string);
+    bool is24HTime(std::string);
     bool isWordNext(std::string);
 
     std::string parseFirstToken(std::string);
@@ -54,6 +55,18 @@ public:
     std::string removeFirstWord(std::string);
     std::string clearFirstWord(std::string);
     std::string clearFrontSpaces(std::string);
+
+  //! From delimited date string where with order day-month-year eg: 25-1-2002 or 25-Jan-2003 (full month name is also accepted)
+  //inline date from_uk_string(std::string s) {
+  //  return date_time::parse_date<date>(s, date_time::ymd_order_dmy);
+  //}
+  //include "boost/date_time/gregorian/parsers.hpp"
+  //date test = boost::gregorian::from_us_string("07-Sep-2010")
+
+    std::string dateFromUserToBoostFormat(std::string);
+    std::string dateFromBoostToStandardFormat(const boost::gregorian::date&);
+
+    std::string timeFrom12To24HFormat(std::string);
 
 };
 #endif

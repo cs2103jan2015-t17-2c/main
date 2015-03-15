@@ -8,9 +8,9 @@
 class TMTaskTime{
 private:
     boost::gregorian::date _startDate;
-    boost::posix_time::ptime _startTime;
+    boost::posix_time::time_duration _startTime;
     boost::gregorian::date _endDate;
-    boost::posix_time::ptime _endTime;
+    boost::posix_time::time_duration _endTime;
 
 public:
     TMTaskTime();

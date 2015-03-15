@@ -362,7 +362,7 @@ bool TMParser::isDeadlinedTask(std::string taskInfo) {
 
         if(isDate(wordAfterTokenBefore)||isDay(wordAfterTokenBefore)) {
             return true;
-        } else if (isTime(wordAfterTokenBefore)) {
+        } else if (is24HTime(wordAfterTokenBefore)) {//check 12HTime
             return true;
         } else {
             startOfTokenBefore = remainingEntry.find(TOKEN_BEFORE);
@@ -453,20 +453,21 @@ bool TMParser::isDay(std::string token) {
     }
 }
 
-bool TMParser::isTime(std::string token) {
-    //format: 10/ 1030/ 10:30
-    int lengthOfToken = token.size();
-    if(lengthOfToken == 2){
-        int hour = std::stoi(token);
-        if(hour >= 0 && hour <= 23) {
+bool TMParser::is12HTime(std::string timeToken){
+    //format 2am 230pm 1230am
+    //implement check for am or pm!
+    int lengthOfTimeToken = timeToken.size();
+    if(lengthOfTimeToken == 3) {
+        int hour = std::stoi(timeToken.substr(0,1));
+        if(hour >= 1 && hour <= 12) {
             return true;
         } else {
             return false;
         }
-    } else if (lengthOfToken = 4) {
-        int hour = std::stoi(token.substr(0,2));
-        if(hour >= 0 && hour <= 23) {
-            int minute = std::stoi(token.substr(2,2));
+    } else if (lengthOfTimeToken == 5) {
+        int hour = std::stoi(timeToken.substr(0,1));
+        if(hour >= 1 && hour <= 12) {
+            int minute = std::stoi(timeToken.substr(1,2));
             if(minute >= 0 && minute <= 59) {
                 return true;
             } else {
@@ -475,11 +476,50 @@ bool TMParser::isTime(std::string token) {
         } else {
             return false;
         }
-    } else if(lengthOfToken = 5) {
-        if(token[2] == ':') {
-            int hour = std::stoi(token.substr(0,2));
+    } else if (lengthOfTimeToken == 6) {
+        int hour = std::stoi(timeToken.substr(0,2));
+        if(hour >= 1 && hour <= 12) {
+            int minute = std::stoi(timeToken.substr(1,2));
+            if(minute >= 0 && minute <= 59) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+bool TMParser::is24HTime(std::string timeToken) {
+    //format: 10/ 1030/ 10:30
+    int lengthOfTimeToken = timeToken.size();
+    if(lengthOfTimeToken == 2){
+        int hour = std::stoi(timeToken);
+        if(hour >= 0 && hour <= 23) {
+            return true;
+        } else {
+            return false;
+        }
+    } else if (lengthOfTimeToken = 4) {
+        int hour = std::stoi(timeToken.substr(0,2));
+        if(hour >= 0 && hour <= 23) {
+            int minute = std::stoi(timeToken.substr(2,2));
+            if(minute >= 0 && minute <= 59) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    } else if(lengthOfTimeToken = 5) {
+        if(timeToken[2] == ':') {
+            int hour = std::stoi(timeToken.substr(0,2));
             if(hour >= 0 && hour <= 23) {
-                int minute = std::stoi(token.substr(3,2));
+                int minute = std::stoi(timeToken.substr(3,2));
                 if(minute >= 0 && minute <= 59) {
                     return true;
                 } else {
@@ -656,3 +696,91 @@ std::string TMParser::clearFrontSpaces(std::string remainingEntry) {
     }
 }
 
+std::string TMParser::dateFromUserToBoostFormat(std::string stringDate) {
+    std::string dd = "";
+    std::string mm = "";
+    std::string yyyy = "";
+    std::string month = "";
+    bool isNumeric = true;
+    
+    if(stringDate.length() == 5){
+        // 1 mar
+        //need to check more
+        dd = stringDate.substr(0,1);
+        month = stringDate.substr(2,3);
+    } else if(stringDate.length() == 6){
+        //DDMMYY
+        for(std::string::iterator it = stringDate.begin(); it < stringDate.end() && isNumeric; it++) {
+            if(!isdigit(*it)) {
+                isNumeric = false;
+            }
+        }
+        
+        if(isNumeric) {
+            //DDMMYY
+            dd = stringDate.substr(0,2);
+            mm = stringDate.substr(2,2);
+            yyyy = "20" + stringDate.substr(4,2);
+        } else {
+            //assume dd month e.g. 16 mar
+            dd = stringDate.substr(0,2);
+            month = stringDate.substr(3,3);
+        }
+
+    } else if(stringDate.length() == 8) {
+        //DDMMYYYY
+        for(std::string::iterator it = stringDate.begin(); it < stringDate.end() && isNumeric; it++) {
+            if(!isdigit(*it)) {
+                isNumeric = false;
+            }
+        }
+
+        if(isNumeric) {
+            dd = stringDate.substr(0,2);
+            mm = stringDate.substr(2,2);
+            yyyy = stringDate.substr(4,4);
+        }
+    } else if(stringDate.length() == 10){
+        //d month yyyy
+        //need to check more
+        dd = stringDate.substr(0,1);
+        month = stringDate.substr(2,3);
+        yyyy = stringDate.substr(8,4);
+    } else if(stringDate.length() == 11){
+        //dd month yyyy
+        dd = stringDate.substr(0,2);
+        month = stringDate.substr(3,3);
+        yyyy = stringDate.substr(9,4);
+    } else {
+        //IMPORTANT CALLER MUST TEST DATE
+        return "";
+    }
+
+    if(month == ""){
+        return dd + "-" + mm + "-" + yyyy;
+    } else {
+        return dd + "-" + month + "-" + yyyy;
+    }
+}
+
+std::string dateFromBoostToStandardFormat(const boost::gregorian::date& date) {
+    std::ostringstream os;
+    boost::gregorian::date_facet* facet(new boost::gregorian::date_facet("%A, %d %B %Y"));
+    os.imbue(std::locale(std::cout.getloc(), facet));
+    os << date;
+    return os.str();
+}
+
+std::string TMParser::timeFrom12To24HFormat(std::string time){
+    std::string hhmm;
+
+    if(is24HTime(time)){
+        if(time.length() == 2){
+            hhmm = time + "00";
+        } else if (time.length() == 4){
+            hhmm = time;
+        } else {
+            hhmm = time.erase(2,1);
+        }
+    } else if(is12HTime(time)) {
+        
