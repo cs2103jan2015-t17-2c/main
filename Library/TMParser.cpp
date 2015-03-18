@@ -169,6 +169,7 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
 
         if(unitString == TOKEN_BEFORE){
             stringAfterBefore = *(iter+1);
+            stringAfterBefore = returnLowerCase(stringAfterBefore);
 
             if(isDate(stringAfterBefore)) {//before date DDMMYYYY
                 dateToMeet = stringAfterBefore;
@@ -176,6 +177,7 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                 dateToMeet = substractNDaysFromDate(dateToMeet,1);
                 remainingEntry.erase(iter,iter+1);
                 timeToMeet = "2359";
+                iter--;
                 //convert to one day earlier at 2359 DONE
             } else if (isDay(stringAfterBefore)) {//before monday
                 //returns user the earliest x-day from today
@@ -188,9 +190,11 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                 timeToMeet = "2359";
                 //convert to one day earlier at 2359 DONE
                 remainingEntry.erase(iter,iter+1);
+                iter--;
             } else if (isWordNext(stringAfterBefore)) {//before next monday
                 if(iter+2 != remainingEntry.end()){
                     std::string stringAfterNext = *(iter+2);
+                    stringAfterNext = returnLowerCase(stringAfterNext);
                     if(isDay(stringAfterNext)) {
                         std::string stringDay = returnLowerCase(stringAfterNext);
                         boost::gregorian::date today = boost::gregorian::day_clock::local_day();
@@ -204,6 +208,7 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                                     + tempDate.substr(0,4);
                         timeToMeet = "2359";
                         remainingEntry.erase(iter,iter+2);
+                        iter--;
                     } else {
                         //before next (day missing)
                         //treat as task description
@@ -225,9 +230,11 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                     if(stringAfterTime == TOKEN_ON){//before time on date/day
                         if(iter+3 != remainingEntry.end()){
                             std::string stringAfterOn = *(iter+3);
+                            stringAfterOn = returnLowerCase(stringAfterOn);
                             if(isDate(stringAfterOn)){
                                 dateToMeet = stringAfterOn;
                                 remainingEntry.erase(iter,iter+3);
+                                iter--;
                             } else if(isDay(stringAfterOn)){
                                 //returns user the earliest x-day from today
                                 stringAfterOn = returnLowerCase(stringAfterOn);
@@ -236,14 +243,28 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                                 boost::gregorian::date dateInBoost = fdaf.get_date(_dateToday);
                                 dateToMeet = dateFromBoostToDDMMYYYY(dateInBoost);
                                 remainingEntry.erase(iter,iter+3);
+                                iter--;
                             } else {
+                                //found before time but no day
+                                //check if current time more than found time
+                                //if so tomorrow otherwise today
+                                std::string currentTime = getCurrentTime();
+                                if(timeToMeet >= currentTime){
+                                    boost::gregorian::date currentDate = _dateToday;
+                                    dateToMeet = dateFromBoostToDDMMYYYY(currentDate);
+                                } else {
+                                    boost::gregorian::date currentDate = _dateToday;
+                                    dateToMeet = dateFromBoostToDelimitedDDMMYYYY(currentDate);
+                                    dateToMeet = addNDaysFromDate(dateToMeet,1);
+                                }
                                 remainingEntry.erase(iter,iter+1);
-                                //do nothing;
+                                iter--;
                             }
                         }
                     } else if(isWordNext(stringAfterTime)){
                         if(iter+3 != remainingEntry.end()){
                         std::string stringAfterNext = *(iter+3);
+                        stringAfterNext = returnLowerCase(stringAfterNext);
                             if(isDay(stringAfterNext)){
                                 std::string stringDay = returnLowerCase(stringAfterNext);
                                 boost::gregorian::date today = boost::gregorian::day_clock::local_day();
@@ -256,6 +277,7 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                                             + "-"
                                             + tempDate.substr(0,4);
                                 remainingEntry.erase(iter,iter+3);
+                                iter--;
                             } else {
                                     //
                                     //
@@ -275,6 +297,8 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                             dateToMeet = dateFromBoostToDelimitedDDMMYYYY(currentDate);
                             dateToMeet = addNDaysFromDate(dateToMeet,1);
                         }
+                        remainingEntry.erase(iter,iter+1);
+                        iter--;
                     }
                 } else {
                     //dateToMeet = today if time hasn't passed otherwise tomorrow
@@ -287,6 +311,8 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                         dateToMeet = dateFromBoostToDelimitedDDMMYYYY(currentDate);
                         dateToMeet = addNDaysFromDate(dateToMeet,1);
                     }
+                    remainingEntry.erase(iter,iter+1);
+                    iter--;
                 }
             } else {
                 //cannot find anything after word before
@@ -316,6 +342,8 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
 
     return task;
 }
+
+//for now find start time and start date only
 //change to period
 TMTask TMParser::parseTimedTaskInfo(std::vector<std::string> taskInfo){
     TaskType taskType = TaskType::Timed;
@@ -323,28 +351,58 @@ TMTask TMParser::parseTimedTaskInfo(std::vector<std::string> taskInfo){
     //std::string dayToMeet = "";
     //missing endTime and endDate need to use function to determine period of time and dates
     std::string startDate = "";
-    std::string remainingEntry = taskInfo;
+    std::vector<std::string> remainingEntry = taskInfo;
     std::string taskDescription = "";
+    std::string unitString;
+    std::vector<std::string>::iterator iter;
     bool timeExtracted = false;
     bool dateExtracted = false;
 
-    int startOfTokenAt = remainingEntry.find(TOKEN_AT);
-    int posOfWordAfterAt;
-    while(startOfTokenAt != std::string::npos) {
-        std::string wordAfterTokenAt = parseSecondToken(remainingEntry.substr(startOfTokenAt));
-        posOfWordAfterAt = remainingEntry.find(wordAfterTokenAt,startOfTokenAt);
+    //seach for at (time)
+    for(iter = remainingEntry.begin(); iter < remainingEntry.end()-1; iter++){
+        unitString = *iter;
+        unitString = returnLowerCase(unitString);
 
-        if(posOfWordAfterAt != std::string::npos) {
-            if(isTime(wordAfterTokenAt)){
-                startTime = wordAfterTokenAt;
+        if(unitString == TOKEN_AT){
+            std::string stringAfterAt = *(iter+1);
+            stringAfterAt = returnLowerCase(stringAfterAt);
+            if(is24HTime(stringAfterAt)||is12HTime(stringAfterAt)){
+                startTime = stringAfterAt;
+                startTime = timeTo24HFormat(startTime);
+                remainingEntry.erase(iter,iter+1);
+                iter--;
                 timeExtracted = true;
             } else {
-                startOfTokenAt = remainingEntry.find(TOKEN_AT,startOfTokenAt + 1);
+                //at (not time) continue searching
             }
+        } else if(unitString == TOKEN_ON){
+            std::string stringAfterOn = *(iter+1);
+            stringAfterOn = returnLowerCase(stringAfterOn);
+            if(isDate(stringAfterOn)){
+                startDate = stringAfterOn;
+                remainingEntry.erase(iter,iter+1);
+                iter--;
+                dateExtracted = true;
+            } else if(isDay(stringAfterOn)){
+                stringAfterOn = returnLowerCase(stringAfterOn);
+                int dayInInteger = dayOfWeek(stringAfterOn);
+                boost::gregorian::first_day_of_the_week_after fdaf(dayInInteger);
+                boost::gregorian::date dateInBoost = fdaf.get_date(_dateToday);
+                startDate = dateFromBoostToDDMMYYYY(dateInBoost);
+                remainingEntry.erase(iter,iter+1);
+                iter--;
+                dateExtracted = true;
+            } else {
+                //found on but cannot find following date or day
+                //need to check another condition: next x-day
+            }
+        } else {
+            //need to check for time period from x to x
         }
     }
-
-    if(timeExtracted){
+    //if obtained only time then check if time passed...
+    //if only date obtained then set as 0000
+    if(timeExtracted){ 
         int noOfSpaces = 0;
         int lengthOfSubString;
         
@@ -399,7 +457,17 @@ TMTask TMParser::parseTimedTaskInfo(std::vector<std::string> taskInfo){
 TMTask TMParser::parseFloatingTaskInfo(std::vector<std::string> taskInfo) {
     TaskType taskType = TaskType::Floating;
     TMTaskTime taskTime;
-    TMTask task(taskInfo,taskTime,taskType);
+    std::string taskDescription;
+
+    int lengthOfVector = taskInfo.size();
+    for(int i = 0; i < lengthOfVector; i++){
+        taskDescription += taskInfo[i];
+        if(i != lengthOfVector - 1){
+            taskDescription += " ";
+        }
+    }
+
+    TMTask task(taskDescription,taskTime,taskType);
 
     return task;
 }
@@ -564,7 +632,7 @@ bool TMParser::is12HTime(std::string timeToken){
 }
 
 bool TMParser::is24HTime(std::string timeToken) {
-    //format: 10/ 1030/ 10:30
+    //format: 10/ 1030/ 10:30 consider single digit e.g 8!!!
     //to consider: 8 1-10(change to pm?) 
     int lengthOfTimeToken = timeToken.size();
     if(lengthOfTimeToken == 2){
