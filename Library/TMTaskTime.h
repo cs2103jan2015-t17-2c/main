@@ -8,9 +8,9 @@
 class TMTaskTime{
 private:
     boost::gregorian::date _startDate;
-    boost::posix_time::time_duration _startTime;
+    std::string _startTime;
     boost::gregorian::date _endDate;
-    boost::posix_time::time_duration _endTime;
+    std::string _endTime;
 
 public:
     TMTaskTime();
