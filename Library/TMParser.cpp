@@ -172,9 +172,11 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
 
             if(isDate(stringAfterBefore)) {//before date DDMMYYYY
                 dateToMeet = stringAfterBefore;
+                dateToMeet = dateFromUserToBoostFormat(dateToMeet);
+                dateToMeet = substractNDaysFromDate(dateToMeet,1);
                 remainingEntry.erase(iter,iter+1);
                 timeToMeet = "2359";
-                //convert to one day earlier at 2359
+                //convert to one day earlier at 2359 DONE
             } else if (isDay(stringAfterBefore)) {//before monday
                 //returns user the earliest x-day from today
                 stringAfterBefore = returnLowerCase(stringAfterBefore);
@@ -182,8 +184,9 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                 boost::gregorian::first_day_of_the_week_after fdaf(dayInInteger);
                 boost::gregorian::date dateInBoost = fdaf.get_date(_dateToday);
                 dateToMeet = dateFromBoostToDelimitedDDMMYYYY(dateInBoost);
+                dateToMeet = substractNDaysFromDate(dateToMeet,1);
                 timeToMeet = "2359";
-                //convert to one day earlier at 2359
+                //convert to one day earlier at 2359 DONE
                 remainingEntry.erase(iter,iter+1);
             } else if (isWordNext(stringAfterBefore)) {//before next monday
                 if(iter+2 != remainingEntry.end()){
@@ -231,8 +234,7 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                                 int dayInInteger = dayOfWeek(stringAfterOn);
                                 boost::gregorian::first_day_of_the_week_after fdaf(dayInInteger);
                                 boost::gregorian::date dateInBoost = fdaf.get_date(_dateToday);
-                                dateToMeet = dateFromBoostToDelimitedDDMMYYYY(dateInBoost);
-                                //convert to one day earlier at 2359
+                                dateToMeet = dateFromBoostToDDMMYYYY(dateInBoost);
                                 remainingEntry.erase(iter,iter+3);
                             } else {
                                 remainingEntry.erase(iter,iter+1);
@@ -253,7 +255,6 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                                             + tempDate.substr(4,2)
                                             + "-"
                                             + tempDate.substr(0,4);
-                                timeToMeet = "2359";
                                 remainingEntry.erase(iter,iter+3);
                             } else {
                                     //
@@ -265,11 +266,27 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                         }
                     } else {
                         //dateToMeet = today if time hasn't passed otherwise tomorrow
-                        //need to check how to do that.
+                        std::string currentTime = getCurrentTime();
+                        if(timeToMeet >= currentTime){
+                            boost::gregorian::date currentDate = _dateToday;
+                            dateToMeet = dateFromBoostToDDMMYYYY(currentDate);
+                        } else {
+                            boost::gregorian::date currentDate = _dateToday;
+                            dateToMeet = dateFromBoostToDelimitedDDMMYYYY(currentDate);
+                            dateToMeet = addNDaysFromDate(dateToMeet,1);
+                        }
                     }
                 } else {
                     //dateToMeet = today if time hasn't passed otherwise tomorrow
-                    //need to check how to do that.
+                    std::string currentTime = getCurrentTime();
+                    if(timeToMeet >= currentTime){
+                        boost::gregorian::date currentDate = _dateToday;
+                        dateToMeet = dateFromBoostToDDMMYYYY(currentDate);
+                    } else {
+                        boost::gregorian::date currentDate = _dateToday;
+                        dateToMeet = dateFromBoostToDelimitedDDMMYYYY(currentDate);
+                        dateToMeet = addNDaysFromDate(dateToMeet,1);
+                    }
                 }
             } else {
                 //cannot find anything after word before
@@ -292,7 +309,7 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
 
     //
     
-    //case 1: time but no date assume it is today if time hasn't passed or else tomorrow
+    //DDMMYYYY to DD MM YYYY
     dateToMeet = dateToMeet.substr(0,2) + " " + dateToMeet.substr(2,2) + " " + dateToMeet.substr(4,4);
     TMTaskTime taskTime("","",dateToMeet,timeToMeet);
     TMTask task(taskDescription,taskTime,taskType);
@@ -805,8 +822,16 @@ std::string TMParser::timeTo24HFormat(std::string time){
 
 std::string TMParser::dateFromBoostToDelimitedDDMMYYYY(const boost::gregorian::date& date){
     std::ostringstream os;
-    boost::gregorian::date_facet* facet(new boost::gregorian::date_facet("%d %B %Y"));
+    boost::gregorian::date_facet* facet(new boost::gregorian::date_facet("%d %m %Y"));
     os.imbue(std::locale(std::cout.getloc(), facet));
+    os << date;
+    return os.str();
+}
+
+std::string TMParser::dateFromBoostToDDMMYYYY(const boost::gregorian::date& date){
+    std::ostringstream os;
+    boost::gregorian::date_facet* facet(new boost::gregorian::date_facet("%d%m%Y"));
+    os.imbue(std::locale(std::cout.getloc(),facet));
     os << date;
     return os.str();
 }
@@ -819,4 +844,20 @@ std::string TMParser::getCurrentTime(){
     os.imbue(std::locale(std::cout.getloc(), facet));
     os << currentDateAndTime;
     return os.str();
+}
+
+//preconditions date dd mm yyyy use dateFromUserToBoost
+std::string TMParser::substractNDaysFromDate(std::string date, int n){
+    boost::gregorian::date initialBoostDate = boost::gregorian::from_uk_string(date);
+    boost::gregorian::date_duration dateDuration(n);
+    boost::gregorian::date finalBoostDate = initialBoostDate - dateDuration;
+    return dateFromBoostToDDMMYYYY(finalBoostDate);
+}
+
+//preconditions date dd mm yyyy use dateFromUserToBoost
+std::string TMParser::addNDaysFromDate(std::string date, int n){
+    boost::gregorian::date initialBoostDate = boost::gregorian::from_uk_string(date);
+    boost::gregorian::date_duration dateDuration(n);
+    boost::gregorian::date finalBoostDate = initialBoostDate + dateDuration;
+    return dateFromBoostToDDMMYYYY(finalBoostDate);
 }

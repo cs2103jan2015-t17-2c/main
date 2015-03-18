@@ -66,9 +66,12 @@ public:
     std::string dateFromUserToBoostFormat(std::string);
     std::string dateFromBoostToStandardFormat(const boost::gregorian::date&);
     std::string dateFromBoostToDelimitedDDMMYYYY(const boost::gregorian::date&);
+    std::string dateFromBoostToDDMMYYYY(const boost::gregorian::date&);
 
     std::string timeTo24HFormat(std::string);
     std::string getCurrentTime();
+    std::string substractNDaysFromDate(std::string,int);
+    std::string addNDaysFromDate(std::string,int);
 
 };
 #endif
