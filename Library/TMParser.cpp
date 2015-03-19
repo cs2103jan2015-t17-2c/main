@@ -402,53 +402,33 @@ TMTask TMParser::parseTimedTaskInfo(std::vector<std::string> taskInfo){
     }
     //if obtained only time then check if time passed...
     //if only date obtained then set as 0000
-    if(timeExtracted){ 
-        int noOfSpaces = 0;
-        int lengthOfSubString;
-        
-        if(remainingEntry.find_first_of(" ",posOfWordAfterAt) != std::string::npos) {
-            noOfSpaces = 2;
+
+    if(!timeExtracted){
+        startTime = "0000";
+    } else if(!dateExtracted){
+        std::string currentTime = getCurrentTime();
+        if(startTime >= currentTime){
+            boost::gregorian::date currentDate = _dateToday;
+            startDate = dateFromBoostToDDMMYYYY(currentDate);
         } else {
-            noOfSpaces = 1;
+            boost::gregorian::date currentDate = _dateToday;
+            startDate = dateFromBoostToDelimitedDDMMYYYY(currentDate);
+            startDate = addNDaysFromDate(startDate,1);
         }
-        
-        lengthOfSubString = TOKEN_AT.length() + startTime.length() + noOfSpaces; //length of 2 spaces
-        remainingEntry.erase(startOfTokenAt,lengthOfSubString);
+    } else {
+        //time and date are found
     }
 
-    //after "at (time)" is removed from string
-    int startOfTokenOn = remainingEntry.find(TOKEN_ON);
-    int posOfWordAfterOn;
-    while(startOfTokenOn != std::string::npos) {
-        std::string wordAfterTokenOn = parseSecondToken(remainingEntry.substr(startOfTokenOn));
-        posOfWordAfterOn = remainingEntry.find(wordAfterTokenOn,startOfTokenOn);
+    int lengthOfRemainingEntry = remainingEntry.size();
 
-        if(posOfWordAfterOn != std::string::npos) {
-            if(isDate(wordAfterTokenOn)){
-                startDate = wordAfterTokenOn;
-                dateExtracted = true;
-            } else {
-                startOfTokenOn = remainingEntry.find(TOKEN_ON,startOfTokenOn + 1);
-            }
+    for(int i = 0; i < lengthOfRemainingEntry; i++){
+        taskDescription += remainingEntry[i];
+        if(i != lengthOfRemainingEntry-1){
+            taskDescription += " ";
         }
     }
 
-    if(dateExtracted){
-        int noOfSpaces = 0;
-        int lengthOfSubString;
-        
-        if(remainingEntry.find_first_of(" ",posOfWordAfterOn) != std::string::npos) {
-            noOfSpaces = 2;
-        } else {
-            noOfSpaces = 1;
-        }
-        
-        lengthOfSubString = TOKEN_ON.length() + startDate.length() + noOfSpaces; //length of 2 spaces
-        remainingEntry.erase(startOfTokenOn,lengthOfSubString);
-    }
-
-    taskDescription = remainingEntry;
-    TMTaskTime taskTime(startDate,startTime,startDate,startTime);
+    TMTaskTime taskTime(startDate,startTime,"","");
     TMTask task(taskDescription,taskTime,taskType);
 
     return task;
@@ -483,6 +463,7 @@ bool TMParser::isDeadlinedTask(std::vector<std::string> taskInfo) {
         unitString = returnLowerCase(*iter);
         if(unitString == TOKEN_BEFORE){
             stringAfterBefore = *(iter+1);
+            stringAfterBefore = returnLowerCase(stringAfterBefore);
             if(isDate(stringAfterBefore)||isDay(stringAfterBefore)) {
                 return true;
             } else if (is24HTime(stringAfterBefore)||is12HTime(stringAfterBefore)) {
@@ -496,24 +477,54 @@ bool TMParser::isDeadlinedTask(std::vector<std::string> taskInfo) {
     return false;
 }
 
-bool TMParser::isTimedTask(std::string taskInfo) {
-    std::string remainingEntry = taskInfo;
-    int startOfTokenOn = remainingEntry.find(TOKEN_ON);
+bool TMParser::isTimedTask(std::vector<std::string> taskInfo) {
+    std::vector<std::string> remainingEntry = taskInfo;
+    bool isTokenOnFound = false;
+    bool isTokenAtFound = false;
+    std::string unitString;
+    std::string stringAfterToken;
+    std::vector<std::string>::iterator iter;
 
-    while(startOfTokenOn != std::string::npos) {
-        std::string wordAfterTokenOn;
-        remainingEntry = remainingEntry.substr(startOfTokenOn);
-        remainingEntry = removeFirstToken(remainingEntry,TOKEN_ON);
-        wordAfterTokenOn = parseFirstToken(remainingEntry);
+    for(iter = remainingEntry.begin(); iter < remainingEntry.end()-1; iter++){
+        unitString = returnLowerCase(*iter);
+        
+        if(unitString == TOKEN_AT){
+            stringAfterToken = *(iter+1);
+            stringAfterToken = returnLowerCase(stringAfterToken);
+            if(is24HTime(stringAfterToken)||is12HTime(stringAfterToken)){
+                isTokenAtFound = true;
+            } else {
+                //found at but no time
+            }
+        }
 
-        if(isDay(wordAfterTokenOn)||isDate(wordAfterTokenOn)) {
-            return true;
-        } else {
-            startOfTokenOn = remainingEntry.find(TOKEN_ON);
+        if(unitString == TOKEN_ON){
+            stringAfterToken = *(iter+1);
+            stringAfterToken = returnLowerCase(stringAfterToken);
+            if(isDate(stringAfterToken)||isDay(stringAfterToken)){
+                isTokenOnFound = true;
+            } else if(isWordNext(stringAfterToken)){
+                if(iter+2 != remainingEntry.end()){
+                    std::string stringAfterNext = *(iter+2);
+                    if(isDay(stringAfterNext)){
+                        isTokenOnFound = true;
+                    } else {
+                        //found "on next" within string but no day
+                    }
+                } else {
+                    //at the back of the string: "... on next"
+                }
+            } else {
+                //continue searching for on and essential info
+            }
         }
     }
 
-    return false;
+    if(isTokenOnFound||isTokenAtFound){
+        return true;
+    } else {
+        return false;
+    }
 }
 
 bool TMParser::isInteger(std::string token) {
@@ -726,25 +737,40 @@ int TMParser::dayOfWeek(std::string day) {
         return 5;
     } else if (day == DAY_SAT||day == DAY_SATURDAY) {
         return 6;
+    } else {
+        //invalid day!
+        return -1;
     }
 }
 
-std::vector<int> TMParser::parseTaskPositionNo(std::string userEntry) {
+//precondition: command extracted
+std::vector<int> TMParser::parseTaskPositionNo(std::vector<std::string> userEntry) {
     int intTaskPositionNo;
     std::vector<int> vectorTaskPositionNo;
-    std::string taskPositionNo = extractEntryAfterCommand(userEntry);
+    std::string taskPositionNo = userEntry[0];
     intTaskPositionNo = std::stoi(taskPositionNo);
     vectorTaskPositionNo.push_back(intTaskPositionNo);
     return vectorTaskPositionNo;
 }
 
+//precondition: command extracted
 std::string TMParser::parseSearchKey(std::vector<std::string> userEntry) {
-    std::string searchKey = extractEntryAfterCommand(userEntry);
+    std::string searchKey;
+    std::vector<std::string>::iterator iter;
+
+    for(iter = userEntry.begin(); iter < userEntry.end(); iter++){
+        searchKey += *iter;
+        if(iter != userEntry.end()-1){
+            searchKey += " ";
+        }
+    }
+
     return searchKey;
 }
 
+//precondition: extract command
 std::string TMParser::parseDirectory(std::vector<std::string> userEntry) {
-    std::string directory = extractEntryAfterCommand(userEntry);
+    std::string directory = userEntry[0];
     return directory;
 }
 
@@ -886,6 +912,8 @@ std::string TMParser::timeTo24HFormat(std::string time){
             hhmm = time.erase(2,1);
         }
     }
+
+    return hhmm;
 }
 
 std::string TMParser::dateFromBoostToDelimitedDDMMYYYY(const boost::gregorian::date& date){

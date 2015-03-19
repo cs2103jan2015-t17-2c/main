@@ -25,6 +25,7 @@ public:
     CommandTypes determineCommandType(std::string);
     
     //parse relevant info into the respective tasks
+    //commmand must be extracted first
     std::vector<TMTask> parseTaskInfo(std::vector<std::string>);
     TMTask parseDeadlinedTaskInfo(std::vector<std::string>);
     TMTask parseTimedTaskInfo(std::vector<std::string>);
@@ -51,7 +52,8 @@ public:
     //0 for Sunday and 6 for Saturday
     int dayOfWeek(std::string); 
 
-    std::vector<int> parseTaskPositionNo(std::string);
+    //use after command is extracted
+    std::vector<int> parseTaskPositionNo(std::vector<std::string>);
     std::string parseSearchKey(std::vector<std::string>);
     std::string parseDirectory(std::vector<std::string>);
 
