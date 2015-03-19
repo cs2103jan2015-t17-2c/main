@@ -33,6 +33,8 @@ const std::string TOKEN_BEFORE = "before";
 const std::string TOKEN_ON = "on";
 const std::string TOKEN_NEXT = "next";
 const std::string TOKEN_AT = "at";
+const std::string TOKEN_FROM = "from";
+const std::string TOKEN_TO = "to";
 
 const std::string PERIOD_HOUR = "hour";
 const std::string PERIOD_HOURS = "hours";
@@ -100,9 +102,6 @@ std::vector<std::string> tokenizedUserEntry;
     return tokenizedUserEntry;
 }
 
-
-
-
 //Preconditions: getTokenizedUserEntry(userEntry) first
 //Postconditions: first token is extracted from vector of string and is no longer is there
 std::string TMParser::extractCommand(std::vector<std::string>& userEntry) {
@@ -149,7 +148,6 @@ std::vector<TMTask> TMParser::parseTaskInfo(std::vector<std::string> taskInfo) {
     } else {
         task.push_back(parseFloatingTaskInfo(taskInfo));
     }
-
     return task;
 }
 
@@ -364,10 +362,16 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
     dateToMeet = dateToMeet.substr(0,2) + " " + dateToMeet.substr(2,2) + " " + dateToMeet.substr(4,4);
     //
     //std::cout << "final dateTM: " << dateToMeet << std::endl;
-    TMTaskTime taskTime("","",dateToMeet,timeToMeet);
-    TMTask task(taskDescription,taskTime,taskType);
-
-    return task;
+    if(isValidDate(dateToMeet)){
+        TMTaskTime taskTime(dateToMeet,timeToMeet,"","");
+        TMTask task(taskDescription,taskTime,taskType);
+        return task;
+    } else {
+        //when date is invalid
+        TMTaskTime taskTime;
+        TMTask task("",taskTime,TaskType::Invalid);
+        return task;
+    }
 }
 
 //for now find start time and start date only
@@ -378,6 +382,8 @@ TMTask TMParser::parseTimedTaskInfo(std::vector<std::string> taskInfo){
     //std::string dayToMeet = "";
     //missing endTime and endDate need to use function to determine period of time and dates
     std::string startDate = "";
+    std::string endTime = "";
+    std::string endDate = "";
     std::vector<std::string> remainingEntry = taskInfo;
     std::string taskDescription = "";
     std::string unitString;
@@ -463,10 +469,19 @@ TMTask TMParser::parseTimedTaskInfo(std::vector<std::string> taskInfo){
     }
     
     startDate = dateFromUserToBoostFormat(startDate);
-    TMTaskTime taskTime(startDate,startTime,"","");
-    TMTask task(taskDescription,taskTime,taskType);
 
-    return task;
+    if(isValidDate(startDate)){
+        TMTaskTime taskTime(startDate,startTime,"","");
+        TMTask task(taskDescription,taskTime,taskType);
+
+        return task;
+    } else {
+        TMTaskTime taskTime;
+        TMTask task("",taskTime,TaskType::Invalid);
+        return task;
+    }
+
+    //return task;
 }
 
 TMTask TMParser::parseFloatingTaskInfo(std::vector<std::string> taskInfo) {
@@ -566,6 +581,11 @@ bool TMParser::isTimedTask(std::vector<std::string> taskInfo) {
                 //continue searching for on and essential info
             }
         }
+        /*
+        if(unitString == TOKEN_FROM){
+
+        }
+        */
     }
     //
     //std::cout << "Reached the end of...\n";
@@ -575,6 +595,20 @@ bool TMParser::isTimedTask(std::vector<std::string> taskInfo) {
     } else {
         return false;
     }
+}
+
+//Preconditions: dd mm yyyy
+bool TMParser::isValidDate(std::string date){
+    boost::gregorian::date boostDate;
+    try {
+        boostDate = boost::gregorian::from_uk_string(date);
+    }
+    catch (const std::out_of_range& oor) {
+        std::cerr << "Out of Range error: " << oor.what() << '\n';
+        return false;
+    }
+
+    return true;
 }
 
 bool TMParser::isInteger(std::string token) {

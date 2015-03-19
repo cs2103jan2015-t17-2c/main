@@ -31,8 +31,6 @@ int main() {
 		}*/
         tokenizedUserEntry = parser.getTokenizedUserEntry(userEntry);
 		std::string command = parser.extractCommand(tokenizedUserEntry);
-
-        parser.parseTaskInfo(tokenizedUserEntry);
         //use extractEntryAfterCommand first read preconditions
 		std::vector<TMTask> taskVector = parser.parseTaskInfo(tokenizedUserEntry);
         std::cout << "TASK DESCRIPTION: " << taskVector[0].getTaskDescription() << std::endl;
