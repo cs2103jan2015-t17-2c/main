@@ -17,22 +17,24 @@ int main() {
 	
 	TMParser parser;
 	TMExecutor executor;
-    std::string userInput;
+    std::string userEntry;
+    std::vector<std::string> tokenizedUserEntry;
 
     std::cout << "Welcome to TimeMaster. Please enter your command" << std::endl;
-    std::getline(std :: cin, userInput);
+    std::getline(std :: cin, userEntry);
 
 	//taskList.loadFromFile();
 	
-	while(userInput != "quit") {
+	while(userEntry != "quit") {
         /*if(GetAsyncKeyState('exit')) {
 			break;
 		}*/
+        tokenizedUserEntry = parser.getTokenizedUserEntry(userEntry);
+		std::string command = parser.extractCommand(tokenizedUserEntry);
 
-		std::string command = parser.extractCommand(userInput);
-
+        parser.parseTaskInfo(tokenizedUserEntry);
         //use extractEntryAfterCommand first read preconditions
-		std::vector<TMTask> taskVector = parser.parseTaskInfo(parser.extractEntryAfterCommand(userInput));
+		std::vector<TMTask> taskVector = parser.parseTaskInfo(tokenizedUserEntry);
         std::cout << "TASK DESCRIPTION: " << taskVector[0].getTaskDescription() << std::endl;
 		executor.sortCommandToFunctions(command, taskVector, taskList);
 
@@ -40,7 +42,7 @@ int main() {
         //taskList.displayAllTasks();
         std::cout << std::endl;
         std::cout << "Welcome to TimeMaster. Please enter your command" << std::endl;
-		getline(std :: cin, userInput);
+		getline(std :: cin, userEntry);
     }
 	
 	std::atexit(saveUponExit);

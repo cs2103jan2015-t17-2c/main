@@ -14,11 +14,19 @@ TMTaskTime::TMTaskTime(){
 TMTaskTime::TMTaskTime(std::string startDate, std::string startTime, std::string endDate,
                        std::string endTime){
     //need to try catch and throw
-    _startDate = boost::gregorian::from_uk_string(startDate);
+    if(startDate == ""){
+        _startDate = boost::gregorian::date(boost::gregorian::not_a_date_time);
+    } else {
+        _startDate = boost::gregorian::from_uk_string(startDate);
+    }
 
     _startTime = startTime;
 
-    _endDate = boost::gregorian::from_uk_string(endDate);
+    if(endDate == ""){
+        _endDate = boost::gregorian::date(boost::gregorian::not_a_date_time);
+    } else {
+        _endDate = boost::gregorian::from_uk_string(endDate);
+    }
 
     _endTime = endTime;
 }

@@ -77,7 +77,7 @@ std::vector<std::string> tokenizedUserEntry;
                     } else {
                         //print invalid;
                         //return empty vector;
-                        std::cout << "close inverted commas missing\n";
+                        //std::cout << "close inverted commas missing\n";
                         return std::vector<std::string>();
                     }
                 } else {
@@ -140,7 +140,7 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
 std::vector<TMTask> TMParser::parseTaskInfo(std::vector<std::string> taskInfo) {
     std::vector<TMTask> task;
     if(isDeadlinedTask(taskInfo)){
-        std::cout << "IS DEADLINE\n";
+        //std::cout << "IS DEADLINE\n";
         task.push_back(parseDeadlinedTaskInfo(taskInfo));
     } else if(isTimedTask(taskInfo)) {
         task.push_back(parseTimedTaskInfo(taskInfo));
@@ -163,6 +163,7 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
     std::string unitString;
     std::string stringAfterBefore;
     std::vector<std::string>::iterator iter;
+    std::vector<std::string>::iterator finalIter;
 
     for(iter = remainingEntry.begin(); iter < remainingEntry.end()-1; iter++){
         unitString = returnLowerCase(*iter);
@@ -175,7 +176,7 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                 dateToMeet = stringAfterBefore;
                 dateToMeet = dateFromUserToBoostFormat(dateToMeet);
                 dateToMeet = substractNDaysFromDate(dateToMeet,1);
-                remainingEntry.erase(iter,iter+1);
+                iter = remainingEntry.erase(iter,iter+2);
                 timeToMeet = "2359";
                 iter--;
                 //convert to one day earlier at 2359 DONE
@@ -189,7 +190,7 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                 dateToMeet = substractNDaysFromDate(dateToMeet,1);
                 timeToMeet = "2359";
                 //convert to one day earlier at 2359 DONE
-                remainingEntry.erase(iter,iter+1);
+                iter = remainingEntry.erase(iter,iter+2);
                 iter--;
             } else if (isWordNext(stringAfterBefore)) {//before next monday
                 if(iter+2 != remainingEntry.end()){
@@ -207,7 +208,7 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                                     + "-"
                                     + tempDate.substr(0,4);
                         timeToMeet = "2359";
-                        remainingEntry.erase(iter,iter+2);
+                        iter = remainingEntry.erase(iter,iter+3);
                         iter--;
                     } else {
                         //before next (day missing)
@@ -218,7 +219,7 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                 }
             } else if (is24HTime(stringAfterBefore)||is12HTime(stringAfterBefore)) {
                 //before time
-                std::cout << "IS TIME\n";
+                //std::cout << "IS TIME\n";
                 timeToMeet = timeTo24HFormat(stringAfterBefore);
                 //check for word on
                 //if exists, check date, next x-day, x-day
@@ -226,6 +227,8 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                 //else today if time hasn't passed. how to check that?
                 if(iter+2 != remainingEntry.end()){
                     std::string stringAfterTime = *(iter+2);
+                    //
+                    //std::cout << stringAfterTime << std::endl;
                     stringAfterTime = returnLowerCase(stringAfterTime);
                     if(stringAfterTime == TOKEN_ON){//before time on date/day
                         if(iter+3 != remainingEntry.end()){
@@ -233,7 +236,7 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                             stringAfterOn = returnLowerCase(stringAfterOn);
                             if(isDate(stringAfterOn)){
                                 dateToMeet = stringAfterOn;
-                                remainingEntry.erase(iter,iter+3);
+                                iter = remainingEntry.erase(iter,iter+4);
                                 iter--;
                             } else if(isDay(stringAfterOn)){
                                 //returns user the earliest x-day from today
@@ -242,7 +245,7 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                                 boost::gregorian::first_day_of_the_week_after fdaf(dayInInteger);
                                 boost::gregorian::date dateInBoost = fdaf.get_date(_dateToday);
                                 dateToMeet = dateFromBoostToDDMMYYYY(dateInBoost);
-                                remainingEntry.erase(iter,iter+3);
+                                iter = remainingEntry.erase(iter,iter+4);
                                 iter--;
                             } else {
                                 //found before time but no day
@@ -257,7 +260,7 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                                     dateToMeet = dateFromBoostToDelimitedDDMMYYYY(currentDate);
                                     dateToMeet = addNDaysFromDate(dateToMeet,1);
                                 }
-                                remainingEntry.erase(iter,iter+1);
+                                iter = remainingEntry.erase(iter,iter+2);
                                 iter--;
                             }
                         }
@@ -276,7 +279,7 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                                             + tempDate.substr(4,2)
                                             + "-"
                                             + tempDate.substr(0,4);
-                                remainingEntry.erase(iter,iter+3);
+                                iter = remainingEntry.erase(iter,iter+4);
                                 iter--;
                             } else {
                                     //
@@ -289,6 +292,8 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                     } else {
                         //dateToMeet = today if time hasn't passed otherwise tomorrow
                         std::string currentTime = getCurrentTime();
+                        //
+                        //std::cout << currentTime << std::endl;
                         if(timeToMeet >= currentTime){
                             boost::gregorian::date currentDate = _dateToday;
                             dateToMeet = dateFromBoostToDDMMYYYY(currentDate);
@@ -297,21 +302,39 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
                             dateToMeet = dateFromBoostToDelimitedDDMMYYYY(currentDate);
                             dateToMeet = addNDaysFromDate(dateToMeet,1);
                         }
-                        remainingEntry.erase(iter,iter+1);
+                        iter = remainingEntry.erase(iter,iter+2);
                         iter--;
                     }
                 } else {
                     //dateToMeet = today if time hasn't passed otherwise tomorrow
                     std::string currentTime = getCurrentTime();
+                    //
+                    //std::cout << currentTime << std::endl;
+                    //std::cout << timeToMeet << std::endl;
                     if(timeToMeet >= currentTime){
                         boost::gregorian::date currentDate = _dateToday;
                         dateToMeet = dateFromBoostToDDMMYYYY(currentDate);
+                        //
+                        //std::cout << dateToMeet << std::endl;
                     } else {
                         boost::gregorian::date currentDate = _dateToday;
                         dateToMeet = dateFromBoostToDelimitedDDMMYYYY(currentDate);
                         dateToMeet = addNDaysFromDate(dateToMeet,1);
                     }
-                    remainingEntry.erase(iter,iter+1);
+                    //
+                    iter = remainingEntry.erase(iter,iter+2);
+                    //
+                    /*
+                    if(iter != remainingEntry.end()){
+                        std::cout << *iter << std::endl;
+                    } else {
+                        std::cout << "end of string\n";
+                    }
+
+                    for (std::vector<std::string>::iterator it = remainingEntry.begin() ; it != remainingEntry.end(); ++it){
+                        std::cout << ' ' << *it;
+                    }
+                    */
                     iter--;
                 }
             } else {
@@ -337,6 +360,8 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
     
     //DDMMYYYY to DD MM YYYY
     dateToMeet = dateToMeet.substr(0,2) + " " + dateToMeet.substr(2,2) + " " + dateToMeet.substr(4,4);
+    //
+    //std::cout << "final dateTM: " << dateToMeet << std::endl;
     TMTaskTime taskTime("","",dateToMeet,timeToMeet);
     TMTask task(taskDescription,taskTime,taskType);
 
