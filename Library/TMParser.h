@@ -12,27 +12,34 @@
 class TMParser {
 private:
     boost::gregorian::date _dateToday;
+	std::string _originalUserInput;
+	std::vector<std::string> _tokenizedUserEntry;
+	static TMParser* theOne;
+	TMParser();
+
 public:
-    TMParser();
+    static TMParser* getInstance();
     
+	void TMParser::initialize(std::string userEntry);
+
     enum CommandTypes {
         Add, Delete, Undo, Complete, Incomplete, Search, Edit, Store, Invalid
     };
 
     std::vector<std::string> getTokenizedUserEntry(std::string);
-    std::string extractCommand(std::vector<std::string>&);
+    std::string extractCommand();
 
     CommandTypes determineCommandType(std::string);
     
     //parse relevant info into the respective tasks
     //commmand must be extracted first
-    std::vector<TMTask> parseTaskInfo(std::vector<std::string>);
-    TMTask parseDeadlinedTaskInfo(std::vector<std::string>);
-    TMTask parseTimedTaskInfo(std::vector<std::string>);
-    TMTask parseFloatingTaskInfo(std::vector<std::string>);
+    std::vector<TMTask> parseTaskInfo();
+    TMTask parseDeadlinedTaskInfo();
+    TMTask parseTimedTaskInfo();
+    TMTask parseFloatingTaskInfo();
 
-    bool isDeadlinedTask(std::vector<std::string>);
-    bool isTimedTask(std::vector<std::string>);
+    bool isDeadlinedTask();
+    bool isTimedTask();
     //do we need a isFloatingTask?
     //
     bool isValidDate(std::string);
@@ -53,9 +60,9 @@ public:
     int dayOfWeek(std::string); 
 
     //use after command is extracted
-    std::vector<int> parseTaskPositionNo(std::vector<std::string>);
-    std::string parseSearchKey(std::vector<std::string>);
-    std::string parseDirectory(std::vector<std::string>);
+    std::vector<int> parseTaskPositionNo();
+    std::string parseSearchKey();
+    std::string parseDirectory();
 
 
   //! From delimited date string where with order day-month-year eg: 25-1-2002 or 25-Jan-2003 (full month name is also accepted)

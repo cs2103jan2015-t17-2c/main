@@ -8,6 +8,16 @@
 #include "TMTask.h"
 #include "TMParser.h"
 
+	TMTaskList* TMTaskList::theOne;
+	TMTaskList* TMTaskList::getInstance() {
+		if (theOne == NULL) {
+			theOne = new TMTaskList();
+		}
+		return theOne;
+	}
+
+	TMTaskList::TMTaskList() {}
+
 	bool TMTaskList::areEquivalent(TMTask task1, TMTask task2) {
 		if (task1.getTaskDescription() != task2.getTaskDescription()) {
 			return false;

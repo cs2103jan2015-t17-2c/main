@@ -1,81 +1,58 @@
-#include <vector>
+//CONTAINS MAIN FUNCTION NOW. UI TO HAVE A DIFFERENT CLASS
+
 #include <iostream>
 #include <string>
-#include "TMExecutor.h"
-#include <boost\date_time.hpp>
+#include <cstdlib>
+#include <vector>
+#include <Windows.h>
 
-void TMExecutor::sortCommandToFunctions(std::string command, std::vector<TMTask> tasks, TMTaskList &tasklist) {
-	if (command == "add" || command == "blockmultiple") {
-		addTasks(tasks, tasklist);
-	}
+#include "TMUserInterface.h"
+#include "TMParser.h"
+#include "TMTaskList.h"
+#include "TMCommandCreator.h"
+#include "TMCommand.h"
 
-	if (command == "delete") {
-		TMTask task = tasks.front();
-		deleteOneTask(task, tasklist);
-	}
 
-	if (command == "confirmed") {
-		freeUnconfirmed(tasks, tasklist);
-	}
+/*void saveUponExit () {
+	taskList.writeToFile();
+}*/
 
-}
-
-void TMExecutor::addTasks(std::vector<TMTask> tasks, TMTaskList &tasklist) {
-	std::vector<TMTask>::iterator iter;
-	for (iter = tasks.begin(); iter != tasks.end(); ++iter) {
-		tasklist.addTask(*iter);
-	}
 	
-	tasks.clear();
-	std::cout << "Current schedule: " << std::endl;
-	tasklist.displayAllTasks();
-	 
-}
-
-void TMExecutor::updateOneTask(TMTask task, std::string component, std::string changeTo, TMTaskList &tasklist) {
-	tasklist.updateTask(tasklist.getPositionIndexFromTask(task), component, changeTo);
-}
-
-void TMExecutor::deleteOneTask(TMTask task, TMTaskList &tasklist) {
-	tasklist.removeTask(tasklist.getPositionIndexFromTask(task));
-}
-
-void TMExecutor::markTodaysTasksAsDone(TMTaskList tasklist) {
-	/*tasklist.archiveTodaysTasks();*/
-}
-
-void TMExecutor::searchKeyword(std::string keyword, TMTaskList &tasklist) {
-	/*std::vector<int> searchResults;
-	searchResults = tasklist.keywordSearch(keyword);
-
-	std::vector<int>::iterator resultsIter;
-	for (resultsIter = searchResults.begin(); resultsIter != searchResults.end(); ++resultsIter) {
-		TMTask result = tasklist.getTaskFromPositionIndex(*resultsIter);
-		std::cout << *resultsIter << ". " << result.getTaskDescription() << std::endl;
-	}*/
-}
+int main() {
 	
-void TMExecutor::searchFreeTime(TMTaskList tasklist) {
-	/*std::cout << tasklist.freeTimeSearch() << std::endl;*/
-}
+	TMParser *parser = TMParser::getInstance(); 
+	TMUserInterface *ui = TMUserInterface::getInstance();
+	TMTaskList *taskList = TMTaskList::getInstance();
+	TMCommandCreator cmdCreator;
+
+    std::string userEntry;
+	bool isSuccessfullyExecuted = false; 
+
+	//ui->displayDefault();
+    ui->promptForUserInput();
+	userEntry = ui->returnUserInput();
+
+	//taskList.loadFromFile();
 	
-void TMExecutor::freeUnconfirmed(std::vector<TMTask> confirmedTasks, TMTaskList &tasklist) {
-	/*std::vector<TMTask>::iterator tasksIter;
-	for (tasksIter = confirmedTasks.begin(); tasksIter != confirmedTasks.end(); ++tasksIter) {
-			updateOneTask(*tasksIter, "isConfirmed", "true", tasklist);
-		}
-	std::vector<int> searchResults;
-	searchResults = tasklist.keywordSearch(confirmedTasks.front().getTaskDescription());
+	while(userEntry != "quit") {
+        /*if(GetAsyncKeyState('exit')) {
+			break;
+		}*/
+        parser->initialize(userEntry);
+		std::string command = parser->extractCommand();
+		TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(command);
+		commandObjPtr->execute();
 
-	std::vector<int>::iterator resultsIter;
-	for (resultsIter = searchResults.begin(); resultsIter != searchResults.end(); ++resultsIter) {
-		TMTask task = tasklist.getTaskFromPositionIndex(*resultsIter);
-		if ( !(task.isConfirmed()) ) {
-			tasklist.removeTask(*resultsIter);
-		}
-	}*/
+		/*if (isSuccessfullyExecuted) {
+			std::cout << "SUCCESS." << std::endl;
+		}*/
+
+		//ui->displayDefault();
+		ui->promptForUserInput();
+		userEntry = ui->returnUserInput();
+    }
+	
+	/*std::atexit(saveUponExit);*/
+
+	return 0;
 }
-
-void TMExecutor::saveAt(std::string directory) {} //YET TO CODE
-
-void TMExecutor::undoLast() {} //YET TO CODE

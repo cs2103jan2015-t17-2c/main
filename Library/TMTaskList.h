@@ -19,9 +19,15 @@ private:
 	//Contains all the completed timed, deadline and floating tasks
 	std::vector<TMTask> archived;
 
+	static TMTaskList *theOne;
+	
+	//Private constructor
+	TMTaskList();
 
 public:
-	
+
+	static TMTaskList* getInstance();
+
 	//Constructor creates a file storing all tasks of the year at a specified folder.
 	
 	//Getter functions//

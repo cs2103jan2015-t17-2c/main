@@ -47,8 +47,22 @@ const std::string PERIOD_MONTHS = "months";
 const std::string PERIOD_YEAR = "year";
 const std::string PERIOD_YEARS = "years";
 
+TMParser* TMParser::theOne;
+
 TMParser::TMParser() {
     _dateToday = boost::gregorian::day_clock::local_day();
+}
+
+TMParser* TMParser::getInstance() {
+	if (theOne == NULL) {
+		theOne = new TMParser();
+	}
+	return theOne;
+}
+
+void TMParser::initialize(std::string userEntry) {
+	_originalUserInput = userEntry;
+	_tokenizedUserEntry = getTokenizedUserEntry(_originalUserInput);
 }
 
 //Preconditions: string parameter string
@@ -104,10 +118,10 @@ std::vector<std::string> tokenizedUserEntry;
 
 //Preconditions: getTokenizedUserEntry(userEntry) first
 //Postconditions: first token is extracted from vector of string and is no longer is there
-std::string TMParser::extractCommand(std::vector<std::string>& userEntry) {
+std::string TMParser::extractCommand() {
     std::string command;
-    command = userEntry[0];
-    userEntry.erase(userEntry.begin());
+    command = _tokenizedUserEntry[0];
+    _tokenizedUserEntry.erase(_tokenizedUserEntry.begin());
 
     return command;
 }
@@ -136,28 +150,28 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
 
 //Preconditions: taskInfo contains only the entry after command. use extractEntryAfterCommand 1st
 //             : use only when in adding or editing information
-std::vector<TMTask> TMParser::parseTaskInfo(std::vector<std::string> taskInfo) {
+std::vector<TMTask> TMParser::parseTaskInfo() {
     std::vector<TMTask> task;
-    if(isDeadlinedTask(taskInfo)){
+    if(isDeadlinedTask()){
         //std::cout << "IS DEADLINE\n";
-        task.push_back(parseDeadlinedTaskInfo(taskInfo));
-    } else if(isTimedTask(taskInfo)) {
+        task.push_back(parseDeadlinedTaskInfo());
+    } else if(isTimedTask()) {
         //
         //std::cout << "IS TIMED\n";
-        task.push_back(parseTimedTaskInfo(taskInfo));
+        task.push_back(parseTimedTaskInfo());
     } else {
-        task.push_back(parseFloatingTaskInfo(taskInfo));
+        task.push_back(parseFloatingTaskInfo());
     }
     return task;
 }
 
 //Preconditions:task is deadlined task use isDeadlinedTask to check
-TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
+TMTask TMParser::parseDeadlinedTaskInfo() {
     TaskType taskType = TaskType::WithDeadline;
     std::string dateToMeet = "";
     //std::string dayToMeet = "";
     std::string timeToMeet = "";
-    std::vector<std::string> remainingEntry = taskInfo;
+    std::vector<std::string> remainingEntry = _tokenizedUserEntry;
     std::string taskDescription = "";
 
     std::string unitString;
@@ -376,7 +390,7 @@ TMTask TMParser::parseDeadlinedTaskInfo(std::vector<std::string> taskInfo) {
 
 //for now find start time and start date only
 //change to period
-TMTask TMParser::parseTimedTaskInfo(std::vector<std::string> taskInfo){
+TMTask TMParser::parseTimedTaskInfo(){
     TaskType taskType = TaskType::Timed;
     std::string startTime = "";
     //std::string dayToMeet = "";
@@ -384,7 +398,7 @@ TMTask TMParser::parseTimedTaskInfo(std::vector<std::string> taskInfo){
     std::string startDate = "";
     std::string endTime = "";
     std::string endDate = "";
-    std::vector<std::string> remainingEntry = taskInfo;
+    std::vector<std::string> remainingEntry = _tokenizedUserEntry;
     std::string taskDescription = "";
     std::string unitString;
     std::vector<std::string>::iterator iter;
@@ -484,14 +498,14 @@ TMTask TMParser::parseTimedTaskInfo(std::vector<std::string> taskInfo){
     //return task;
 }
 
-TMTask TMParser::parseFloatingTaskInfo(std::vector<std::string> taskInfo) {
+TMTask TMParser::parseFloatingTaskInfo() {
     TaskType taskType = TaskType::Floating;
     TMTaskTime taskTime;
     std::string taskDescription;
 
-    int lengthOfVector = taskInfo.size();
+    int lengthOfVector = _tokenizedUserEntry.size();
     for(int i = 0; i < lengthOfVector; i++){
-        taskDescription += taskInfo[i];
+        taskDescription += _tokenizedUserEntry[i];
         if(i != lengthOfVector - 1){
             taskDescription += " ";
         }
@@ -504,8 +518,8 @@ TMTask TMParser::parseFloatingTaskInfo(std::vector<std::string> taskInfo) {
 
 //need to check if before is the last word of the string. will go out of bound?
 //if before is the last word then it cannot be a deadline
-bool TMParser::isDeadlinedTask(std::vector<std::string> taskInfo) {
-    std::vector<std::string> remainingEntry = taskInfo;
+bool TMParser::isDeadlinedTask() {
+    std::vector<std::string> remainingEntry = _tokenizedUserEntry;
     std::string unitString;
     std::string stringAfterBefore;
     std::vector<std::string>::iterator iter;
@@ -527,8 +541,8 @@ bool TMParser::isDeadlinedTask(std::vector<std::string> taskInfo) {
     return false;
 }
 
-bool TMParser::isTimedTask(std::vector<std::string> taskInfo) {
-    std::vector<std::string> remainingEntry = taskInfo;
+bool TMParser::isTimedTask() {
+    std::vector<std::string> remainingEntry = _tokenizedUserEntry;
     bool isTokenOnFound = false;
     bool isTokenAtFound = false;
     std::string unitString;
@@ -834,23 +848,23 @@ int TMParser::dayOfWeek(std::string day) {
 }
 
 //precondition: command extracted
-std::vector<int> TMParser::parseTaskPositionNo(std::vector<std::string> userEntry) {
+std::vector<int> TMParser::parseTaskPositionNo() {
     int intTaskPositionNo;
     std::vector<int> vectorTaskPositionNo;
-    std::string taskPositionNo = userEntry[0];
+    std::string taskPositionNo = _tokenizedUserEntry[0];
     intTaskPositionNo = std::stoi(taskPositionNo);
     vectorTaskPositionNo.push_back(intTaskPositionNo);
     return vectorTaskPositionNo;
 }
 
 //precondition: command extracted
-std::string TMParser::parseSearchKey(std::vector<std::string> userEntry) {
+std::string TMParser::parseSearchKey() {
     std::string searchKey;
     std::vector<std::string>::iterator iter;
 
-    for(iter = userEntry.begin(); iter < userEntry.end(); iter++){
+    for(iter = _tokenizedUserEntry.begin(); iter < _tokenizedUserEntry.end(); iter++){
         searchKey += *iter;
-        if(iter != userEntry.end()-1){
+        if(iter != _tokenizedUserEntry.end()-1){
             searchKey += " ";
         }
     }
@@ -859,8 +873,8 @@ std::string TMParser::parseSearchKey(std::vector<std::string> userEntry) {
 }
 
 //precondition: extract command
-std::string TMParser::parseDirectory(std::vector<std::string> userEntry) {
-    std::string directory = userEntry[0];
+std::string TMParser::parseDirectory() {
+    std::string directory = _tokenizedUserEntry[0];
     return directory;
 }
 
