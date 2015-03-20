@@ -27,7 +27,9 @@ public:
     //parse relevant info into the respective tasks
     //commmand must be extracted first
     std::vector<TMTask> parseTaskInfo(std::vector<std::string>);
+
     TMTask parseDeadlinedTaskInfo(std::vector<std::string>);
+    std::string extractDateAfterBefore(std::vector<std::string>&,std::vector<std::string>::iterator&);
     TMTask parseTimedTaskInfo(std::vector<std::string>);
     TMTask parseFloatingTaskInfo(std::vector<std::string>);
 
@@ -61,9 +63,7 @@ public:
   //! From delimited date string where with order day-month-year eg: 25-1-2002 or 25-Jan-2003 (full month name is also accepted)
   //inline date from_uk_string(std::string s) {
   //  return date_time::parse_date<date>(s, date_time::ymd_order_dmy);
-  //}
-  //include "boost/date_time/gregorian/parsers.hpp"
-  //date test = boost::gregorian::from_us_string("07-Sep-2010")
+
     std::string returnLowerCase(std::string);
     std::string dateFromUserToBoostFormat(std::string);
     std::string dateFromBoostToStandardFormat(const boost::gregorian::date&);
