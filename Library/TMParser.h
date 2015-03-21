@@ -39,14 +39,15 @@ public:
     TMTask parseTimedTaskInfo();
     TMTask parseFloatingTaskInfo();
 
-    //std::string extractDateAfterBefore(std::vector<std::string>&,std::vector<std::string>::iterator&);
-    
+    std::string extractDayOrDate(std::vector<std::string>&,std::vector<std::string>::iterator&);
+    std::string extractDateAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator&);
+    std::string extractNextDayAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator&);
+    std::string extractDayAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator&);
+    std::string extractTimeAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator&);
 
 
     bool isDeadlinedTask();
     bool isTimedTask();
-    //do we need a isFloatingTask?
-    //
     bool isValidDate(std::string);
     //
     bool isInteger(std::string);
@@ -68,11 +69,6 @@ public:
     std::vector<int> parseTaskPositionNo();
     std::string parseSearchKey();
     std::string parseDirectory();
-
-
-  //! From delimited date string where with order day-month-year eg: 25-1-2002 or 25-Jan-2003 (full month name is also accepted)
-  //inline date from_uk_string(std::string s) {
-  //  return date_time::parse_date<date>(s, date_time::ymd_order_dmy);
 
     std::string returnLowerCase(std::string);
     std::string dateFromUserToBoostFormat(std::string);
