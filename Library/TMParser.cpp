@@ -152,6 +152,7 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
 //             : use only when in adding or editing information
 std::vector<TMTask> TMParser::parseTaskInfo() {
     std::vector<TMTask> task;
+<<<<<<< HEAD
     std::cout << "parseTaskInfo\n";
     if(isDeadlinedTask()){
         std::cout << "IS DEADLINE\n";
@@ -163,6 +164,16 @@ std::vector<TMTask> TMParser::parseTaskInfo() {
     } else {
         //
         std::cout << "floating task\n";
+=======
+    if(isDeadlinedTask()){
+        //std::cout << "IS DEADLINE\n";
+        task.push_back(parseDeadlinedTaskInfo());
+    } else if(isTimedTask()) {
+        //
+        //std::cout << "IS TIMED\n";
+        task.push_back(parseTimedTaskInfo());
+    } else {
+>>>>>>> 11bc8fc3d7bda6f946ec316539989eb6aa46df26
         task.push_back(parseFloatingTaskInfo());
     }
     return task;
@@ -462,7 +473,11 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
 
 //for now find start time and start date only
 //change to period
+<<<<<<< HEAD
 TMTask TMParser::parseTimedTaskInfo() {
+=======
+TMTask TMParser::parseTimedTaskInfo(){
+>>>>>>> 11bc8fc3d7bda6f946ec316539989eb6aa46df26
     TaskType taskType = TaskType::Timed;
     std::string startTime = "";
     //std::string dayToMeet = "";
@@ -1594,23 +1609,23 @@ int TMParser::dayOfWeek(std::string day) {
 }
 
 //precondition: command extracted
-std::vector<int> TMParser::parseTaskPositionNo(std::vector<std::string> userEntry) {
+std::vector<int> TMParser::parseTaskPositionNo() {
     int intTaskPositionNo;
     std::vector<int> vectorTaskPositionNo;
-    std::string taskPositionNo = userEntry[0];
+    std::string taskPositionNo = _tokenizedUserEntry[0];
     intTaskPositionNo = std::stoi(taskPositionNo);
     vectorTaskPositionNo.push_back(intTaskPositionNo);
     return vectorTaskPositionNo;
 }
 
 //precondition: command extracted
-std::string TMParser::parseSearchKey(std::vector<std::string> userEntry) {
+std::string TMParser::parseSearchKey() {
     std::string searchKey;
     std::vector<std::string>::iterator iter;
 
-    for(iter = userEntry.begin(); iter < userEntry.end(); iter++){
+    for(iter = _tokenizedUserEntry.begin(); iter < _tokenizedUserEntry.end(); iter++){
         searchKey += *iter;
-        if(iter != userEntry.end()-1){
+        if(iter != _tokenizedUserEntry.end()-1){
             searchKey += " ";
         }
     }
@@ -1619,8 +1634,8 @@ std::string TMParser::parseSearchKey(std::vector<std::string> userEntry) {
 }
 
 //precondition: extract command
-std::string TMParser::parseDirectory(std::vector<std::string> userEntry) {
-    std::string directory = userEntry[0];
+std::string TMParser::parseDirectory() {
+    std::string directory = _tokenizedUserEntry[0];
     return directory;
 }
 

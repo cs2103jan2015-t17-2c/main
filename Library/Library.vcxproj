@@ -65,15 +65,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="TMAddTasks.h" />
+    <ClInclude Include="TMCommand.h" />
+    <ClInclude Include="TMCommandCreator.h" />
+    <ClInclude Include="TMDeleteTasks.h" />
+    <ClInclude Include="TMDoneAllToday.h" />
+    <ClInclude Include="TMConfirmTasks.h" />
+    <ClInclude Include="TMSaveAt.h" />
+    <ClInclude Include="TMUserInterface.h" />
+    <ClInclude Include="TMViewFreeTime.h" />
+    <ClInclude Include="TMSearchKeyword.h" />
     <ClInclude Include="TMTask.h" />
     <ClInclude Include="TMParser.h" />
     <ClInclude Include="TMTaskTime.h" />
-    <ClInclude Include="TMExecutor.h" />
     <ClInclude Include="TMTaskList.h" />
     <ClInclude Include="TMTimeParser.h" />
+    <ClInclude Include="TMUpdateTask.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TimeMaster.cpp" />
+    <ClCompile Include="TMUserInterface.cpp" />
     <ClCompile Include="TMParser.cpp" />
     <ClCompile Include="TMTask.cpp" />
     <ClCompile Include="TMTaskTime.cpp" />
