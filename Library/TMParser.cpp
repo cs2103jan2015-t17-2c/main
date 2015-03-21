@@ -453,7 +453,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
     //
     //std::cout << "final dateTM: " << dateToMeet << std::endl;
     if(isValidDate(dateToMeet)){
-        TMTaskTime taskTime(dateToMeet,timeToMeet,"","");
+        TMTaskTime taskTime("","",dateToMeet,timeToMeet);
         TMTask task(taskDescription,taskTime,taskType);
         return task;
     } else {
@@ -1630,9 +1630,11 @@ int TMParser::dayOfWeek(std::string day) {
 std::vector<int> TMParser::parseTaskPositionNo() {
     int intTaskPositionNo;
     std::vector<int> vectorTaskPositionNo;
-    std::string taskPositionNo = _tokenizedUserEntry[0];
-    intTaskPositionNo = std::stoi(taskPositionNo);
-    vectorTaskPositionNo.push_back(intTaskPositionNo);
+    for(int i = 0; i < _tokenizedUserEntry.size(); i++) {
+        std::string taskPositionNo = _tokenizedUserEntry[i];
+        intTaskPositionNo = std::stoi(taskPositionNo);
+        vectorTaskPositionNo.push_back(intTaskPositionNo);
+    }
     return vectorTaskPositionNo;
 }
 
