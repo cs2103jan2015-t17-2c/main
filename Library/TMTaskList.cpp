@@ -135,7 +135,7 @@
 	void TMTaskList::addTask (TMTask task) {
 	
 		if (task.getTaskType() == TaskType::Timed  || task.getTaskType() == TaskType::WithDeadline) {
-			if (hasClash(task)) {
+			/*if (hasClash(task)) {
 				std::vector<TMTask> clashesWith;
 				clashesWith = findClashes(task);
 				std::cout << "Clashes in timing of the following tasks:" << std::endl;
@@ -155,7 +155,7 @@
 				if (usersReply == "n" || usersReply == "N") {
 					return;
 				}
-			}
+			}*/
 			timedAndDeadline.push_back(task);
 			std::cout << "TIMED TASK ADDED!" << std::endl;
 			//chronoSort();
