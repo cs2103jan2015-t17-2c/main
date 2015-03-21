@@ -9,14 +9,15 @@
 #include "TMParser.h"
 
 	TMTaskList* TMTaskList::theOne;
+	
+	TMTaskList::TMTaskList() {}
+	
 	TMTaskList* TMTaskList::getInstance() {
 		if (theOne == NULL) {
 			theOne = new TMTaskList();
 		}
 		return theOne;
 	}
-
-	TMTaskList::TMTaskList() {}
 
 	bool TMTaskList::areEquivalent(TMTask task1, TMTask task2) {
 		if (task1.getTaskDescription() != task2.getTaskDescription()) {
@@ -193,7 +194,7 @@
 			}
 			
 		} else if (positionIndex <= timedAndDeadline.size() + floating.size()) {
-			TMTask task = floating[positionIndex-floating.size()-1];
+			TMTask &task = floating[positionIndex-timedAndDeadline.size()-1];
 			if (componentOfTask == "desc") {
 				task.setTaskDescription(changeTo);
 			}
@@ -391,3 +392,6 @@
 		}
 		readFromFile.close();*/
 	} 
+
+	void TMTaskList::saveFileAt(std::string directory) {
+	}

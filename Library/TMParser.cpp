@@ -126,6 +126,10 @@ std::string TMParser::extractCommand() {
     return command;
 }
 
+std::vector<std::string> TMParser::returnTokens() {
+	return _tokenizedUserEntry;
+}
+
 TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
     if(command == CMD_ADD) {
         return CommandTypes::Add;

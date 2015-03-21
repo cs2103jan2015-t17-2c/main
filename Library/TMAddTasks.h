@@ -1,8 +1,8 @@
 #ifndef TMADDTASKS_H
 #define TMADDTASKS_H
 
-#include "TMTask.h";
-#include "TMCommand.h";
+#include "TMTask.h"
+#include "TMCommand.h"
 #include "TMTaskList.h"
 #include "TMParser.h"
 

@@ -47,6 +47,7 @@ int main() {
 			std::cout << "SUCCESS." << std::endl;
 		}*/
 
+		taskList->displayAllTasks();
 		//ui->displayDefault();
 		ui->promptForUserInput();
 		userEntry = ui->returnUserInput();

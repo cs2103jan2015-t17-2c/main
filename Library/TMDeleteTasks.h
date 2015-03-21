@@ -3,6 +3,7 @@
 
 #include "TMCommand.h"
 #include "TMTaskList.h"
+#include "TMParser.h"
 
 class TMDeleteTasks : public TMCommand {
 
@@ -10,11 +11,13 @@ public:
 	TMDeleteTasks() {}
 
 	void execute() {
-		/*std::vector<int>::iterator iter;
-		for (iter = positionIndexes.begin(); iter != positionIndexes.end(); ++iter) {
-			taskList.removeTask(*iter);
+		TMParser *parser = TMParser::getInstance(); 
+		TMTaskList *taskList = TMTaskList::getInstance();
+		std::vector<int> deleteIndexes = parser->parseTaskPositionNo();
+		std::vector<int>::iterator iter;
+		for (iter = deleteIndexes.begin(); iter != deleteIndexes.end(); ++iter) {
+			taskList->removeTask(*iter);
 		}
-		positionIndexes.clear();*/
 		std::cout << "DELETE TASKS CALLED." << std::endl;
 	}
 

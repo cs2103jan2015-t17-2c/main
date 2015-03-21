@@ -68,6 +68,7 @@
     <ClInclude Include="TMAddTasks.h" />
     <ClInclude Include="TMCommand.h" />
     <ClInclude Include="TMCommandCreator.h" />
+    <ClInclude Include="TMCompleteTasks.h" />
     <ClInclude Include="TMDeleteTasks.h" />
     <ClInclude Include="TMDoneAllToday.h" />
     <ClInclude Include="TMConfirmTasks.h" />
@@ -80,7 +81,7 @@
     <ClInclude Include="TMTaskTime.h" />
     <ClInclude Include="TMTaskList.h" />
     <ClInclude Include="TMTimeParser.h" />
-    <ClInclude Include="TMUpdateTask.h" />
+    <ClInclude Include="TMEditTask.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TMUserInterface.cpp" />

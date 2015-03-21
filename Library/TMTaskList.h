@@ -90,6 +90,7 @@ public:
 	//Save functions//
 	void writeToFile();
 	void loadFromFile();
+	void saveFileAt(std::string directory);
 };
 
 #endif

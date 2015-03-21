@@ -72,9 +72,6 @@
     <ClInclude Include="TMDeleteTasks.h">
       <Filter>Header Files\TMCommand</Filter>
     </ClInclude>
-    <ClInclude Include="TMUpdateTask.h">
-      <Filter>Header Files\TMCommand</Filter>
-    </ClInclude>
     <ClInclude Include="TMDoneAllToday.h">
       <Filter>Header Files\TMCommand</Filter>
     </ClInclude>
@@ -95,6 +92,12 @@
     </ClInclude>
     <ClInclude Include="TMUserInterface.h">
       <Filter>Header Files\TMUserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="TMEditTask.h">
+      <Filter>Header Files\TMCommand</Filter>
+    </ClInclude>
+    <ClInclude Include="TMCompleteTasks.h">
+      <Filter>Header Files\TMCommand</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

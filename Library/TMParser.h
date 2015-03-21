@@ -28,6 +28,7 @@ public:
 
     std::vector<std::string> getTokenizedUserEntry(std::string);
     std::string extractCommand();
+	std::vector<std::string> returnTokens();
 
     CommandTypes determineCommandType(std::string);
     
