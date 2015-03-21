@@ -16,16 +16,9 @@ private:
 	std::vector<std::string> _tokenizedUserEntry;
 	static TMParser* theOne;
 	TMParser();
-<<<<<<< HEAD
-public:
-    static TMParser* getInstance();
-    
-	void TMParser::initialize(std::string userEntry);
-=======
 
 public:
     static TMParser* getInstance();
->>>>>>> 11bc8fc3d7bda6f946ec316539989eb6aa46df26
     
 	void TMParser::initialize(std::string userEntry);
 
@@ -40,20 +33,14 @@ public:
     
     //parse relevant info into the respective tasks
     //commmand must be extracted first
-<<<<<<< HEAD
-    std::vector<TMTask> parseTaskInfo(std::vector<std::string>);
-
-=======
->>>>>>> 11bc8fc3d7bda6f946ec316539989eb6aa46df26
     std::vector<TMTask> parseTaskInfo();
     TMTask parseDeadlinedTaskInfo();
     TMTask parseTimedTaskInfo();
     TMTask parseFloatingTaskInfo();
-<<<<<<< HEAD
+
     //std::string extractDateAfterBefore(std::vector<std::string>&,std::vector<std::string>::iterator&);
     
-=======
->>>>>>> 11bc8fc3d7bda6f946ec316539989eb6aa46df26
+
 
     bool isDeadlinedTask();
     bool isTimedTask();
@@ -77,11 +64,7 @@ public:
     int dayOfWeek(std::string); 
 
     //use after command is extracted
-<<<<<<< HEAD
-	std::vector<int> parseTaskPositionNo();
-=======
     std::vector<int> parseTaskPositionNo();
->>>>>>> 11bc8fc3d7bda6f946ec316539989eb6aa46df26
     std::string parseSearchKey();
     std::string parseDirectory();
 

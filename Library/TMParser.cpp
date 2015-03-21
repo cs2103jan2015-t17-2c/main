@@ -152,7 +152,6 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
 //             : use only when in adding or editing information
 std::vector<TMTask> TMParser::parseTaskInfo() {
     std::vector<TMTask> task;
-<<<<<<< HEAD
     std::cout << "parseTaskInfo\n";
     if(isDeadlinedTask()){
         std::cout << "IS DEADLINE\n";
@@ -164,16 +163,6 @@ std::vector<TMTask> TMParser::parseTaskInfo() {
     } else {
         //
         std::cout << "floating task\n";
-=======
-    if(isDeadlinedTask()){
-        //std::cout << "IS DEADLINE\n";
-        task.push_back(parseDeadlinedTaskInfo());
-    } else if(isTimedTask()) {
-        //
-        //std::cout << "IS TIMED\n";
-        task.push_back(parseTimedTaskInfo());
-    } else {
->>>>>>> 11bc8fc3d7bda6f946ec316539989eb6aa46df26
         task.push_back(parseFloatingTaskInfo());
     }
     return task;
@@ -473,11 +462,8 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
 
 //for now find start time and start date only
 //change to period
-<<<<<<< HEAD
-TMTask TMParser::parseTimedTaskInfo() {
-=======
+
 TMTask TMParser::parseTimedTaskInfo(){
->>>>>>> 11bc8fc3d7bda6f946ec316539989eb6aa46df26
     TaskType taskType = TaskType::Timed;
     std::string startTime = "";
     //std::string dayToMeet = "";
