@@ -1528,7 +1528,7 @@ bool TMParser::is24HTime(std::string timeToken) {
         } else {
             return false;
         }
-    } else if (lengthOfTimeToken = 4) {
+    } else if (lengthOfTimeToken == 4) {
         if(isInteger(timeToken)) {
             int hour = std::stoi(timeToken.substr(0,2));
             if(hour >= 0 && hour <= 23) {
@@ -1544,7 +1544,7 @@ bool TMParser::is24HTime(std::string timeToken) {
         } else {
             return false;
         }
-    } else if(lengthOfTimeToken = 5) {
+    } else if(lengthOfTimeToken == 5) {
         if(timeToken[2] == ':') {
             if(isInteger(timeToken.substr(0,2)) && isInteger(timeToken.substr(3,2))) {
                 int hour = std::stoi(timeToken.substr(0,2));
