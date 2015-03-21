@@ -1257,6 +1257,7 @@ bool TMParser::isTimedTask() {
     bool isTokenOnFound = false;
     bool isTokenAtFound = false;
     bool isTokenFromFound = false;
+    bool isTokenToFound = false;
     std::string unitString;
     std::string stringAfterToken;
     std::vector<std::string>::iterator iter;
@@ -1334,12 +1335,39 @@ bool TMParser::isTimedTask() {
                 //cannot find a startTime or startDate. from is treated as task desc
             }
         }
+
+        if(unitString == TOKEN_TO) {
+            std::string stringAfterTo = *(iter + 1);
+            stringAfterTo = returnLowerCase(stringAfterTo);
+
+            if(isDate(stringAfterTo)||isDay(stringAfterTo)) {
+                //check for time after date
+                isTokenToFound = true;
+            } else if(is12HTime(stringAfterTo)||is24HTime(stringAfterTo)){
+                isTokenToFound = true;
+            } else if(isWordNext(stringAfterTo)) {
+                //check for day after next, then check for time
+                if(iter + 2 != remainingEntry.end()) {
+                    std::string stringAfterNext = *(iter + 2);
+                    stringAfterNext = returnLowerCase(stringAfterNext);
+                    if(isDay(stringAfterNext)) {
+                        isTokenToFound = true;
+                    } else {
+                        //found from next .. task descr. continue
+                    }
+                } else {
+                    //found from next. treat as task description. continue
+                }
+            } else {
+                //cannot find a startTime or startDate. from is treated as task desc
+            }
+        }
         
     }
     //
     //std::cout << "Reached the end of...\n";
 
-    if(isTokenOnFound||isTokenAtFound||isTokenFromFound){
+    if(isTokenOnFound||isTokenAtFound||isTokenFromFound||isTokenToFound){
         return true;
     } else {
         return false;
