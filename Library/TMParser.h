@@ -39,11 +39,12 @@ public:
     TMTask parseTimedTaskInfo();
     TMTask parseFloatingTaskInfo();
 
-    std::string extractDayOrDate(std::vector<std::string>&,std::vector<std::string>::iterator&);
-    std::string extractDateAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator&);
-    std::string extractNextDayAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator&);
-    std::string extractDayAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator&);
-    std::string extractTimeAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator&);
+    std::string extractDayOrDate(std::vector<std::string>&,std::vector<std::string>::iterator);
+    std::string extractDateAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator);
+    std::string extractNextDayAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator);
+    std::string extractDayAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator);
+    std::string extractTimeAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator);
+    void extractDateAndOrTime(std::vector<std::string>&,std::vector<std::string>::iterator,std::string&,std::string&);
 
 
     bool isDeadlinedTask();
@@ -57,7 +58,7 @@ public:
     bool isDay(std::string);
     bool is12HTime(std::string);
     bool is24HTime(std::string);
-    bool isWordNext(std::string);
+    bool isNextDay(const std::vector<std::string>&, std::vector<std::string>::iterator);
     bool isAM(std::string);
     bool isPM(std::string);
 
@@ -80,6 +81,7 @@ public:
     std::string getCurrentTime();
     std::string substractNDaysFromDate(std::string,int);
     std::string addNDaysFromDate(std::string,int);
+    std::string getDateFromNextDay(std::vector<std::string>&,std::vector<std::string>::iterator);
 
 };
 #endif
