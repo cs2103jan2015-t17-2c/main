@@ -9,6 +9,10 @@
 #include <vector>
 #include <ctype.h>
 
+//user input date must be ddmmyyyy
+//time input if in 12hour format must be followed immediately by pm and am
+//else in 24 hours format hhmm
+
 class TMParser {
 private:
     boost::gregorian::date _dateToday;
@@ -60,6 +64,7 @@ public:
     bool is12HTime(std::string);
     bool is24HTime(std::string);
     bool isNextDay(const std::vector<std::string>&, std::vector<std::string>::iterator);
+    bool isNext(std::string);
     bool isAM(std::string);
     bool isPM(std::string);
 

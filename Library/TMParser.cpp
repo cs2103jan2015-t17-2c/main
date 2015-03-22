@@ -181,7 +181,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
     std::string taskDescription = "";
 
     std::string unitString;
-    std::string stringAfterBefore;
+    std::string nextWord;
     std::vector<std::string>::iterator iter;
 
     bool iterMinusOne = false;
@@ -193,231 +193,56 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
         }
 
         unitString = returnLowerCase(*iter);
-        //
-        //std::cout << unitString << std::endl;
+
         if(unitString == TOKEN_BEFORE){
-            stringAfterBefore = *(iter+1);
-            stringAfterBefore = returnLowerCase(stringAfterBefore);
 
-            //
-            //std::cout << "Before\n";
-            if(isDate(stringAfterBefore)) {//before date DDMMYYYY
-                dateToMeet = stringAfterBefore;
-                dateToMeet = dateFromUserToBoostFormat(dateToMeet);
-                dateToMeet = substractNDaysFromDate(dateToMeet,1);
-                iter = remainingEntry.erase(iter,iter+2);
-                timeToMeet = "2359";
-                if(iter == remainingEntry.end()){
-                    break;
-                } else if (iter == remainingEntry.begin()){
-                    iterMinusOne = true;
-                } else {
-                    iter--;
-                }
-                //convert to one day earlier at 2359 DONE
-            } else if (isDay(stringAfterBefore)) {//before monday
-                //returns user the earliest x-day from today
-                stringAfterBefore = returnLowerCase(stringAfterBefore);
-                int dayInInteger = dayOfWeek(stringAfterBefore);
-                boost::gregorian::first_day_of_the_week_after fdaf(dayInInteger);
-                boost::gregorian::date dateInBoost = fdaf.get_date(_dateToday);
-                dateToMeet = dateFromBoostToDelimitedDDMMYYYY(dateInBoost);
-                dateToMeet = substractNDaysFromDate(dateToMeet,1);
-                timeToMeet = "2359";
-                //convert to one day earlier at 2359 DONE
-                iter = remainingEntry.erase(iter,iter+2);
-                if(iter == remainingEntry.end()){
-                    break;
-                } else if (iter == remainingEntry.begin()){
-                    iterMinusOne = true;
-                } else {
-                    iter--;
-                }
-            } else if (isNextDay(remainingEntry,iter)) {//before next monday
-                if(iter+2 != remainingEntry.end()){
-                    std::string stringAfterNext = *(iter+2);
-                    stringAfterNext = returnLowerCase(stringAfterNext);
-                    //
-                    std::cout << stringAfterNext << std::endl;
-                    if(isDay(stringAfterNext)) {
-                        std::string stringDay = stringAfterNext;
-                        boost::gregorian::date_duration oneWeek(7);
-                        boost::gregorian::date oneWeekFromToday = _dateToday + oneWeek;
-                        boost::gregorian::greg_weekday day(dayOfWeek(stringDay));
-                        boost::gregorian::date dateTM = boost::gregorian::next_weekday(oneWeekFromToday, day);
-                        std::string tempDate = boost::gregorian::to_iso_string(dateTM);
-                        dateToMeet = tempDate.substr(6,2)
-                                    + tempDate.substr(4,2)
-                                    + tempDate.substr(0,4);
-                        dateToMeet = dateFromUserToBoostFormat(dateToMeet);
-                        dateToMeet = substractNDaysFromDate(dateToMeet,1);
-                        timeToMeet = "2359";
-                        iter = remainingEntry.erase(iter,iter+3);
-                        if(iter == remainingEntry.end()){
-                            break;
-                        } else if (iter == remainingEntry.begin()){
-                            iterMinusOne = true;
-                        } else {
-                            iter--;
-                        }
-                    } else {
-                        //before next (day missing)
-                        //treat as task description
-                    }
-                } else {
-                    //treats as task description
-                }
-            } else if (is12HTime(stringAfterBefore)||is24HTime(stringAfterBefore)) {
-                //before time
-                //std::cout << "IS TIME\n";
-                timeToMeet = timeTo24HFormat(stringAfterBefore);
-                //check for word on
-                //if exists, check date, next x-day, x-day
-                //assume (before time) (on day) must check (on day) separately
-                //else today if time hasn't passed. how to check that?
-                if(iter+2 != remainingEntry.end()){
-                    std::string stringAfterTime = *(iter+2);
-                    //
-                    //std::cout << stringAfterTime << std::endl;
-                    stringAfterTime = returnLowerCase(stringAfterTime);
-                    if(stringAfterTime == TOKEN_ON){//before time on date/day
-                        if(iter+3 != remainingEntry.end()){
-                            std::string stringAfterOn = *(iter+3);
-                            stringAfterOn = returnLowerCase(stringAfterOn);
-                            if(isDate(stringAfterOn)){
-                                dateToMeet = stringAfterOn;
-                                iter = remainingEntry.erase(iter,iter+4);
-                                if(iter == remainingEntry.end()){
-                                    break;
-                                } else if (iter == remainingEntry.begin()){
-                                    iterMinusOne = true;
-                                } else {
-                                    iter--;
-                                }
-                            } else if(isDay(stringAfterOn)){
-                                //returns user the earliest x-day from today
-                                stringAfterOn = returnLowerCase(stringAfterOn);
-                                int dayInInteger = dayOfWeek(stringAfterOn);
-                                boost::gregorian::first_day_of_the_week_after fdaf(dayInInteger);
-                                boost::gregorian::date dateInBoost = fdaf.get_date(_dateToday);
-                                dateToMeet = dateFromBoostToDDMMYYYY(dateInBoost);
-                                iter = remainingEntry.erase(iter,iter+4);
-                                if(iter == remainingEntry.end()){
-                                    break;
-                                } else if (iter == remainingEntry.begin()){
-                                    iterMinusOne = true;
-                                } else {
-                                    iter--;
-                                }
-                            } else {
-                                //found before time but no day
-                                //check if current time more than found time
-                                //if so tomorrow otherwise today
-                                std::string currentTime = getCurrentTime();
-                                if(timeToMeet >= currentTime){
-                                    boost::gregorian::date currentDate = _dateToday;
-                                    dateToMeet = dateFromBoostToDDMMYYYY(currentDate);
-                                } else {
-                                    boost::gregorian::date currentDate = _dateToday;
-                                    dateToMeet = dateFromBoostToDelimitedDDMMYYYY(currentDate);
-                                    dateToMeet = addNDaysFromDate(dateToMeet,1);
-                                }
-                                iter = remainingEntry.erase(iter,iter+2);
-                                if(iter == remainingEntry.end()){
-                                    break;
-                                } else if (iter == remainingEntry.begin()){
-                                    iterMinusOne = true;
-                                } else {
-                                    iter--;
-                                }
-                            }
-                        }
-                    } else if(isNextDay(remainingEntry,iter)){
-                        if(iter+3 != remainingEntry.end()){
-                        std::string stringAfterNext = *(iter+3);
-                        stringAfterNext = returnLowerCase(stringAfterNext);
-                            if(isDay(stringAfterNext)){
-                                std::string stringDay = returnLowerCase(stringAfterNext);
-                                boost::gregorian::date_duration oneWeek(7);
-                                boost::gregorian::date oneWeekFromToday = _dateToday + oneWeek;
-                                boost::gregorian::greg_weekday day(dayOfWeek(stringDay));
-                                boost::gregorian::date dateTM = boost::gregorian::next_weekday(oneWeekFromToday, day);
-                                std::string tempDate = boost::gregorian::to_iso_string(dateTM);
-                                dateToMeet = tempDate.substr(6,2)
-                                            + "-"
-                                            + tempDate.substr(4,2)
-                                            + "-"
-                                            + tempDate.substr(0,4);
-                                iter = remainingEntry.erase(iter,iter+4);
-                                if(iter == remainingEntry.end()){
-                                    break;
-                                } else if (iter == remainingEntry.begin()){
-                                    iterMinusOne = true;
-                                } else {
-                                    iter--;
-                                }
-                            } else {
-                                    //
-                                    //
-                            }
-                        } else {
-                                //
-                                //
-                        }
-                    } else {
-                        //dateToMeet = today if time hasn't passed otherwise tomorrow
-                        std::string currentTime = getCurrentTime();
-                        //
-                        //std::cout << currentTime << std::endl;
-                        if(timeToMeet >= currentTime){
-                            boost::gregorian::date currentDate = _dateToday;
-                            dateToMeet = dateFromBoostToDDMMYYYY(currentDate);
-                        } else {
-                            boost::gregorian::date currentDate = _dateToday;
-                            dateToMeet = dateFromBoostToDelimitedDDMMYYYY(currentDate);
-                            dateToMeet = addNDaysFromDate(dateToMeet,1);
-                        }
+            if(iter + 1 != remainingEntry.end()){
+                nextWord = returnLowerCase(*(iter+1));
 
-                        iter = remainingEntry.erase(iter,iter+2);
-
-                        if(iter == remainingEntry.end()){
-                            break;
-                        } else if (iter == remainingEntry.begin()){
-                            iterMinusOne = true;
-                        } else {
-                            iter--;
-                        }
-                    }
-                } else {
-                    //dateToMeet = today if time hasn't passed otherwise tomorrow
-                    std::string currentTime = getCurrentTime();
-                    //
-                    //std::cout << currentTime << std::endl;
-                    //std::cout << timeToMeet << std::endl;
-                    if(timeToMeet >= currentTime){
-                        boost::gregorian::date currentDate = _dateToday;
-                        dateToMeet = dateFromBoostToDDMMYYYY(currentDate);
-                        //
-                        //std::cout << dateToMeet << std::endl;
+                if(isDate(nextWord)||isDay(nextWord)) {//before date DDMMYYYY
+                    dateToMeet = extractDayOrDate(remainingEntry,iter);
+                    dateToMeet = dateFromUserToBoostFormat(dateToMeet);
+                    dateToMeet = substractNDaysFromDate(dateToMeet,1);
+                    iter = remainingEntry.erase(iter);
+                    timeToMeet = "2359";
+                    if(iter == remainingEntry.end()){
+                        break;
+                    } else if (iter == remainingEntry.begin()){
+                        iterMinusOne = true;
                     } else {
-                        boost::gregorian::date currentDate = _dateToday;
-                        dateToMeet = dateFromBoostToDelimitedDDMMYYYY(currentDate);
-                        dateToMeet = addNDaysFromDate(dateToMeet,1);
+                        iter--;
                     }
-                    //
-                    iter = remainingEntry.erase(iter,iter+2);
-                    //
-                    /*
-                    if(iter != remainingEntry.end()){
-                        std::cout << *iter << std::endl;
+                } else if (isNextDay(remainingEntry,iter)) {//before next monday
+                    dateToMeet = extractNextDayAfterToken(remainingEntry,iter);
+                    dateToMeet = dateFromUserToBoostFormat(dateToMeet);
+                    dateToMeet = substractNDaysFromDate(dateToMeet,1);
+                    timeToMeet = "2359";
+                    iter = remainingEntry.erase(iter);
+                    if(iter == remainingEntry.end()){
+                        break;
+                    } else if (iter == remainingEntry.begin()){
+                        iterMinusOne = true;
                     } else {
-                        std::cout << "end of string\n";
+                        iter--;
                     }
+                } else if (is12HTime(nextWord)||is24HTime(nextWord)) {
+                    timeToMeet = extractTimeAfterToken(remainingEntry,iter);
+                    iter = remainingEntry.erase(iter);
+                    if(iter == remainingEntry.end()){
+                        break;
+                    } else if (iter == remainingEntry.begin()){
+                        iterMinusOne = true;
+                    } else {
+                        iter--;
+                    }
+                } 
+            }
+        } else if(unitString == TOKEN_ON) {
+            if(iter + 1 != remainingEntry.end()){
+                dateToMeet = extractDayOrDate(remainingEntry,iter);
 
-                    for (std::vector<std::string>::iterator it = remainingEntry.begin() ; it != remainingEntry.end(); ++it){
-                        std::cout << ' ' << *it;
-                    }
-                    */
+                if(dateToMeet != "") {//before date DDMMYYYY
+                    iter = remainingEntry.erase(iter);
                     if(iter == remainingEntry.end()){
                         break;
                     } else if (iter == remainingEntry.begin()){
@@ -426,12 +251,29 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                         iter--;
                     }
                 }
-            } else {
-                //cannot find anything after word before
-                //continue;
             }
-        } else {
-            //word in main loop is not before. continue searching
+        } else if(isNext(unitString)){
+            if(iter + 1 != remainingEntry.end()){
+                nextWord = returnLowerCase(*(iter + 1));
+                if(isDay(nextWord)){
+                    std::string stringDay = nextWord;
+
+                    boost::gregorian::greg_weekday day(dayOfWeek(stringDay));
+                    boost::gregorian::first_day_of_the_week_after fdaf(day);
+                    boost::gregorian::date dateTM = fdaf.get_date(_dateToday);
+                    std::string tempDate = boost::gregorian::to_iso_string(dateTM);
+
+                    dateToMeet = tempDate.substr(6,2) + tempDate.substr(4,2) + tempDate.substr(0,4);
+                    iter = remainingEntry.erase(iter,iter + 2);
+                    if(iter == remainingEntry.end()){
+                        break;
+                    } else if (iter == remainingEntry.begin()){
+                        iterMinusOne = true;
+                    } else {
+                        iter--;
+                    }
+                }
+            }
         }
     }
 
@@ -447,7 +289,15 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
     }
 
     //
-    
+    if(dateToMeet == ""){
+        std::string currentTime = getCurrentTime();
+        if(timeToMeet >= currentTime){
+            dateToMeet = dateFromBoostToDDMMYYYY(_dateToday);
+        } else {
+            dateToMeet = dateFromBoostToDelimitedDDMMYYYY(_dateToday);
+            dateToMeet = addNDaysFromDate(dateToMeet,1);
+        }
+    }
     //DDMMYYYY to DD MM YYYY
     dateToMeet = dateToMeet.substr(0,2) + " " + dateToMeet.substr(2,2) + " " + dateToMeet.substr(4,4);
     //
@@ -1167,6 +1017,10 @@ bool TMParser::isNextDay(const std::vector<std::string>& remainingEntry,std::vec
     }
 }
 
+bool TMParser::isNext(std::string token){
+    return token == TOKEN_NEXT;
+}
+
 bool TMParser::isAM(std::string token){
     std::string lastTwoCharacters = token.substr(token.length()-2,2);
     lastTwoCharacters = returnLowerCase(lastTwoCharacters);
@@ -1444,10 +1298,9 @@ std::string TMParser::getDateFromNextDay(std::vector<std::string>& remainingEntr
     std::string stringDay = returnLowerCase(*(iter + 2));
     std::string date;
 
-    boost::gregorian::date_duration oneWeek(7);
-    boost::gregorian::date oneWeekFromToday = _dateToday + oneWeek;
     boost::gregorian::greg_weekday day(dayOfWeek(stringDay));
-    boost::gregorian::date dateTM = boost::gregorian::next_weekday(oneWeekFromToday, day);
+    boost::gregorian::first_day_of_the_week_after fdaf(day);
+    boost::gregorian::date dateTM = fdaf.get_date(_dateToday);
     std::string tempDate = boost::gregorian::to_iso_string(dateTM);
 
     date = tempDate.substr(6,2) + tempDate.substr(4,2) + tempDate.substr(0,4);
