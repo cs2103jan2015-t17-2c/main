@@ -39,14 +39,17 @@ public:
     TMTask parseTimedTaskInfo();
     TMTask parseFloatingTaskInfo();
 
-    //std::string extractDateAfterBefore(std::vector<std::string>&,std::vector<std::string>::iterator&);
-    
+    //need to check if there is sufficient space at the back first
+    std::string extractDayOrDate(std::vector<std::string>&,std::vector<std::string>::iterator);
+    std::string extractDateAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator);
+    std::string extractNextDayAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator);
+    std::string extractDayAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator);
+    std::string extractTimeAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator);
+    void extractDateAndOrTime(std::vector<std::string>&,std::vector<std::string>::iterator,std::string&,std::string&);
 
 
     bool isDeadlinedTask();
     bool isTimedTask();
-    //do we need a isFloatingTask?
-    //
     bool isValidDate(std::string);
     //
     bool isInteger(std::string);
@@ -56,7 +59,7 @@ public:
     bool isDay(std::string);
     bool is12HTime(std::string);
     bool is24HTime(std::string);
-    bool isWordNext(std::string);
+    bool isNextDay(const std::vector<std::string>&, std::vector<std::string>::iterator);
     bool isAM(std::string);
     bool isPM(std::string);
 
@@ -69,11 +72,6 @@ public:
     std::string parseSearchKey();
     std::string parseDirectory();
 
-
-  //! From delimited date string where with order day-month-year eg: 25-1-2002 or 25-Jan-2003 (full month name is also accepted)
-  //inline date from_uk_string(std::string s) {
-  //  return date_time::parse_date<date>(s, date_time::ymd_order_dmy);
-
     std::string returnLowerCase(std::string);
     std::string dateFromUserToBoostFormat(std::string);
     std::string dateFromBoostToStandardFormat(const boost::gregorian::date&);
@@ -84,6 +82,7 @@ public:
     std::string getCurrentTime();
     std::string substractNDaysFromDate(std::string,int);
     std::string addNDaysFromDate(std::string,int);
+    std::string getDateFromNextDay(std::vector<std::string>&,std::vector<std::string>::iterator);
 
 };
 #endif
