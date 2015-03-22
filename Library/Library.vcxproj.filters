@@ -99,6 +99,9 @@
     <ClInclude Include="TMCompleteTasks.h">
       <Filter>Header Files\TMCommand</Filter>
     </ClInclude>
+    <ClInclude Include="TMDateTime.h">
+      <Filter>Header Files\TMTask</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TMParser.cpp">
@@ -121,6 +124,9 @@
     </ClCompile>
     <ClCompile Include="TMUserInterface.cpp">
       <Filter>Source Files\TMUserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="TMDateTime.cpp">
+      <Filter>Source Files\TMTask</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
