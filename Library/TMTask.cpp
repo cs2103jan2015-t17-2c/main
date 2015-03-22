@@ -9,17 +9,6 @@ TMTask::TMTask(std::string taskDescription, TMTaskTime taskTime, TaskType taskTy
     _taskType = taskType;
 }
 
-/*
-//constructor for floating tasks
-TMTask::TMTask(std::string taskDescription, TaskType taskType) {
-    _taskDescription = taskDescription;
-    TMTaskTime taskTime("","","","");
-    _taskTime = taskTime;
-    _isCompleted = false;
-    _isConfirmed = true;
-    _taskType = taskType;
-}*/
-
 std::string TMTask::getTaskDescription(){
     return _taskDescription;
 }
