@@ -13,11 +13,9 @@ public:
 	void execute() {
 		TMParser *parser = TMParser::getInstance(); 
 		TMTaskList *taskList = TMTaskList::getInstance();
-		std::vector<int> deleteIndexes = parser->parseTaskPositionNo();
-		std::vector<int>::iterator iter;
-		for (iter = deleteIndexes.begin(); iter != deleteIndexes.end(); ++iter) {
-			taskList->removeTask(*iter);
-		}
+		std::vector<int> deleteIndex = parser->parseTaskPositionNo();
+		taskList->removeTask(deleteIndex[0]);
+
 		std::cout << "DELETE TASKS CALLED." << std::endl;
 	}
 

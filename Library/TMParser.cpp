@@ -156,18 +156,19 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
 //             : use only when in adding or editing information
 std::vector<TMTask> TMParser::parseTaskInfo() {
     std::vector<TMTask> task;
-    std::cout << "parseTaskInfo\n";
+    //std::cout << "parseTaskInfo\n";
     if(isDeadlinedTask()){
-        std::cout << "IS DEADLINE\n";
+        //std::cout << "IS DEADLINE\n";
         task.push_back(parseDeadlinedTaskInfo());
     } else if(isTimedTask()) {
-        //
-        std::cout << "IS TIMED\n";
+        
+       // std::cout << "IS TIMED\n";
         task.push_back(parseTimedTaskInfo());
     } else {
-        //
-        std::cout << "floating task\n";
+        
+       // std::cout << "floating task\n";
         task.push_back(parseFloatingTaskInfo());
+		//std::cout << "DONE WITH FLOATING" << std::endl;
     }
     return task;
 }

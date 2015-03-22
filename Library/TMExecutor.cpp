@@ -12,11 +12,6 @@
 #include "TMCommandCreator.h"
 #include "TMCommand.h"
 
-
-/*void saveUponExit () {
-	taskList.writeToFile();
-}*/
-
 	
 int main() {
 	
@@ -32,7 +27,6 @@ int main() {
     ui->promptForUserInput();
 	userEntry = ui->returnUserInput();
 
-	//taskList.loadFromFile();
 	
 	while(userEntry != "quit") {
         /*if(GetAsyncKeyState('exit')) {
@@ -42,10 +36,8 @@ int main() {
 		std::string command = parser->extractCommand();
 		TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(command);
 		commandObjPtr->execute();
+		taskList->writeToFile();
 
-		/*if (isSuccessfullyExecuted) {
-			std::cout << "SUCCESS." << std::endl;
-		}*/
 
 		taskList->displayAllTasks();
 		//ui->displayDefault();
@@ -53,7 +45,7 @@ int main() {
 		userEntry = ui->returnUserInput();
     }
 	
-	/*std::atexit(saveUponExit);*/
+	taskList->leaveReferenceUponExit();
 
 	return 0;
 }

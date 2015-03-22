@@ -8,7 +8,7 @@ class TMViewFreeTime : public TMCommand {
 public:
 	void execute() {
 		TMTaskList *taskList = TMTaskList::getInstance();
-		std::cout << taskList->freeTimeSearch() << std::endl;
+		std::cout << taskList->displayFreeTime() << std::endl;
 	}
 	void undo();
 };
