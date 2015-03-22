@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <iomanip>
 #include <boost\date_time.hpp>
 
 #include "TMTaskList.h"
@@ -472,10 +473,10 @@
 		std::cout << "Details:" << std::endl;
 		std::vector<TMTask>::iterator iter;
 		for(iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
-			std::cout << (*iter).getTaskDescription() << " " << (*iter).getTaskTime().getStartDate() << 
-			" " << (*iter).getTaskTime().getStartTime() << 
-			" " << (*iter).getTaskTime().getEndDate() <<
-			" " << (*iter).getTaskTime().getEndTime() <<std::endl;
+			std::cout << std :: left << std :: setw(25) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t" << (*iter).getTaskTime().getStartDate() << 
+			"\t" << (*iter).getTaskTime().getStartTime() << 
+			"\t" << (*iter).getTaskTime().getEndDate() <<
+			"\t" << (*iter).getTaskTime().getEndTime() <<std::endl;
 		}
 	
 		std::cout << "Number of floating tasks:" << floating.size() <<std::endl;
