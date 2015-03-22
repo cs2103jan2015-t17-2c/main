@@ -10,7 +10,7 @@ public:
 	void execute() {
 		TMParser *parser = TMParser::getInstance(); 
 		TMTaskList *taskList = TMTaskList::getInstance();
-		taskList->saveFileAt(parser->parseDirectory());
+		taskList->setFileDirectory(parser->parseDirectory());
 	}
 	void undo();
 };

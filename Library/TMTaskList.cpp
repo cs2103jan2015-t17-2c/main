@@ -10,7 +10,10 @@
 
 	TMTaskList* TMTaskList::theOne;
 	
-	TMTaskList::TMTaskList() {}
+	TMTaskList::TMTaskList() {
+		_fileDirectory = "DEFAULT.txt"; //could consider using the name of the year instead
+		//loadFromFile();
+		}
 	
 	TMTaskList* TMTaskList::getInstance() {
 		if (theOne == NULL) {
@@ -19,6 +22,9 @@
 		return theOne;
 	}
 
+
+
+	//LOGIC FUNCTIONS//
 	bool TMTaskList::areEquivalent(TMTask task1, TMTask task2) {
 		if (task1.getTaskDescription() != task2.getTaskDescription()) {
 			return false;
@@ -52,18 +58,18 @@
 	}
 
 	bool TMTaskList::hasClash(TMTask task) {
-		std::vector<TMTask>::iterator iter;
+		/*std::vector<TMTask>::iterator iter;
 		for (iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
 			if (startsEarlierThan(task, *iter)) {
 				if (isTwoClash(task, *iter)) {
 					return true;
 				}
 			} else {
-				if (isTwoClash(task, *iter)) {
+				if (isTwoClash(*iter, task)) {
 					return true;
 				}
 			}
-		}	
+		}	*/
 	return false;
 	}
 
@@ -75,9 +81,26 @@
 		}
 	}
 
+	bool TMTaskList::startsEarlierThan(TMTask task, TMTaskTime time) {
+		/*std::string task1StartDate = task1.getTaskTime().getStartDate();
+		std::string task2StartDate = task2.getTaskTime().getStartDate();
+
+		if (task1StartDate < task2StartDate) {
+			return true;
+		} else if (task1StartDate == task2StartDate) {
+			return (task1.getTaskTime().getStartTime() <  task2.getTaskTime().getStartTime());
+		}*/
+
+		return false;
+	} 
+
+	bool TMTaskList::endsEarlierThan(TMTask task, TMTaskTime time) {return true;} //YET TO CODE
+
+	bool TMTaskList::isEarlierThan(TMTaskTime time1, TMTaskTime time2) {return true;} //YET TO CODE
+
 	std::vector<TMTask> TMTaskList::findClashes(TMTask task) {
 		std::vector<TMTask> clashes;
-		std::vector<TMTask>::iterator iter;
+		/*std::vector<TMTask>::iterator iter;
 		for (iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
 			if (startsEarlierThan(task, *iter)) {
 				if (isTwoClash(task, *iter)) {
@@ -88,11 +111,35 @@
 					clashes.push_back(*iter);
 				}
 			}
-		}
+		}*/
 	return clashes;
 	}
 
-	
+	std::vector<TMTask>::iterator TMTaskList::findEarliestTaskIter(std::vector<TMTask>::iterator unsortedStart) {
+									TMTask earliestTask = *unsortedStart;
+									std::vector<TMTask>::iterator earliestTaskIter;
+									/*earliestTaskIter = unsortedStart;
+									std::vector<TMTask>::iterator iter;
+		
+									for (iter = unsortedStart; iter != timedAndDeadline.end(); ++iter) {
+										if (startsEarlierThan(*iter, earliestTask)) {
+											earliestTask = *iter;
+											earliestTaskIter = iter;
+										}
+									}*/
+
+									return earliestTaskIter;
+	}
+
+	std::string TMTaskList::toLower(std::string toBeConverted) {
+		std::string aCopy = toBeConverted;
+		transform(aCopy.begin(), aCopy.end(), aCopy.begin(), ::tolower);
+		return aCopy;
+	}
+
+
+
+	//GETTER FUNCTIONS//
 	int TMTaskList::getPositionIndexFromTask(TMTask task) {
 		std::vector<TMTask>::iterator iter;
 		int positionIndex = 1;
@@ -132,6 +179,34 @@
 		}
 	}
 
+	int TMTaskList::getTimedAndDeadlineSize() {
+		return timedAndDeadline.size();
+	}
+
+	int TMTaskList::getFloatingSize() {
+		return floating.size();
+	}
+
+	int TMTaskList::getArchivedSize() {
+		return archived.size();
+	}
+
+	std::vector<TMTask> TMTaskList::getTimedAndDeadline() {
+		return timedAndDeadline;
+	}
+	
+	std::vector<TMTask> TMTaskList::getFloating() {
+		return floating;
+	}
+	
+	std::vector<TMTask> TMTaskList::getArchived() {
+		return archived;
+	}
+
+
+
+
+	//BASIC FUNCTIONS//
 	void TMTaskList::addTask (TMTask task) {
 	
 		if (task.getTaskType() == TaskType::Timed  || task.getTaskType() == TaskType::WithDeadline) {
@@ -164,6 +239,14 @@
 			std::cout << "FLOATING TASK ADDED!" << std::endl;
 		}
 
+	}
+
+	void TMTaskList::blockMultiple(std::vector<TMTask> tasks, TMTaskList tasklist) {
+		std::vector<TMTask>::iterator iter;
+		for (iter = tasks.begin(); iter != tasks.end(); ++iter) {
+			tasklist.addTask(*iter);
+		}
+		tasks.clear();
 	}
 
 	void TMTaskList::updateTask(int positionIndex, std::string componentOfTask, std::string changeTo) {
@@ -218,25 +301,13 @@
 		}
 	}
 
-	void TMTaskList::displayAllTasks() {
-		std::cout << "Number of tasks with deadlines: " << timedAndDeadline.size() <<std::endl;
-		std::cout << "Details:" << std::endl;
-		std::vector<TMTask>::iterator iter;
-		for(iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
-			std::cout << (*iter).getTaskDescription() << " " << (*iter).getTaskTime().getStartDate() << 
-			" " << (*iter).getTaskTime().getStartTime() << 
-			" " << (*iter).getTaskTime().getEndDate() <<
-			" " << (*iter).getTaskTime().getEndTime() <<std::endl;
-		}
-	
-		std::cout << "Number of floating tasks:" << floating.size() <<std::endl;
-		std::cout << "Details:" << std::endl;
-		for(iter = floating.begin(); iter != floating.end(); ++iter) {
-			std::cout << (*iter).getTaskDescription() << std::endl;
-		}
-	}	
-	
-	
+	void TMTaskList::archiveOneTask(int positionIndex) {
+		TMTask task = getTaskFromPositionIndex(positionIndex);
+		task.setAsCompleted();
+		archived.push_back(task);
+		removeTask(positionIndex);
+	}
+
 	void TMTaskList::chronoSort() {
 		std::vector<TMTask>::iterator iter;
 		for (iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
@@ -246,63 +317,8 @@
 		
 	}
 
-	std::vector<TMTask>::iterator TMTaskList::findEarliestTaskIter(std::vector<TMTask>::iterator unsortedStart) {
-									TMTask earliestTask = *unsortedStart;
-									std::vector<TMTask>::iterator earliestTaskIter;
-									earliestTaskIter = unsortedStart;
-									std::vector<TMTask>::iterator iter;
-		
-									for (iter = unsortedStart; iter != timedAndDeadline.end(); ++iter) {
-										if (startsEarlierThan(*iter, earliestTask)) {
-											earliestTask = *iter;
-											earliestTaskIter = iter;
-										}
-									}
-
-									return earliestTaskIter;
-	}
-
-	bool TMTaskList::startsEarlierThan(TMTask task1, TMTask task2) {
-		std::string task1StartDate = task1.getTaskTime().getStartDate();
-		std::string task2StartDate = task2.getTaskTime().getStartDate();
-
-		if (task1StartDate < task2StartDate) {
-			return true;
-		} else if (task1StartDate == task2StartDate) {
-			return (task1.getTaskTime().getStartTime() <  task2.getTaskTime().getStartTime());
-		}
-
-		return false;
-	}
-
 	void TMTaskList::alphaSort() {}		//YET TO CODE
 
-	void TMTaskList::blockMultiple(std::vector<TMTask> tasks, TMTaskList tasklist) {
-		std::vector<TMTask>::iterator iter;
-		for (iter = tasks.begin(); iter != tasks.end(); ++iter) {
-			tasklist.addTask(*iter);
-		}
-		tasks.clear();
-	}
-
-	void TMTaskList::archiveTodaysTasks() {
-		/*date dateToday(day_clock::local_day());
-		std::vector<TMTask>::iterator iter;
-		for (iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
-			if ((*iter).getTaskTime().getEndDate() == dateToday) { //THINK OF HOW TO CONVERT DATETODAY TO STRING
-				
-                archiveOneTask(getPositionIndexFromTask(*iter)); 
-			}
-		}*/
-	}
-
-	void TMTaskList::archiveOneTask(int positionIndex) {
-		TMTask task = getTaskFromPositionIndex(positionIndex);
-		task.setAsCompleted();
-		archived.push_back(task);
-		removeTask(positionIndex);
-	}
-	
 	std::vector<int> TMTaskList::keywordSearch(std::string keyword) {
 		std::string lowerKeyword = toLower(keyword);
 		
@@ -330,13 +346,146 @@
 		return searchResults;
 	}
 
-	std::string TMTaskList::toLower(std::string toBeConverted) {
-		std::string aCopy = toBeConverted;
-		transform(aCopy.begin(), aCopy.end(), aCopy.begin(), ::tolower);
-		return aCopy;
-	}
 	
-	std::string TMTaskList::freeTimeSearch() {
+
+
+	//EXPORT AND IMPORT FUNCTIONS//
+	void TMTaskList::writeToFile(){
+		std::ofstream outFile;
+		int i;
+		std::vector<TMTask>::iterator iter;
+
+		outFile.open(_fileDirectory);
+		outFile << "Number of timed and deadline: "  << timedAndDeadline.size() << "\n";
+		for (i = 0; i < timedAndDeadline.size(); ++i) {
+			outFile << timedAndDeadline[i].getTaskDescription() << 
+				" " << timedAndDeadline[i].getTaskTime().getStartDate() << 
+				" " << timedAndDeadline[i].getTaskTime().getStartTime() << 
+				" " << timedAndDeadline[i].getTaskTime().getEndDate() <<
+				" " << timedAndDeadline[i].getTaskTime().getEndTime() << "\n";
+		}
+
+		//outFile << '\n';
+	
+		outFile << "Number of undated tasks: " << floating.size() << "\n";
+		for (i = 0; i < floating.size(); ++i) {
+			outFile << floating[i].getTaskDescription() << "\n";
+		}
+
+		//outFile << "\n";
+
+		outFile << "Number of completed tasks: " << archived.size() << "\n";
+		for (iter = archived.begin(); iter != archived.end(); iter++) {
+			
+			if (iter->getTaskType() == TaskType::Timed || iter->getTaskType() == TaskType::WithDeadline) {
+				outFile << iter->getTaskDescription() <<
+				" " << iter->getTaskTime().getStartDate() << 
+				" " << iter->getTaskTime().getStartTime() << 
+				" " << iter->getTaskTime().getEndDate() <<
+				" " << iter->getTaskTime().getEndTime() << '\n';
+			}
+
+			else {
+				outFile << iter->getTaskDescription() << '\n';
+			}
+		}
+
+		outFile.close();
+	}
+
+	void TMTaskList::loadFromFile() {
+
+		std::ifstream directoryReference("REFERENCE.txt");
+		getline(directoryReference, _fileDirectory);
+
+		std::ifstream contentReference(_fileDirectory);
+		std::vector<std::string> linesFromFile;
+		std::string line;
+		std::string M1 = "Number of timed and deadline:";
+		std::string M2 = "Number of undated tasks:";
+		std::string M3 = "Number of completed tasks:";
+
+		while (getline(contentReference, line)) {
+			if (line != "\n") {
+				linesFromFile.push_back(line);
+			}
+		}
+
+		directoryReference.close();
+		contentReference.close();
+
+		std::vector<std::string>::iterator iter;
+
+		//std::search(searchLine.begin(), searchLine.end(), keyword.begin(), keyword.end()) != searchLine.end()
+
+		std::vector<TMTask> tasks;
+		TMParser *parser = TMParser::getInstance(); 
+
+		//Assumes first line in saved text file is as unmodified by user.
+		//Loop stops when M2 is detected
+		//Timed and deadline tasks
+		for (iter = linesFromFile.erase(linesFromFile.begin()); std::search(iter->begin(), iter->end(), M2.begin(), M2.end()) == iter->end();iter = linesFromFile.erase(iter)) {
+			parser->initialize(*iter);
+			tasks = parser->parseTaskInfo();
+			TMTask task = tasks[0];
+			timedAndDeadline.push_back(task);
+		}
+
+		//Floating tasks
+		for (iter =linesFromFile.erase(linesFromFile.begin()); std::search(iter->begin(), iter->end(), M3.begin(), M3.end()) == iter->end(); iter = linesFromFile.erase(iter)) {
+			parser->initialize(*iter);
+			tasks = parser->parseTaskInfo();
+			TMTask task = tasks[0];
+			floating.push_back(task);
+		}
+
+		//Completed tasks
+		for (iter = linesFromFile.erase(linesFromFile.begin()); iter != linesFromFile.end(); iter = linesFromFile.erase(iter)) {
+			parser->initialize(*iter);
+			tasks = parser->parseTaskInfo();
+			TMTask task = tasks[0];
+			task.setAsCompleted();
+			archived.push_back(task);
+		}
+
+		std::cout << "Successfully loaded from file" << std::endl;
+	} 
+
+	void TMTaskList::setFileDirectory(std::string directory) {
+		_fileDirectory = directory;
+	}
+
+	void TMTaskList::leaveReferenceUponExit() {
+		std::ofstream outFile;
+		outFile.open("REFERENCE.txt");
+		outFile << _fileDirectory << '\n';
+		outFile << "THIS FILE IS FOR REFERENCE TO LOAD FROM FILE. DO NOT DELETE" << '\n';
+		outFile.close();
+		}
+
+
+
+
+
+	void TMTaskList::displayAllTasks() {
+		std::cout << "Number of tasks with deadlines: " << timedAndDeadline.size() <<std::endl;
+		std::cout << "Details:" << std::endl;
+		std::vector<TMTask>::iterator iter;
+		for(iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
+			std::cout << (*iter).getTaskDescription() << " " << (*iter).getTaskTime().getStartDate() << 
+			" " << (*iter).getTaskTime().getStartTime() << 
+			" " << (*iter).getTaskTime().getEndDate() <<
+			" " << (*iter).getTaskTime().getEndTime() <<std::endl;
+		}
+	
+		std::cout << "Number of floating tasks:" << floating.size() <<std::endl;
+		std::cout << "Details:" << std::endl;
+		for(iter = floating.begin(); iter != floating.end(); ++iter) {
+			std::cout << (*iter).getTaskDescription() << std::endl;
+		}
+	}	
+
+	std::string TMTaskList::displayFreeTime() {
 		std::vector<TMTask>::iterator iter;
 		std::string result;
 		for (iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
@@ -345,53 +494,4 @@
 		result = result + " ~ " + (*iter).getTaskTime().getStartDate() + " " + (*iter).getTaskTime().getStartTime() + '\n';
 		}
 		return result;
-	}
-
-	void TMTaskList::writeToFile(){
-		std::ofstream writeToFile;
-		writeToFile.open("TMStorage.txt", std::ofstream::trunc);
-		writeToFile << "Tasks With Deadline:"  <<std::endl;
-		writeToFile << timedAndDeadline.size() <<std::endl;
-		for(int i =0; i < timedAndDeadline.size(); ++i)
-		{
-			writeToFile << timedAndDeadline[i].getTaskDescription() << " " << timedAndDeadline[i].getTaskTime().getStartDate() << 
-				" " << timedAndDeadline[i].getTaskTime().getStartTime() << 
-				" " << timedAndDeadline[i].getTaskTime().getEndDate() <<
-				" " << timedAndDeadline[i].getTaskTime().getEndTime() <<std::endl;
-		}
-	
-		writeToFile << "Tasks Without Deadline:" <<std::endl;
-		writeToFile <<floating.size()<<std::endl;
-		for(int j=0; j < floating.size(); ++j)
-		{
-			writeToFile << floating[j].getTaskDescription() << std::endl;
-		}
-		writeToFile.close();
-	}
-
-	void TMTaskList::loadFromFile() {
-		/*std::ifstream readFromFile;
-		std::string unusedLines;
-		std::string entryTimedAndDeadline;
-		std::string entryFloating;
-		TMParser parseTimedAndDeadline,parseFloating;
-		readFromFile.open("TMStorage.txt");
-		getline(readFromFile,unusedLines);
-		int sizeTimed;
-		std :: cin>>sizeTimed;
-		for (int i=0; i < sizeTimed; ++i){
-			getline(readFromFile,entryTimedAndDeadline);
-			parseTimedAndDeadline.parseTaskInfo(entryTimedAndDeadline);
-		}
-		getline(readFromFile,unusedLines);
-		int sizeFloating;
-		std :: cin>>sizeFloating;
-		for (int j=0;j < sizeFloating;++j){
-			getline(readFromFile,entryFloating);
-			parseFloating.parseTaskInfo(entryFloating);
-		}
-		readFromFile.close();*/
-	} 
-
-	void TMTaskList::saveFileAt(std::string directory) {
 	}
