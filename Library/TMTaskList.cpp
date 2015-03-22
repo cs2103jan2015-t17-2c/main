@@ -473,21 +473,29 @@
         if(hCon == NULL)
         hCon = GetStdHandle(STD_OUTPUT_HANDLE);
         SetConsoleTextAttribute(hCon, c);
-}
+	}
 
 
 
 	void TMTaskList::displayAllTasks() {
-		std::cout << "Number of tasks with deadlines: " << timedAndDeadline.size() <<std::endl;
+		std::cout << "Number of scheduled tasks: " << timedAndDeadline.size() <<std::endl;
 		std::cout << "Details:" << std::endl;
 		std::vector<TMTask>::iterator iter;
 		for(iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
-			SetColor(RED);
-			std::cout << std :: left << std :: setw(25) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t" << (*iter).getTaskTime().getStartDate() << 
-			"\t" << (*iter).getTaskTime().getStartTime() << 
-			"\t" << (*iter).getTaskTime().getEndDate() <<
-			"\t" << (*iter).getTaskTime().getEndTime() <<std::endl;
-			SetColor(GRAY);
+			if ((*iter).getTaskType() == TaskType::WithDeadline){
+				SetColor(RED);
+				std::cout << std :: left << std :: setw(25) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t" << (*iter).getTaskTime().getStartDate() << 
+				"\t" << (*iter).getTaskTime().getStartTime() << 
+				"\t" << (*iter).getTaskTime().getEndDate() <<
+				"\t" << (*iter).getTaskTime().getEndTime() <<std::endl;
+				SetColor(GRAY);
+			}
+			else{
+				std::cout << std :: left << std :: setw(25) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t" << (*iter).getTaskTime().getStartDate() << 
+				"\t" << (*iter).getTaskTime().getStartTime() << 
+				"\t" << (*iter).getTaskTime().getEndDate() <<
+				"\t" << (*iter).getTaskTime().getEndTime() <<std::endl;
+			}
 		}
 	
 		std::cout << "Number of floating tasks:" << floating.size() <<std::endl;
