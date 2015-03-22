@@ -39,6 +39,7 @@ public:
     TMTask parseTimedTaskInfo();
     TMTask parseFloatingTaskInfo();
 
+    //need to check if there is sufficient space at the back first
     std::string extractDayOrDate(std::vector<std::string>&,std::vector<std::string>::iterator);
     std::string extractDateAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator);
     std::string extractNextDayAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator);

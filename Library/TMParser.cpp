@@ -493,78 +493,51 @@ TMTask TMParser::parseTimedTaskInfo(){
         unitString = returnLowerCase(unitString);
 
         if(unitString == TOKEN_AT){
-            startTime = extractTimeAfterToken(remainingEntry,iter);
-            if(startTime != ""){
-                startTimeExtracted = true;
-                iter = remainingEntry.erase(iter);
-                if(iter == remainingEntry.end()){
-                    break;
-                } else if (iter == remainingEntry.begin()){
-                    iterMinusOne = true;
-                } else {
-                    iter--;
-                }
-            } //else no time treat at as description continue searching
+            if(iter + 1 != remainingEntry.end()){
+                startTime = extractTimeAfterToken(remainingEntry,iter);
+                if(startTime != ""){
+                    startTimeExtracted = true;
+                    iter = remainingEntry.erase(iter);
+                    if(iter == remainingEntry.end()){
+                        break;
+                    } else if (iter == remainingEntry.begin()){
+                        iterMinusOne = true;
+                    } else {
+                        iter--;
+                    }
+                } //else no time treat at as description continue searching
+            }
         } else if(unitString == TOKEN_ON){
-            startDate = extractDayOrDate(remainingEntry,iter);
-            if(startDate != ""){
-                startDateExtracted = true;
-                iter = remainingEntry.erase(iter);
-                if(iter == remainingEntry.end()){
-                    break;
-                } else if (iter == remainingEntry.begin()){
-                    iterMinusOne = true;
-                } else {
-                    iter--;
+            if(iter + 1 != remainingEntry.end()){
+                startDate = extractDayOrDate(remainingEntry,iter);
+                if(startDate != ""){
+                    startDateExtracted = true;
+                    iter = remainingEntry.erase(iter);
+                    if(iter == remainingEntry.end()){
+                        break;
+                    } else if (iter == remainingEntry.begin()){
+                        iterMinusOne = true;
+                    } else {
+                        iter--;
+                    }
                 }
             }
         } else if(unitString == TOKEN_FROM){
-//
-            //
-        } else if (unitString == TOKEN_TO){
-            //checks for endTime and endDate
-            std::string stringAfterTo = *(iter + 1);
-            stringAfterTo = returnLowerCase(stringAfterTo);
-
-            if(isDay(stringAfterTo)) {
-                //convert day to date first
-                int dayInInteger = dayOfWeek(stringAfterTo);
-                boost::gregorian::first_day_of_the_week_after fdaf(dayInInteger);
-                boost::gregorian::date dateInBoost = fdaf.get_date(_dateToday);
-                endDate = dateFromBoostToDDMMYYYY(dateInBoost);
-                //endDate extracted
-                endDateExtracted = true;
-                //check for time after day
-                if(iter + 2 != remainingEntry.end()) {
-                    std::string stringAfterDay = *(iter + 2);
-                    stringAfterDay = returnLowerCase(stringAfterDay);
-                    //found before day time
-                    if(is12HTime(stringAfterDay)||is24HTime(stringAfterDay)) {
-                        endTime = stringAfterDay;
-                        endTime = timeTo24HFormat(endTime);
-                        endTimeExtracted = true;
-                        iter = remainingEntry.erase(iter,iter + 3);
-                        if(iter == remainingEntry.end()){
-                            break;
-                        } else if (iter == remainingEntry.begin()){
-                            iterMinusOne = true;
-                        } else {
-                            iter--;
-                        }
-                    } else {
-                        //found only from Day
-                        iter = remainingEntry.erase(iter,iter + 2);
-                        if(iter == remainingEntry.end()){
-                            break;
-                        } else if (iter == remainingEntry.begin()){
-                            iterMinusOne = true;
-                        } else {
-                            iter--;
-                        }
+            if(iter + 1 != remainingEntry.end()){
+                std::string extractedDate;
+                std::string extractedTime;
+                extractDateAndOrTime(remainingEntry,iter,extractedDate,extractedTime);
+                if((extractedDate != "")||(extractedTime != "")){
+                    if(extractedDate != ""){
+                        startDate = extractedDate;
+                        startDateExtracted = true;
                     }
-                } else {
-                    //found only "from Day"
-                    iter = remainingEntry.erase(iter,iter+2);
+                    if(extractedTime != ""){
+                        startTime = extractedTime;
+                        startTimeExtracted = true;
+                    }
+                    
+                    iter = remainingEntry.erase(iter);
                     if(iter == remainingEntry.end()){
                         break;
                     } else if (iter == remainingEntry.begin()){
@@ -573,214 +546,48 @@ TMTask TMParser::parseTimedTaskInfo(){
                         iter--;
                     }
                 }
-            } else if(isDate(stringAfterTo)) {
-                //check for time after date
-                endDate = stringAfterTo;
-                endDateExtracted = true;
-                if(iter + 2 != remainingEntry.end()) {
-                std::string stringAfterDate = *(iter + 2);
-                stringAfterDate = returnLowerCase(stringAfterDate);
-                //found before day time
-                    if(is12HTime(stringAfterDate)||is24HTime(stringAfterDate)) {
-                        endTime = stringAfterDate;
-                        endTime = timeTo24HFormat(endTime);
-                        endTimeExtracted = true;
-                        iter = remainingEntry.erase(iter,iter + 3);
-                        if(iter == remainingEntry.end()){
-                            break;
-                        } else if (iter == remainingEntry.begin()){
-                            iterMinusOne = true;
-                        } else {
-                            iter--;
-                        }
-                    } else {
-                        //found only from Date
-                        iter = remainingEntry.erase(iter,iter + 2);
-                        if(iter == remainingEntry.end()){
-                            break;
-                        } else if (iter == remainingEntry.begin()){
-                            iterMinusOne = true;
-                        } else {
-                           iter--;
-                        }
-                    }
-                } else {
-                    //found only "from Day"
-                    iter = remainingEntry.erase(iter,iter+2);
-                    if(iter == remainingEntry.end()){
-                        break;
-                    } else if (iter == remainingEntry.begin()){
-                        iterMinusOne = true;
-                    } else {
-                        iter--;
-                    }
-                }
-            } else if(isNextDay(remainingEntry,iter)) {
-                //check for day after next, then check for time
-                if(iter + 2 != remainingEntry.end()) {
-                    //
-                    std::string stringAfterNext = *(iter + 2);
-                    stringAfterNext = returnLowerCase(stringAfterNext);
-                    if(isDay(stringAfterNext)) {
-                        //get date from next Day
-                        std::string stringDay = stringAfterNext;
-                        boost::gregorian::date_duration oneWeek(7);
-                        boost::gregorian::date oneWeekFromToday = _dateToday + oneWeek;
-                        boost::gregorian::greg_weekday day(dayOfWeek(stringDay));
-                        boost::gregorian::date dateTM = boost::gregorian::next_weekday(oneWeekFromToday, day);
-                        std::string tempDate = boost::gregorian::to_iso_string(dateTM);
-                        endDate = tempDate.substr(6,2)
-                                    + tempDate.substr(4,2)
-                                    + tempDate.substr(0,4);
-                        endDateExtracted = true;
-                        //check for time
-                        if(iter + 3 != remainingEntry.end()) {
-                            //
-                            std::string stringAfterDay = *(iter + 3);
-                            stringAfterDay = returnLowerCase(stringAfterDay);
-                            if(is12HTime(stringAfterDay)||is24HTime(stringAfterDay)) {
-                                endTime = stringAfterDay;
-                                endTime = timeTo24HFormat(endTime);
-                                iter = remainingEntry.erase(iter, iter + 4);
-                                endTimeExtracted = true;
-                                if(iter == remainingEntry.end()){
-                                    break;
-                                } else if (iter == remainingEntry.begin()){
-                                    iterMinusOne = true;
-                                } else {
-                                    iter--;
-                                }
-                            } else {
-                                iter = remainingEntry.erase(iter, iter +3);
-                                if(iter == remainingEntry.end()){
-                                    break;
-                                } else if (iter == remainingEntry.begin()){
-                                     iterMinusOne = true;
-                                } else {
-                                    iter--;
-                                }
-                            }
-                        } else {
-                            iter = remainingEntry.erase(iter, iter + 3);
-                            if(iter == remainingEntry.end()){
-                                break;
-                            } else if (iter == remainingEntry.begin()){
-                                iterMinusOne = true;
-                            } else {
-                                iter--;
-                            }
-                        }
-                    } else {
-                        //found from next .. task descr. continue
-                    }
-                } else {
-                    //found from next. treat as task description. continue
-                }
-            } else if(is12HTime(stringAfterTo)||is24HTime(stringAfterTo)){
-                endTime = stringAfterTo;
-                endTime = timeTo24HFormat(endTime);
-                endTimeExtracted = true;
-                if(iter + 2 != remainingEntry.end()){
-                    std::string stringAfterTime = *(iter+2);
-                    stringAfterTime = returnLowerCase(stringAfterTime);
-                    if(isDate(stringAfterTime)){
-                        endDate = stringAfterTime;
-                        iter = remainingEntry.erase(iter,iter+3);
-                        endDateExtracted = true;
-                        if(iter == remainingEntry.end()){
-                        break;
-                        } else if (iter == remainingEntry.begin()){
-                            iterMinusOne = true;
-                        } else {
-                            iter--;
-                        }
-                    } else if(isDay(stringAfterTime)){
-                        stringAfterTime = returnLowerCase(stringAfterTime);
-                        int dayInInteger = dayOfWeek(stringAfterTime);
-                        boost::gregorian::first_day_of_the_week_after fdaf(dayInInteger);
-                        boost::gregorian::date dateInBoost = fdaf.get_date(_dateToday);
-                        endDate = dateFromBoostToDDMMYYYY(dateInBoost);
-                        iter = remainingEntry.erase(iter,iter+3);
-                        endDateExtracted = true;
-                        if(iter == remainingEntry.end()){
-                            break;
-                        } else if (iter == remainingEntry.begin()){
-                            iterMinusOne = true;
-                        } else {
-                            iter--;
-                        }
-                    } else if(isNextDay(remainingEntry,iter)){
-                        if(iter + 3 != remainingEntry.end()) {
-                            std::string stringAfterNext = *(iter + 3);
-                            stringAfterNext = returnLowerCase(stringAfterNext);
-                            if(isDay(stringAfterNext)) {
-                            //get date from next Day
-                                std::string stringDay = stringAfterNext;
-                                boost::gregorian::date_duration oneWeek(7);
-                                boost::gregorian::date oneWeekFromToday = _dateToday + oneWeek;
-                                boost::gregorian::greg_weekday day(dayOfWeek(stringDay));
-                                boost::gregorian::date dateTM = boost::gregorian::next_weekday(oneWeekFromToday, day);
-                                std::string tempDate = boost::gregorian::to_iso_string(dateTM);
-                                endDate = tempDate.substr(6,2)
-                                        + tempDate.substr(4,2)
-                                        + tempDate.substr(0,4);
-                                endDateExtracted = true;
-
-                                iter = remainingEntry.erase(iter,iter+4);
-                                if(iter == remainingEntry.end()){
-                                    break;
-                                } else if (iter == remainingEntry.begin()){
-                                    iterMinusOne = true;
-                                } else {
-                                    iter--;
-                                }
-                                //
-                            } else {
-                                iter = remainingEntry.erase(iter,iter+2);
-                                if(iter == remainingEntry.end()){
-                                    break;
-                                } else if (iter == remainingEntry.begin()){
-                                    iterMinusOne = true;
-                                } else {
-                                    iter--;
-                                }
-                            }
-                        } else {
-                            iter = remainingEntry.erase(iter,iter+2);
-                            if(iter == remainingEntry.end()){
-                                break;
-                            } else if (iter == remainingEntry.begin()){
-                                iterMinusOne = true;
-                            } else {
-                                iter--;
-                            }
-                        }
-                    } else {
-                        //found only "from endTime"
-                        iter = remainingEntry.erase(iter,iter + 2);
-                        if(iter == remainingEntry.end()){
-                            break;
-                        } else if (iter == remainingEntry.begin()){
-                            iterMinusOne = true;
-                        } else {
-                            iter--;
-                        }
-                    }
-                } else {
-                    //found only "from endTime"
-                    iter = remainingEntry.erase(iter,iter + 2);
-                    if(iter == remainingEntry.end()){
-                        break;
-                    } else if (iter == remainingEntry.begin()){
-                        iterMinusOne = true;
-                    } else {
-                        iter--;
-                    }
-                }
-            } else {
-                //cannot find a endTime or endDate. from is treated as task desc
             }
-        } else {
+        } else if (unitString == TOKEN_TO){
+            if(iter + 1 != remainingEntry.end()){
+                std::string extractedDate;
+                std::string extractedTime;
+                extractDateAndOrTime(remainingEntry,iter,extractedDate,extractedTime);
+                if((extractedDate != "")||(extractedTime != "")){
+                    if(extractedDate != ""){
+                        endDate = extractedDate;
+                        endDateExtracted = true;
+                    }
+                    if(extractedTime != ""){
+                        endTime = extractedTime;
+                        endTimeExtracted = true;
+                    }
+                    
+                    iter = remainingEntry.erase(iter);
+                    if(iter == remainingEntry.end()){
+                        break;
+                    } else if (iter == remainingEntry.begin()){
+                        iterMinusOne = true;
+                    } else {
+                        iter--;
+                    }
+                }
+            }
+        } else if(isNextDay(remainingEntry,iter)) {
+            if(iter + 1 != remainingEntry.end()){
+                startDate = extractNextDayAfterToken(remainingEntry,iter);
+                if(startDate != ""){
+                    startDateExtracted = true;
+                    iter = remainingEntry.erase(iter);
+                    if(iter == remainingEntry.end()){
+                        break;
+                    } else if (iter == remainingEntry.begin()){
+                        iterMinusOne = true;
+                    } else {
+                        iter--;
+                    }
+                }
+            }
+        }else {
             //cannot find any markers
         }
     }
@@ -806,10 +613,10 @@ TMTask TMParser::parseTimedTaskInfo(){
         }
     } else if((endTimeExtracted||endDateExtracted) && !startTimeExtracted && !startDateExtracted) {
         if(!endTimeExtracted){
-        endTime = "0000";
+            endTime = "0000";
         } else if(!endDateExtracted){
             std::string currentTime = getCurrentTime();
-            if(startTime >= currentTime){
+            if(endTime >= currentTime){
                 boost::gregorian::date currentDate = _dateToday;
                 endDate = dateFromBoostToDDMMYYYY(currentDate);
             } else {
@@ -822,35 +629,56 @@ TMTask TMParser::parseTimedTaskInfo(){
         }
     } else if((startDateExtracted||startTimeExtracted) && (endDateExtracted||endTimeExtracted)){
         if(!startTimeExtracted){
-        startTime = "0000";
+            //there's startDate no startTime
+            startTime = "0000";
+            //check if there's no endDate but there's endTime then endDate will be startDate
+            //else there is no endTime but there's endDate then endTime will be 2359
+            if(!endDateExtracted){
+                //if endTime = 0000 plus 1 more day?
+                endDate = startDate;
+            } else if(!endTimeExtracted){
+                endTime = "2359";
+            }
         } else if(!startDateExtracted){
-            std::string currentTime = getCurrentTime();
-            if(startTime >= currentTime){
-                boost::gregorian::date currentDate = _dateToday;
-                startDate = dateFromBoostToDDMMYYYY(currentDate);
+            //no startDate but got startTime
+            //no endDate got endTime then should be today till today/tomorrow
+            //got endDate no endTime
+
+            if(!endDateExtracted){
+                startDate = dateFromBoostToDDMMYYYY(_dateToday);
+                if(endTime >= startTime){
+                    endDate = startDate;
+                } else {
+                    endDate = dateFromBoostToDelimitedDDMMYYYY(_dateToday);
+                    endDate = addNDaysFromDate(endDate,1);
+                }
+            } else if (!endTimeExtracted){
+                startDate = endDate;
+                endTime = "2359";
             } else {
-                boost::gregorian::date currentDate = _dateToday;
-                 startDate = dateFromBoostToDelimitedDDMMYYYY(currentDate);
-                 startDate = addNDaysFromDate(startDate,1);
-             }
+                if(startTime >= endTime){
+                    startDate = endDate;
+                    startDate = dateFromUserToBoostFormat(startDate);
+                    startDate = substractNDaysFromDate(startDate,1);
+                } else {
+                    startDate = endDate;
+                }
+            }
         } else {
-        //startTime and startDate are found
-        }
-        
-        if(!endTimeExtracted){
-        endTime = "0000";
-        } else if(!endDateExtracted){
-            std::string currentTime = getCurrentTime();
-            if(startTime >= currentTime){
-                boost::gregorian::date currentDate = _dateToday;
-                endDate = dateFromBoostToDDMMYYYY(currentDate);
+            //startTime and startDate are found
+            if(!endTimeExtracted){
+                endTime = "2359";
+            } else if (!endDateExtracted){
+                if(endTime >= startTime){
+                    endDate = startDate;
+                } else {
+                    endDate = startDate;
+                    endDate = dateFromUserToBoostFormat(endDate);
+                    endDate = addNDaysFromDate(endDate,1);
+                }
             } else {
-                boost::gregorian::date currentDate = _dateToday;
-                 endDate = dateFromBoostToDelimitedDDMMYYYY(currentDate);
-                 endDate = addNDaysFromDate(startDate,1);
-             }
-        } else {
-        //endTime and endDate are found
+                //all attributes found
+            }
         }
 
     }
@@ -984,33 +812,23 @@ std::string TMParser::extractTimeAfterToken(std::vector<std::string>& remainingE
     return time;
 }
 
-//NEED TO RETURN 2 VARIABLES!!!!!!!
+//NEED TO RETURN 2 VARIABLES
 void TMParser::extractDateAndOrTime(std::vector<std::string>& remainingEntry,std::vector<std::string>::iterator iter,std::string& extractedDate, std::string& extractedTime){
                 //checks for startTime and startDate
     std::string stringAfterToken = returnLowerCase(*(iter + 1));
     std::string date = "";
     std::string time = "";
 
-    if(isDay(stringAfterToken)) {
-        date = extractDayAfterToken(remainingEntry, iter);
+    if(isDay(stringAfterToken)||isDate(stringAfterToken)) {
+        date = extractDayOrDate(remainingEntry, iter);
         
         if(iter + 1 != remainingEntry.end()) {
-            std::string stringAfterDay = returnLowerCase(*(iter + 1));
-            
-            if(is12HTime(stringAfterDay)||is24HTime(stringAfterDay)) {
-                time = extractTimeAfterToken(remainingEntry,iter);
-            }
-        }
-    } else if(isDate(stringAfterToken)) {
-        date = extractDateAfterToken(remainingEntry,iter);
-        
-        if(iter + 1 != remainingEntry.end()){
             std::string stringAfterDate = returnLowerCase(*(iter + 1));
             
             if(is12HTime(stringAfterDate)||is24HTime(stringAfterDate)) {
                 time = extractTimeAfterToken(remainingEntry,iter);
             }
-        } 
+        }
     } else if(isNextDay(remainingEntry,iter)) {
         date = extractNextDayAfterToken(remainingEntry,iter);
 
@@ -1031,15 +849,9 @@ void TMParser::extractDateAndOrTime(std::vector<std::string>& remainingEntry,std
                 date = extractDayOrDate(remainingEntry,iter);
             } else if(isNextDay(remainingEntry,iter)){
                 date = extractNextDayAfterToken(remainingEntry,iter);
-            } else {
-            
             }
-        } else {
-        
-        }
-    } else {
-    
-    }
+        } 
+    } 
 
     extractedDate = date;
     extractedTime = time;
@@ -1054,26 +866,21 @@ bool TMParser::isDeadlinedTask() {
     std::string unitString;
     std::string stringAfterBefore;
     std::vector<std::string>::iterator iter;
+
     for(iter = remainingEntry.begin(); iter < remainingEntry.end(); iter++){
-        unitString = returnLowerCase(*iter);
-        if(unitString == TOKEN_BEFORE){
-            stringAfterBefore = *(iter+1);
-            stringAfterBefore = returnLowerCase(stringAfterBefore);
-            if(isDate(stringAfterBefore)||isDay(stringAfterBefore)) {
-                return true;
-            } else if (is12HTime(stringAfterBefore)||is24HTime(stringAfterBefore)) {
-                return true;
-            } else if (isNextDay(remainingEntry,iter)){ 
-                std::string stringAfterNext;
-                stringAfterNext = *(iter+2);
-                stringAfterNext = returnLowerCase(stringAfterNext);
-                if(isDay(stringAfterNext)){
+        if(iter + 1 != remainingEntry.end()){
+            unitString = returnLowerCase(*iter);
+        
+            if(unitString == TOKEN_BEFORE){
+                stringAfterBefore = returnLowerCase(*(iter+1));
+
+                if(isDate(stringAfterBefore)||isDay(stringAfterBefore)) {
                     return true;
-                } else {
-                    continue;
+                } else if (is12HTime(stringAfterBefore)||is24HTime(stringAfterBefore)) {
+                    return true;
+                } else if (isNextDay(remainingEntry,iter)){ 
+                    return true;
                 }
-            } else {
-                continue;
             }
         }
     }
@@ -1091,110 +898,57 @@ bool TMParser::isTimedTask() {
     std::string stringAfterToken;
     std::vector<std::string>::iterator iter;
 
+    
     for(iter = remainingEntry.begin(); iter < remainingEntry.end(); iter++){
-        unitString = returnLowerCase(*iter);
+        //check if current iter is at the last string
+        if(iter + 1 != remainingEntry.end()){
+            unitString = returnLowerCase(*iter);
+            if(unitString == TOKEN_AT){
 
-        //std::cout << "before checking for token...\n";
-        
-        if(unitString == TOKEN_AT){
-            stringAfterToken = *(iter+1);
-            //
-            //std::cout << "isTimedTask: " << stringAfterToken << std::endl;
-            stringAfterToken = returnLowerCase(stringAfterToken);
-            //
-            //std::cout << "isTimedTask: " << stringAfterToken << std::endl;
-            if(is12HTime(stringAfterToken)||is24HTime(stringAfterToken)){
+            stringAfterToken = returnLowerCase(*(iter+1));
+
+                if(is12HTime(stringAfterToken)||is24HTime(stringAfterToken)){
                 isTokenAtFound = true;
-                //
-                //std::cout << stringAfterToken << std::endl;
-            } else {
-                //found at but no time
-            }
-            //
-            //std::cout << "isTimedTask: " << stringAfterToken << std::endl;
-        }
-
-        //
-        //std::cout << "after checking for token at...\n";
-
-        if(unitString == TOKEN_ON){
-            stringAfterToken = *(iter+1);
-            stringAfterToken = returnLowerCase(stringAfterToken);
-            if(isDate(stringAfterToken)||isDay(stringAfterToken)){
-                isTokenOnFound = true;
-            } else if(isNextDay(remainingEntry,iter)){
-                if(iter+2 != remainingEntry.end()){
-                    std::string stringAfterNext = *(iter+2);
-                    if(isDay(stringAfterNext)){
-                        isTokenOnFound = true;
-                    } else {
-                        //found "on next" within string but no day
-                    }
-                } else {
-                    //at the back of the string: "... on next"
                 }
-            } else {
-                //continue searching for on and essential info
             }
-        }
+
+
+            if(unitString == TOKEN_ON){
+                stringAfterToken = returnLowerCase(*(iter+1));
+                if(isDate(stringAfterToken)||isDay(stringAfterToken)){
+                    isTokenOnFound = true;
+                }
+            }
         
-        if(unitString == TOKEN_FROM){
-        std::string stringAfterToken = *(iter + 1);
-            stringAfterToken = returnLowerCase(stringAfterToken);
+            if(unitString == TOKEN_FROM){
+                std::string stringAfterToken = returnLowerCase(*(iter + 1));
 
-            if(isDate(stringAfterToken)||isDay(stringAfterToken)) {
+                if(isDate(stringAfterToken)||isDay(stringAfterToken)){
                 //check for time after date
-                isTokenFromFound = true;
-            } else if(is12HTime(stringAfterToken)||is24HTime(stringAfterToken)){
-                isTokenFromFound = true;
-            } else if(isNextDay(remainingEntry,iter)) {
+                    isTokenFromFound = true;
+                } else if(is12HTime(stringAfterToken)||is24HTime(stringAfterToken)){
+                    isTokenFromFound = true;
+                } else if(isNextDay(remainingEntry,iter)){
                 //check for day after next, then check for time
-                if(iter + 2 != remainingEntry.end()) {
-                    std::string stringAfterNext = *(iter + 2);
-                    stringAfterNext = returnLowerCase(stringAfterNext);
-                    if(isDay(stringAfterNext)) {
-                        isTokenFromFound = true;
-                    } else {
-                        //found from next .. task descr. continue
-                    }
-                } else {
-                    //found from next. treat as task description. continue
+                    isTokenFromFound = true;
                 }
-            } else {
-                //cannot find a startTime or startDate. from is treated as task desc
+            }        
+
+            if(unitString == TOKEN_TO){
+            std::string stringAfterTo = returnLowerCase(*(iter + 1));
+
+                if(isDate(stringAfterTo)||isDay(stringAfterTo)) {
+                //check for time after date
+                    isTokenToFound = true;
+                } else if(is12HTime(stringAfterTo)||is24HTime(stringAfterTo)){
+                    isTokenToFound = true;
+                } else if(isNextDay(remainingEntry,iter)) {
+                //check for day after next, then check for time
+                    isTokenToFound = true;
+                } 
             }
         }
-
-        if(unitString == TOKEN_TO) {
-            std::string stringAfterTo = *(iter + 1);
-            stringAfterTo = returnLowerCase(stringAfterTo);
-
-            if(isDate(stringAfterTo)||isDay(stringAfterTo)) {
-                //check for time after date
-                isTokenToFound = true;
-            } else if(is12HTime(stringAfterTo)||is24HTime(stringAfterTo)){
-                isTokenToFound = true;
-            } else if(isNextDay(remainingEntry,iter)) {
-                //check for day after next, then check for time
-                if(iter + 2 != remainingEntry.end()) {
-                    std::string stringAfterNext = *(iter + 2);
-                    stringAfterNext = returnLowerCase(stringAfterNext);
-                    if(isDay(stringAfterNext)) {
-                        isTokenToFound = true;
-                    } else {
-                        //found from next .. task descr. continue
-                    }
-                } else {
-                    //found from next. treat as task description. continue
-                }
-            } else {
-                //cannot find a startTime or startDate. from is treated as task desc
-            }
-        }
-        
     }
-    //
-    //std::cout << "Reached the end of...\n";
 
     if(isTokenOnFound||isTokenAtFound||isTokenFromFound||isTokenToFound){
         return true;
@@ -1687,12 +1441,12 @@ std::string TMParser::addNDaysFromDate(std::string date, int n){
 }
 
 std::string TMParser::getDateFromNextDay(std::vector<std::string>& remainingEntry,std::vector<std::string>::iterator iter){
-    std::string day = returnLowerCase(*(iter + 2));
+    std::string stringDay = returnLowerCase(*(iter + 2));
     std::string date;
 
     boost::gregorian::date_duration oneWeek(7);
     boost::gregorian::date oneWeekFromToday = _dateToday + oneWeek;
-    boost::gregorian::greg_weekday day(dayOfWeek(day));
+    boost::gregorian::greg_weekday day(dayOfWeek(stringDay));
     boost::gregorian::date dateTM = boost::gregorian::next_weekday(oneWeekFromToday, day);
     std::string tempDate = boost::gregorian::to_iso_string(dateTM);
 
