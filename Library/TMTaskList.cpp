@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <string>
 #include <iomanip>
+#include <Windows.h>
 #include <boost\date_time.hpp>
 
 #include "TMTaskList.h"
@@ -464,7 +465,15 @@
 		outFile.close();
 		}
 
+	HANDLE hCon;
 
+	enum Color { DARKBLUE = 1, DARKGREEN, DARKTEAL, DARKRED, DARKPINK, DARKYELLOW, GRAY, DARKGRAY, BLUE, GREEN, TEAL, RED, PINK, YELLOW, WHITE };
+
+	void SetColor(Color c){
+        if(hCon == NULL)
+        hCon = GetStdHandle(STD_OUTPUT_HANDLE);
+        SetConsoleTextAttribute(hCon, c);
+}
 
 
 
@@ -473,18 +482,24 @@
 		std::cout << "Details:" << std::endl;
 		std::vector<TMTask>::iterator iter;
 		for(iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
+			SetColor(RED);
 			std::cout << std :: left << std :: setw(25) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t" << (*iter).getTaskTime().getStartDate() << 
 			"\t" << (*iter).getTaskTime().getStartTime() << 
 			"\t" << (*iter).getTaskTime().getEndDate() <<
 			"\t" << (*iter).getTaskTime().getEndTime() <<std::endl;
+			SetColor(GRAY);
 		}
 	
 		std::cout << "Number of floating tasks:" << floating.size() <<std::endl;
 		std::cout << "Details:" << std::endl;
 		for(iter = floating.begin(); iter != floating.end(); ++iter) {
+			SetColor(YELLOW);
 			std::cout << (*iter).getTaskDescription() << std::endl;
+			SetColor(GRAY);
 		}
 	}	
+
+
 
 	std::string TMTaskList::displayFreeTime() {
 		std::vector<TMTask>::iterator iter;
