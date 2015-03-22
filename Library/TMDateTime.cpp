@@ -1,7 +1,5 @@
 #include "TMDateTime.h"
 
-const std::locale facet(std::locale::classic(), new boost::gregorian::date_facet("%d %b %Y"));
-
 TMDateTime::TMDateTime(){
     boost::gregorian::date startDate(boost::gregorian::not_a_date_time);
     _date = startDate;
@@ -23,7 +21,8 @@ std::string TMDateTime::getDate(){
     if(_date.is_not_a_date()){
         return "";
     } else {
-        std::stringstream stream;
+        std::locale facet(std::locale::classic(), new boost::gregorian::date_facet("%d %b %Y"));
+        std::ostringstream stream;
         stream.imbue(facet);
         stream << _date;
         return stream.str();
@@ -35,7 +34,7 @@ std::string TMDateTime::getTime(){
 }
 
 void TMDateTime::setDate(std::string newDate){
-    _date = boost::gregorian::from_undelimited_string(newDate);
+    _date = boost::gregorian::from_uk_string(newDate);
 }
 
 void TMDateTime::setTime(std::string newTime){

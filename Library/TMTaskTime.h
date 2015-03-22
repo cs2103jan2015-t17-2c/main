@@ -2,8 +2,6 @@
 #define TMTASKTIME_H
 #include "TMDateTime.h"
 #include <string>
-#include <iostream>
-#include <locale>
 #include <boost\date_time.hpp>
 
 
