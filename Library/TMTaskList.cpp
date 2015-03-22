@@ -473,25 +473,36 @@
         if(hCon == NULL)
         hCon = GetStdHandle(STD_OUTPUT_HANDLE);
         SetConsoleTextAttribute(hCon, c);
-}
+	}
 
 
 
 	void TMTaskList::displayAllTasks() {
-		std::cout << "Number of tasks with deadlines: " << timedAndDeadline.size() <<std::endl;
-		std::cout << "Details:" << std::endl;
-		std::vector<TMTask>::iterator iter;
-		for(iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
-			SetColor(RED);
-			std::cout << std :: left << std :: setw(25) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t" << (*iter).getTaskTime().getStartDate() << 
-			"\t" << (*iter).getTaskTime().getStartTime() << 
-			"\t" << (*iter).getTaskTime().getEndDate() <<
-			"\t" << (*iter).getTaskTime().getEndTime() <<std::endl;
-			SetColor(GRAY);
-		}
-	
+		std::cout << "Number of scheduled tasks: " << timedAndDeadline.size() <<std::endl;
 		std::cout << "Number of floating tasks:" << floating.size() <<std::endl;
 		std::cout << "Details:" << std::endl;
+		std::vector<TMTask>::iterator iter;
+
+		std::cout << std :: left << std :: setw(18) << std :: setfill(' ') << "TASK DECSCRIPTION" << "\t" <<
+		"START DATE" << "\t" << "START TIME" << "\t" << "END DATE" <<
+		"\t" << "END TIME" ;
+		
+		for(iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
+			if ((*iter).getTaskType() == TaskType::WithDeadline){
+				SetColor(RED);
+				std::cout << std :: left << std :: setw(18) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t" <<
+				std :: setw (18) << "\t\t" << (*iter).getTaskTime().getEndDate() <<
+				"\t" << (*iter).getTaskTime().getEndTime() <<std::endl;
+				SetColor(GRAY);
+			}
+			else{
+				std::cout << std :: left << std :: setw(18) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t" << (*iter).getTaskTime().getStartDate() << 
+				"\t" << (*iter).getTaskTime().getStartTime() << 
+				"\t\t" << (*iter).getTaskTime().getEndDate() <<
+				"\t" << (*iter).getTaskTime().getEndTime() <<std::endl;
+			}
+		}
+	
 		for(iter = floating.begin(); iter != floating.end(); ++iter) {
 			SetColor(YELLOW);
 			std::cout << (*iter).getTaskDescription() << std::endl;
