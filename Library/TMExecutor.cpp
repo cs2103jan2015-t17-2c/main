@@ -23,9 +23,11 @@ int main() {
     std::string userEntry;
 	bool isSuccessfullyExecuted = false; 
 
-	//ui->displayDefault();
+	ui->displayDefault();
     ui->promptForUserInput();
 	userEntry = ui->returnUserInput();
+	
+	std::cout << std::endl << "RESULTS" << std::endl;
 
 	
 	while(userEntry != "quit") {
@@ -39,8 +41,7 @@ int main() {
 		taskList->writeToFile();
 
 
-		taskList->displayAllTasks();
-		//ui->displayDefault();
+		ui->displayDefault();
 		ui->promptForUserInput();
 		userEntry = ui->returnUserInput();
     }

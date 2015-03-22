@@ -102,13 +102,6 @@ public:
 	void loadFromFile();
 	void setFileDirectory(std::string directory);
 	void leaveReferenceUponExit();
-	
-
-
-	void displayAllTasks(); //NOT SUPPOSED TO BE HERE, CONSIDER EXPORTING TO EXECUTOR
-
-	//Postcondition: Returns a string consisting all the timings in which the user is free
-	std::string displayFreeTime(); //NOT SUPPOSED TO BE HERE, CONSIDER EXPORTING TO EXECUTOR
 
 };
 
