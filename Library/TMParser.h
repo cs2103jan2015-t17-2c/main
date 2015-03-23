@@ -44,12 +44,13 @@ public:
     TMTask parseFloatingTaskInfo();
 
     //need to check if there is sufficient space at the back first
-    std::string extractDayOrDate(std::vector<std::string>&,std::vector<std::string>::iterator);
-    std::string extractDateAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator);
-    std::string extractNextDayAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator);
-    std::string extractDayAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator);
-    std::string extractTimeAfterToken(std::vector<std::string>&,std::vector<std::string>::iterator);
-    void extractDateAndOrTime(std::vector<std::string>&,std::vector<std::string>::iterator,std::string&,std::string&);
+    std::string extractDayOrDate(std::vector<std::string>&, std::vector<std::string>::iterator);
+    std::string extractDateAfterToken(std::vector<std::string>&, std::vector<std::string>::iterator);
+    std::string extractNextDayAfterToken(std::vector<std::string>&, std::vector<std::string>::iterator);
+    std::string extractNextDay(std::vector<std::string>&, std::vector<std::string>::iterator);
+    std::string extractDayAfterToken(std::vector<std::string>&, std::vector<std::string>::iterator);
+    std::string extractTimeAfterToken(std::vector<std::string>&, std::vector<std::string>::iterator);
+    void extractDateAndOrTime(std::vector<std::string>&,std::vector<std::string>::iterator, std::string&,std::string&);
 
 
     bool isDeadlinedTask();

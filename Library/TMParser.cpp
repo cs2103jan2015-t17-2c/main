@@ -423,10 +423,11 @@ TMTask TMParser::parseTimedTaskInfo(){
                     }
                 }
             }
-        } else if(isNextDay(remainingEntry,iter)) {
+        } else if(isNext(unitString)) {
             if(iter + 1 != remainingEntry.end()){
-                startDate = extractNextDayAfterToken(remainingEntry,iter);
-                if(startDate != ""){
+                std::string nextWord = returnLowerCase(*(iter + 1));
+                if(isDay(nextWord)){
+                    startDate = extractNextDay(remainingEntry,iter);
                     startDateExtracted = true;
                     iter = remainingEntry.erase(iter);
                     if(iter == remainingEntry.end()){
@@ -438,7 +439,7 @@ TMTask TMParser::parseTimedTaskInfo(){
                     }
                 }
             }
-        }else {
+        } else {
             //cannot find any markers
         }
     }
@@ -631,11 +632,28 @@ std::string TMParser::extractDateAfterToken(std::vector<std::string>& remainingE
     return startDate;
 }
 
-//preconditions: isNextDay is true
+//preconditions: isNextDay is true. used for deadline. comes after "before".
 std::string TMParser::extractNextDayAfterToken(std::vector<std::string>& remainingEntry,std::vector<std::string>::iterator iter){
     //check for day after next, then check for time iter + 1 = next
     std::string date = getDateFromNextDay(remainingEntry,iter);
     remainingEntry.erase(iter + 1, iter + 3);
+
+    return date;
+}
+
+std::string TMParser::extractNextDay(std::vector<std::string>& remainingEntry, std::vector<std::string>::iterator iter){
+    std::string stringDay = returnLowerCase(*(iter + 1));
+    std::string date;
+    
+    boost::gregorian::greg_weekday day(dayOfWeek(stringDay));
+    boost::gregorian::first_day_of_the_week_after fdaf(day);
+    boost::gregorian::first_day_of_the_week_after firstSundayAfterToday(boost::gregorian::Sunday);
+    boost::gregorian::date dateTM = firstSundayAfterToday.get_date(_dateToday);
+    dateTM = fdaf.get_date(dateTM);
+    std::string tempDate = boost::gregorian::to_iso_string(dateTM);
+
+    date = tempDate.substr(6,2) + tempDate.substr(4,2) + tempDate.substr(0,4);
+    remainingEntry.erase(iter + 1);
 
     return date;
 }
@@ -745,6 +763,7 @@ bool TMParser::isTimedTask() {
     bool isTokenAtFound = false;
     bool isTokenFromFound = false;
     bool isTokenToFound = false;
+    bool isNextDayFound =  false;
     std::string unitString;
     std::string stringAfterToken;
     std::vector<std::string>::iterator iter;
@@ -798,10 +817,20 @@ bool TMParser::isTimedTask() {
                     isTokenToFound = true;
                 } 
             }
+
+            if(isNext(unitString)){
+                if(iter + 1 != remainingEntry.end()){
+                    std::string nextWord = returnLowerCase(*(iter + 1));
+                    if(isDay(nextWord)){
+                        isNextDayFound = true;
+                    }
+                }
+            }
+
         }
     }
 
-    if(isTokenOnFound||isTokenAtFound||isTokenFromFound||isTokenToFound){
+    if(isTokenOnFound||isTokenAtFound||isTokenFromFound||isTokenToFound||isNextDayFound){
         return true;
     } else {
         return false;
@@ -1295,13 +1324,16 @@ std::string TMParser::addNDaysFromDate(std::string date, int n){
     return dateFromBoostToDDMMYYYY(finalBoostDate);
 }
 
+//preconditions only used after token before
 std::string TMParser::getDateFromNextDay(std::vector<std::string>& remainingEntry,std::vector<std::string>::iterator iter){
     std::string stringDay = returnLowerCase(*(iter + 2));
     std::string date;
 
     boost::gregorian::greg_weekday day(dayOfWeek(stringDay));
     boost::gregorian::first_day_of_the_week_after fdaf(day);
-    boost::gregorian::date dateTM = fdaf.get_date(_dateToday);
+    boost::gregorian::first_day_of_the_week_after firstSundayAfterToday(boost::gregorian::Sunday);
+    boost::gregorian::date dateTM = firstSundayAfterToday.get_date(_dateToday);
+    dateTM = fdaf.get_date(dateTM);
     std::string tempDate = boost::gregorian::to_iso_string(dateTM);
 
     date = tempDate.substr(6,2) + tempDate.substr(4,2) + tempDate.substr(0,4);
