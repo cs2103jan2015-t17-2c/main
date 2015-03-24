@@ -15,6 +15,7 @@ public:
     TMDateTime(std::string, std::string);
 
     std::string getDate();
+    boost::gregorian::date getBoostDate();
     std::string getTime();
 
     void setDate(std::string);

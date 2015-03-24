@@ -17,6 +17,10 @@ std::string TMTaskTime::getStartDate(){
     return _startDateTime.getDate();
 }
 
+boost::gregorian::date TMTaskTime::getStartBoostDate(){
+    return _startDateTime.getBoostDate();
+}
+
 std::string TMTaskTime::getStartTime(){
     return _startDateTime.getTime();
 }
@@ -25,8 +29,20 @@ std::string TMTaskTime::getEndDate(){
     return _endDateTime.getDate();
 }
 
+boost::gregorian::date TMTaskTime::getEndBoostDate(){
+    return _endDateTime.getBoostDate();
+}
+
 std::string TMTaskTime::getEndTime(){
     return _endDateTime.getTime();
+}
+
+TMDateTime TMTaskTime::getStartDateTime(){
+	return _startDateTime;
+}
+
+TMDateTime TMTaskTime::getEndDateTime(){
+	return _endDateTime;
 }
 
 void TMTaskTime::setStartDate(std::string newStartDate){
