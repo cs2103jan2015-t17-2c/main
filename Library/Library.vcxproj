@@ -40,12 +40,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LibraryPath>C:\local\boost_1_57_0\stage\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\local\boost_1_57_0;$(IncludePath)</IncludePath>
+    <IncludePath>C:\local\boost_1_57_0\boost;C:\local\boost_1_57_0;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>C:\local\boost_1_57_0\lib64-msvc-11.0;C:\local\boost_1_57_0\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
