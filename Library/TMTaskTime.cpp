@@ -17,12 +17,20 @@ std::string TMTaskTime::getStartDate(){
     return _startDateTime.getDate();
 }
 
+boost::gregorian::date TMTaskTime::getStartBoostDate(){
+    return _startDateTime.getBoostDate();
+}
+
 std::string TMTaskTime::getStartTime(){
     return _startDateTime.getTime();
 }
 
 std::string TMTaskTime::getEndDate(){
     return _endDateTime.getDate();
+}
+
+boost::gregorian::date TMTaskTime::getEndBoostDate(){
+    return _endDateTime.getBoostDate();
 }
 
 std::string TMTaskTime::getEndTime(){

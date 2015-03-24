@@ -29,6 +29,10 @@ std::string TMDateTime::getDate(){
     }
 }
 
+boost::gregorian::date TMDateTime::getBoostDate(){
+    return _date;
+}
+
 std::string TMDateTime::getTime(){
     return _time;
 }
