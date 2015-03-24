@@ -15,8 +15,10 @@ public:
     TMTaskTime(std::string, std::string, std::string, std::string);
 
     std::string getStartDate();
+    boost::gregorian::date getStartBoostDate();
     std::string getStartTime();
     std::string getEndDate();
+    boost::gregorian::date getEndBoostDate();
     std::string getEndTime();
 	TMDateTime getStartDateTime();
 	TMDateTime getEndDateTime();
