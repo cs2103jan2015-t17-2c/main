@@ -59,53 +59,59 @@
 		return true;
 	}
 
-	bool TMTaskList::hasClash(TMTask task) {
-		/*std::vector<TMTask>::iterator iter;
+	bool TMTaskList::hasClash(TMTask task) { //REVISIT CODE AND CHECK FOR BOUNDARY VALUES
+		std::vector<TMTask>::iterator iter;
+		TMDateTime start = task.getTaskTime().getStartDateTime();
+		
 		for (iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
-			if (startsEarlierThan(task, *iter)) {
-				if (isTwoClash(task, *iter)) {
-					return true;
-				}
-			} else {
+			if (startsBeforeTime(*iter, start)) {
 				if (isTwoClash(*iter, task)) {
 					return true;
 				}
+			} else {
+				if (isTwoClash(task, *iter)) {
+					return true;
+				}
 			}
-		}	*/
+		}	
 	return false;
 	}
 
-	bool TMTaskList::isTwoClash(TMTask task1, TMTask task2) {
-		if (task1.getTaskTime().getEndDate() == task2.getTaskTime().getStartDate()) {
-			return ( task1.getTaskTime().getEndTime() > task2.getTaskTime().getStartTime() );
-		} else {
-			( task1.getTaskTime().getEndDate() > task2.getTaskTime().getStartDate() );
-		}
+	bool TMTaskList::isTwoClash(TMTask task1, TMTask task2) { //REVISIT CODE
+		return startsBeforeTime(task2, task1.getTaskTime().getEndDateTime());
+		return true;
 	}
 
-	bool TMTaskList::startsEarlierThan(TMTask task, TMTaskTime time) {
-		/*std::string task1StartDate = task1.getTaskTime().getStartDate();
-		std::string task2StartDate = task2.getTaskTime().getStartDate();
-
-		if (task1StartDate < task2StartDate) {
-			return true;
-		} else if (task1StartDate == task2StartDate) {
-			return (task1.getTaskTime().getStartTime() <  task2.getTaskTime().getStartTime());
-		}*/
-
-		return false;
+	bool TMTaskList::startsBeforeTime(TMTask task, TMDateTime time) { //REVISIT CODE
+		TMDateTime dateTime = task.getTaskTime().getStartDateTime();
+		return isBefore(dateTime, time);
 	} 
 
-	bool TMTaskList::endsEarlierThan(TMTask task, TMTaskTime time) {return true;} //YET TO CODE
+	bool TMTaskList::endsBeforeTime(TMTask task, TMDateTime time) {
+		TMDateTime dateTime = task.getTaskTime().getEndDateTime();
+		return isBefore(dateTime, time);
+	} //REVISIT CODE
 
-	bool TMTaskList::isEarlierThan(TMTaskTime time1, TMTaskTime time2) {return true;} //YET TO CODE
+	bool TMTaskList::isBefore(TMDateTime time1, TMDateTime time2) { //REVISIT CODE
+		if (time1.getDate() > time2.getDate()) {
+			return false;
+		} else if (time1.getDate() == time2.getDate()) {
+			if (time1.getTime() >= time2.getTime()) {
+				return false;
+			}
+		}
 
-	std::vector<TMTask> TMTaskList::findClashes(TMTask task) {
+		return true;
+	}
+
+	std::vector<TMTask> TMTaskList::findClashes(TMTask task) { //REVISIT CODE AND CHECK FOR BOUNDARY VALUES
 		std::vector<TMTask> clashes;
-		/*std::vector<TMTask>::iterator iter;
+		std::vector<TMTask>::iterator iter;
+		TMDateTime start = task.getTaskTime().getStartDateTime();
+		
 		for (iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
-			if (startsEarlierThan(task, *iter)) {
-				if (isTwoClash(task, *iter)) {
+			if (startsBeforeTime(*iter, start)) {
+				if (isTwoClash(*iter, task)) {
 					clashes.push_back(*iter);
 				}
 			} else {
@@ -113,22 +119,22 @@
 					clashes.push_back(*iter);
 				}
 			}
-		}*/
+		}	
 	return clashes;
 	}
 
 	std::vector<TMTask>::iterator TMTaskList::findEarliestTaskIter(std::vector<TMTask>::iterator unsortedStart) {
 									TMTask earliestTask = *unsortedStart;
 									std::vector<TMTask>::iterator earliestTaskIter;
-									/*earliestTaskIter = unsortedStart;
+									earliestTaskIter = unsortedStart;
 									std::vector<TMTask>::iterator iter;
 		
 									for (iter = unsortedStart; iter != timedAndDeadline.end(); ++iter) {
-										if (startsEarlierThan(*iter, earliestTask)) {
+										if (startsBeforeTime(*iter, earliestTask.getTaskTime().getStartDateTime())) {
 											earliestTask = *iter;
 											earliestTaskIter = iter;
 										}
-									}*/
+									}
 
 									return earliestTaskIter;
 	}

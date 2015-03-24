@@ -29,6 +29,14 @@ std::string TMTaskTime::getEndTime(){
     return _endDateTime.getTime();
 }
 
+TMDateTime TMTaskTime::getStartDateTime(){
+	return _startDateTime;
+}
+
+TMDateTime TMTaskTime::getEndDateTime(){
+	return _endDateTime;
+}
+
 void TMTaskTime::setStartDate(std::string newStartDate){
     _startDateTime.setDate(newStartDate);
 }

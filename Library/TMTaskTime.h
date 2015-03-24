@@ -18,6 +18,9 @@ public:
     std::string getStartTime();
     std::string getEndDate();
     std::string getEndTime();
+	TMDateTime getStartDateTime();
+	TMDateTime getEndDateTime();
+	
 
     void setStartDate(std::string);
     void setStartTime(std::string);

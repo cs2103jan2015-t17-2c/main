@@ -4,6 +4,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include "TMDateTime.h"
 #include "TMTask.h"
 
 
@@ -43,13 +44,13 @@ public:
 	bool isTwoClash(TMTask task1, TMTask task2);
 
 	//Postcondition: Returns true if task starts before tmTime
-	bool startsEarlierThan(TMTask task, TMTaskTime time);
+	bool startsBeforeTime(TMTask task, TMDateTime time);
 
 	//Postcondition: Returns true if task ends before tmTime
-	bool endsEarlierThan(TMTask task, TMTaskTime time);
+	bool endsBeforeTime(TMTask task, TMDateTime time);
 
-	//Postcondition: Returns true if time1 is earlier than time2
-	bool TMTaskList::isEarlierThan(TMTaskTime time1, TMTaskTime time2);
+	//Postcondition: Returns true if time1 is before time2, returning false if time1 is after or equals to time2
+	bool TMTaskList::isBefore(TMDateTime time1, TMDateTime time2);
 
 	//Postcondition: Returns all tasks that clashes with the task to be added in the form of a vector
 	std::vector<TMTask> findClashes(TMTask task);
