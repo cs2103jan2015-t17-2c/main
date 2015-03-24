@@ -93,9 +93,9 @@
 	} //REVISIT CODE
 
 	bool TMTaskList::isBefore(TMDateTime time1, TMDateTime time2) { //REVISIT CODE
-		if (time1.getDate() > time2.getDate()) {
+		if (time1.getBoostDate() > time2.getBoostDate()) {
 			return false;
-		} else if (time1.getDate() == time2.getDate()) {
+		} else if (time1.getBoostDate() == time2.getBoostDate()) {
 			if (time1.getTime() >= time2.getTime()) {
 				return false;
 			}

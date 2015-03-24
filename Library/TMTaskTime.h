@@ -20,6 +20,7 @@ public:
     std::string getEndDate();
     boost::gregorian::date getEndBoostDate();
     std::string getEndTime();
+	
 	TMDateTime getStartDateTime();
 	TMDateTime getEndDateTime();
 	
