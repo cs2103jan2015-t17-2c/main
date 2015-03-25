@@ -7,6 +7,7 @@
 #include "TMDateTime.h"
 #include "TMTask.h"
 #include <assert.h>
+#include <Windows.h>
 
 
 class TMTaskList{

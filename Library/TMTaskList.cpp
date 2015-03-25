@@ -106,7 +106,7 @@
 	}
 
 	bool TMTaskList::isValidPositionIndex(int positionIndex) {
-		return (positionIndex > 0 && positionIndex <= _dated.size() + _undated.size());
+		return (positionIndex > 0 && positionIndex <= int(_dated.size() + _undated.size()));
 	}
 	
 	bool TMTaskList::isInClashes(TMTask task) {
@@ -210,12 +210,12 @@
 	TMTask TMTaskList::getTaskFromPositionIndex(int positionIndex) {
 		assert(isValidPositionIndex(positionIndex));
 
-		if (positionIndex <= _dated.size()) {
+		if (positionIndex <= int(_dated.size())) {
 			return _dated[positionIndex - 1];
 		}
 
-		if (positionIndex <= _dated.size() + _undated.size()) {
-			return _undated[positionIndex - _dated.size() - 1];
+		if (positionIndex <= int(_dated.size() + _undated.size())) {
+			return _undated[positionIndex - int(_dated.size()) - 1];
 		}
 	}
 
@@ -368,7 +368,7 @@
 	//NEED TO USE ASSERT TO DETERMINE VALID POSITION INDEX
 	void TMTaskList::updateTask(int positionIndex, std::string componentOfTask, std::string changeTo) {
 		assert(isValidPositionIndex(positionIndex));
-		if (positionIndex <= _dated.size()) {
+		if (positionIndex <= int(_dated.size())) {
 			TMTask task = _dated[positionIndex-1];
 
 			if (componentOfTask == "desc") {
@@ -394,7 +394,7 @@
 				}
 			}
 			
-		} else if (positionIndex <= _dated.size() + _undated.size()) {
+		} else if (positionIndex <= int(_dated.size() + _undated.size())) {
 			TMTask &task = _undated[positionIndex-_dated.size()-1];
 			if (componentOfTask == "desc") {
 				task.setTaskDescription(changeTo);
@@ -413,9 +413,9 @@
 	//NEED TO USE ASSERT TO DETERMINE VALID POSITION INDEX
 	void TMTaskList::removeTask(int positionIndex) {	
 		assert(isValidPositionIndex(positionIndex));
-		if (positionIndex <= _dated.size()) {
+		if (positionIndex <= int(_dated.size())) {
 			_dated.erase(_dated.begin() + positionIndex - 1);
-		} else if (positionIndex <= _dated.size() + _undated.size()) {
+		} else if (positionIndex <= int(_dated.size() + _undated.size())) {
 			int floatingTaskNumber = positionIndex - _dated.size();
 			_undated.erase(_undated.begin() + floatingTaskNumber - 1);
 		}
@@ -486,7 +486,7 @@
 
 		outFile.open(_fileDirectory);
 		outFile << "Number of timed and deadline: "  << _dated.size() << "\n";
-		for (i = 0; i < _dated.size(); ++i) {
+		for (i = 0; i < int(_dated.size()); ++i) {
 			outFile << _dated[i].getTaskDescription() << 
 				" " << _dated[i].getTaskTime().getStartDate() << 
 				" " << _dated[i].getTaskTime().getStartTime() << 
@@ -497,7 +497,7 @@
 		//outFile << '\n';
 	
 		outFile << "Number of undated tasks: " << _undated.size() << "\n";
-		for (i = 0; i < _undated.size(); ++i) {
+		for (i = 0; i < int(_undated.size()); ++i) {
 			outFile << _undated[i].getTaskDescription() << "\n";
 		}
 
