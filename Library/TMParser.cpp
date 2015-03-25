@@ -155,19 +155,12 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
 //             : use only when in adding or editing information
 std::vector<TMTask> TMParser::parseTaskInfo() {
     std::vector<TMTask> task;
-    //std::cout << "parseTaskInfo\n";
     if(isDeadlinedTask()){
-        //std::cout << "IS DEADLINE\n";
         task.push_back(parseDeadlinedTaskInfo());
     } else if(isTimedTask()) {
-        
-       // std::cout << "IS TIMED\n";
         task.push_back(parseTimedTaskInfo());
     } else {
-        
-       // std::cout << "floating task\n";
         task.push_back(parseUndatedTaskInfo());
-		//std::cout << "DONE WITH FLOATING" << std::endl;
     }
     return task;
 }
@@ -199,7 +192,8 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
             if(iter + 1 != remainingEntry.end()){
                 nextWord = returnLowerCase(*(iter+1));
 
-                if(isDate(nextWord)||isDay(nextWord)) {//before date DDMMYYYY
+                if(isDate(nextWord)||isDay(nextWord)) {
+                    //e.g. before 01012016 (DDMMYYYY)
                     dateToMeet = extractDayOrDate(remainingEntry,iter);
                     dateToMeet = dateFromUserToBoostFormat(dateToMeet);
                     dateToMeet = substractNDaysFromDate(dateToMeet,1);
@@ -212,7 +206,8 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                     } else {
                         iter--;
                     }
-                } else if (isNextDay(remainingEntry,iter)) {//before next monday
+                } else if (isNextDay(remainingEntry,iter)) {
+                    //e.g. before next monday
                     dateToMeet = extractNextDayAfterToken(remainingEntry,iter);
                     dateToMeet = dateFromUserToBoostFormat(dateToMeet);
                     dateToMeet = substractNDaysFromDate(dateToMeet,1);
@@ -879,7 +874,9 @@ bool TMParser::isDay(std::string token) {
        token == DAY_SAT||
        token == DAY_SATURDAY||
        token == DAY_SUN||
-       token== DAY_SUNDAY) {
+       token == DAY_SUNDAY||
+       token == DAY_TODAY||
+       token == DAY_TOMORROW) {
            return true;
     } else {
         return false;

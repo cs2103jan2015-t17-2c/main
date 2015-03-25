@@ -57,9 +57,6 @@
     <ClInclude Include="TMParser.h">
       <Filter>Header Files\TMParser</Filter>
     </ClInclude>
-    <ClInclude Include="TMTimeParser.h">
-      <Filter>Header Files\TMParser</Filter>
-    </ClInclude>
     <ClInclude Include="TMTask.h">
       <Filter>Header Files\TMTask</Filter>
     </ClInclude>
@@ -105,9 +102,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TMParser.cpp">
-      <Filter>Source Files\TMParser</Filter>
-    </ClCompile>
-    <ClCompile Include="TMTimeParser.cpp">
       <Filter>Source Files\TMParser</Filter>
     </ClCompile>
     <ClCompile Include="TMTask.cpp">

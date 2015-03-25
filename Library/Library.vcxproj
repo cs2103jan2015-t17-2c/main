@@ -82,7 +82,6 @@
     <ClInclude Include="TMParser.h" />
     <ClInclude Include="TMTaskTime.h" />
     <ClInclude Include="TMTaskList.h" />
-    <ClInclude Include="TMTimeParser.h" />
     <ClInclude Include="TMEditTask.h" />
   </ItemGroup>
   <ItemGroup>
@@ -92,7 +91,6 @@
     <ClCompile Include="TMTask.cpp" />
     <ClCompile Include="TMTaskTime.cpp" />
     <ClCompile Include="TMTaskList.cpp" />
-    <ClCompile Include="TMTimeParser.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
