@@ -478,8 +478,9 @@ TMTask TMParser::parseTimedTaskInfo(){
         } else {
         //endTime and endDate are found
         }
-        startDate = endDate;
-        startTime = endTime;
+        //no startDateTime, assumed to be current date and atime
+        startDate = dateFromBoostToDDMMYYYY(_dateToday);
+        startTime = getCurrentTime();
 
     } else if((startDateExtracted||startTimeExtracted) && (endDateExtracted||endTimeExtracted)){
         taskType = TaskType::WithPeriod;
