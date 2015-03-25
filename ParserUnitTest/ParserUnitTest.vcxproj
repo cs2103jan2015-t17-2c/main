@@ -11,12 +11,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F3CB39AB-99D5-4991-9CF4-DE3F6693E57E}</ProjectGuid>
-    <RootNamespace>Library</RootNamespace>
+    <ProjectGuid>{5F3B26C5-04BB-4430-B897-3B0A70AF6B2C}</ProjectGuid>
+    <RootNamespace>ParserUnitTest</RootNamespace>
+    <ProjectName>TMParserExe</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -39,13 +40,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>C:\local\boost_1_57_0;C:\local\boost_1_57_0\boost;$(IncludePath)</IncludePath>
     <LibraryPath>C:\local\boost_1_57_0\stage\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\local\boost_1_57_0\boost;C:\local\boost_1_57_0;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\local\boost_1_57_0\lib64-msvc-11.0;C:\local\boost_1_57_0\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -58,6 +60,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -66,33 +69,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="TMAddTasks.h" />
-    <ClInclude Include="TMCommand.h" />
-    <ClInclude Include="TMCommandCreator.h" />
-    <ClInclude Include="TMCompleteTasks.h" />
-    <ClInclude Include="TMDateTime.h" />
-    <ClInclude Include="TMDeleteTasks.h" />
-    <ClInclude Include="TMDoneAllToday.h" />
-    <ClInclude Include="TMConfirmTasks.h" />
-    <ClInclude Include="TMSaveAt.h" />
-    <ClInclude Include="TMUserInterface.h" />
-    <ClInclude Include="TMViewFreeTime.h" />
-    <ClInclude Include="TMSearchKeyword.h" />
-    <ClInclude Include="TMTask.h" />
-    <ClInclude Include="TMParser.h" />
-    <ClInclude Include="TMTaskTime.h" />
-    <ClInclude Include="TMTaskList.h" />
-    <ClInclude Include="TMTimeParser.h" />
-    <ClInclude Include="TMEditTask.h" />
+    <ClCompile Include="..\Library\TMExecutor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TMDateTime.cpp" />
-    <ClCompile Include="TMUserInterface.cpp" />
-    <ClCompile Include="TMParser.cpp" />
-    <ClCompile Include="TMTask.cpp" />
-    <ClCompile Include="TMTaskTime.cpp" />
-    <ClCompile Include="TMTaskList.cpp" />
-    <ClCompile Include="TMTimeParser.cpp" />
+    <ProjectReference Include="..\Library\Library.vcxproj">
+      <Project>{f3cb39ab-99d5-4991-9cf4-de3f6693e57e}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

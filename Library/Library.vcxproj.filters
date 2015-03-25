@@ -119,9 +119,6 @@
     <ClCompile Include="TMTaskList.cpp">
       <Filter>Source Files\TMMemory</Filter>
     </ClCompile>
-    <ClCompile Include="TMExecutor.cpp">
-      <Filter>Source Files\TMExecutor</Filter>
-    </ClCompile>
     <ClCompile Include="TMUserInterface.cpp">
       <Filter>Source Files\TMUserInterface</Filter>
     </ClCompile>
