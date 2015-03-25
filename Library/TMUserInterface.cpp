@@ -56,12 +56,12 @@ void TMUserInterface::displayDefault() {
 			SetColor(Color::GRAY);
 
 		} else {
-			SetColor(Color::PINK);
-			std::cout << std :: left << std :: setw(18) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t" << (*iter).getTaskTime().getStartDate() << 
-			"\t" << (*iter).getTaskTime().getStartTime() << 
-			"\t\t" << (*iter).getTaskTime().getEndDate() <<
-			"\t" << (*iter).getTaskTime().getEndTime() <<std::endl;
-			SetColor(Color::GRAY);
+			if (taskList->isInClashes(*iter)) {
+					SetColor(Color::BLUE);
+			} else {
+				SetColor(Color::WHITE);
+			}
+			printPeriodTask(*iter);
 		}
 	}
 	
@@ -72,6 +72,7 @@ void TMUserInterface::displayDefault() {
 	}
 
 	std::cout << std::endl;
+	std::cout << "TOTAL NUM CLASHES: " << taskList->getClashesSize() << std::endl;
 }	
 
 void TMUserInterface::displayFreeTime() {
@@ -85,4 +86,12 @@ void TMUserInterface::displayFreeTime() {
 		std::cout << " ~ " << (*iter).getTaskTime().getStartDate() << " " << (*iter).getTaskTime().getStartTime() << '\n\n';
 	}
 	
+}
+
+void TMUserInterface::printPeriodTask(TMTask task) {
+	std::cout << std :: left << std :: setw(18) << std :: setfill(' ') << task.getTaskDescription() << "\t" << task.getTaskTime().getStartDate() << 
+			"\t" << task.getTaskTime().getStartTime() << 
+			"\t\t" << task.getTaskTime().getEndDate() <<
+			"\t" << task.getTaskTime().getEndTime() <<std::endl;
+			SetColor(Color::GRAY);
 }

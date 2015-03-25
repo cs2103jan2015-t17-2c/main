@@ -21,6 +21,7 @@ public:
 	std::string returnUserInput();
 	void SetColor(Color c);
 	void displayDefault();
+	void printPeriodTask(TMTask task);
 
 	//Postcondition: Returns a string consisting all the timings in which the user is free
 	void TMUserInterface::displayFreeTime();

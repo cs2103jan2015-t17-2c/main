@@ -21,6 +21,9 @@ private:
 	//Contains all the completed timed, deadline and floating tasks
 	std::vector<TMTask> _archived;
 
+	//Contains all tasks in taskList that are involved in a schedule clash
+	std::vector<TMTask> _clashes;
+	
 	static TMTaskList *theOne;
 	
 	//Private constructor
@@ -55,6 +58,9 @@ public:
 
 	bool isValidPositionIndex(int positionIndex);
 
+	//Checks whether task has clashes with other tasks in taskList
+	bool isInClashes(TMTask task);
+
 	//Postcondition: Returns all tasks that clashes with the task to be added in the form of a vector
 	std::vector<TMTask> findClashes(TMTask task);
 
@@ -74,6 +80,7 @@ public:
 	int getDatedSize();
 	int getUndatedSize();
 	int getArchivedSize();
+	int getClashesSize();
 	std::vector<TMTask> getDated();
 	std::vector<TMTask> getUndated();
 	std::vector<TMTask> getArchived();
