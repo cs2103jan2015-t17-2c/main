@@ -42,7 +42,7 @@ public:
     std::vector<TMTask> parseTaskInfo();
     TMTask parseDeadlinedTaskInfo();
     TMTask parseTimedTaskInfo();
-    TMTask parseFloatingTaskInfo();
+    TMTask parseUndatedTaskInfo();
 
     //need to check if there is sufficient space at the back first
     std::string extractDayOrDate(std::vector<std::string>&, std::vector<std::string>::iterator);

@@ -166,7 +166,7 @@ std::vector<TMTask> TMParser::parseTaskInfo() {
     } else {
         
        // std::cout << "floating task\n";
-        task.push_back(parseFloatingTaskInfo());
+        task.push_back(parseUndatedTaskInfo());
 		//std::cout << "DONE WITH FLOATING" << std::endl;
     }
     return task;
@@ -303,8 +303,8 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
     //
     //std::cout << "final dateTM: " << dateToMeet << std::endl;
     if(isValidDate(dateToMeet)){
-        TMTaskTime taskTime("","",dateToMeet,timeToMeet);
-        TMTask task(taskDescription,taskTime,taskType);
+        TMTaskTime taskTime(dateToMeet, timeToMeet, dateToMeet, timeToMeet);
+        TMTask task(taskDescription, taskTime, taskType);
         return task;
     } else {
         //when date is invalid
@@ -318,7 +318,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
 //change to period
 
 TMTask TMParser::parseTimedTaskInfo(){
-    TaskType taskType = TaskType::Timed;
+    TaskType taskType;
     std::string startTime = "";
     std::string startDate = "";
     std::string endTime = "";
@@ -447,8 +447,9 @@ TMTask TMParser::parseTimedTaskInfo(){
 
     //assume user will surely use from and to combination
     if((startTimeExtracted||startDateExtracted) && !endTimeExtracted && !endDateExtracted){
+        taskType = TaskType::WithStartDateTime;
         if(!startTimeExtracted){
-        startTime = "0000";
+            startTime = "0000";
         } else if(!startDateExtracted){
             std::string currentTime = getCurrentTime();
             if(startTime >= currentTime){
@@ -462,7 +463,11 @@ TMTask TMParser::parseTimedTaskInfo(){
         } else {
         //startTime and startDate are found
         }
+        endDate = startDate;
+        endTime = startTime;
+
     } else if((endTimeExtracted||endDateExtracted) && !startTimeExtracted && !startDateExtracted) {
+        taskType = TaskType::WithEndDateTime;
         if(!endTimeExtracted){
             endTime = "0000";
         } else if(!endDateExtracted){
@@ -478,7 +483,11 @@ TMTask TMParser::parseTimedTaskInfo(){
         } else {
         //endTime and endDate are found
         }
+        startDate = endDate;
+        startTime = endTime;
+
     } else if((startDateExtracted||startTimeExtracted) && (endDateExtracted||endTimeExtracted)){
+        taskType = TaskType::WithPeriod;
         if(!startTimeExtracted){
             //there's startDate no startTime
             startTime = "0000";
@@ -531,7 +540,6 @@ TMTask TMParser::parseTimedTaskInfo(){
                 //all attributes found
             }
         }
-
     }
 
     int lengthOfRemainingEntry = remainingEntry.size();
@@ -543,57 +551,23 @@ TMTask TMParser::parseTimedTaskInfo(){
         }
     }
     
-    if((startDate != "") && (endDate != "")) {
-        startDate = dateFromUserToBoostFormat(startDate);
-        endDate = dateFromUserToBoostFormat(endDate);
+    startDate = dateFromUserToBoostFormat(startDate);
+    endDate = dateFromUserToBoostFormat(endDate);
+    
+    if(isValidDate(startDate) && isValidDate(endDate)){
+        TMTaskTime taskTime(startDate,startTime,endDate,endTime);
+        TMTask task(taskDescription,taskTime,taskType);
 
-        if(isValidDate(startDate) && isValidDate(endDate)){
-            TMTaskTime taskTime(startDate,startTime,endDate,endTime);
-            TMTask task(taskDescription,taskTime,taskType);
-
-            return task;
-        } else {
-            TMTaskTime taskTime;
-            TMTask task("",taskTime,TaskType::Invalid);
-            return task;
-        }
-    } else if((endDate == "") && (startDate != "")) {
-        startDate = dateFromUserToBoostFormat(startDate);
-
-        if(isValidDate(startDate)) {
-            TMTaskTime taskTime(startDate,startTime,"","");
-            TMTask task(taskDescription,taskTime,taskType);
-
-            return task;
-        } else {
-            TMTaskTime taskTime;
-            TMTask task("",taskTime,TaskType::Invalid);
-            return task;
-        }
-    } else if((startDate == "") && (endDate != "")){
-        endDate = dateFromUserToBoostFormat(endDate);
-
-        if(isValidDate(endDate)) {
-            TMTaskTime taskTime("","",endDate,endTime);
-            TMTask task(taskDescription,taskTime,taskType);
-
-            return task;
-        } else {
-            TMTaskTime taskTime;
-            TMTask task("",taskTime,TaskType::Invalid);
-            return task;
-        }
+        return task;
     } else {
         TMTaskTime taskTime;
         TMTask task("",taskTime,TaskType::Invalid);
         return task;
     }
-
-    //return task;
 }
 
-TMTask TMParser::parseFloatingTaskInfo() {
-    TaskType taskType = TaskType::Floating;
+TMTask TMParser::parseUndatedTaskInfo() {
+    TaskType taskType = TaskType::Undated;
     TMTaskTime taskTime;
     std::string taskDescription;
 
