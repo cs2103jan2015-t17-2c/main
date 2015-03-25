@@ -874,9 +874,7 @@ bool TMParser::isDay(std::string token) {
        token == DAY_SAT||
        token == DAY_SATURDAY||
        token == DAY_SUN||
-       token == DAY_SUNDAY||
-       token == DAY_TODAY||
-       token == DAY_TOMORROW) {
+       token == DAY_SUNDAY) {
            return true;
     } else {
         return false;
@@ -1176,7 +1174,6 @@ std::string TMParser::dateFromUserToBoostFormat(std::string stringDate) {
         month = stringDate.substr(3,3);
         yyyy = stringDate.substr(9,4);
     } else {
-        //IMPORTANT CALLER MUST TEST DATE
         return "";
     }
 

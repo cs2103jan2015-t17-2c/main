@@ -1,8 +1,5 @@
-Number of timed and deadline: 5
-today 26 Mar 2015 2100 26 Mar 2015 2100
-tomorrow 27 Mar 2015 2100 28 Mar 2015 2100
-tomorrow 9pm 28 Mar 2015 2100 28 Mar 2015 2100
-t1 29 Mar 2015 2000 29 Mar 2015 2100
-t2 30 Mar 2015 2100 28 Mar 2015 1400
+Number of timed and deadline: 2
+t1 thu 26 Mar 2015 1200 26 Mar 2015 1200
+t2 02 Apr 2015 1500 02 Apr 2015 1500
 Number of undated tasks: 0
 Number of completed tasks: 0
