@@ -108,6 +108,16 @@
 	bool TMTaskList::isValidPositionIndex(int positionIndex) {
 		return (positionIndex > 0 && positionIndex <= _dated.size() + _undated.size());
 	}
+	
+	bool TMTaskList::isInClashes(TMTask task) {
+		std::vector<TMTask>::iterator iter;
+		for (iter = _clashes.begin(); iter != _clashes.end(); ++iter) {
+			if (areEquivalent(*iter, task)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	std::vector<TMTask> TMTaskList::findClashes(TMTask task) { //REVISIT CODE AND CHECK FOR BOUNDARY VALUES
 		std::vector<TMTask> clashes;
@@ -118,13 +128,19 @@
 			if (startsBeforeTime(*iter, start)) {
 				if (isTwoClash(*iter, task)) {
 					clashes.push_back(*iter);
+					if (!isInClashes(*iter)) {
+						_clashes.push_back(*iter);
+					}
 				}
 			} else {
 				if (isTwoClash(task, *iter)) {
 					clashes.push_back(*iter);
+					if (!isInClashes(*iter)) {
+						_clashes.push_back(*iter);
+					}
 				}
 			}
-		}	
+		}
 	return clashes;
 	}
 
@@ -215,6 +231,10 @@
 		return _archived.size();
 	}
 
+	int TMTaskList::getClashesSize() {
+		return _clashes.size();
+	}
+
 	std::vector<TMTask> TMTaskList::getDated() {
 		return _dated;
 	}
@@ -255,6 +275,8 @@
 
 				if (usersReply == "n" || usersReply == "N") {
 					return;
+				} else if (usersReply == "y") {
+					_clashes.push_back(task);
 				}
 			}
 			_dated.push_back(task);
@@ -288,6 +310,8 @@
 
 				if (usersReply == "n" || usersReply == "N") {
 					return;
+				} else if (usersReply == "y") {
+					_clashes.push_back(task);
 				}
 			}
 			_dated.push_back(task);
