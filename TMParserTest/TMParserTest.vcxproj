@@ -11,22 +11,26 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F3CB39AB-99D5-4991-9CF4-DE3F6693E57E}</ProjectGuid>
-    <RootNamespace>Library</RootNamespace>
+    <ProjectGuid>{D586A8D4-5EF3-4337-ADF2-6BB90434FD61}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>TMParserTest</RootNamespace>
+    <ProjectName>LibraryTest</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -39,60 +43,62 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\local\boost_1_57_0;C:\local\boost_1_57_0\boost;$(IncludePath)</IncludePath>
     <LibraryPath>C:\local\boost_1_57_0\stage\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\local\boost_1_57_0\boost;C:\local\boost_1_57_0;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\local\boost_1_57_0\lib64-msvc-11.0;C:\local\boost_1_57_0\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\local\boost_1_57_0\boost;C:\local\boost_1_57_0\lib64-msvc-11.0;C:\Users\Wei Ern\Documents\Visual Studio 2012\Projects\TimeMaster\Library;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <UseFullPaths>true</UseFullPaths>
     </ClCompile>
     <Link>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <UseFullPaths>true</UseFullPaths>
     </ClCompile>
     <Link>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="TMAddTasks.h" />
-    <ClInclude Include="TMCommand.h" />
-    <ClInclude Include="TMCommandCreator.h" />
-    <ClInclude Include="TMCompleteTasks.h" />
-    <ClInclude Include="TMDateTime.h" />
-    <ClInclude Include="TMDeleteTasks.h" />
-    <ClInclude Include="TMDoneAllToday.h" />
-    <ClInclude Include="TMConfirmTasks.h" />
-    <ClInclude Include="TMSaveAt.h" />
-    <ClInclude Include="TMUserInterface.h" />
-    <ClInclude Include="TMViewFreeTime.h" />
-    <ClInclude Include="TMSearchKeyword.h" />
-    <ClInclude Include="TMTask.h" />
-    <ClInclude Include="TMParser.h" />
-    <ClInclude Include="TMTaskTime.h" />
-    <ClInclude Include="TMTaskList.h" />
-    <ClInclude Include="TMTimeParser.h" />
-    <ClInclude Include="TMEditTask.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TMDateTime.cpp" />
-    <ClCompile Include="TMUserInterface.cpp" />
-    <ClCompile Include="TMParser.cpp" />
-    <ClCompile Include="TMTask.cpp" />
-    <ClCompile Include="TMTaskTime.cpp" />
-    <ClCompile Include="TMTaskList.cpp" />
-    <ClCompile Include="TMTimeParser.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="TMParserTest.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Library\Library.vcxproj">
+      <Project>{f3cb39ab-99d5-4991-9cf4-de3f6693e57e}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
