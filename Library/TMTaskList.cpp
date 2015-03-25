@@ -96,7 +96,7 @@
 		if (time1.getBoostDate() > time2.getBoostDate()) {
 			return false;
 		} else if (time1.getBoostDate() == time2.getBoostDate()) {
-			if (time1.getTime() >= time2.getTime()) {
+			if (time1.getTime() > time2.getTime()) {
 				return false;
 			}
 		}
@@ -217,40 +217,52 @@
 		TaskType type = task.getTaskType();
 		switch (type) {
 			
-		case Timed:
+		case WithStartDateTime:
 			/*if (hasClash(task)) {
-			std::vector<TMTask> clashesWith;
-			clashesWith = findClashes(task);
-			std::cout << "Clashes in timing of the following tasks:" << std::endl;
-			std::vector<TMTask>::iterator iter;
-			for (iter = clashesWith.begin(); iter != clashesWith.end(); ++iter) {
-				std::string taskDetails;
-				taskDetails = (*iter).getTaskDescription() + " " + (*iter).getTaskTime().getStartDate()
-					+ " " + (*iter).getTaskTime().getStartTime()
-					+ " " + (*iter).getTaskTime().getEndDate()
-					+ " " + (*iter).getTaskTime().getEndTime(); //TO IMPLEMENT NEW METHODS IN TMTASK
-				std::cout << taskDetails << std::endl;
-			}
-			std::cout << "Do you want to add this task despite clashes? (Y/N)" << std::endl;
-			std::string usersReply;
-			std::cin >> usersReply;
+				std::vector<TMTask> clashesWith;
+				clashesWith = findClashes(task);
+				std::cout << "Clashes in timing of the following tasks:" << std::endl;
+				std::vector<TMTask>::iterator iter;
+				for (iter = clashesWith.begin(); iter != clashesWith.end(); ++iter) {
+					std::string taskDetails;
+					taskDetails = (*iter).getTaskDescription() + " " + (*iter).getTaskTime().getStartDate()
+						+ " " + (*iter).getTaskTime().getStartTime()
+						+ " " + (*iter).getTaskTime().getEndDate()
+						+ " " + (*iter).getTaskTime().getEndTime(); 
+					std::cout << taskDetails << std::endl;
+				}
+				std::cout << "Do you want to add this task despite clashes? (Y/N)" << std::endl;
+				std::string usersReply;
+				std::cin >> usersReply;
 
-			if (usersReply == "n" || usersReply == "N") {
-				return;
-			}
+				if (usersReply == "n" || usersReply == "N") {
+					return;
+				}
 			}*/
 			_dated.push_back(task);
-			std::cout << "DATED TASK ADDED!" << std::endl;
-			//chronoSort();
-			break;
-		
-		case WithDeadline:
-			_dated.push_back(task);
-			std::cout << "DATED TASK ADDED!" << std::endl;
-			//chronoSort();
+			std::cout << "WITH SDT TASK ADDED!" << std::endl;
+			chronoSort();
 			break;
 
-		case Floating: 
+		case WithEndDateTime:
+			_dated.push_back(task);
+			std::cout << "WITHDEADLINE TASK ADDED!" << std::endl;
+			chronoSort();
+			break;
+		
+		case WithPeriod:
+			_dated.push_back(task);
+			std::cout << "WITHDEADLINE TASK ADDED!" << std::endl;
+			chronoSort();
+			break;
+
+		case WithDeadline:
+			_dated.push_back(task);
+			std::cout << "WITHDEADLINE TASK ADDED!" << std::endl;
+			chronoSort();
+			break;
+
+		case Undated: 
 			_undated.push_back(task);
 			std::cout << "UNDATED TASK ADDED!" << std::endl;
 			break;
@@ -402,7 +414,7 @@
 		outFile << "Number of completed tasks: " << _archived.size() << "\n";
 		for (iter = _archived.begin(); iter != _archived.end(); iter++) {
 			
-			if (iter->getTaskType() == TaskType::Timed || iter->getTaskType() == TaskType::WithDeadline) {
+			if (iter->getTaskType() == TaskType::WithPeriod || iter->getTaskType() == TaskType::WithDeadline) {
 				outFile << iter->getTaskDescription() <<
 				" " << iter->getTaskTime().getStartDate() << 
 				" " << iter->getTaskTime().getStartTime() << 
