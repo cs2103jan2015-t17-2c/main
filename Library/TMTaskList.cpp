@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iostream>
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -143,6 +144,23 @@
 									return earliestTaskIter;
 	}
 
+	
+	std::vector<TMTask>::iterator TMTaskList::findSmallestAlphaTaskIter(std::vector<TMTask>::iterator unsortedStart) {
+									TMTask smallestAlphaTask = *unsortedStart;
+									std::vector<TMTask>::iterator smallestAlphaTaskIter;
+									smallestAlphaTaskIter = unsortedStart;
+									std::vector<TMTask>::iterator iter;
+		
+									for (iter = unsortedStart; iter != _undated.end(); ++iter) {
+										if (iter->getTaskDescription() < smallestAlphaTaskIter->getTaskDescription()) {
+											smallestAlphaTask = *iter;
+											smallestAlphaTaskIter = iter;
+										}
+									}
+
+									return smallestAlphaTaskIter;
+	}
+
 	std::string TMTaskList::toLower(std::string toBeConverted) {
 		std::string aCopy = toBeConverted;
 		transform(aCopy.begin(), aCopy.end(), aCopy.begin(), ::tolower);
@@ -218,7 +236,7 @@
 		switch (type) {
 			
 		case WithStartDateTime:
-			/*if (hasClash(task)) {
+			if (hasClash(task)) {
 				std::vector<TMTask> clashesWith;
 				clashesWith = findClashes(task);
 				std::cout << "Clashes in timing of the following tasks:" << std::endl;
@@ -233,12 +251,12 @@
 				}
 				std::cout << "Do you want to add this task despite clashes? (Y/N)" << std::endl;
 				std::string usersReply;
-				std::cin >> usersReply;
+				std::getline(std::cin, usersReply);
 
 				if (usersReply == "n" || usersReply == "N") {
 					return;
 				}
-			}*/
+			}
 			_dated.push_back(task);
 			std::cout << "WITH SDT TASK ADDED!" << std::endl;
 			chronoSort();
@@ -246,17 +264,59 @@
 
 		case WithEndDateTime:
 			_dated.push_back(task);
-			std::cout << "WITHDEADLINE TASK ADDED!" << std::endl;
+			std::cout << "WITH EDT TASK ADDED!" << std::endl;
 			chronoSort();
 			break;
 		
 		case WithPeriod:
+				if (hasClash(task)) {
+				std::vector<TMTask> clashesWith;
+				clashesWith = findClashes(task);
+				std::cout << "Clashes in timing of the following tasks:" << std::endl;
+				std::vector<TMTask>::iterator iter;
+				for (iter = clashesWith.begin(); iter != clashesWith.end(); ++iter) {
+					std::string taskDetails;
+					taskDetails = (*iter).getTaskDescription() + " " + (*iter).getTaskTime().getStartDate()
+						+ " " + (*iter).getTaskTime().getStartTime()
+						+ " " + (*iter).getTaskTime().getEndDate()
+						+ " " + (*iter).getTaskTime().getEndTime(); 
+					std::cout << taskDetails << std::endl;
+				}
+				std::cout << "Do you want to add this task despite clashes? (Y/N)" << std::endl;
+				std::string usersReply;
+				std::getline(std::cin, usersReply);
+
+				if (usersReply == "n" || usersReply == "N") {
+					return;
+				}
+			}
 			_dated.push_back(task);
-			std::cout << "WITHDEADLINE TASK ADDED!" << std::endl;
+			std::cout << "WITH PERIOD TASK ADDED!" << std::endl;
 			chronoSort();
 			break;
 
 		case WithDeadline:
+			if (hasClash(task)) {
+				std::vector<TMTask> clashesWith;
+				clashesWith = findClashes(task);
+				std::cout << "Clashes in timing of the following tasks:" << std::endl;
+				std::vector<TMTask>::iterator iter;
+				for (iter = clashesWith.begin(); iter != clashesWith.end(); ++iter) {
+					std::string taskDetails;
+					taskDetails = (*iter).getTaskDescription() + " " + (*iter).getTaskTime().getStartDate()
+						+ " " + (*iter).getTaskTime().getStartTime()
+						+ " " + (*iter).getTaskTime().getEndDate()
+						+ " " + (*iter).getTaskTime().getEndTime(); 
+					std::cout << taskDetails << std::endl;
+				}
+				std::cout << "Do you want to add this task despite clashes? (Y/N)" << std::endl;
+				std::string usersReply;
+				std::getline(std::cin, usersReply);
+
+				if (usersReply == "n" || usersReply == "N") {
+					return;
+				}
+			}
 			_dated.push_back(task);
 			std::cout << "WITHDEADLINE TASK ADDED!" << std::endl;
 			chronoSort();
@@ -265,6 +325,7 @@
 		case Undated: 
 			_undated.push_back(task);
 			std::cout << "UNDATED TASK ADDED!" << std::endl;
+			alphaSort();
 			break;
 
 		case Invalid:
@@ -354,7 +415,14 @@
 		
 	}
 
-	void TMTaskList::alphaSort() {}		//YET TO CODE
+
+	void TMTaskList::alphaSort() {
+		std::vector<TMTask>::iterator iter;
+		for (iter = _undated.begin(); iter != _undated.end(); ++iter) {
+			std::iter_swap(iter, findSmallestAlphaTaskIter(iter));
+		}
+		std::cout << "Alphabetical sort completed." <<std:: endl;
+	}	
 
 	std::vector<int> TMTaskList::keywordSearch(std::string keyword) {
 		std::string lowerKeyword = toLower(keyword);

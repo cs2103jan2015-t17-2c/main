@@ -61,6 +61,7 @@ public:
 	//Find the earliest task in the unsorted tasklist
 	std::vector<TMTask>::iterator findEarliestTaskIter(std::vector<TMTask>::iterator unsortedStart);
 
+	std::vector<TMTask>::iterator findSmallestAlphaTaskIter(std::vector<TMTask>::iterator unsortedStart);
 	//Postcondition: Returns a string which consists of only lowercase letters
 	std::string toLower(std::string toBeConverted);
 
