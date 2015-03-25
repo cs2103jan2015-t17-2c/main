@@ -6,19 +6,20 @@
 #include <string>
 #include "TMDateTime.h"
 #include "TMTask.h"
+#include <assert.h>
 
 
 class TMTaskList{
 private:
 	
 	//Contains all the incompleted timed and deadline tasks for the current year
-	std::vector<TMTask> timedAndDeadline; 
+	std::vector<TMTask> _dated; 
 	
 	//Contains all the incompleted floating tasks
-	std::vector<TMTask> floating; 
+	std::vector<TMTask> _undated; 
 
 	//Contains all the completed timed, deadline and floating tasks
-	std::vector<TMTask> archived;
+	std::vector<TMTask> _archived;
 
 	static TMTaskList *theOne;
 	
@@ -52,6 +53,8 @@ public:
 	//Postcondition: Returns true if time1 is before time2, returning false if time1 is after or equals to time2
 	bool TMTaskList::isBefore(TMDateTime time1, TMDateTime time2);
 
+	bool isValidPositionIndex(int positionIndex);
+
 	//Postcondition: Returns all tasks that clashes with the task to be added in the form of a vector
 	std::vector<TMTask> findClashes(TMTask task);
 
@@ -67,11 +70,11 @@ public:
 	//Postcondition: Returns 0 if the position index is not found
 	int getPositionIndexFromTask(TMTask task);
 	TMTask getTaskFromPositionIndex(int positionIndex);
-	int getTimedAndDeadlineSize();
-	int getFloatingSize();
+	int getDatedSize();
+	int getUndatedSize();
 	int getArchivedSize();
-	std::vector<TMTask> getTimedAndDeadline();
-	std::vector<TMTask> getFloating();
+	std::vector<TMTask> getDated();
+	std::vector<TMTask> getUndated();
 	std::vector<TMTask> getArchived();
 
 

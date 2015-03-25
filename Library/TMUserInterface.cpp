@@ -34,12 +34,12 @@ void TMUserInterface::displayDefault() {
 
 	TMTaskList *taskList = TMTaskList::getInstance();
 
-	std::vector<TMTask> timedAndDeadline = taskList->getTimedAndDeadline();
-	std::vector<TMTask> floating = taskList->getFloating();
+	std::vector<TMTask> dated = taskList->getDated();
+	std::vector<TMTask> undated = taskList->getUndated();
 	std::vector<TMTask> archived = taskList->getArchived();
 
-	std::cout << "Number of scheduled tasks: " << timedAndDeadline.size() <<std::endl;
-	std::cout << "Number of floating tasks:" << floating.size() <<std::endl;
+	std::cout << "Number of scheduled tasks: " << dated.size() <<std::endl;
+	std::cout << "Number of undated tasks:" << undated.size() <<std::endl;
 	std::cout << "Details:" << "\n\n";
 	std::vector<TMTask>::iterator iter;
 
@@ -47,7 +47,7 @@ void TMUserInterface::displayDefault() {
 	"START DATE" << "\t" << "START TIME" << "\t" << "END DATE" <<
 	"\t" << "END TIME" ;
 		
-	for (iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
+	for (iter = dated.begin(); iter != dated.end(); ++iter) {
 		if ((*iter).getTaskType() == TaskType::WithDeadline) {
 			SetColor(Color::RED);
 			std::cout << std :: left << std :: setw(18) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t" <<
@@ -65,7 +65,7 @@ void TMUserInterface::displayDefault() {
 		}
 	}
 	
-	for (iter = floating.begin(); iter != floating.end(); ++iter) {
+	for (iter = undated.begin(); iter != undated.end(); ++iter) {
 		SetColor(Color::YELLOW);
 		std::cout << (*iter).getTaskDescription() << std::endl;
 		SetColor(Color::GRAY);
@@ -76,10 +76,10 @@ void TMUserInterface::displayDefault() {
 
 void TMUserInterface::displayFreeTime() {
 	TMTaskList *taskList = TMTaskList::getInstance();
-	std::vector<TMTask> timedAndDeadline = taskList->getTimedAndDeadline();
+	std::vector<TMTask> dated = taskList->getDated();
 	std::vector<TMTask>::iterator iter;
 	
-	for (iter = timedAndDeadline.begin(); iter != timedAndDeadline.end(); ++iter) {
+	for (iter = dated.begin(); iter != dated.end(); ++iter) {
 		std::cout << (*iter).getTaskTime().getEndDate() << " " << (*iter).getTaskTime().getEndTime();
 		++iter;
 		std::cout << " ~ " << (*iter).getTaskTime().getStartDate() << " " << (*iter).getTaskTime().getStartTime() << '\n\n';

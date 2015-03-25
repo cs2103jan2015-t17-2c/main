@@ -14,7 +14,7 @@ public:
 		 boost::gregorian::date dateToday =  boost::gregorian::day_clock::local_day();
 		 std::string strDateToday = parser->dateFromBoostToDelimitedDDMMYYYY(dateToday);
 
-		int numTimedAndDeadline = taskList->getTimedAndDeadlineSize();
+		int numTimedAndDeadline = taskList->getDatedSize();
 		for (int i = 1; i <= numTimedAndDeadline; i++) {
 			TMTask task = taskList->getTaskFromPositionIndex(i);
 			std::cout << task.getTaskTime().getEndDate() << std::endl;

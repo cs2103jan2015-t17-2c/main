@@ -7,4 +7,5 @@ void main(array<String^>^ args) {
 	Application::SetCompatibleTextRenderingDefault(false);
 	TMGUI::TMGUserInterface mainWindow;
 	Application::Run(%mainWindow);
-}
+}
+

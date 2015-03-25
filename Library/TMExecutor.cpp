@@ -36,7 +36,7 @@ int main() {
 		}*/
         parser->initialize(userEntry);
 		std::string command = parser->extractCommand();
-		TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(command);
+		TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(parser->determineCommandType(command));
 		commandObjPtr->execute();
 		taskList->writeToFile();
 
