@@ -97,7 +97,7 @@
 		if (time1.getBoostDate() > time2.getBoostDate()) {
 			return false;
 		} else if (time1.getBoostDate() == time2.getBoostDate()) {
-			if (time1.getTime() > time2.getTime()) {
+			if (time1.getTime() >= time2.getTime()) {
 				return false;
 			}
 		}

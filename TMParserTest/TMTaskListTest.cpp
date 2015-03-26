@@ -49,5 +49,41 @@ namespace LibraryTest
 			Assert::AreEqual(expectedDatedSize,taskList->getDatedSize());
 		}
 
+		TEST_METHOD(TestisTwoClash_1) {  
+			//test 1 (Task B starts before Task A ends)
+			TMTaskTime timeA("27 03 2015", "1300", "27 03 2015", "1700");
+			TMTask taskA("Task A", timeA, TaskType::WithPeriod);
+			TMTaskTime timeB("27 03 2015", "1500", "27 03 2015", "1600");
+			TMTask taskB("Task B", timeB, TaskType::WithPeriod);
+			TMTaskList *taskList = TMTaskList::getInstance();
+			bool actual = taskList->isTwoClash(taskA, taskB);
+			bool expected = true;
+			Assert::AreEqual(expected, actual, false);
+		}
+
+		TEST_METHOD(TestisTwoClash_2) {  
+			//test 2 (Task B starts some time after Task A ends)
+			TMTaskTime timeA("27 03 2015", "1300", "27 03 2015", "1700");
+			TMTask taskA("Task A", timeA, TaskType::WithPeriod);
+			TMTaskTime timeB("27 03 2015", "1730", "27 03 2015", "1800");
+			TMTask taskB("Task B", timeB, TaskType::WithPeriod);
+			TMTaskList *taskList = TMTaskList::getInstance();
+			bool actual = taskList->isTwoClash(taskA, taskB);
+			bool expected = false;
+			Assert::AreEqual(expected, actual, false);
+		}
+
+		TEST_METHOD(TestisTwoClash_3) {  
+			//test 3 (Task B starts right after Task A ends, boundary value)
+			TMTaskTime timeA("27 03 2015", "1300", "27 03 2015", "1700");
+			TMTask taskA("Task A", timeA, TaskType::WithPeriod);
+			TMTaskTime timeB("27 03 2015", "1700", "27 03 2015", "1800");
+			TMTask taskB("Task B", timeB, TaskType::WithPeriod);
+			TMTaskList *taskList = TMTaskList::getInstance();
+			bool actual = taskList->isTwoClash(taskA, taskB);
+			bool expected = false;
+			Assert::AreEqual(expected, actual, false);
+		}
+
 	};
 }
