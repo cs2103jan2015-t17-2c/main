@@ -43,7 +43,7 @@ int main() {
 		taskList.writeToFile();
 
 
-		ui->displayDefault();
+		std:: cout << ui->displayDefault();
 		ui->promptForUserInput();
 		userEntry = ui->returnUserInput();
     }

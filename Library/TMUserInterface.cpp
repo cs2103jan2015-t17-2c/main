@@ -1,6 +1,7 @@
 #include <iostream>
 #include "TMUserInterface.h"
 #include "TMTaskListStates.h"
+#include <sstream>
 
 TMUserInterface* TMUserInterface::theOne;
 
@@ -31,7 +32,9 @@ void TMUserInterface:: SetColor(Color c){
 }
 
 
-void TMUserInterface::displayDefault() {
+std::string TMUserInterface::displayDefault() {
+
+	std::ostringstream oss;
 
 	TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
 	TMTaskList taskList = taskListStates->getCurrentTaskList();
@@ -40,19 +43,19 @@ void TMUserInterface::displayDefault() {
 	std::vector<TMTask> undated = taskList.getUndated();
 	std::vector<TMTask> archived = taskList.getArchived();
 
-	std::cout << "Number of scheduled tasks: " << dated.size() <<std::endl;
-	std::cout << "Number of undated tasks:" << undated.size() <<std::endl;
-	std::cout << "Details:" << "\n\n";
+	oss<< "Number of scheduled tasks: " << dated.size() << "\n";
+	oss << "Number of undated tasks:" << undated.size() << "\n";
+	oss << "Details:" << "\n\n";
 	std::vector<TMTask>::iterator iter;
 
-	std::cout << std :: left << std :: setw(18) << std :: setfill(' ') << "TASK DECSCRIPTION" << "\t" <<
+	oss << std :: left << std :: setw(18) << std :: setfill(' ') << "TASK DECSCRIPTION" << "\t" <<
 	"START DATE" << "\t" << "START TIME" << "\t" << "END DATE" <<
 	"\t" << "END TIME" ;
 		
 	for (iter = dated.begin(); iter != dated.end(); ++iter) {
 		if ((*iter).getTaskType() == TaskType::WithDeadline) {
 			SetColor(Color::RED);
-			std::cout << std :: left << std :: setw(18) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t" <<
+			oss << std :: left << std :: setw(18) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t" <<
 			std :: setw (18) << "\t\t" << (*iter).getTaskTime().getEndDate() <<
 			"\t" << (*iter).getTaskTime().getEndTime() <<std::endl;
 			SetColor(Color::GRAY);
@@ -69,12 +72,14 @@ void TMUserInterface::displayDefault() {
 	
 	for (iter = undated.begin(); iter != undated.end(); ++iter) {
 		SetColor(Color::YELLOW);
-		std::cout << (*iter).getTaskDescription() << std::endl;
+		oss << (*iter).getTaskDescription() << std::endl;
 		SetColor(Color::GRAY);
 	}
 
-	std::cout << std::endl;
-	std::cout << "TOTAL NUM CLASHES: " << taskList.getClashesSize() << std::endl;
+	oss << std::endl;
+	oss << "TOTAL NUM CLASHES: " << taskList.getClashesSize() << std::endl;
+
+	return oss.str();
 }	
 
 void TMUserInterface::displayFreeTime() {

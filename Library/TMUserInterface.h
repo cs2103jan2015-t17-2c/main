@@ -20,7 +20,7 @@ public:
 	void promptForUserInput();
 	std::string returnUserInput();
 	void SetColor(Color c);
-	void displayDefault();
+	std::string displayDefault();
 	void printPeriodTask(TMTask task);
 
 	//Postcondition: Returns a string consisting all the timings in which the user is free
