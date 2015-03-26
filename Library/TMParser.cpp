@@ -36,6 +36,7 @@ const std::string TOKEN_AT = "at";
 const std::string TOKEN_FROM = "from";
 const std::string TOKEN_TO = "to";
 
+/* in 3 hours, etc. for deadlined task
 const std::string PERIOD_HOUR = "hour";
 const std::string PERIOD_HOURS = "hours";
 const std::string PERIOD_DAY = "day";
@@ -46,6 +47,7 @@ const std::string PERIOD_MONTH = "month";
 const std::string PERIOD_MONTHS = "months";
 const std::string PERIOD_YEAR = "year";
 const std::string PERIOD_YEARS = "years";
+*/
 
 TMParser* TMParser::theOne;
 
@@ -192,10 +194,10 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
             if(iter + 1 != remainingEntry.end()){
                 nextWord = returnLowerCase(*(iter+1));
 
-                if(isDate(nextWord)||isDay(nextWord)) {
+                if(isNumericDate(nextWord)||isDay(nextWord)) {
                     //e.g. before 01012016 (DDMMYYYY)
-                    dateToMeet = extractDayOrDate(remainingEntry,iter);
-                    dateToMeet = dateFromUserToBoostFormat(dateToMeet);
+                    dateToMeet = extractDayOrNumericDate(remainingEntry,iter);
+                    dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
                     dateToMeet = substractNDaysFromDate(dateToMeet,1);
                     iter = remainingEntry.erase(iter);
                     timeToMeet = "2359";
@@ -209,7 +211,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                 } else if (isNextDay(remainingEntry,iter)) {
                     //e.g. before next monday
                     dateToMeet = extractNextDayAfterToken(remainingEntry,iter);
-                    dateToMeet = dateFromUserToBoostFormat(dateToMeet);
+                    dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
                     dateToMeet = substractNDaysFromDate(dateToMeet,1);
                     timeToMeet = "2359";
                     iter = remainingEntry.erase(iter);
@@ -234,7 +236,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
             }
         } else if(unitString == TOKEN_ON) {
             if(iter + 1 != remainingEntry.end()){
-                dateToMeet = extractDayOrDate(remainingEntry,iter);
+                dateToMeet = extractDayOrNumericDate(remainingEntry,iter);
 
                 if(dateToMeet != "") {//before date DDMMYYYY
                     iter = remainingEntry.erase(iter);
@@ -274,8 +276,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
 
 
     int sizeOfVector = remainingEntry.size();
-    //
-    std::cout << "size: " << sizeOfVector << std::endl;
+
     for(int i = 0; i < sizeOfVector; i++) {
         taskDescription += remainingEntry[i];
         if(i != sizeOfVector - 1) {
@@ -295,8 +296,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
     }
     //DDMMYYYY to DD MM YYYY
     dateToMeet = dateToMeet.substr(0,2) + " " + dateToMeet.substr(2,2) + " " + dateToMeet.substr(4,4);
-    //
-    //std::cout << "final dateTM: " << dateToMeet << std::endl;
+
     if(isValidDate(dateToMeet)){
         TMTaskTime taskTime(dateToMeet, timeToMeet, dateToMeet, timeToMeet);
         TMTask task(taskDescription, taskTime, taskType);
@@ -354,7 +354,7 @@ TMTask TMParser::parseTimedTaskInfo(){
             }
         } else if(unitString == TOKEN_ON){
             if(iter + 1 != remainingEntry.end()){
-                startDate = extractDayOrDate(remainingEntry,iter);
+                startDate = extractDayOrNumericDate(remainingEntry,iter);
                 if(startDate != ""){
                     startDateExtracted = true;
                     iter = remainingEntry.erase(iter);
@@ -514,7 +514,7 @@ TMTask TMParser::parseTimedTaskInfo(){
             } else {
                 if(startTime >= endTime){
                     startDate = endDate;
-                    startDate = dateFromUserToBoostFormat(startDate);
+                    startDate = dateFromNumericToBoostFormat(startDate);
                     startDate = substractNDaysFromDate(startDate,1);
                 } else {
                     startDate = endDate;
@@ -529,7 +529,7 @@ TMTask TMParser::parseTimedTaskInfo(){
                     endDate = startDate;
                 } else {
                     endDate = startDate;
-                    endDate = dateFromUserToBoostFormat(endDate);
+                    endDate = dateFromNumericToBoostFormat(endDate);
                     endDate = addNDaysFromDate(endDate,1);
                 }
             } else {
@@ -547,10 +547,13 @@ TMTask TMParser::parseTimedTaskInfo(){
         }
     }
     
-    startDate = dateFromUserToBoostFormat(startDate);
-    endDate = dateFromUserToBoostFormat(endDate);
+    startDate = dateFromNumericToBoostFormat(startDate);
+    endDate = dateFromNumericToBoostFormat(endDate);
     
-    if(isValidDate(startDate) && isValidDate(endDate)){
+    if(isValidDate(startDate) && isValidDate(endDate) && isValidInfo(startDate,startTime,endDate,endTime)){
+        //check if startDate is less than or equal to endDate else invalid print error message
+        //if startDate = endDate check if startTime <= endTime
+        //
         TMTaskTime taskTime(startDate,startTime,endDate,endTime);
         TMTask task(taskDescription,taskTime,taskType);
 
@@ -580,12 +583,12 @@ TMTask TMParser::parseUndatedTaskInfo() {
     return task;
 }
 
-std::string TMParser::extractDayOrDate(std::vector<std::string>& remainingEntry,std::vector<std::string>::iterator iter){
+std::string TMParser::extractDayOrNumericDate(std::vector<std::string>& remainingEntry,std::vector<std::string>::iterator iter){
     std::string stringAfterOn = returnLowerCase(*(iter + 1));
     std::string startDate = "";
 
-    if(isDate(stringAfterOn)){
-        startDate = extractDateAfterToken(remainingEntry,iter);
+    if(isNumericDate(stringAfterOn)){
+        startDate = extractNumericDateAfterToken(remainingEntry,iter);
     } else if(isDay(stringAfterOn)){
         startDate = extractDayAfterToken(remainingEntry,iter);
     } else {               
@@ -595,7 +598,7 @@ std::string TMParser::extractDayOrDate(std::vector<std::string>& remainingEntry,
     return startDate;
 }
 
-std::string TMParser::extractDateAfterToken(std::vector<std::string>& remainingEntry, std::vector<std::string>::iterator iter){
+std::string TMParser::extractNumericDateAfterToken(std::vector<std::string>& remainingEntry, std::vector<std::string>::iterator iter){
     std::string startDate = returnLowerCase(*(iter + 1));
     remainingEntry.erase(iter + 1);
     return startDate;
@@ -657,8 +660,8 @@ void TMParser::extractDateAndOrTime(std::vector<std::string>& remainingEntry,std
     std::string date = "";
     std::string time = "";
 
-    if(isDay(stringAfterToken)||isDate(stringAfterToken)) {
-        date = extractDayOrDate(remainingEntry, iter);
+    if(isDay(stringAfterToken)||isNumericDate(stringAfterToken)) {
+        date = extractDayOrNumericDate(remainingEntry, iter);
         
         if(iter + 1 != remainingEntry.end()) {
             std::string stringAfterDate = returnLowerCase(*(iter + 1));
@@ -683,8 +686,8 @@ void TMParser::extractDateAndOrTime(std::vector<std::string>& remainingEntry,std
         if(iter + 1 != remainingEntry.end()){
             std::string stringAfterTime = returnLowerCase(*(iter+1));
             
-            if(isDate(stringAfterTime)||isDay(stringAfterTime)){
-                date = extractDayOrDate(remainingEntry,iter);
+            if(isNumericDate(stringAfterTime)||isDay(stringAfterTime)){
+                date = extractDayOrNumericDate(remainingEntry,iter);
             } else if(isNextDay(remainingEntry,iter)){
                 date = extractNextDayAfterToken(remainingEntry,iter);
             }
@@ -712,7 +715,7 @@ bool TMParser::isDeadlinedTask() {
             if(unitString == TOKEN_BEFORE){
                 stringAfterBefore = returnLowerCase(*(iter+1));
 
-                if(isDate(stringAfterBefore)||isDay(stringAfterBefore)) {
+                if(isNumericDate(stringAfterBefore)||isDay(stringAfterBefore)) {
                     return true;
                 } else if (is12HTime(stringAfterBefore)||is24HTime(stringAfterBefore)) {
                     return true;
@@ -754,7 +757,7 @@ bool TMParser::isTimedTask() {
 
             if(unitString == TOKEN_ON){
                 stringAfterToken = returnLowerCase(*(iter+1));
-                if(isDate(stringAfterToken)||isDay(stringAfterToken)){
+                if(isNumericDate(stringAfterToken)||isDay(stringAfterToken)){
                     isTokenOnFound = true;
                 }
             }
@@ -762,7 +765,7 @@ bool TMParser::isTimedTask() {
             if(unitString == TOKEN_FROM){
                 std::string stringAfterToken = returnLowerCase(*(iter + 1));
 
-                if(isDate(stringAfterToken)||isDay(stringAfterToken)){
+                if(isNumericDate(stringAfterToken)||isDay(stringAfterToken)){
                 //check for time after date
                     isTokenFromFound = true;
                 } else if(is12HTime(stringAfterToken)||is24HTime(stringAfterToken)){
@@ -776,7 +779,7 @@ bool TMParser::isTimedTask() {
             if(unitString == TOKEN_TO){
             std::string stringAfterTo = returnLowerCase(*(iter + 1));
 
-                if(isDate(stringAfterTo)||isDay(stringAfterTo)) {
+                if(isNumericDate(stringAfterTo)||isDay(stringAfterTo)) {
                 //check for time after date
                     isTokenToFound = true;
                 } else if(is12HTime(stringAfterTo)||is24HTime(stringAfterTo)){
@@ -820,6 +823,27 @@ bool TMParser::isValidDate(std::string date){
     return true;
 }
 
+bool TMParser::isValidInfo(std::string startDate, std::string startTime, std::string endDate, std::string endTime) {
+    boost::gregorian::date boostStartDate = boost::gregorian::from_uk_string(startDate);
+    boost::gregorian::date boostEndDate = boost::gregorian::from_uk_string(endDate);
+
+    if(boostStartDate < boostEndDate){
+        return true;
+    } else if(boostStartDate == boostEndDate) {
+        if(startTime <= endTime){
+            return true;
+        } else {
+            //create print error message or string constant
+            std::cout << "Error: start time is later than end time\n";
+            return false;
+        }
+    } else {
+        //create print error message or string constant
+        std::cout << "Error: end date is later than start date\n";
+        return false;
+    }
+}
+
 bool TMParser::isInteger(std::string token) {
     for(std::string::iterator it = token.begin(); it < token.end(); it++) {
         if(!isdigit(*it)) {
@@ -828,7 +852,7 @@ bool TMParser::isInteger(std::string token) {
     }
     return true;
 }
-
+/*
 bool TMParser::isPeriod(std::string token) {
     if(token == PERIOD_HOUR||
        token == PERIOD_HOURS||
@@ -843,19 +867,54 @@ bool TMParser::isPeriod(std::string token) {
            return true; } else {
                return false;}
 }
-
-bool TMParser::isDate(std::string token) {
-    //DDMMYYYY
+*/
+bool TMParser::isNumericDate(std::string token) {
+    //DDMMYYYY DDMMYYYY
     //need more rigorous testing of dates
     int lengthOfToken = token.size();
-    if(lengthOfToken != 8) {
-        return false;
-    } else {
-        for(std::string::iterator it = token.begin(); it < token.end(); it++) {
-            if(!isdigit(*it)) {
-                return false;
-            }
+    if(lengthOfToken == 8||lengthOfToken == 6) {
+        if(isInteger(token)){
+            return true;
         }
+    }
+
+    return false;
+}
+
+bool TMParser::isDDMonDate(std::string token){
+    std::string dd = "";
+    std::string month = "";
+    std::string yyyy = "";
+    int lengthOfStringDate = token.length();
+
+    int positionOfNextDash = token.find_first_of("-");
+
+    if(positionOfNextDash == std::string::npos){
+        return false;
+    }
+
+    dd = token.substr(0,positionOfNextDash);//dd = dd
+
+    if(!isInteger(dd)){
+        return false;
+    }
+
+    token = token.substr(positionOfNextDash + 1); //stringDate = mm-yyyy 
+    positionOfNextDash = token.find_first_of("-");
+    
+    if(positionOfNextDash == std::string::npos){
+        month = token.substr(0,positionOfNextDash);
+        if(!isMonth(month)){
+            return false;
+        }
+        yyyy = token.substr(positionOfNextDash + 1);
+    } else {
+        month = token;
+        if(!isMonth(month)){
+            return false;
+        }
+        std::string dateToday = dateFromBoostToDDMMYYYY(_dateToday);
+        yyyy = dateToday.substr(4);
     }
     return true;
 }
@@ -885,17 +944,13 @@ bool TMParser::isDay(std::string token) {
 bool TMParser::is12HTime(std::string timeToken){
     //format 2am 10am 230pm 1230am
     //check for am or pm first
-    //std::cout << "is12HTime\n";
+
     if(isAM(timeToken)||isPM(timeToken)){
-        //
-        //std::cout << "isAM or isPM\n";
+
     } else {
-        //
-        //std::cout << "false\n";
+
         return false;
     }
-    //
-    //std::cout << "out \n";
 
     int lengthOfTimeToken = timeToken.size();
     if(lengthOfTimeToken == 3){
@@ -1040,6 +1095,36 @@ bool TMParser::isPM(std::string token){
     }
 }
 
+bool TMParser::isMonth(std::string token){
+    token = returnLowerCase(token);
+    if(token == "jan"||
+       token == "january"||
+       token == "feb"||
+       token == "february"||
+       token == "mar"||
+       token == "march"||
+       token == "apr"||
+       token == "april"||
+       token == "may"||
+       token == "jun"||
+       token == "jul"||
+       token == "july"||
+       token == "aug"||
+       token == "august"||
+       token == "sep"||
+       token == "september"||
+       token == "oct"||
+       token == "october"||
+       token == "nov"||
+       token == "november"||
+       token == "dec"||
+       token == "december") {
+           return true;
+    } else {
+        return false;
+    }
+}
+
 int TMParser::numberOfWords(std::string remainingEntry) {
     int count = 0;
     if(remainingEntry != ""){
@@ -1119,73 +1204,53 @@ std::string TMParser::returnLowerCase(std::string word) {
     return word;
 }
 
-std::string TMParser::dateFromUserToBoostFormat(std::string stringDate) {
+//check if it's ddmmyy or ddmmyyyy format first using isNumericDate
+std::string TMParser::dateFromNumericToBoostFormat(std::string stringDate) {
     std::string dd = "";
     std::string mm = "";
     std::string yyyy = "";
-    std::string month = "";
-    bool isNumeric = true;
+    int lengthOfStringDate = stringDate.length();
     
-    if(stringDate.length() == 5){
-        // 1 mar
-        //need to check more
-        dd = stringDate.substr(0,1);
-        month = stringDate.substr(2,3);
-    } else if(stringDate.length() == 6){
+    if(lengthOfStringDate == 6){
         //DDMMYY
-        for(std::string::iterator it = stringDate.begin(); it < stringDate.end() && isNumeric; it++) {
-            if(!isdigit(*it)) {
-                isNumeric = false;
-            }
-        }
-        
-        if(isNumeric) {
-            //DDMMYY
-            dd = stringDate.substr(0,2);
-            mm = stringDate.substr(2,2);
-            yyyy = "20" + stringDate.substr(4,2);
-        } else {
-            //assume dd month e.g. 16 mar
-            dd = stringDate.substr(0,2);
-            month = stringDate.substr(3,3);
-        }
-
-    } else if(stringDate.length() == 8) {
-        //DDMMYYYY
-        for(std::string::iterator it = stringDate.begin(); it < stringDate.end() && isNumeric; it++) {
-            if(!isdigit(*it)) {
-                isNumeric = false;
-            }
-        }
-
-        if(isNumeric) {
-            dd = stringDate.substr(0,2);
-            mm = stringDate.substr(2,2);
-            yyyy = stringDate.substr(4,4);
-        }
-    } else if(stringDate.length() == 10){
-        //d month yyyy
-        //need to check more
-        dd = stringDate.substr(0,1);
-        month = stringDate.substr(2,3);
-        yyyy = stringDate.substr(8,4);
-    } else if(stringDate.length() == 11){
-        //dd month yyyy
         dd = stringDate.substr(0,2);
-        month = stringDate.substr(3,3);
-        yyyy = stringDate.substr(9,4);
-    } else {
-        return "";
-    }
+        mm = stringDate.substr(2,2);
+        yyyy = "20" + stringDate.substr(4,2);
+    } else if(lengthOfStringDate == 8) {
+        //DDMMYYYY
+        dd = stringDate.substr(0,2);
+        mm = stringDate.substr(2,2);
+        yyyy = stringDate.substr(4,4);
+    } 
 
-    if(month == ""){
-        return dd + "-" + mm + "-" + yyyy;
-    } else {
-        return dd + "-" + month + "-" + yyyy;
-    }
+    return dd + "-" + mm + "-" + yyyy;
+
 }
 
-std::string dateFromBoostToStandardFormat(const boost::gregorian::date& date) {
+std::string TMParser::dateFromMonthToBoostFormat(std::string stringDate){
+    std::string dd = "";
+    std::string month = "";
+    std::string yyyy = "";
+    int lengthOfStringDate = stringDate.length();
+
+    int positionOfNextDash = stringDate.find_first_of("-");
+    dd = stringDate.substr(0,positionOfNextDash);//dd = dd
+    stringDate = stringDate.substr(positionOfNextDash + 1); //stringDate = mm-yyyy 
+    positionOfNextDash = stringDate.find_first_of("-");
+    
+    if(positionOfNextDash == std::string::npos){
+        month = stringDate.substr(0,positionOfNextDash);
+        yyyy = stringDate.substr(positionOfNextDash + 1);
+    } else {
+        month = stringDate;
+        std::string dateToday = dateFromBoostToDDMMYYYY(_dateToday);
+        yyyy = dateToday.substr(4);
+    }
+
+    return dd + "-" + month + "-" + yyyy;
+}
+
+std::string TMParser::dateFromBoostToStandardFormat(const boost::gregorian::date& date) {
     std::ostringstream os;
     boost::gregorian::date_facet* facet(new boost::gregorian::date_facet("%A, %d %B %Y"));
     os.imbue(std::locale(std::cout.getloc(), facet));
@@ -1198,7 +1263,6 @@ std::string TMParser::timeTo24HFormat(std::string time){
     std::string hhmm;
     int timeIn24HFormat;
     //
-    std::cout << time << std::endl;
     //if this is true then there are only 4 possibilities check is24HTime function
     if(is12HTime(time)) {
         if(isAM(time)){
