@@ -1,6 +1,6 @@
-Number of timed and deadline: 3
- 26 Mar 2015 0052 26 Mar 2015 2100
-9pm 26 Mar 2015 0052 26 Mar 2015 2200
- 26 Mar 2015 2100 26 Mar 2015 2200
-Number of undated tasks: 0
+Number of timed and deadline: 2
+t1 26 Mar 2015 1201 26 Mar 2015 1201
+t2 26 Mar 2015 1301 26 Mar 2015 1301
+Number of undated tasks: 1
+t3 at 12.01pm
 Number of completed tasks: 0
