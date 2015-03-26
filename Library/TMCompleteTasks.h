@@ -2,8 +2,7 @@
 #define TMCOMPLETETASKS_H
 
 #include "TMCommand.h"
-#include "TMTaskList.h"
-#include "TMParser.h"
+
 
 class TMCompleteTasks : public TMCommand {
 
@@ -11,15 +10,25 @@ public:
 	TMCompleteTasks() {}
 	void execute() {
 		TMParser *parser = TMParser::getInstance(); 
-		TMTaskList *taskList = TMTaskList::getInstance();
+		TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+		TMTaskList taskList = taskListStates->getCurrentTaskList();
+
 		std::vector<int> completeIndexes = parser->parseTaskPositionNo();
-		std::vector<int>::iterator iter;
-
-		for (iter = completeIndexes.begin(); iter != completeIndexes.end(); ++iter) {
-			taskList->archiveOneTask(*iter);
+		std::vector<int>::iterator intIter;
+		std::vector<TMTask> completedTasks;
+		std::vector<TMTask>::iterator taskIter;
+		
+		for (intIter = completeIndexes.begin(); intIter != completeIndexes.end(); ++intIter) {
+			TMTask task = taskList.getTaskFromPositionIndex(*intIter);
+			completedTasks.push_back(task);
 		}
-	}
 
-	void undo() {}
+		for (taskIter = completedTasks.begin(); taskIter != completedTasks.end(); ++taskIter) {
+			int positionIndex = taskList.getPositionIndexFromTask(*taskIter);
+			taskList.archiveOneTask(positionIndex);
+		}
+
+		taskListStates->addNewState(taskList);
+	}
 };
 #endif

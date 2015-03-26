@@ -2,7 +2,6 @@
 #define TMVIEWFREETIME_H
 
 #include "TMCommand.h"
-#include "TMUserInterface.h"
 
 class TMViewFreeTime : public TMCommand {
 public:

@@ -131,12 +131,9 @@ namespace TMGUI {
 
 					/*
 					TMParser *parser = TMParser::getInstance(); 
-					TMTaskList *taskList = TMTaskList::getInstance();
+					TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
 					TMCommandCreator cmdCreator;
-					
-		
-					bool isSuccessfullyExecuted = false; 
-					
+				
 				
 					parser->initialize(unmanaged);
 					std::string command = parser->extractCommand();

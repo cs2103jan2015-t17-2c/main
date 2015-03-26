@@ -74,7 +74,10 @@
     <ClInclude Include="TMDeleteTasks.h" />
     <ClInclude Include="TMDoneAllToday.h" />
     <ClInclude Include="TMConfirmTasks.h" />
+    <ClInclude Include="TMRedo.h" />
     <ClInclude Include="TMSaveAt.h" />
+    <ClInclude Include="TMTaskListStates.h" />
+    <ClInclude Include="TMUndo.h" />
     <ClInclude Include="TMUserInterface.h" />
     <ClInclude Include="TMViewFreeTime.h" />
     <ClInclude Include="TMSearchKeyword.h" />
@@ -86,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TMDateTime.cpp" />
+    <ClCompile Include="TMTaskListStates.cpp" />
     <ClCompile Include="TMUserInterface.cpp" />
     <ClCompile Include="TMParser.cpp" />
     <ClCompile Include="TMTask.cpp" />

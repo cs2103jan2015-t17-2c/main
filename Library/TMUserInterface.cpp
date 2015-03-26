@@ -1,5 +1,6 @@
 #include <iostream>
 #include "TMUserInterface.h"
+#include "TMTaskListStates.h"
 
 TMUserInterface* TMUserInterface::theOne;
 
@@ -32,11 +33,12 @@ void TMUserInterface:: SetColor(Color c){
 
 void TMUserInterface::displayDefault() {
 
-	TMTaskList *taskList = TMTaskList::getInstance();
+	TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+	TMTaskList taskList = taskListStates->getCurrentTaskList();
 
-	std::vector<TMTask> dated = taskList->getDated();
-	std::vector<TMTask> undated = taskList->getUndated();
-	std::vector<TMTask> archived = taskList->getArchived();
+	std::vector<TMTask> dated = taskList.getDated();
+	std::vector<TMTask> undated = taskList.getUndated();
+	std::vector<TMTask> archived = taskList.getArchived();
 
 	std::cout << "Number of scheduled tasks: " << dated.size() <<std::endl;
 	std::cout << "Number of undated tasks:" << undated.size() <<std::endl;
@@ -56,7 +58,7 @@ void TMUserInterface::displayDefault() {
 			SetColor(Color::GRAY);
 
 		} else {
-			if (taskList->isInClashes(*iter)) {
+			if (taskList.isInClashes(*iter)) {
 					SetColor(Color::BLUE);
 			} else {
 				SetColor(Color::WHITE);
@@ -72,12 +74,13 @@ void TMUserInterface::displayDefault() {
 	}
 
 	std::cout << std::endl;
-	std::cout << "TOTAL NUM CLASHES: " << taskList->getClashesSize() << std::endl;
+	std::cout << "TOTAL NUM CLASHES: " << taskList.getClashesSize() << std::endl;
 }	
 
 void TMUserInterface::displayFreeTime() {
-	TMTaskList *taskList = TMTaskList::getInstance();
-	std::vector<TMTask> dated = taskList->getDated();
+	TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+	TMTaskList taskList = taskListStates->getCurrentTaskList();
+	std::vector<TMTask> dated = taskList.getDated();
 	std::vector<TMTask>::iterator iter;
 	
 	for (iter = dated.begin(); iter != dated.end(); ++iter) {
