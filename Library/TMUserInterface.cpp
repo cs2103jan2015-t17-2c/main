@@ -50,12 +50,12 @@ std::string TMUserInterface::displayDefault() {
 
 	oss << std :: left << std :: setw(18) << std :: setfill(' ') << "TASK DECSCRIPTION" << "\t" <<
 	"START DATE" << "\t" << "START TIME" << "\t" << "END DATE" <<
-	"\t" << "END TIME" ;
+	"\t" << "END TIME" << "\n" ;
 		
 	for (iter = dated.begin(); iter != dated.end(); ++iter) {
 		if ((*iter).getTaskType() == TaskType::WithDeadline) {
 			SetColor(Color::RED);
-			oss << std :: left << std :: setw(18) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t" <<
+			oss << std :: left << std :: setw(18) << std :: setfill(' ')  << (*iter).getTaskDescription() << "\t\t\t" <<
 			std :: setw (18) << "\t\t" << (*iter).getTaskTime().getEndDate() <<
 			"\t" << (*iter).getTaskTime().getEndTime() <<std::endl;
 			SetColor(Color::GRAY);
@@ -64,9 +64,13 @@ std::string TMUserInterface::displayDefault() {
 			if (taskList.isInClashes(*iter)) {
 					SetColor(Color::BLUE);
 			} else {
+				oss << std :: left << std :: setw(18) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t\t" << (*iter).getTaskTime().getStartDate() << 
+				"\t" << (*iter).getTaskTime().getStartTime() << 
+				"\t\t" << (*iter).getTaskTime().getEndDate() <<
+				"\t" << (*iter).getTaskTime().getEndTime() <<std::endl;
 				SetColor(Color::WHITE);
 			}
-			printPeriodTask(oss,*iter);
+			
 		}
 	}
 	
@@ -97,9 +101,6 @@ void TMUserInterface::displayFreeTime() {
 }
 
 void TMUserInterface::printPeriodTask(std ::ostringstream& oss, TMTask task) {
-	oss << std :: left << std :: setw(18) << std :: setfill(' ') << task.getTaskDescription() << "\t" << task.getTaskTime().getStartDate() << 
-			"\t" << task.getTaskTime().getStartTime() << 
-			"\t\t" << task.getTaskTime().getEndDate() <<
-			"\t" << task.getTaskTime().getEndTime() <<std::endl;
+	
 			SetColor(Color::GRAY);
 }
