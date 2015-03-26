@@ -66,7 +66,7 @@ std::string TMUserInterface::displayDefault() {
 			} else {
 				SetColor(Color::WHITE);
 			}
-			printPeriodTask(*iter);
+			printPeriodTask(oss,*iter);
 		}
 	}
 	
@@ -96,8 +96,8 @@ void TMUserInterface::displayFreeTime() {
 	
 }
 
-void TMUserInterface::printPeriodTask(TMTask task) {
-	std::cout << std :: left << std :: setw(18) << std :: setfill(' ') << task.getTaskDescription() << "\t" << task.getTaskTime().getStartDate() << 
+void TMUserInterface::printPeriodTask(std ::ostringstream& oss, TMTask task) {
+	oss << std :: left << std :: setw(18) << std :: setfill(' ') << task.getTaskDescription() << "\t" << task.getTaskTime().getStartDate() << 
 			"\t" << task.getTaskTime().getStartTime() << 
 			"\t\t" << task.getTaskTime().getEndDate() <<
 			"\t" << task.getTaskTime().getEndTime() <<std::endl;
