@@ -55,7 +55,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\local\boost_1_57_0\boost;C:\local\boost_1_57_0\lib64-msvc-11.0;C:\Users\Wei Ern\Documents\Visual Studio 2012\Projects\TimeMaster\Library;$(VCInstallDir)UnitTest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\local\boost_1_57_0\boost;C:\local\boost_1_57_0\lib64-msvc-11.0;C:\Users\Wei Ern\Documents\Visual Studio 2012\Projects\TimeMaster\Library;$(VCInstallDir)UnitTest\include;$(SolutionDir)Library;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
     </ClCompile>
