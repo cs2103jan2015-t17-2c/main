@@ -15,6 +15,8 @@
 #include "TMDoneAllToday.h"
 #include "TMViewFreeTime.h"
 #include "TMCompleteTasks.h"
+#include "TMUndo.h"
+#include "TMRedo.h"
 
 class TMCommandCreator {
 public:
@@ -66,11 +68,22 @@ public:
 			break;
 
 		case TMParser::CommandTypes::Incomplete:
+		
 		case TMParser::CommandTypes::Undo: 
+			newCmdPtr = new TMUndo();
+			return newCmdPtr;
+			break;
+
+		case TMParser::CommandTypes::Redo:
+			newCmdPtr = new TMRedo();
+			return newCmdPtr;
+			break;
+
 		case TMParser::CommandTypes::ViewFreeTime:
 			newCmdPtr = new TMViewFreeTime();
 			return newCmdPtr;
 			break;
+		
 		case TMParser::CommandTypes::ViewDate:;
 		case TMParser::CommandTypes::ViewDeadline:;
 		case TMParser::CommandTypes::ViewUndated:;

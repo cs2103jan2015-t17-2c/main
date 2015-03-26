@@ -128,13 +128,14 @@ namespace TMGUI {
 					std::string unmanaged = msclr::interop::marshal_as<std::string>(str);
 
 					TMParser *parser = TMParser::getInstance(); 
+
 					TMUserInterface *ui = TMUserInterface::getInstance();
 					TMTaskList *taskList = TMTaskList::getInstance();
+
+					TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+
 					TMCommandCreator cmdCreator;
-					
-		
-					bool isSuccessfullyExecuted = false; 
-					
+				
 				
 					parser->initialize(unmanaged);
 					

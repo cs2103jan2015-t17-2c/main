@@ -4,11 +4,12 @@
 const std::string CMD_ADD = "add";
 const std::string CMD_DELETE = "delete";
 const std::string CMD_UNDO = "undo";
+const std::string CMD_REDO = "redo";
 const std::string CMD_COMPLETE = "complete";
 const std::string CMD_INCOMPLETE = "incomplete";
 const std::string CMD_SEARCH = "search";
 const std::string CMD_EDIT = "edit";
-const std::string CMD_STORE = "store";
+const std::string CMD_STORE = "saveat";
 
 const std::string DAY_YESTERDAY = "yesterday";
 const std::string DAY_TODAY = "today";
@@ -137,7 +138,9 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
     } else if (command == CMD_DELETE) {
         return CommandTypes::Delete;
     } else if (command == CMD_UNDO) {
-        return CommandTypes::Undo;
+		return CommandTypes::Undo;
+	}else if (command == CMD_REDO) {
+        return CommandTypes::Redo;
     } else if (command == CMD_COMPLETE) {
         return CommandTypes::Complete;
     } else if (command == CMD_INCOMPLETE) {
