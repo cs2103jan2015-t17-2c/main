@@ -126,11 +126,9 @@ namespace TMGUI {
 				if(e->KeyChar == (char)13){
 					String ^ str = userInput->Text;
 					std::string unmanaged = msclr::interop::marshal_as<std::string>(str);
-					std :: cout << "" + unmanaged;
 
-
-					/*
 					TMParser *parser = TMParser::getInstance(); 
+					TMUserInterface *ui = TMUserInterface::getInstance();
 					TMTaskList *taskList = TMTaskList::getInstance();
 					TMCommandCreator cmdCreator;
 					
@@ -139,17 +137,16 @@ namespace TMGUI {
 					
 				
 					parser->initialize(unmanaged);
-					std::string command = parser->extractCommand();
-
-					TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(command);
-					commandObjPtr->execute();
 					
-					//displayScreen->ui->displayDefault();*/
+					std::string command = parser->extractCommand();
+					TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(parser->determineCommandType(command));
+					commandObjPtr->execute();
+					ui->displayDefault();
 				 }
 			 }
 	private: System::Void displayScreen_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 			 }
-private: System::Void userInput_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+	private: System::Void userInput_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 			 if (userInput->Text == "add") {
 				displayScreen->Text = "add detected";}
 		 }
