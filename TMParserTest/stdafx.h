@@ -11,5 +11,8 @@
 #include "CppUnitTest.h"
 
 // TODO: reference additional headers your program requires here
+#include "TMUserInterface.h"
 #include "TMParser.h"
 #include "TMTaskList.h"
+#include "TMCommandCreator.h"
+#include "TMCommand.h"
