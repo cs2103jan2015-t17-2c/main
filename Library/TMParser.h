@@ -44,8 +44,8 @@ public:
     TMTask parseUndatedTaskInfo();
 
     //need to check if there is sufficient space at the back first
-    std::string extractDayOrDate(std::vector<std::string>&, std::vector<std::string>::iterator);
-    std::string extractDateAfterToken(std::vector<std::string>&, std::vector<std::string>::iterator);
+    std::string extractDayOrNumericDate(std::vector<std::string>&, std::vector<std::string>::iterator);
+    std::string extractNumericDateAfterToken(std::vector<std::string>&, std::vector<std::string>::iterator);
     std::string extractNextDayAfterToken(std::vector<std::string>&, std::vector<std::string>::iterator);
     std::string extractNextDay(std::vector<std::string>&, std::vector<std::string>::iterator);
     std::string extractDayAfterToken(std::vector<std::string>&, std::vector<std::string>::iterator);
@@ -56,11 +56,16 @@ public:
     bool isDeadlinedTask();
     bool isTimedTask();
     bool isValidDate(std::string);
-    //
+
+    //checks if startDate is not later than endDate and 
+    //if startDate == endDate, startTime is no later than endTime
+    bool isValidInfo(std::string, std::string, std::string, std::string);
+
     bool isInteger(std::string);
-    bool isPeriod(std::string);
+    //bool isPeriod(std::string);
     //to test for date in other forms. define another function to convert 
-    bool isDate(std::string);
+    bool isNumericDate(std::string);
+    bool isDDMonDate(std::string);
     bool isDay(std::string);
     bool is12HTime(std::string);
     bool is24HTime(std::string);
@@ -68,6 +73,7 @@ public:
     bool isNext(std::string);
     bool isAM(std::string);
     bool isPM(std::string);
+    bool isMonth(std::string);
 
     int numberOfWords(std::string);
     //0 for Sunday and 6 for Saturday
@@ -79,7 +85,8 @@ public:
     std::string parseDirectory();
 
     std::string returnLowerCase(std::string);
-    std::string dateFromUserToBoostFormat(std::string);
+    std::string dateFromNumericToBoostFormat(std::string);
+    std::string dateFromMonthToBoostFormat(std::string);
     std::string dateFromBoostToStandardFormat(const boost::gregorian::date&);
     std::string dateFromBoostToDelimitedDDMMYYYY(const boost::gregorian::date&);
     std::string dateFromBoostToDDMMYYYY(const boost::gregorian::date&);

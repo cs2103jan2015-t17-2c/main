@@ -5,7 +5,7 @@ TMTaskTime::TMTaskTime(){
 
 TMTaskTime::TMTaskTime(std::string startDate, std::string startTime, std::string endDate,
                        std::string endTime){
-    //need to try catch and throw
+
     TMDateTime startDateTime(startDate,startTime);
     _startDateTime = startDateTime;
 
