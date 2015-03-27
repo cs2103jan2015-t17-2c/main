@@ -98,16 +98,6 @@
 	bool TMTaskList::isValidPositionIndex(int positionIndex) {
 		return (positionIndex > 0 && positionIndex <= int(_dated.size() + _undated.size()));
 	}
-	
-	bool TMTaskList::isInClashes(TMTask task) {
-		std::vector<TMTask>::iterator iter;
-		for (iter = _clashes.begin(); iter != _clashes.end(); ++iter) {
-			if (areEquivalent(*iter, task)) {
-				return true;
-			}
-		}
-		return false;
-	}
 
 	std::vector<TMTask> TMTaskList::findClashes(TMTask task) { //REVISIT CODE AND CHECK FOR BOUNDARY VALUES
 		std::vector<TMTask> clashes;
@@ -118,20 +108,14 @@
 			if (startsBeforeTime(*iter, start)) {
 				if (isTwoClash(*iter, task)) {
 					clashes.push_back(*iter);
-					if (!isInClashes(*iter)) {
-						_clashes.push_back(*iter);
-					}
 				}
-			} else {
-				if (isTwoClash(task, *iter)) {
+			} else if (isTwoClash(task, *iter)) {
 					clashes.push_back(*iter);
-					if (!isInClashes(*iter)) {
-						_clashes.push_back(*iter);
-					}
-				}
 			}
+			
 		}
-	return clashes;
+
+		return clashes;
 	}
 
 	std::vector<TMTask>::iterator TMTaskList::findEarliestTaskIter(std::vector<TMTask>::iterator unsortedStart) {
@@ -173,7 +157,37 @@
 		return aCopy;
 	}
 
+	int TMTaskList::getUniqueBatchNum() {
+		std::vector<TMTask>::iterator iter;
+		int i;
+		for (i = 1; !isUniqueBatchNum(i); ++i) {
+			}
 
+		return i;
+	}
+
+	bool TMTaskList::isUniqueBatchNum(int i) {
+		std::vector<TMTask>::iterator iter;
+		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
+			if (iter->getUnconfirmedBatchNumber() == i) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	std::vector<int> TMTaskList::searchUnconfirmedBatchNum(int i) {
+		std::vector<TMTask>::iterator iter;
+		std::vector<int> results;
+
+		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
+			if (iter->getUnconfirmedBatchNumber() == i && !iter->isConfirmed()) {
+				results.push_back(getPositionIndexFromTask(*iter));
+			}
+		}
+		std::cout << "SIZE OF SEARCH: " << results.size() << std::endl;
+		return results;
+	}
 
 	//GETTER FUNCTIONS//
 	int TMTaskList::getPositionIndexFromTask(TMTask task) {
@@ -219,10 +233,6 @@
 
 	int TMTaskList::getArchivedSize() {
 		return _archived.size();
-	}
-
-	int TMTaskList::getClashesSize() {
-		return _clashes.size();
 	}
 
 	std::vector<TMTask> TMTaskList::getDated() {
@@ -277,9 +287,7 @@
 
 				if (usersReply == "n" || usersReply == "N") {
 					return;
-				} else if (usersReply == "y") {
-					_clashes.push_back(task);
-				}
+				} 
 			}
 			_dated.push_back(task);
 			std::cout << "WITH PERIOD TASK ADDED!" << std::endl;
@@ -298,19 +306,13 @@
 		}
 	}
 
-	void TMTaskList::blockMultiple(std::vector<TMTask> tasks, TMTaskList tasklist) {
-		std::vector<TMTask>::iterator iter;
-		for (iter = tasks.begin(); iter != tasks.end(); ++iter) {
-			tasklist.addTask(*iter);
-		}
-		tasks.clear();
-	}
+	
 
 	//NEED TO USE ASSERT TO DETERMINE VALID POSITION INDEX
 	void TMTaskList::updateTask(int positionIndex, std::string componentOfTask, std::string changeTo) {
 		assert(isValidPositionIndex(positionIndex));
 		if (positionIndex <= int(_dated.size())) {
-			TMTask task = _dated[positionIndex-1];
+			TMTask &task = _dated[positionIndex-1];
 
 			if (componentOfTask == "desc") {
 				task.setTaskDescription(changeTo);
@@ -332,6 +334,12 @@
 				}
 				if (changeTo == "0") {
 					task.setAsUnconfirmed();
+				}
+			}
+
+			if (componentOfTask == "unconfirmedBatchNum") {
+				if (changeTo == "0") {
+					task.setUnconfirmedBatchNumber(0);
 				}
 			}
 			

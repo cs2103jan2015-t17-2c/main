@@ -61,7 +61,7 @@ std::string TMUserInterface::displayDefault() {
 			SetColor(Color::GRAY);
 
 		} else {
-			if (taskList.isInClashes(*iter)) {
+			if (iter->isClashed()) {
 					SetColor(Color::BLUE);
 			} else {	
 				SetColor(Color::WHITE);
@@ -80,7 +80,6 @@ std::string TMUserInterface::displayDefault() {
 	}
 
 	oss << std::endl;
-	oss << "TOTAL NUM CLASHES: " << taskList.getClashesSize() << std::endl;
 
 	return oss.str();
 }	

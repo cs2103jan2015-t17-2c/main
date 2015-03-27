@@ -9,7 +9,6 @@ public:
 
 	void execute() {
 		TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
-		TMParser *parser = TMParser::getInstance(); 
 		TMTaskList taskList = taskListStates->getCurrentTaskList();
 
 		 boost::gregorian::date dateToday =  boost::gregorian::day_clock::local_day();

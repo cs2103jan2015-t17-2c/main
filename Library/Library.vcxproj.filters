@@ -108,6 +108,9 @@
     <ClInclude Include="TMRedo.h">
       <Filter>Header Files\TMCommand</Filter>
     </ClInclude>
+    <ClInclude Include="TMBlockTime.h">
+      <Filter>Header Files\TMCommand</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TMParser.cpp">

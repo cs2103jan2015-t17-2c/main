@@ -18,6 +18,7 @@ private:
     bool _isClashed;
     TaskType _taskType;
 
+
 public:
     //constructor for deadlined tasks and timed tasks
     TMTask(std::string, TMTaskTime, TaskType);
@@ -31,11 +32,12 @@ public:
     TMTaskTime getTaskTime();
     bool isCompleted();
 	bool isConfirmed();
-    bool isClashed();
+	bool isClashed();
     TaskType getTaskType();
 
     void setTaskDescription(std::string);
-    void setUnconfirmedBatchNumber(int);
+
+
     //Preconditions: TMTaskTime must be created prior to setting
     void setTaskTime(TMTaskTime);
     void setAsCompleted();
@@ -45,5 +47,7 @@ public:
     void setAsClashed();
     void setAsUnclashed();
     void setTaskType(TaskType);
+	void setUnconfirmedBatchNumber(int);
 };
 #endif
+

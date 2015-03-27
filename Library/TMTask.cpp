@@ -9,6 +9,7 @@ TMTask::TMTask(std::string taskDescription, TMTaskTime taskTime, TaskType taskTy
     _isConfirmed = true;
     _isClashed = false;
     _taskType = taskType;
+	_unconfirmedBatchNumber = 0;
 }
 
 std::string TMTask::getTaskDescription(){
@@ -31,6 +32,7 @@ bool TMTask::isConfirmed(){
     return _isConfirmed;
 }
 
+
 bool TMTask::isClashed(){
     return _isClashed;
 }
@@ -38,6 +40,7 @@ bool TMTask::isClashed(){
 TaskType TMTask::getTaskType(){
     return _taskType;
 }
+
 
 void TMTask::setTaskDescription(std::string newTaskDescription){
     _taskDescription = newTaskDescription;
@@ -78,4 +81,3 @@ void TMTask::setAsUnclashed(){
 void TMTask::setTaskType(TaskType newTaskType){
     _taskType = newTaskType;
 }
-    
