@@ -174,19 +174,18 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
 //Preconditions: taskInfo contains only the entry after command. use extractEntryAfterCommand 1st
 //             : use only when in adding or editing information
 std::vector<TMTask> TMParser::parseTaskInfo() {
-    std::vector<TMTask> task;
     if(isDeadlinedTask()){
-        task.push_back(parseDeadlinedTaskInfo());
+        return parseDeadlinedTaskInfo();
     } else if(isTimedTask()) {
-        task.push_back(parseTimedTaskInfo());
+        return parseTimedTaskInfo();
     } else {
-        task.push_back(parseUndatedTaskInfo());
+        return parseUndatedTaskInfo();
     }
-    return task;
 }
 
 //Preconditions:task is deadlined task use isDeadlinedTask to check
-TMTask TMParser::parseDeadlinedTaskInfo() {
+std::vector<TMTask> TMParser::parseDeadlinedTaskInfo() {
+    std::vector<TMTask> tasks;
     TaskType taskType = TaskType::WithEndDateTime;
     std::string dateToMeet = "";
     std::string timeToMeet = "";
@@ -256,7 +255,6 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
             if(iter + 1 != remainingEntry.end()){
 
                 dateToMeet = extractDayOrNumericDate(remainingEntry,iter);
-                dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
 
                 if(dateToMeet != "") {//before date DDMMYYYY
                     iter = remainingEntry.erase(iter);
@@ -273,17 +271,9 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
             if(iter + 1 != remainingEntry.end()){
                 nextWord = returnLowerCase(*(iter + 1));
                 if(isDay(nextWord)){
-                    std::string stringDay = nextWord;
+                    dateToMeet = extractNextDay(remainingEntry,iter);
+                    iter = remainingEntry.erase(iter);
 
-                    boost::gregorian::greg_weekday day(dayOfWeek(stringDay));
-                    boost::gregorian::first_day_of_the_week_after fdaf(day);
-                    boost::gregorian::date dateTM = fdaf.get_date(_dateToday);
-                    std::string tempDate = boost::gregorian::to_iso_string(dateTM);
-
-                    dateToMeet = tempDate.substr(6,2) + tempDate.substr(4,2) + tempDate.substr(0,4);
-                    dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
-
-                    iter = remainingEntry.erase(iter,iter + 2);
                     if(iter == remainingEntry.end()){
                         break;
                     } else if (iter == remainingEntry.begin()){
@@ -311,30 +301,33 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
         std::string currentTime = getCurrentTime();
         if(timeToMeet >= currentTime){
             dateToMeet = dateFromBoostToDDMMYYYY(_dateToday);
-            dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
         } else {
             dateToMeet = dateFromBoostToDelimitedDDMMYYYY(_dateToday);
             dateToMeet = addNDaysFromDate(dateToMeet,1);
-            dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
         }
     }
+
+    dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
 
     if(isValidDate(dateToMeet)){
         TMTaskTime taskTime(dateToMeet, timeToMeet, dateToMeet, timeToMeet);
         TMTask task(taskDescription, taskTime, taskType);
-        return task;
+        tasks.push_back(task);
+        return tasks;
     } else {
         //when date is invalid
         TMTaskTime taskTime;
         TMTask task("",taskTime,TaskType::Invalid);
-        return task;
+        tasks.push_back(task);
+        return tasks;
     }
 }
 
 //for now find start time and start date only
 //change to period
 
-TMTask TMParser::parseTimedTaskInfo(){
+std::vector<TMTask> TMParser::parseTimedTaskInfo(){
+    std::vector<TMTask> tasks;
     TaskType taskType;
     std::string startTime = "";
     std::string startDate = "";
@@ -573,21 +566,18 @@ TMTask TMParser::parseTimedTaskInfo(){
     endDate = dateFromNumericToBoostFormat(endDate);
     
     if(isValidDate(startDate) && isValidDate(endDate) && isValidInfo(startDate,startTime,endDate,endTime)){
-        //check if startDate is less than or equal to endDate else invalid print error message
-        //if startDate = endDate check if startTime <= endTime
-        //
-        TMTaskTime taskTime(startDate,startTime,endDate,endTime);
-        TMTask task(taskDescription,taskTime,taskType);
-
-        return task;
+        tasks = returnSplitPeriodTasks(taskDescription, startDate, startTime, endDate, endTime, taskType);
     } else {
         TMTaskTime taskTime;
         TMTask task("",taskTime,TaskType::Invalid);
-        return task;
+        tasks.push_back(task);
     }
+    
+    return tasks;
 }
 
-TMTask TMParser::parseUndatedTaskInfo() {
+std::vector<TMTask> TMParser::parseUndatedTaskInfo() {
+    std::vector<TMTask> tasks;
     TaskType taskType = TaskType::Undated;
     TMTaskTime taskTime;
     std::string taskDescription;
@@ -601,8 +591,42 @@ TMTask TMParser::parseUndatedTaskInfo() {
     }
 
     TMTask task(taskDescription,taskTime,taskType);
+    tasks.push_back(task);
 
-    return task;
+    return tasks;
+}
+
+//dates must be delimited by spaces or '-'
+std::vector<TMTask> TMParser::returnSplitPeriodTasks(std::string taskDescription, std::string startDate, std::string startTime, std::string endDate, std::string endTime, TaskType taskType){
+    boost::gregorian::date boostStartDate = boost::gregorian::from_uk_string(startDate);
+    boost::gregorian::date boostEndDate = boost::gregorian::from_uk_string(endDate);
+    boost::gregorian::date_duration oneDay(1);
+    std::vector<TMTask> tasks;
+
+    if(startDate == endDate){
+        TMTaskTime taskTime(startDate,startTime,endDate,endTime);
+        TMTask task(taskDescription,taskTime,taskType);
+        tasks.push_back(task);
+    } else {
+        TMTaskTime taskTime(startDate,startTime,startDate,"2359");
+        TMTask task(taskDescription,taskTime,taskType);
+        tasks.push_back(task);
+        boostStartDate = boostStartDate + oneDay;
+
+        while(boostStartDate != boostEndDate){
+            startDate = dateFromBoostToDelimitedDDMMYYYY(boostStartDate);
+            taskTime = TMTaskTime(startDate,"0000",startDate,"2359");
+            task = TMTask(taskDescription,taskTime,taskType);
+            tasks.push_back(task);
+            boostStartDate = boostStartDate + oneDay;
+        }
+
+        taskTime = TMTaskTime(endDate,"0000",endDate,endTime);
+        task = TMTask(taskDescription,taskTime,taskType);
+        tasks.push_back(task);
+    }
+
+    return tasks;
 }
 
 std::string TMParser::extractDayOrNumericDate(std::vector<std::string>& remainingEntry,std::vector<std::string>::iterator iter){
@@ -845,6 +869,9 @@ bool TMParser::isValidDate(std::string date){
     return true;
 }
 
+//Preconditions: dates must be in boost string format, times must be 24h format
+//checks if startDate is less than or equal to endDate else invalid print error message
+//if startDate = endDate check if startTime <= endTime
 bool TMParser::isValidInfo(std::string startDate, std::string startTime, std::string endDate, std::string endTime) {
     boost::gregorian::date boostStartDate = boost::gregorian::from_uk_string(startDate);
     boost::gregorian::date boostEndDate = boost::gregorian::from_uk_string(endDate);

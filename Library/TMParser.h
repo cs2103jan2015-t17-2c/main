@@ -39,9 +39,10 @@ public:
     //parse relevant info into the respective tasks
     //commmand must be extracted first
     std::vector<TMTask> parseTaskInfo();
-    TMTask parseDeadlinedTaskInfo();
-    TMTask parseTimedTaskInfo();
-    TMTask parseUndatedTaskInfo();
+    std::vector<TMTask> parseDeadlinedTaskInfo();
+    std::vector<TMTask> parseTimedTaskInfo();
+    std::vector<TMTask> parseUndatedTaskInfo();
+    std::vector<TMTask> returnSplitPeriodTasks(std::string, std::string, std::string, std::string, std::string, TaskType);
 
     //need to check if there is sufficient space at the back first
     std::string extractDayOrNumericDate(std::vector<std::string>&, std::vector<std::string>::iterator);
