@@ -99,6 +99,15 @@
     <ClInclude Include="TMDateTime.h">
       <Filter>Header Files\TMTask</Filter>
     </ClInclude>
+    <ClInclude Include="TMTaskListStates.h">
+      <Filter>Header Files\TMMemory</Filter>
+    </ClInclude>
+    <ClInclude Include="TMUndo.h">
+      <Filter>Header Files\TMCommand</Filter>
+    </ClInclude>
+    <ClInclude Include="TMRedo.h">
+      <Filter>Header Files\TMCommand</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TMParser.cpp">
@@ -118,6 +127,9 @@
     </ClCompile>
     <ClCompile Include="TMDateTime.cpp">
       <Filter>Source Files\TMTask</Filter>
+    </ClCompile>
+    <ClCompile Include="TMTaskListStates.cpp">
+      <Filter>Source Files\TMMemory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

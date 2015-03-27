@@ -1,5 +1,7 @@
 #include <iostream>
 #include "TMUserInterface.h"
+#include "TMTaskListStates.h"
+#include <sstream>
 
 TMUserInterface* TMUserInterface::theOne;
 
@@ -30,54 +32,64 @@ void TMUserInterface:: SetColor(Color c){
 }
 
 
-void TMUserInterface::displayDefault() {
+std::string TMUserInterface::displayDefault() {
 
-	TMTaskList *taskList = TMTaskList::getInstance();
+	std::ostringstream oss;
 
-	std::vector<TMTask> dated = taskList->getDated();
-	std::vector<TMTask> undated = taskList->getUndated();
-	std::vector<TMTask> archived = taskList->getArchived();
+	TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+	TMTaskList taskList = taskListStates->getCurrentTaskList();
 
-	std::cout << "Number of scheduled tasks: " << dated.size() <<std::endl;
-	std::cout << "Number of undated tasks:" << undated.size() <<std::endl;
-	std::cout << "Details:" << "\n\n";
+	std::vector<TMTask> dated = taskList.getDated();
+	std::vector<TMTask> undated = taskList.getUndated();
+	std::vector<TMTask> archived = taskList.getArchived();
+
+	oss<< "Number of scheduled tasks: " << dated.size() << "\n";
+	oss << "Number of undated tasks:" << undated.size() << "\n";
+	oss << "Details:" << "\n\n";
 	std::vector<TMTask>::iterator iter;
 
-	std::cout << std :: left << std :: setw(18) << std :: setfill(' ') << "TASK DECSCRIPTION" << "\t" <<
+	oss << std :: left << std :: setw(18) << std :: setfill(' ') << "TASK DECSCRIPTION" << "\t" <<
 	"START DATE" << "\t" << "START TIME" << "\t" << "END DATE" <<
-	"\t" << "END TIME" ;
+	"\t" << "END TIME" << "\n" ;
 		
 	for (iter = dated.begin(); iter != dated.end(); ++iter) {
 		if ((*iter).getTaskType() == TaskType::WithDeadline) {
 			SetColor(Color::RED);
-			std::cout << std :: left << std :: setw(18) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t" <<
+			oss << std :: left << std :: setw(18) << std :: setfill(' ')  << (*iter).getTaskDescription() << "\t\t\t" <<
 			std :: setw (18) << "\t\t" << (*iter).getTaskTime().getEndDate() <<
 			"\t" << (*iter).getTaskTime().getEndTime() <<std::endl;
 			SetColor(Color::GRAY);
 
 		} else {
-			if (taskList->isInClashes(*iter)) {
+			if (taskList.isInClashes(*iter)) {
 					SetColor(Color::BLUE);
 			} else {
+				oss << std :: left << std :: setw(18) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t\t" << (*iter).getTaskTime().getStartDate() << 
+				"\t" << (*iter).getTaskTime().getStartTime() << 
+				"\t\t" << (*iter).getTaskTime().getEndDate() <<
+				"\t" << (*iter).getTaskTime().getEndTime() <<std::endl;
 				SetColor(Color::WHITE);
 			}
-			printPeriodTask(*iter);
+			
 		}
 	}
 	
 	for (iter = undated.begin(); iter != undated.end(); ++iter) {
 		SetColor(Color::YELLOW);
-		std::cout << (*iter).getTaskDescription() << std::endl;
+		oss << (*iter).getTaskDescription() << std::endl;
 		SetColor(Color::GRAY);
 	}
 
-	std::cout << std::endl;
-	std::cout << "TOTAL NUM CLASHES: " << taskList->getClashesSize() << std::endl;
+	oss << std::endl;
+	oss << "TOTAL NUM CLASHES: " << taskList.getClashesSize() << std::endl;
+
+	return oss.str();
 }	
 
 void TMUserInterface::displayFreeTime() {
-	TMTaskList *taskList = TMTaskList::getInstance();
-	std::vector<TMTask> dated = taskList->getDated();
+	TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+	TMTaskList taskList = taskListStates->getCurrentTaskList();
+	std::vector<TMTask> dated = taskList.getDated();
 	std::vector<TMTask>::iterator iter;
 	
 	for (iter = dated.begin(); iter != dated.end(); ++iter) {
@@ -88,10 +100,7 @@ void TMUserInterface::displayFreeTime() {
 	
 }
 
-void TMUserInterface::printPeriodTask(TMTask task) {
-	std::cout << std :: left << std :: setw(18) << std :: setfill(' ') << task.getTaskDescription() << "\t" << task.getTaskTime().getStartDate() << 
-			"\t" << task.getTaskTime().getStartTime() << 
-			"\t\t" << task.getTaskTime().getEndDate() <<
-			"\t" << task.getTaskTime().getEndTime() <<std::endl;
+void TMUserInterface::printPeriodTask(std ::ostringstream& oss, TMTask task) {
+	
 			SetColor(Color::GRAY);
 }

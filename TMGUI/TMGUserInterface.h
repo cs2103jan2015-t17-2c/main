@@ -43,11 +43,12 @@ namespace TMGUI {
 				delete components;
 			}
 		}
-	private: System::Windows::Forms::TextBox^  displayScreen;
+
 	protected: 
 
 	private: System::Windows::Forms::TextBox^  userInput;
 	private: System::Windows::Forms::Label^  welcomeMessage;
+	private: System::Windows::Forms::RichTextBox^  richTextBox1;
 	protected: 
 
 
@@ -65,31 +66,17 @@ namespace TMGUI {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-			this->displayScreen = (gcnew System::Windows::Forms::TextBox());
 			this->userInput = (gcnew System::Windows::Forms::TextBox());
 			this->welcomeMessage = (gcnew System::Windows::Forms::Label());
+			this->richTextBox1 = (gcnew System::Windows::Forms::RichTextBox());
 			this->SuspendLayout();
-			// 
-			// displayScreen
-			// 
-			this->displayScreen->BackColor = System::Drawing::SystemColors::ActiveCaptionText;
-			this->displayScreen->ForeColor = System::Drawing::SystemColors::Info;
-			this->displayScreen->Location = System::Drawing::Point(70, 55);
-			this->displayScreen->Margin = System::Windows::Forms::Padding(2);
-			this->displayScreen->Multiline = true;
-			this->displayScreen->Name = L"displayScreen";
-			this->displayScreen->ReadOnly = true;
-			this->displayScreen->Size = System::Drawing::Size(468, 194);
-			this->displayScreen->TabIndex = 0;
-			this->displayScreen->TextChanged += gcnew System::EventHandler(this, &TMGUserInterface::displayScreen_TextChanged);
-			this->displayScreen->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &TMGUserInterface::userInput_KeyPress);
 			// 
 			// userInput
 			// 
-			this->userInput->Location = System::Drawing::Point(70, 344);
-			this->userInput->Margin = System::Windows::Forms::Padding(2);
+			this->userInput->Location = System::Drawing::Point(99, 694);
+			this->userInput->Margin = System::Windows::Forms::Padding(4);
 			this->userInput->Name = L"userInput";
-			this->userInput->Size = System::Drawing::Size(468, 20);
+			this->userInput->Size = System::Drawing::Size(932, 31);
 			this->userInput->TabIndex = 1;
 			this->userInput->TextChanged += gcnew System::EventHandler(this, &TMGUserInterface::userInput_TextChanged);
 			this->userInput->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &TMGUserInterface::userInput_KeyPress);
@@ -97,22 +84,30 @@ namespace TMGUI {
 			// welcomeMessage
 			// 
 			this->welcomeMessage->AutoSize = true;
-			this->welcomeMessage->Location = System::Drawing::Point(82, 305);
-			this->welcomeMessage->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
+			this->welcomeMessage->Location = System::Drawing::Point(94, 653);
+			this->welcomeMessage->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->welcomeMessage->Name = L"welcomeMessage";
-			this->welcomeMessage->Size = System::Drawing::Size(262, 13);
+			this->welcomeMessage->Size = System::Drawing::Size(530, 25);
 			this->welcomeMessage->TabIndex = 2;
 			this->welcomeMessage->Text = L"Welcome to TimeMaster. Please enter your command:";
 			// 
+			// richTextBox1
+			// 
+			this->richTextBox1->Location = System::Drawing::Point(99, 54);
+			this->richTextBox1->Name = L"richTextBox1";
+			this->richTextBox1->Size = System::Drawing::Size(1138, 578);
+			this->richTextBox1->TabIndex = 3;
+			this->richTextBox1->Text = L"";
+			// 
 			// TMGUserInterface
 			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
+			this->AutoScaleDimensions = System::Drawing::SizeF(12, 25);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(748, 415);
+			this->ClientSize = System::Drawing::Size(1337, 881);
+			this->Controls->Add(this->richTextBox1);
 			this->Controls->Add(this->welcomeMessage);
 			this->Controls->Add(this->userInput);
-			this->Controls->Add(this->displayScreen);
-			this->Margin = System::Windows::Forms::Padding(2);
+			this->Margin = System::Windows::Forms::Padding(4);
 			this->MaximizeBox = false;
 			this->Name = L"TMGUserInterface";
 			this->Text = L"TMGUserInterface";
@@ -126,32 +121,33 @@ namespace TMGUI {
 				if(e->KeyChar == (char)13){
 					String ^ str = userInput->Text;
 					std::string unmanaged = msclr::interop::marshal_as<std::string>(str);
-					std :: cout << "" + unmanaged;
 
-
-					/*
 					TMParser *parser = TMParser::getInstance(); 
-					TMTaskList *taskList = TMTaskList::getInstance();
+
+					TMUserInterface *ui = TMUserInterface::getInstance();
+					
+					TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+
 					TMCommandCreator cmdCreator;
-					
-		
-					bool isSuccessfullyExecuted = false; 
-					
+				
 				
 					parser->initialize(unmanaged);
-					std::string command = parser->extractCommand();
-
-					TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(command);
-					commandObjPtr->execute();
 					
-					//displayScreen->ui->displayDefault();*/
+					std::string command = parser->extractCommand();
+					TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(parser->determineCommandType(command));
+					commandObjPtr->execute();
+					std :: string display = ui->displayDefault();
+					std :: cout << display;
+					String^ str2 = gcnew String(display.c_str());
+
+					richTextBox1->Text = str2;
+
+					userInput->Clear();
 				 }
 			 }
 	private: System::Void displayScreen_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 			 }
-private: System::Void userInput_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-			 if (userInput->Text == "add") {
-				displayScreen->Text = "add detected";}
+	private: System::Void userInput_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 		 }
 };
 }

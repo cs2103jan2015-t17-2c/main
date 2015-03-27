@@ -5,6 +5,7 @@
 #include "TMTaskList.h"
 #include "TMTask.h"
 #include <Windows.h>
+#include <sstream>
 
 class TMUserInterface {
 private:
@@ -20,8 +21,8 @@ public:
 	void promptForUserInput();
 	std::string returnUserInput();
 	void SetColor(Color c);
-	void displayDefault();
-	void printPeriodTask(TMTask task);
+	std::string displayDefault();
+	void printPeriodTask(std::ostringstream& oss, TMTask task);
 
 	//Postcondition: Returns a string consisting all the timings in which the user is free
 	void TMUserInterface::displayFreeTime();

@@ -11,20 +11,10 @@
 #include "TMTask.h"
 #include "TMParser.h"
 
-	TMTaskList* TMTaskList::theOne;
 	
 	TMTaskList::TMTaskList() {
 		_fileDirectory = "DEFAULT.txt"; //could consider using the name of the year instead
-		//loadFromFile();
 		}
-	
-	TMTaskList* TMTaskList::getInstance() {
-		if (theOne == NULL) {
-			theOne = new TMTaskList();
-		}
-		return theOne;
-	}
-
 
 
 	//LOGIC FUNCTIONS//

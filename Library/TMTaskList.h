@@ -25,18 +25,11 @@ private:
 	//Contains all tasks in taskList that are involved in a schedule clash
 	std::vector<TMTask> _clashes;
 	
-	static TMTaskList *theOne;
-	
-	//Private constructor
-	TMTaskList();
-
 	//File directory name
 	std::string _fileDirectory;
 
 public:
-	
-	static TMTaskList* getInstance();
-
+	TMTaskList();
 
 	//LOGIC FUNCTIONS//
 	//Compares 2 tasks, returns true if both tasks have similar attributes.

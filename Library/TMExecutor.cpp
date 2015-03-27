@@ -8,6 +8,7 @@
 
 #include "TMUserInterface.h"
 #include "TMParser.h"
+#include "TMTaskListStates.h"
 #include "TMTaskList.h"
 #include "TMCommandCreator.h"
 #include "TMCommand.h"
@@ -17,7 +18,8 @@ int main() {
 	
 	TMParser *parser = TMParser::getInstance(); 
 	TMUserInterface *ui = TMUserInterface::getInstance();
-	TMTaskList *taskList = TMTaskList::getInstance();
+	TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+	TMTaskList taskList = taskListStates->getCurrentTaskList();
 	TMCommandCreator cmdCreator;
 
     std::string userEntry;
@@ -38,15 +40,15 @@ int main() {
 		std::string command = parser->extractCommand();
 		TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(parser->determineCommandType(command));
 		commandObjPtr->execute();
-		taskList->writeToFile();
+		taskList.writeToFile();
 
 
-		ui->displayDefault();
+		std:: cout << ui->displayDefault();
 		ui->promptForUserInput();
 		userEntry = ui->returnUserInput();
     }
 	
-	taskList->leaveReferenceUponExit();
+	taskList.leaveReferenceUponExit();
 
 	return 0;
 }

@@ -2,16 +2,16 @@
 #define TMSAVEAT_H
 
 #include "TMCommand.h"
-#include "TMTaskList.h"
-#include "TMParser.h"
 
 class TMSaveAt : public TMCommand {
 public:
 	void execute() {
 		TMParser *parser = TMParser::getInstance(); 
-		TMTaskList *taskList = TMTaskList::getInstance();
-		taskList->setFileDirectory(parser->parseDirectory());
+		TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+		TMTaskList taskList = taskListStates->getCurrentTaskList();
+		taskList.setFileDirectory(parser->parseDirectory());
+		taskListStates->addNewState(taskList);
 	}
-	void undo();
+
 };
 #endif
