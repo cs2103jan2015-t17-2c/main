@@ -242,7 +242,9 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
             }
         } else if(unitString == TOKEN_ON) {
             if(iter + 1 != remainingEntry.end()){
+
                 dateToMeet = extractDayOrNumericDate(remainingEntry,iter);
+                dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
 
                 if(dateToMeet != "") {//before date DDMMYYYY
                     iter = remainingEntry.erase(iter);
@@ -267,6 +269,8 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                     std::string tempDate = boost::gregorian::to_iso_string(dateTM);
 
                     dateToMeet = tempDate.substr(6,2) + tempDate.substr(4,2) + tempDate.substr(0,4);
+                    dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
+
                     iter = remainingEntry.erase(iter,iter + 2);
                     if(iter == remainingEntry.end()){
                         break;
@@ -295,13 +299,13 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
         std::string currentTime = getCurrentTime();
         if(timeToMeet >= currentTime){
             dateToMeet = dateFromBoostToDDMMYYYY(_dateToday);
+            dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
         } else {
             dateToMeet = dateFromBoostToDelimitedDDMMYYYY(_dateToday);
             dateToMeet = addNDaysFromDate(dateToMeet,1);
+            dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
         }
     }
-    //DDMMYYYY to DD MM YYYY
-    dateToMeet = dateToMeet.substr(0,2) + " " + dateToMeet.substr(2,2) + " " + dateToMeet.substr(4,4);
 
     if(isValidDate(dateToMeet)){
         TMTaskTime taskTime(dateToMeet, timeToMeet, dateToMeet, timeToMeet);
