@@ -63,14 +63,13 @@ std::string TMUserInterface::displayDefault() {
 		} else {
 			if (taskList.isInClashes(*iter)) {
 					SetColor(Color::BLUE);
-			} else {
-				oss << std :: left << std :: setw(18) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t\t" << (*iter).getTaskTime().getStartDate() << 
+			} else {	
+				SetColor(Color::WHITE);
+			}
+			oss << std :: left << std :: setw(18) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t\t" << (*iter).getTaskTime().getStartDate() << 
 				"\t" << (*iter).getTaskTime().getStartTime() << 
 				"\t\t" << (*iter).getTaskTime().getEndDate() <<
 				"\t" << (*iter).getTaskTime().getEndTime() <<std::endl;
-				SetColor(Color::WHITE);
-			}
-			
 		}
 	}
 	
