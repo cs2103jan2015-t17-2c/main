@@ -11,22 +11,34 @@ public:
 		TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
 		TMTaskList taskList = taskListStates->getCurrentTaskList();
 		std::vector<int> confirmedTasksIndexes = parser->parseTaskPositionNo();
-		std::vector<int>::iterator iter;
+		std::vector<int>::iterator iter1;
+		std::vector<int>::iterator iter2;
+		std::vector<int> batchNums;
+		std::vector<TMTask> deleteTasks;
+		std::vector<TMTask>::iterator taskIter;
 
-		for (iter = confirmedTasksIndexes.begin(); iter != confirmedTasksIndexes.end(); ++iter) {
-				taskList.updateTask(*iter, "completion", "1");
+
+		for (iter1 = confirmedTasksIndexes.begin(); iter1 != confirmedTasksIndexes.end(); ++iter1) {
+			TMTask task = taskList.getTaskFromPositionIndex(*iter1);
+			int batchNum = task.getUnconfirmedBatchNum();
+			batchNums.push_back(batchNum);
+			taskList.updateTask(*iter1, "confirmation", "1");
+			taskList.updateTask(*iter1, "unconfirmedBatchNum", "0");
 		}
 
-		TMTask oneConfirmedTask = taskList.getTaskFromPositionIndex(confirmedTasksIndexes[0]);
-		std::string confirmedTaskDesc = oneConfirmedTask.getTaskDescription();
+		for (iter1 = batchNums.begin(); iter1 != batchNums.end(); ++iter1) {
+			std::vector<int> results;
+			results = taskList.searchUnconfirmedBatchNum(*iter1);
+			if (!results.empty()) {
+				for (iter2 = results.begin(); iter2 != results.end(); ++iter2) {
+					TMTask task = taskList.getTaskFromPositionIndex(*iter2);
+					deleteTasks.push_back(task);
+				}
 
-		std::vector<int> searchResults;
-		searchResults = taskList.keywordSearch(confirmedTaskDesc);
-
-		for (iter = searchResults.begin(); iter != searchResults.end(); ++iter) {
-			TMTask task = taskList.getTaskFromPositionIndex(*iter);
-			if ( !(task.isConfirmed()) ) {
-				taskList.removeTask(*iter);
+				for (taskIter = deleteTasks.begin(); taskIter != deleteTasks.end(); ++taskIter) {
+					int positionIndex = taskList.getPositionIndexFromTask(*taskIter);
+					taskList.removeTask(positionIndex);
+				}
 			}
 		}
 

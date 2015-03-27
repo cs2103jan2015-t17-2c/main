@@ -11,6 +11,8 @@ const std::string CMD_SEARCH = "search";
 const std::string CMD_EDIT = "edit";
 const std::string CMD_STORE = "store";
 const std::string CMD_DONEALL = "doneall";
+const std::string CMD_BLOCK = "block";
+const std::string CMD_CONFIRM = "confirm";
 
 const std::string CMD_SHORTCUT_ADD = "a";
 const std::string CMD_SHORTCUT_DELETE = "d";
@@ -166,7 +168,11 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
         return CommandTypes::SaveAt;
 	} else if (command == CMD_DONEALL||command == CMD_SHORTCUT_DONEALL) {
         return CommandTypes::CompleteAllToday;
-    } else {
+    } else if (command == CMD_BLOCK) {
+        return CommandTypes::Block;
+	} else if (command == CMD_CONFIRM) {
+        return CommandTypes::Confirm; 
+	} else {
         return CommandTypes::Invalid;
     }
 }

@@ -22,9 +22,6 @@ private:
 	//Contains all the completed timed, deadline and floating tasks
 	std::vector<TMTask> _archived;
 
-	//Contains all tasks in taskList that are involved in a schedule clash
-	std::vector<TMTask> _clashes;
-	
 	//File directory name
 	std::string _fileDirectory;
 
@@ -52,9 +49,6 @@ public:
 
 	bool isValidPositionIndex(int positionIndex);
 
-	//Checks whether task has clashes with other tasks in taskList
-	bool isInClashes(TMTask task);
-
 	//Postcondition: Returns all tasks that clashes with the task to be added in the form of a vector
 	std::vector<TMTask> findClashes(TMTask task);
 
@@ -62,10 +56,16 @@ public:
 	std::vector<TMTask>::iterator findEarliestTaskIter(std::vector<TMTask>::iterator unsortedStart);
 
 	std::vector<TMTask>::iterator findSmallestAlphaTaskIter(std::vector<TMTask>::iterator unsortedStart);
+	
 	//Postcondition: Returns a string which consists of only lowercase letters
 	std::string toLower(std::string toBeConverted);
 
+	int getUniqueBatchNum();
 
+	bool isUniqueBatchNum(int i);
+
+	std::vector<int> searchUnconfirmedBatchNum(int i);
+	
 
 	//GETTER FUNCTIONS//
 	//Postcondition: Returns 0 if the position index is not found
@@ -82,9 +82,6 @@ public:
 
 	//BASIC FUNCTIONS//
 	void addTask(TMTask task);
-	
-	//Temporarily reserving timeslots for unconfirmed activities
-	void blockMultiple(std::vector<TMTask> tasks, TMTaskList tasklist); //CONSIDER REMOVING IT
 	
 	void updateTask(int positionIndex, std::string componentOfTask, std::string changeTo);
 	

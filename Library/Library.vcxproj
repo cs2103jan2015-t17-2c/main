@@ -67,6 +67,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="TMAddTasks.h" />
+    <ClInclude Include="TMBlockTime.h" />
     <ClInclude Include="TMCommand.h" />
     <ClInclude Include="TMCommandCreator.h" />
     <ClInclude Include="TMCompleteTasks.h" />

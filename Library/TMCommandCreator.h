@@ -11,6 +11,7 @@
 #include "TMEditTask.h"
 #include "TMSearchKeyword.h"
 #include "TMSaveAt.h"
+#include "TMBlockTime.h"
 #include "TMConfirmTasks.h"
 #include "TMDoneAllToday.h"
 #include "TMViewFreeTime.h"
@@ -49,6 +50,11 @@ public:
 
 		case TMParser::CommandTypes::SaveAt:
 			newCmdPtr = new TMSaveAt();
+			return newCmdPtr;
+			break;
+
+		case TMParser::CommandTypes::Block:
+			newCmdPtr = new TMBlockTime();
 			return newCmdPtr;
 			break;
 
