@@ -20,7 +20,7 @@ public:
 
 		for (iter1 = confirmedTasksIndexes.begin(); iter1 != confirmedTasksIndexes.end(); ++iter1) {
 			TMTask task = taskList.getTaskFromPositionIndex(*iter1);
-			int batchNum = task.getUnconfirmedBatchNum();
+			int batchNum = task.getUnconfirmedBatchNumber();
 			batchNums.push_back(batchNum);
 			taskList.updateTask(*iter1, "confirmation", "1");
 			taskList.updateTask(*iter1, "unconfirmedBatchNum", "0");

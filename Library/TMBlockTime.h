@@ -19,7 +19,7 @@ public:
 
 		for (iter = unmanaged.begin(); iter != unmanaged.end(); ++iter) {
 			iter->setAsUnconfirmed();
-			iter->setUnconfirmedBatchNum(i);
+			iter->setUnconfirmedBatchNumber(i);
 			taskList.addTask(*iter);
 			
 		}

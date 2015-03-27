@@ -169,7 +169,7 @@
 	bool TMTaskList::isUniqueBatchNum(int i) {
 		std::vector<TMTask>::iterator iter;
 		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
-			if (iter->getUnconfirmedBatchNum() == i) {
+			if (iter->getUnconfirmedBatchNumber() == i) {
 				return false;
 			}
 		}
@@ -181,7 +181,7 @@
 		std::vector<int> results;
 
 		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
-			if (iter->getUnconfirmedBatchNum() == i && !iter->isConfirmed()) {
+			if (iter->getUnconfirmedBatchNumber() == i && !iter->isConfirmed()) {
 				results.push_back(getPositionIndexFromTask(*iter));
 			}
 		}
@@ -339,7 +339,7 @@
 
 			if (componentOfTask == "unconfirmedBatchNum") {
 				if (changeTo == "0") {
-					task.setUnconfirmedBatchNum(0);
+					task.setUnconfirmedBatchNumber(0);
 				}
 			}
 			

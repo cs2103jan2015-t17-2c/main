@@ -2,17 +2,22 @@
 //constructor for deadlined tasks and timed tasks
 TMTask::TMTask(std::string taskDescription, TMTaskTime taskTime, TaskType taskType){
     _taskDescription = taskDescription;
+    _unconfirmedBatchNumber = 0;
     _taskTime = taskTime;
     //by default all tasks when created are presumed to be uncompleted
     _isCompleted = false;   
     _isConfirmed = true;
-	_isClash = false;
+    _isClashed = false;
     _taskType = taskType;
-	_unconfirmedBatchNum = 0;
+	_unconfirmedBatchNumber = 0;
 }
 
 std::string TMTask::getTaskDescription(){
     return _taskDescription;
+}
+
+int TMTask::getUnconfirmedBatchNumber(){
+    return _unconfirmedBatchNumber;
 }
 
 TMTaskTime TMTask::getTaskTime(){
@@ -27,19 +32,22 @@ bool TMTask::isConfirmed(){
     return _isConfirmed;
 }
 
-bool TMTask::isClash() {
-	return _isClash;
+
+bool TMTask::isClashed(){
+    return _isClashed;
 }
 
 TaskType TMTask::getTaskType(){
     return _taskType;
 }
 
-int TMTask::getUnconfirmedBatchNum() {
-	return _unconfirmedBatchNum;
-}
+
 void TMTask::setTaskDescription(std::string newTaskDescription){
     _taskDescription = newTaskDescription;
+}
+
+void TMTask::setUnconfirmedBatchNumber(int unconfirmedBatchNumber){
+    _unconfirmedBatchNumber = unconfirmedBatchNumber;
 }
 
 void TMTask::setTaskTime(TMTaskTime newTaskTime) {
@@ -62,18 +70,14 @@ void TMTask::setAsUnconfirmed() {
     _isConfirmed = false;
 }
 
-void TMTask::setAsClash() {
-	_isClash = true;
+void TMTask::setAsClashed(){
+    _isClashed = true;
 }
 
-void TMTask::setAsNotClash() {
-	_isClash = false;
+void TMTask::setAsUnclashed(){
+    _isClashed = false;
 }
 
 void TMTask::setTaskType(TaskType newTaskType){
     _taskType = newTaskType;
-}
-
-void TMTask::setUnconfirmedBatchNum(int i) {
-	_unconfirmedBatchNum = i;
 }

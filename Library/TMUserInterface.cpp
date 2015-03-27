@@ -61,7 +61,7 @@ std::string TMUserInterface::displayDefault() {
 			SetColor(Color::GRAY);
 
 		} else {
-			if (iter->isClash()) {
+			if (iter->isClashed()) {
 					SetColor(Color::BLUE);
 			} else {	
 				SetColor(Color::WHITE);
