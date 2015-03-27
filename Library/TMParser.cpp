@@ -10,6 +10,7 @@ const std::string CMD_INCOMPLETE = "incomplete";
 const std::string CMD_SEARCH = "search";
 const std::string CMD_EDIT = "edit";
 const std::string CMD_STORE = "saveat";
+const std::string CMD_DONEALL = "doneall";
 
 const std::string DAY_YESTERDAY = "yesterday";
 const std::string DAY_TODAY = "today";
@@ -151,6 +152,8 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
         return CommandTypes::Edit;
     } else if (command == CMD_STORE) {
         return CommandTypes::SaveAt;
+	} else if (command == CMD_DONEALL) {
+        return CommandTypes::CompleteAllToday;
     } else {
         return CommandTypes::Invalid;
     }
@@ -172,7 +175,7 @@ std::vector<TMTask> TMParser::parseTaskInfo() {
 
 //Preconditions:task is deadlined task use isDeadlinedTask to check
 TMTask TMParser::parseDeadlinedTaskInfo() {
-    TaskType taskType = TaskType::WithDeadline;
+    TaskType taskType = TaskType::WithEndDateTime;
     std::string dateToMeet = "";
     std::string timeToMeet = "";
     std::vector<std::string> remainingEntry = _tokenizedUserEntry;
@@ -239,7 +242,9 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
             }
         } else if(unitString == TOKEN_ON) {
             if(iter + 1 != remainingEntry.end()){
+
                 dateToMeet = extractDayOrNumericDate(remainingEntry,iter);
+                dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
 
                 if(dateToMeet != "") {//before date DDMMYYYY
                     iter = remainingEntry.erase(iter);
@@ -264,6 +269,8 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                     std::string tempDate = boost::gregorian::to_iso_string(dateTM);
 
                     dateToMeet = tempDate.substr(6,2) + tempDate.substr(4,2) + tempDate.substr(0,4);
+                    dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
+
                     iter = remainingEntry.erase(iter,iter + 2);
                     if(iter == remainingEntry.end()){
                         break;
@@ -292,13 +299,13 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
         std::string currentTime = getCurrentTime();
         if(timeToMeet >= currentTime){
             dateToMeet = dateFromBoostToDDMMYYYY(_dateToday);
+            dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
         } else {
             dateToMeet = dateFromBoostToDelimitedDDMMYYYY(_dateToday);
             dateToMeet = addNDaysFromDate(dateToMeet,1);
+            dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
         }
     }
-    //DDMMYYYY to DD MM YYYY
-    dateToMeet = dateToMeet.substr(0,2) + " " + dateToMeet.substr(2,2) + " " + dateToMeet.substr(4,4);
 
     if(isValidDate(dateToMeet)){
         TMTaskTime taskTime(dateToMeet, timeToMeet, dateToMeet, timeToMeet);

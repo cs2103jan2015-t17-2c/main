@@ -1,3 +1,0 @@
-Number of timed and deadline: 0
-Number of undated tasks: 0
-Number of completed tasks: 0

@@ -219,3 +219,5 @@ $RECYCLE.BIN/
 Library/TMStorage.txt
 Library/DEFAULT.txt
 Library/REFERENCE.txt
+ParserUnitTest/DEFAULT.txt
+ParserUnitTest/REFERENCE.txt
