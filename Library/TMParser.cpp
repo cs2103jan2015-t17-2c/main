@@ -10,6 +10,7 @@ const std::string CMD_INCOMPLETE = "incomplete";
 const std::string CMD_SEARCH = "search";
 const std::string CMD_EDIT = "edit";
 const std::string CMD_STORE = "saveat";
+const std::string CMD_DONEALL = "doneall";
 
 const std::string DAY_YESTERDAY = "yesterday";
 const std::string DAY_TODAY = "today";
@@ -151,6 +152,8 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
         return CommandTypes::Edit;
     } else if (command == CMD_STORE) {
         return CommandTypes::SaveAt;
+	} else if (command == CMD_DONEALL) {
+        return CommandTypes::CompleteAllToday;
     } else {
         return CommandTypes::Invalid;
     }
@@ -172,7 +175,7 @@ std::vector<TMTask> TMParser::parseTaskInfo() {
 
 //Preconditions:task is deadlined task use isDeadlinedTask to check
 TMTask TMParser::parseDeadlinedTaskInfo() {
-    TaskType taskType = TaskType::WithDeadline;
+    TaskType taskType = TaskType::WithEndDateTime;
     std::string dateToMeet = "";
     std::string timeToMeet = "";
     std::vector<std::string> remainingEntry = _tokenizedUserEntry;

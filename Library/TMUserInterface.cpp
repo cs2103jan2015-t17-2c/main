@@ -53,7 +53,7 @@ std::string TMUserInterface::displayDefault() {
 	"\t" << "END TIME" << "\n" ;
 		
 	for (iter = dated.begin(); iter != dated.end(); ++iter) {
-		if ((*iter).getTaskType() == TaskType::WithDeadline) {
+		if ((*iter).getTaskType() == TaskType::WithEndDateTime) {
 			SetColor(Color::RED);
 			oss << std :: left << std :: setw(18) << std :: setfill(' ')  << (*iter).getTaskDescription() << "\t\t\t" <<
 			std :: setw (18) << "\t\t" << (*iter).getTaskTime().getEndDate() <<

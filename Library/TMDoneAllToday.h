@@ -13,17 +13,33 @@ public:
 		TMTaskList taskList = taskListStates->getCurrentTaskList();
 
 		 boost::gregorian::date dateToday =  boost::gregorian::day_clock::local_day();
-		 std::string strDateToday = parser->dateFromBoostToDelimitedDDMMYYYY(dateToday);
+		 std::locale facet(std::locale::classic(), new boost::gregorian::date_facet("%d %b %Y"));
+		 std::ostringstream stream;
+		 stream.imbue(facet);
+		 std::string  strDateToday;
+		 stream << dateToday;
+		 strDateToday = stream.str();
+		 
 
-		int numTimedAndDeadline = taskList.getDatedSize();
-		for (int i = 1; i <= numTimedAndDeadline; i++) {
+		int numDated = taskList.getDatedSize();
+		std::vector<TMTask> completedTasks;
+
+		for (int i = 1; i <= numDated; i++) {
 			TMTask task = taskList.getTaskFromPositionIndex(i);
-			std::cout << task.getTaskTime().getEndDate() << std::endl;
+			std::cout << task.getTaskTime().getEndDate() << " " << strDateToday << std::endl;
 			if (task.getTaskTime().getEndDate() == strDateToday) {
-				taskList.archiveOneTask(i); 
+				completedTasks.push_back(taskList.getTaskFromPositionIndex(i));
 			}
 		}
-		taskListStates->addNewState(taskList);
+
+		std::vector<TMTask>::iterator iter;
+		for (iter = completedTasks.begin(); iter != completedTasks.end(); ++iter) {
+			taskList = taskListStates->getCurrentTaskList();
+			int positionIndex = taskList.getPositionIndexFromTask(*iter);
+			taskList.archiveOneTask(positionIndex); 
+			taskListStates->addNewState(taskList);
+		}
+				
 	}
 
 };
