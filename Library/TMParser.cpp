@@ -9,8 +9,19 @@ const std::string CMD_COMPLETE = "complete";
 const std::string CMD_INCOMPLETE = "incomplete";
 const std::string CMD_SEARCH = "search";
 const std::string CMD_EDIT = "edit";
-const std::string CMD_STORE = "saveat";
+const std::string CMD_STORE = "store";
 const std::string CMD_DONEALL = "doneall";
+
+const std::string CMD_SHORTCUT_ADD = "a";
+const std::string CMD_SHORTCUT_DELETE = "d";
+const std::string CMD_SHORTCUT_UNDO = "u";
+const std::string CMD_SHORTCUT_REDO = "r";
+const std::string CMD_SHORTCUT_COMPLETE = "c";
+const std::string CMD_SHORTCUT_INCOMPLETE = "i";
+const std::string CMD_SHORTCUT_SEARCH = "se";
+const std::string CMD_SHORTCUT_EDIT= "e";
+const std::string CMD_SHORTCUT_STORE = "st";
+const std::string CMD_SHORTCUT_DONEALL = "da";
 
 const std::string DAY_YESTERDAY = "yesterday";
 const std::string DAY_TODAY = "today";
@@ -134,25 +145,26 @@ std::vector<std::string> TMParser::returnTokens() {
 }
 
 TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
-    if(command == CMD_ADD) {
+    command = returnLowerCase(command);
+    if(command == CMD_ADD||command == CMD_SHORTCUT_ADD) {
         return CommandTypes::Add;
-    } else if (command == CMD_DELETE) {
+    } else if (command == CMD_DELETE||command == CMD_SHORTCUT_DELETE) {
         return CommandTypes::Delete;
-    } else if (command == CMD_UNDO) {
+    } else if (command == CMD_UNDO||command == CMD_SHORTCUT_UNDO) {
 		return CommandTypes::Undo;
-	}else if (command == CMD_REDO) {
+	}else if (command == CMD_REDO||command == CMD_SHORTCUT_REDO) {
         return CommandTypes::Redo;
-    } else if (command == CMD_COMPLETE) {
+    } else if (command == CMD_COMPLETE||command == CMD_SHORTCUT_COMPLETE) {
         return CommandTypes::Complete;
-    } else if (command == CMD_INCOMPLETE) {
+    } else if (command == CMD_INCOMPLETE||command == CMD_SHORTCUT_INCOMPLETE) {
         return CommandTypes::Incomplete;
-    } else if (command == CMD_SEARCH) {
+    } else if (command == CMD_SEARCH||command == CMD_SHORTCUT_SEARCH) {
         return CommandTypes::SearchKeyword;
-    } else if (command == CMD_EDIT) {
+    } else if (command == CMD_EDIT||command == CMD_SHORTCUT_EDIT) {
         return CommandTypes::Edit;
-    } else if (command == CMD_STORE) {
+    } else if (command == CMD_STORE||command == CMD_SHORTCUT_STORE) {
         return CommandTypes::SaveAt;
-	} else if (command == CMD_DONEALL) {
+	} else if (command == CMD_DONEALL||command == CMD_SHORTCUT_DONEALL) {
         return CommandTypes::CompleteAllToday;
     } else {
         return CommandTypes::Invalid;
