@@ -49,6 +49,7 @@ namespace TMGUI {
 	private: System::Windows::Forms::TextBox^  userInput;
 	private: System::Windows::Forms::Label^  welcomeMessage;
 	private: System::Windows::Forms::RichTextBox^  richTextBox1;
+
 	protected: 
 
 
@@ -93,9 +94,13 @@ namespace TMGUI {
 			// 
 			// richTextBox1
 			// 
+			this->richTextBox1->AcceptsTab = true;
+			this->richTextBox1->Font = (gcnew System::Drawing::Font(L"Calisto MT", 7.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
 			this->richTextBox1->Location = System::Drawing::Point(99, 54);
 			this->richTextBox1->Name = L"richTextBox1";
-			this->richTextBox1->Size = System::Drawing::Size(1138, 578);
+			this->richTextBox1->ReadOnly = true;
+			this->richTextBox1->Size = System::Drawing::Size(1120, 575);
 			this->richTextBox1->TabIndex = 3;
 			this->richTextBox1->Text = L"";
 			// 
@@ -118,7 +123,14 @@ namespace TMGUI {
 #pragma endregion
 	
 	private: System::Void userInput_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
-				if(e->KeyChar == (char)13){
+				
+				 if(e->KeyChar == (char)13){
+					 richTextBox1->Text="";
+					 std::ostringstream oss,HEADERS,DEADLINE,TIMED,FLOATING;
+					 DEADLINE.clear();
+					
+				
+					
 					String ^ str = userInput->Text;
 					std::string unmanaged = msclr::interop::marshal_as<std::string>(str);
 
@@ -136,18 +148,88 @@ namespace TMGUI {
 					std::string command = parser->extractCommand();
 					TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(parser->determineCommandType(command));
 					commandObjPtr->execute();
-					std :: string display = ui->displayDefault();
-					std :: cout << display;
-					String^ str2 = gcnew String(display.c_str());
+					
+					
+					
+					TMTaskList taskList = taskListStates->getCurrentTaskList();
 
-					richTextBox1->Text = str2;
+					std::vector<TMTask> dated = taskList.getDated();
+					std::vector<TMTask> undated = taskList.getUndated();
+					std::vector<TMTask> archived = taskList.getArchived();
 
-					userInput->Clear();
+					oss<< "Number of scheduled tasks: " << dated.size() << "\n";
+					oss << "Number of undated tasks:" << undated.size() << "\n";
+					oss << "Details:" << "\n\n";
+
+					String^ str2 = gcnew String(oss.str().c_str());
+					richTextBox1->SelectionColor = Color :: Red;
+					richTextBox1->SelectedText = str2 ;
+					
+
+					HEADERS << std :: left << std :: setw(18) << std :: setfill(' ') << "TASK DECSCRIPTION" << "\t" <<
+					"START DATE" << "\t" << "START TIME" << "\t" << "END DATE" <<
+					"\t" << "END TIME" << "\n" ;
+
+					
+					String^ str3 = gcnew String(HEADERS.str().c_str());
+					richTextBox1->SelectionColor = Color :: Green;
+					richTextBox1->SelectedText = str3 ;
+					
+
+					std::vector<TMTask>::iterator iter;
+		
+					for (iter = dated.begin(); iter != dated.end(); ++iter) {
+						if ((*iter).getTaskType() == TaskType::WithEndDateTime) {
+			
+						DEADLINE << std :: left << std :: setw(18) << std :: setfill(' ')  << (*iter).getTaskDescription() << "\t\t\t" <<
+						std :: setw (18) << "\t\t" << (*iter).getTaskTime().getEndDate() <<
+						"\t" << (*iter).getTaskTime().getEndTime() <<std::endl;
+
+						String^ str4 = gcnew String(DEADLINE.str().c_str());
+						richTextBox1->SelectionColor = Color :: Navy;
+						richTextBox1->SelectedText = str4 ;
+
+						
+			
+						
+						} else {
+								if (iter->isClashed()) {
+								} 
+								TIMED << std :: left << std :: setw(18) << std :: setfill(' ') << (*iter).getTaskDescription() << "\t\t" << (*iter).getTaskTime().getStartDate() << 
+								"\t" << (*iter).getTaskTime().getStartTime() << 
+								"\t\t" << (*iter).getTaskTime().getEndDate() <<
+								"\t" << (*iter).getTaskTime().getEndTime() <<std::endl;
+
+								String^ str5 = gcnew String(TIMED.str().c_str());
+								richTextBox1->SelectionColor = Color :: Purple;
+								richTextBox1->SelectedText = str5 ;
+		}
+	}
+	
+	for (iter = undated.begin(); iter != undated.end(); ++iter) {
+		
+		FLOATING << (*iter).getTaskDescription() << std::endl;
+		String^ str6 = gcnew String(FLOATING.str().c_str());
+		richTextBox1->SelectionColor = Color :: YellowGreen;
+		richTextBox1->SelectedText = str6 ;
+		
+	}
+
+	
+	
+					
+					
+					
+	
+					
+	userInput->Clear();
 				 }
 			 }
 	private: System::Void displayScreen_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 			 }
 	private: System::Void userInput_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+		 }
+private: System::Void dataGridView1_CellContentClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
 		 }
 };
 }
