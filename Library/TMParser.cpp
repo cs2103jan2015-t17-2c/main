@@ -210,83 +210,79 @@ std::vector<TMTask> TMParser::parseDeadlinedTaskInfo() {
             iterMinusOne = false;
         }
 
+        if(iter + 1 == remainingEntry.end()){
+            break;
+        }
+
         unitString = returnLowerCase(*iter);
 
         if(unitString == TOKEN_BEFORE){
-
-            if(iter + 1 != remainingEntry.end()){
-                nextWord = returnLowerCase(*(iter+1));
-
-                if(isNumericDate(nextWord)||isDay(nextWord)||isDDMonDate(nextWord)) {
-                    //e.g. before 01012016 (DDMMYYYY)
-                    dateToMeet = extractDayOrNumericDateOrDDMonDate(remainingEntry,iter);
-                    dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
-                    dateToMeet = substractNDaysFromDate(dateToMeet,1);
-                    iter = remainingEntry.erase(iter);
-                    timeToMeet = "2359";
-                    if(iter == remainingEntry.end()){
-                        break;
-                    } else if (iter == remainingEntry.begin()){
-                        iterMinusOne = true;
-                    } else {
-                        iter--;
-                    }
-                } else if (isNextDay(remainingEntry,iter)) {
-                    //e.g. before next monday
-                    dateToMeet = extractNextDayAfterToken(remainingEntry,iter);
-                    dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
-                    dateToMeet = substractNDaysFromDate(dateToMeet,1);
-                    timeToMeet = "2359";
-                    iter = remainingEntry.erase(iter);
-                    if(iter == remainingEntry.end()){
-                        break;
-                    } else if (iter == remainingEntry.begin()){
-                        iterMinusOne = true;
-                    } else {
-                        iter--;
-                    }
-                } else if (is12HTime(nextWord)||is24HTime(nextWord)) {
-                    timeToMeet = extractTimeAfterToken(remainingEntry,iter);
-                    iter = remainingEntry.erase(iter);
-                    if(iter == remainingEntry.end()){
-                        break;
-                    } else if (iter == remainingEntry.begin()){
-                        iterMinusOne = true;
-                    } else {
-                        iter--;
-                    }
-                } 
-            }
-        } else if(unitString == TOKEN_ON) {
-            if(iter + 1 != remainingEntry.end()){
-
+            nextWord = returnLowerCase(*(iter+1));
+            if(isNumericDate(nextWord)||isDay(nextWord)||isDDMonDate(nextWord)) {
+                //e.g. before 01012016 (DDMMYYYY)
                 dateToMeet = extractDayOrNumericDateOrDDMonDate(remainingEntry,iter);
+                dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
+                dateToMeet = substractNDaysFromDate(dateToMeet,1);
+                iter = remainingEntry.erase(iter);
+                timeToMeet = "2359";
+                if(iter == remainingEntry.end()){
+                    break;
+                } else if (iter == remainingEntry.begin()){
+                    iterMinusOne = true;
+                } else {
+                    iter--;
+                }
+            } else if (isNextDay(remainingEntry,iter)) {
+                //e.g. before next monday
+                dateToMeet = extractNextDayAfterToken(remainingEntry,iter);
+                dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
+                dateToMeet = substractNDaysFromDate(dateToMeet,1);
+                timeToMeet = "2359";
+                iter = remainingEntry.erase(iter);
+                if(iter == remainingEntry.end()){
+                    break;
+                } else if (iter == remainingEntry.begin()){
+                    iterMinusOne = true;
+                } else {
+                    iter--;
+                }
+            } else if (is12HTime(nextWord)||is24HTime(nextWord)) {
+                timeToMeet = extractTimeAfterToken(remainingEntry,iter);
+                iter = remainingEntry.erase(iter);
+                if(iter == remainingEntry.end()){
+                    break;
+                } else if (iter == remainingEntry.begin()){
+                    iterMinusOne = true;
+                } else {
+                    iter--;
+                }
+            } 
+        } else if(unitString == TOKEN_ON) {
+            dateToMeet = extractDayOrNumericDateOrDDMonDate(remainingEntry,iter);
 
-                if(dateToMeet != "") {//before date DDMMYYYY
-                    iter = remainingEntry.erase(iter);
-                    if(iter == remainingEntry.end()){
-                        break;
-                    } else if (iter == remainingEntry.begin()){
-                        iterMinusOne = true;
-                    } else {
-                        iter--;
-                    }
+            if(dateToMeet != "") {
+                //before date DDMMYYYY
+                iter = remainingEntry.erase(iter);
+                if(iter == remainingEntry.end()){
+                    break;
+                } else if (iter == remainingEntry.begin()){
+                    iterMinusOne = true;
+                } else {
+                    iter--;
                 }
             }
         } else if(isNext(unitString)){
-            if(iter + 1 != remainingEntry.end()){
-                nextWord = returnLowerCase(*(iter + 1));
-                if(isDay(nextWord)){
-                    dateToMeet = extractNextDay(remainingEntry,iter);
-                    iter = remainingEntry.erase(iter);
+            nextWord = returnLowerCase(*(iter + 1));
+            if(isDay(nextWord)){
+                dateToMeet = extractNextDay(remainingEntry,iter);
+                iter = remainingEntry.erase(iter);
 
-                    if(iter == remainingEntry.end()){
-                        break;
-                    } else if (iter == remainingEntry.begin()){
-                        iterMinusOne = true;
-                    } else {
-                        iter--;
-                    }
+                if(iter == remainingEntry.end()){
+                    break;
+                } else if (iter == remainingEntry.begin()){
+                    iterMinusOne = true;
+                } else {
+                    iter--;
                 }
             }
         }
@@ -355,103 +351,98 @@ std::vector<TMTask> TMParser::parseTimedTaskInfo(){
             iter--;
             iterMinusOne = false;
         }
+
+        if(iter + 1 == remainingEntry.end()){
+            break;
+        }
+
         unitString = *iter;
         unitString = returnLowerCase(unitString);
 
-        if(unitString == TOKEN_AT){
-            if(iter + 1 != remainingEntry.end()){
-                startTime = extractTimeAfterToken(remainingEntry,iter);
-                if(startTime != ""){
-                    startTimeExtracted = true;
-                    iter = remainingEntry.erase(iter);
-                    if(iter == remainingEntry.end()){
-                        break;
-                    } else if (iter == remainingEntry.begin()){
-                        iterMinusOne = true;
-                    } else {
-                        iter--;
-                    }
-                } //else no time treat at as description continue searching
-            }
-        } else if(unitString == TOKEN_ON){
-            if(iter + 1 != remainingEntry.end()){
-                startDate = extractDayOrNumericDateOrDDMonDate(remainingEntry,iter);
-                if(startDate != ""){
-                    startDateExtracted = true;
-                    iter = remainingEntry.erase(iter);
-                    if(iter == remainingEntry.end()){
-                        break;
-                    } else if (iter == remainingEntry.begin()){
-                        iterMinusOne = true;
-                    } else {
-                        iter--;
-                    }
+        if(unitString == TOKEN_AT) {
+            startTime = extractTimeAfterToken(remainingEntry,iter);
+            if(startTime != ""){
+                startTimeExtracted = true;
+                iter = remainingEntry.erase(iter);
+                if(iter == remainingEntry.end()){
+                    break;
+                } else if (iter == remainingEntry.begin()){
+                    iterMinusOne = true;
+                } else {
+                    iter--;
+                }
+            } //else no time treat at as description continue searching
+        } else if(unitString == TOKEN_ON) {
+            startDate = extractDayOrNumericDateOrDDMonDate(remainingEntry,iter);
+            if(startDate != ""){
+                startDateExtracted = true;
+                iter = remainingEntry.erase(iter);
+                if(iter == remainingEntry.end()){
+                    break;
+                } else if (iter == remainingEntry.begin()){
+                    iterMinusOne = true;
+                } else {
+                    iter--;
                 }
             }
         } else if(unitString == TOKEN_FROM){
-            if(iter + 1 != remainingEntry.end()){
-                std::string extractedDate;
-                std::string extractedTime;
-                extractDateAndOrTime(remainingEntry,iter,extractedDate,extractedTime);
-                if((extractedDate != "")||(extractedTime != "")){
-                    if(extractedDate != ""){
-                        startDate = extractedDate;
-                        startDateExtracted = true;
-                    }
-                    if(extractedTime != ""){
-                        startTime = extractedTime;
-                        startTimeExtracted = true;
-                    }
+            std::string extractedDate;
+            std::string extractedTime;
+            extractDateAndOrTime(remainingEntry,iter,extractedDate,extractedTime);
+            if((extractedDate != "")||(extractedTime != "")){
+                if(extractedDate != ""){
+                    startDate = extractedDate;
+                    startDateExtracted = true;
+                }
+                if(extractedTime != ""){
+                    startTime = extractedTime;
+                    startTimeExtracted = true;
+                }
                     
-                    iter = remainingEntry.erase(iter);
-                    if(iter == remainingEntry.end()){
-                        break;
-                    } else if (iter == remainingEntry.begin()){
-                        iterMinusOne = true;
-                    } else {
-                        iter--;
-                    }
+                iter = remainingEntry.erase(iter);
+                if(iter == remainingEntry.end()){
+                    break;
+                } else if (iter == remainingEntry.begin()){
+                    iterMinusOne = true;
+                } else {
+                    iter--;
                 }
             }
         } else if (unitString == TOKEN_TO){
-            if(iter + 1 != remainingEntry.end()){
-                std::string extractedDate;
-                std::string extractedTime;
-                extractDateAndOrTime(remainingEntry,iter,extractedDate,extractedTime);
-                if((extractedDate != "")||(extractedTime != "")){
-                    if(extractedDate != ""){
-                        endDate = extractedDate;
-                        endDateExtracted = true;
-                    }
-                    if(extractedTime != ""){
-                        endTime = extractedTime;
-                        endTimeExtracted = true;
-                    }
+            std::string extractedDate;
+            std::string extractedTime;
+            extractDateAndOrTime(remainingEntry,iter,extractedDate,extractedTime);
+            if((extractedDate != "")||(extractedTime != "")){
+                if(extractedDate != ""){
+                    endDate = extractedDate;
+                    endDateExtracted = true;
+                }
+                if(extractedTime != ""){
+                    endTime = extractedTime;
+                    endTimeExtracted = true;
+                }
                     
-                    iter = remainingEntry.erase(iter);
-                    if(iter == remainingEntry.end()){
-                        break;
-                    } else if (iter == remainingEntry.begin()){
-                        iterMinusOne = true;
-                    } else {
-                        iter--;
-                    }
+                iter = remainingEntry.erase(iter);
+                if(iter == remainingEntry.end()){
+                    break;
+                } else if (iter == remainingEntry.begin()){
+                    iterMinusOne = true;
+                } else {
+                    iter--;
                 }
             }
         } else if(isNext(unitString)) {
-            if(iter + 1 != remainingEntry.end()){
-                std::string nextWord = returnLowerCase(*(iter + 1));
-                if(isDay(nextWord)){
-                    startDate = extractNextDay(remainingEntry,iter);
-                    startDateExtracted = true;
-                    iter = remainingEntry.erase(iter);
-                    if(iter == remainingEntry.end()){
-                        break;
-                    } else if (iter == remainingEntry.begin()){
-                        iterMinusOne = true;
-                    } else {
-                        iter--;
-                    }
+            std::string nextWord = returnLowerCase(*(iter + 1));
+            if(isDay(nextWord)){
+                startDate = extractNextDay(remainingEntry,iter);
+                startDateExtracted = true;
+                iter = remainingEntry.erase(iter);
+                if(iter == remainingEntry.end()){
+                    break;
+                } else if (iter == remainingEntry.begin()){
+                    iterMinusOne = true;
+                } else {
+                    iter--;
                 }
             }
         } else {
