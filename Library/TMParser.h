@@ -42,11 +42,12 @@ public:
     std::vector<TMTask> parseDeadlinedTaskInfo();
     std::vector<TMTask> parseTimedTaskInfo();
     std::vector<TMTask> parseUndatedTaskInfo();
-    std::vector<TMTask> returnSplitPeriodTasks(std::string, std::string, std::string, std::string, std::string, TaskType);
+    //std::vector<TMTask> returnSplitPeriodTasks(std::string, std::string, std::string, std::string, std::string, TaskType);
 
     //need to check if there is sufficient space at the back first
-    std::string extractDayOrNumericDate(std::vector<std::string>&, std::vector<std::string>::iterator);
+    std::string extractDayOrNumericDateOrDDMonDate(std::vector<std::string>&, std::vector<std::string>::iterator);
     std::string extractNumericDateAfterToken(std::vector<std::string>&, std::vector<std::string>::iterator);
+    std::string extractDDMonDateAfterToken(std::vector<std::string>&, std::vector<std::string>::iterator);
     std::string extractNextDayAfterToken(std::vector<std::string>&, std::vector<std::string>::iterator);
     std::string extractNextDay(std::vector<std::string>&, std::vector<std::string>::iterator);
     std::string extractDayAfterToken(std::vector<std::string>&, std::vector<std::string>::iterator);
@@ -66,6 +67,7 @@ public:
     //bool isPeriod(std::string);
     //to test for date in other forms. define another function to convert 
     bool isNumericDate(std::string);
+    //
     bool isDDMonDate(std::string);
     bool isDay(std::string);
     bool is12HTime(std::string);
@@ -74,6 +76,7 @@ public:
     bool isNext(std::string);
     bool isAM(std::string);
     bool isPM(std::string);
+    //
     bool isMonth(std::string);
 
     int numberOfWords(std::string);
@@ -87,16 +90,16 @@ public:
 
     std::string returnLowerCase(std::string);
     std::string dateFromNumericToBoostFormat(std::string);
-    std::string dateFromMonthToBoostFormat(std::string);
+    
     std::string dateFromBoostToStandardFormat(const boost::gregorian::date&);
     std::string dateFromBoostToDelimitedDDMMYYYY(const boost::gregorian::date&);
     std::string dateFromBoostToDDMMYYYY(const boost::gregorian::date&);
+    std::string monthFromWrittenToNumeric(std::string);
 
     std::string timeTo24HFormat(std::string);
     std::string getCurrentTime();
     std::string substractNDaysFromDate(std::string,int);
     std::string addNDaysFromDate(std::string,int);
     std::string getDateFromNextDay(std::vector<std::string>&,std::vector<std::string>::iterator);
-
 };
 #endif
