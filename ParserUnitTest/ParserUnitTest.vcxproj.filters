@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Library\TMExecutor.cpp">
+    <ClCompile Include="..\Library\Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

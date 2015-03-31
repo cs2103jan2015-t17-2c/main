@@ -40,12 +40,6 @@
     <Filter Include="Source Files\TMExecutor">
       <UniqueIdentifier>{513dd6dc-e43d-43c3-9e41-89271b52d6b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\TMUserInterface">
-      <UniqueIdentifier>{324f1775-2110-404b-95b5-69cf6afc9bd8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\TMUserInterface">
-      <UniqueIdentifier>{b99b82c5-3d72-44c7-a4a5-2e27087157df}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TMCommand.h">
@@ -75,9 +69,6 @@
     <ClInclude Include="TMSearchKeyword.h">
       <Filter>Header Files\TMCommand</Filter>
     </ClInclude>
-    <ClInclude Include="TMViewFreeTime.h">
-      <Filter>Header Files\TMCommand</Filter>
-    </ClInclude>
     <ClInclude Include="TMConfirmTasks.h">
       <Filter>Header Files\TMCommand</Filter>
     </ClInclude>
@@ -86,9 +77,6 @@
     </ClInclude>
     <ClInclude Include="TMCommandCreator.h">
       <Filter>Header Files\TMExecutor</Filter>
-    </ClInclude>
-    <ClInclude Include="TMUserInterface.h">
-      <Filter>Header Files\TMUserInterface</Filter>
     </ClInclude>
     <ClInclude Include="TMEditTask.h">
       <Filter>Header Files\TMCommand</Filter>
@@ -111,6 +99,9 @@
     <ClInclude Include="TMBlockTime.h">
       <Filter>Header Files\TMCommand</Filter>
     </ClInclude>
+    <ClInclude Include="TMExecutor.h">
+      <Filter>Header Files\TMExecutor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TMParser.cpp">
@@ -125,14 +116,17 @@
     <ClCompile Include="TMTaskList.cpp">
       <Filter>Source Files\TMMemory</Filter>
     </ClCompile>
-    <ClCompile Include="TMUserInterface.cpp">
-      <Filter>Source Files\TMUserInterface</Filter>
-    </ClCompile>
     <ClCompile Include="TMDateTime.cpp">
       <Filter>Source Files\TMTask</Filter>
     </ClCompile>
     <ClCompile Include="TMTaskListStates.cpp">
       <Filter>Source Files\TMMemory</Filter>
+    </ClCompile>
+    <ClCompile Include="TMExecutor.cpp">
+      <Filter>Source Files\TMExecutor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

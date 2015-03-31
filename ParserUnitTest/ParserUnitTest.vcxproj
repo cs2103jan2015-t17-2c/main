@@ -69,12 +69,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Library\TMExecutor.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Library\Library.vcxproj">
       <Project>{f3cb39ab-99d5-4991-9cf4-de3f6693e57e}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Library\Source.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

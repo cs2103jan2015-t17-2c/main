@@ -14,10 +14,10 @@
 #include "TMBlockTime.h"
 #include "TMConfirmTasks.h"
 #include "TMDoneAllToday.h"
-#include "TMViewFreeTime.h"
 #include "TMCompleteTasks.h"
 #include "TMUndo.h"
 #include "TMRedo.h"
+
 
 class TMCommandCreator {
 public:
@@ -73,7 +73,7 @@ public:
 			return newCmdPtr;
 			break;
 
-		case TMParser::CommandTypes::Incomplete:
+		case TMParser::CommandTypes::Incomplete:;
 		
 		case TMParser::CommandTypes::Undo: 
 			newCmdPtr = new TMUndo();
@@ -85,17 +85,8 @@ public:
 			return newCmdPtr;
 			break;
 
-		case TMParser::CommandTypes::ViewFreeTime:
-			newCmdPtr = new TMViewFreeTime();
-			return newCmdPtr;
+		case TMParser::CommandTypes::Invalid:
 			break;
-		
-		case TMParser::CommandTypes::ViewDate:;
-		case TMParser::CommandTypes::ViewDeadline:;
-		case TMParser::CommandTypes::ViewUndated:;
-		case TMParser::CommandTypes::ViewArchived:;
-		case TMParser::CommandTypes::ViewAllTasks:;
-		case TMParser::CommandTypes::Invalid:;
 		
 		}
 	}
