@@ -569,6 +569,26 @@ std::vector<TMTask> TMParser::parseTimedTaskInfo(){
     return tasks;
 }
 
+std::vector<TMTask> TMParser::parseUndatedTaskInfo() {
+    std::vector<TMTask> tasks;
+    TaskType taskType = TaskType::Undated;
+    TMTaskTime taskTime;
+    std::string taskDescription;
+
+    int lengthOfVector = _tokenizedUserEntry.size();
+    for(int i = 0; i < lengthOfVector; i++){
+        taskDescription += _tokenizedUserEntry[i];
+        if(i != lengthOfVector - 1){
+            taskDescription += " ";
+        }
+    }
+
+    TMTask task(taskDescription,taskTime,taskType);
+    tasks.push_back(task);
+
+    return tasks;
+}
+
 std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
     std::vector<TMTask> tasks;
     std::vector<TMTaskTime> taskTimings;
@@ -661,59 +681,6 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
 
     return tasks;
 }
-
-std::vector<TMTask> TMParser::parseUndatedTaskInfo() {
-    std::vector<TMTask> tasks;
-    TaskType taskType = TaskType::Undated;
-    TMTaskTime taskTime;
-    std::string taskDescription;
-
-    int lengthOfVector = _tokenizedUserEntry.size();
-    for(int i = 0; i < lengthOfVector; i++){
-        taskDescription += _tokenizedUserEntry[i];
-        if(i != lengthOfVector - 1){
-            taskDescription += " ";
-        }
-    }
-
-    TMTask task(taskDescription,taskTime,taskType);
-    tasks.push_back(task);
-
-    return tasks;
-}
-
-//dates must be delimited by spaces or '-'
-/*std::vector<TMTask> TMParser::returnSplitPeriodTasks(std::string taskDescription, std::string startDate, std::string startTime, std::string endDate, std::string endTime, TaskType taskType){
-    boost::gregorian::date boostStartDate = boost::gregorian::from_uk_string(startDate);
-    boost::gregorian::date boostEndDate = boost::gregorian::from_uk_string(endDate);
-    boost::gregorian::date_duration oneDay(1);
-    std::vector<TMTask> tasks;
-
-    if(startDate == endDate){
-        TMTaskTime taskTime(startDate,startTime,endDate,endTime);
-        TMTask task(taskDescription,taskTime,taskType);
-        tasks.push_back(task);
-    } else {
-        TMTaskTime taskTime(startDate,startTime,startDate,"2359");
-        TMTask task(taskDescription,taskTime,taskType);
-        tasks.push_back(task);
-        boostStartDate = boostStartDate + oneDay;
-
-        while(boostStartDate != boostEndDate){
-            startDate = dateFromBoostToDelimitedDDMMYYYY(boostStartDate);
-            taskTime = TMTaskTime(startDate,"0000",startDate,"2359");
-            task = TMTask(taskDescription,taskTime,taskType);
-            tasks.push_back(task);
-            boostStartDate = boostStartDate + oneDay;
-        }
-
-        taskTime = TMTaskTime(endDate,"0000",endDate,endTime);
-        task = TMTask(taskDescription,taskTime,taskType);
-        tasks.push_back(task);
-    }
-
-    return tasks;
-}*/
 
 std::string TMParser::extractDayOrNumericDateOrDDMonDate(std::vector<std::string>& remainingEntry,std::vector<std::string>::iterator iter){
     std::string stringAfterOn = returnLowerCase(*iter);

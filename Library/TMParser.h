@@ -40,10 +40,9 @@ public:
     std::vector<TMTask> parseTaskInfo();
     std::vector<TMTask> parseDeadlinedTaskInfo();
     std::vector<TMTask> parseTimedTaskInfo();
-    //create new command block for multiple task timing. multipletiming should be segregated
-    std::vector<TMTask> parseMultipleTimingTaskInfo();
     std::vector<TMTask> parseUndatedTaskInfo();
-    //std::vector<TMTask> returnSplitPeriodTasks(std::string, std::string, std::string, std::string, std::string, TaskType);
+
+    std::vector<TMTask> parseMultipleTimingTaskInfo();
 
     //need to check if there is sufficient space at the back first
     std::string extractDayOrNumericDateOrDDMonDate(std::vector<std::string>&, std::vector<std::string>::iterator);
