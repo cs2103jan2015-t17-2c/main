@@ -6,6 +6,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <queue>
 #include <ctype.h>
 
 //user input date must be ddmmyyyy
@@ -45,14 +46,14 @@ public:
     std::vector<TMTask> parseMultipleTimingTaskInfo();
 
     //need to check if there is sufficient space at the back first
-    std::string extractDayOrNumericDateOrDDMonDate(std::vector<std::string>&, std::vector<std::string>::iterator);
-    std::string extractNumericDateAfterToken(std::vector<std::string>&, std::vector<std::string>::iterator);
-    std::string extractDDMonDateAfterToken(std::vector<std::string>&, std::vector<std::string>::iterator);
-    std::string extractNextDayAfterToken(std::vector<std::string>&, std::vector<std::string>::iterator);
-    std::string extractNextDay(std::vector<std::string>&, std::vector<std::string>::iterator);
-    std::string extractDayAfterToken(std::vector<std::string>&, std::vector<std::string>::iterator);
-    std::string extractTimeAfterToken(std::vector<std::string>&, std::vector<std::string>::iterator);
-    void extractDateAndOrTime(std::vector<std::string>&,std::vector<std::string>::iterator, std::string&,std::string&);
+    std::string extractDayOrNumericDateOrDDMonDate(int, std::queue<int>&);
+    std::string extractNumericDateAfterToken(int, std::queue<int>&);
+    std::string extractDDMonDateAfterToken(int, std::queue<int>&);
+    std::string extractNextDayAfterToken(int, std::queue<int>&);
+    std::string extractNextDay(int, std::queue<int>&);
+    std::string extractDayAfterToken(int, std::queue<int>&);
+    std::string extractTimeAfterToken(int, std::queue<int>&);
+    void extractDateAndOrTime(int, std::queue<int>&, std::string&,std::string&);
 
 
     bool isDeadlinedTask();
@@ -74,7 +75,7 @@ public:
     bool isDay(std::string);
     bool is12HTime(std::string);
     bool is24HTime(std::string);
-    bool isNextDay(const std::vector<std::string>&, std::vector<std::string>::iterator);
+    bool isNextDay(int);
     bool isNext(std::string);
     bool isAM(std::string);
     bool isPM(std::string);
@@ -102,6 +103,6 @@ public:
     std::string getCurrentTime();
     std::string substractNDaysFromDate(std::string,int);
     std::string addNDaysFromDate(std::string,int);
-    std::string getDateFromNextDay(std::vector<std::string>&,std::vector<std::string>::iterator);
+    std::string getDateFromNextDay(int);
 };
 #endif
