@@ -311,7 +311,7 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 			return ADD_UNDATED_SUCCESS;
 			break;
 
-		case InvalidType:
+		case Invalid:
 			return ADD_INVALID;
 			break;
 		}
