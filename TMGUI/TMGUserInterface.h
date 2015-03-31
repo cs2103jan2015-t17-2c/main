@@ -210,7 +210,7 @@ namespace TMGUI {
 			// taskDescription
 			// 
 			this->taskDescription->Text = L"Task Description";
-			this->taskDescription->Width = 515;
+			this->taskDescription->Width = 273;
 			// 
 			// startDate
 			// 
@@ -280,28 +280,36 @@ namespace TMGUI {
 					
 					//displayString = displayString + gcnew String((*iter).c_str());
 					
-					ListViewItem^ listViewItems;
+					TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+					TMTaskList taskList = taskListStates->getCurrentTaskList();
+					std::vector<TMTask> dated = taskList.getDated();
+					std::vector<TMTask> undated = taskList.getUndated();
+					std::vector<TMTask> archived = taskList.getArchived();
+					std::vector<TMTask>::iterator iter;
 
+					//displayString = displayString + gcnew String((*iter).c_str());
 					
-					listViewItems = gcnew ListViewItem("1");
-					listViewItems->SubItems->Add("testlol");
-					
-				
+					ListViewItem^ entryTimed,entryFloating;
 
-					defaultView->Items->Add(listViewItems);
+					for(int i=0; i != dated.size() ; ++i){
+						
+						entryTimed = gcnew ListViewItem(Convert::ToString(i+1));
+						entryTimed->SubItems->Add(gcnew String(( (dated[i].getTaskDescription()).c_str() )));
+						entryTimed->SubItems->Add(gcnew String(( (dated[i].getTaskTime().getStartDate()).c_str() )));
+						entryTimed->SubItems->Add(gcnew String(( (dated[i].getTaskTime().getStartTime()).c_str() )));
+						entryTimed->SubItems->Add(gcnew String(( (dated[i].getTaskTime().getEndDate()).c_str() )));
+						entryTimed->SubItems->Add(gcnew String(( (dated[i].getTaskTime().getEndTime()).c_str() )));
 
 
-				
+						defaultView->Items->Add(entryTimed);
 
-				
+					}
 					userInput->Clear();
 				 }
 			 }
+			 
 
-	private: System::Void displayScreen_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-			 }
-
-
+	
 	private: System::Void welcomeMessage_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
 

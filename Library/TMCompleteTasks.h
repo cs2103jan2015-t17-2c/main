@@ -17,6 +17,7 @@ public:
 		std::vector<int>::iterator intIter;
 		std::vector<TMTask> completedTasks;
 		std::vector<TMTask>::iterator taskIter;
+		std::ostringstream oss;
 		
 		for (intIter = completeIndexes.begin(); intIter != completeIndexes.end(); ++intIter) {
 			TMTask task = taskList.getTaskFromPositionIndex(*intIter);
@@ -25,9 +26,10 @@ public:
 
 		for (taskIter = completedTasks.begin(); taskIter != completedTasks.end(); ++taskIter) {
 			int positionIndex = taskList.getPositionIndexFromTask(*taskIter);
-			taskList.archiveOneTask(positionIndex);
+			oss << taskList.archiveOneTask(positionIndex) << std::endl;
 		}
 
+		outcome = oss.str();
 		taskListStates->addNewState(taskList);
 	}
 };

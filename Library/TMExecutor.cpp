@@ -15,8 +15,8 @@ TMExecutor::TMExecutor() {
 }
 
 void TMExecutor::executeMain(std::string userInput) {
-	_displayInfo.clear();
-	_displayColours.clear();
+	//_displayInfo.clear();
+	//_displayColours.clear();
 
 	TMParser *parser = TMParser::getInstance(); 
 	TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
@@ -32,12 +32,13 @@ void TMExecutor::executeMain(std::string userInput) {
 	TMParser::CommandTypes type = parser->determineCommandType(command);
 	TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(type);
 	commandObjPtr->execute();
+	_resultOfExecution = commandObjPtr->outcome;
 	}
 	//taskList.writeToFile();
 	//taskList.leaveReferenceUponExit();
 
-	setDisplayInfo();
-	setDisplayColours();
+	//setDisplayInfo();
+	//setDisplayColours();
 
 	return;
 }
@@ -60,7 +61,7 @@ TMDisplay TMExecutor::determineDisplayType(std::string userInput) {
 	}
 }
 
-
+/*
 void TMExecutor::setDisplayInfo() {
 	
 	std::vector<std::string> displayInfo;
@@ -213,3 +214,4 @@ std::string TMExecutor::getOneUndatedInfo(TMTask task) {
 	return oss.str();
 }
 
+*/

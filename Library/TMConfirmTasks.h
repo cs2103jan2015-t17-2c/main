@@ -16,14 +16,14 @@ public:
 		std::vector<int> batchNums;
 		std::vector<TMTask> deleteTasks;
 		std::vector<TMTask>::iterator taskIter;
-
+		std::ostringstream oss;
 
 		for (iter1 = confirmedTasksIndexes.begin(); iter1 != confirmedTasksIndexes.end(); ++iter1) {
-			TMTask task = taskList.getTaskFromPositionIndex(*iter1);
+			TMTask &task = taskList.getTaskFromPositionIndex(*iter1);
 			int batchNum = task.getUnconfirmedBatchNumber();
 			batchNums.push_back(batchNum);
-			taskList.updateTask(*iter1, "confirmation", "1");
-			taskList.updateTask(*iter1, "unconfirmedBatchNum", "0");
+			task.setAsConfirmed();
+			task.setUnconfirmedBatchNumber(0);
 		}
 
 		for (iter1 = batchNums.begin(); iter1 != batchNums.end(); ++iter1) {
@@ -37,11 +37,12 @@ public:
 
 				for (taskIter = deleteTasks.begin(); taskIter != deleteTasks.end(); ++taskIter) {
 					int positionIndex = taskList.getPositionIndexFromTask(*taskIter);
-					taskList.removeTask(positionIndex);
+					oss << taskList.removeTask(positionIndex) << std::endl;
 				}
 			}
 		}
 
+		outcome = oss.str();
 		taskListStates->addNewState(taskList);
 	}
 

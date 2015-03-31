@@ -240,7 +240,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
     } else {
         //when date is invalid
         TMTaskTime taskTime;
-        TMTask task("",taskTime,TaskType::Invalid);
+        TMTask task("",taskTime,TaskType::InvalidType);
         return task;
     }
 }
@@ -468,7 +468,7 @@ TMTask TMParser::parseTimedTaskInfo(){
         return task;
     } else {
         TMTaskTime taskTime;
-        TMTask task("",taskTime,TaskType::Invalid);
+        TMTask task("",taskTime,TaskType::InvalidType);
         return task;
     }
 }
@@ -581,6 +581,10 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
     }
 
     return tasks;
+}
+
+EditableTaskComponent TMParser::parseTaskComponent() {
+	return Description;
 }
 
 std::string TMParser::extractDayOrNumericDateOrDDMonDate(int index, std::queue<int>& indexOfDatesAndTimes){

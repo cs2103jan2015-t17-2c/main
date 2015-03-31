@@ -81,14 +81,16 @@ public:
 
 
 	//BASIC FUNCTIONS//
-	void addTask(TMTask task);
+	std::string addTask(TMTask task);
+
+	std::string addClashedTask(TMTask task);
 	
-	void updateTask(int positionIndex, std::string componentOfTask, std::string changeTo);
+	std::string updateTask(int positionIndex, EditableTaskComponent component, std::string changeTo);
 	
-	void removeTask(int positionIndex);
+	std::string removeTask(int positionIndex);
 	
 	//Archive a selected task
-	void archiveOneTask(int positionIndex);
+	std::string archiveOneTask(int positionIndex);
 	
 	//Sorts tasks in tasklist in chronological order according to their start dates
 	//Precondition: timedAndDeadline vector not empty
@@ -104,6 +106,7 @@ public:
 	void writeToFile();
 	void loadFromFile();
 	void setFileDirectory(std::string directory);
+	std::string getFileDirectory();
 	void leaveReferenceUponExit();
 
 };

@@ -9,9 +9,12 @@
 #include "TMExecutor.h"
 
 class TMCommand{
+	
+	
 
 	public: 
 	virtual void execute() = 0;
+	std::string outcome;
 };
 
 #endif

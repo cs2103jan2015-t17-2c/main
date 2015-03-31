@@ -16,6 +16,7 @@ public:
 		std::vector <int>::iterator intIter;
 		std::vector<TMTask> deleteTasks;
 		std::vector<TMTask>::iterator taskIter;
+		std::ostringstream oss;
 		
 		for (intIter = deleteIndexes.begin(); intIter !=deleteIndexes.end(); ++intIter) {
 			TMTask task = taskList.getTaskFromPositionIndex(*intIter);
@@ -24,12 +25,12 @@ public:
 
 		for (taskIter = deleteTasks.begin(); taskIter != deleteTasks.end(); ++taskIter) {
 			int positionIndex = taskList.getPositionIndexFromTask(*taskIter);
-			taskList.removeTask(positionIndex);
+			oss << taskList.removeTask(positionIndex) << std::endl;
 		}
 
-
+		outcome = oss.str();
 		taskListStates->addNewState(taskList);
-		std::cout << "DELETE TASKS CALLED." << std::endl;
+		
 	}
 
 
