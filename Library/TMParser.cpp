@@ -508,29 +508,37 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
     bool startDateExtracted = false;
     //bool endTimeExtracted = false;
     //bool endDateExtracted = false;
-    std::string extractedDate;
-    std::string extractedTime;
+    bool oneTimingFound = false;
     int lengthOfTokenizedUserEntry = _tokenizedUserEntry.size();
 
     for(int index = 0; index < lengthOfTokenizedUserEntry; index++){
+        std::string extractedDate;
+        std::string extractedTime;
 
         unitString = returnLowerCase(_tokenizedUserEntry[index]);
 
-        if(unitString == "and"){
-            if(index + 1 == lengthOfTokenizedUserEntry){
-                break;
-            }
-            extractDateAndOrTime(index + 1, indexOfDatesAndTimes,extractedDate,extractedTime);
-            mainIndexOfDatesAndTimes.push(index);
-            while(!indexOfDatesAndTimes.empty()){
-                    mainIndexOfDatesAndTimes.push(indexOfDatesAndTimes.front());
-                    indexOfDatesAndTimes.pop();
-            }
+        if(oneTimingFound){
+            if(unitString == "and"){
+                if(index + 1 == lengthOfTokenizedUserEntry){
+                    break;
+                }
+
+                extractDateAndOrTime(index + 1, indexOfDatesAndTimes,extractedDate,extractedTime);
+
+                if((extractedDate != "")||(extractedTime != "")){
+                    mainIndexOfDatesAndTimes.push(index);
+                }
+            } 
         } else {
             extractDateAndOrTime(index, indexOfDatesAndTimes, extractedDate, extractedTime);
         }
         
         if((extractedDate != "")||(extractedTime != "")){
+            if(!oneTimingFound){
+                //put in isValid loop?
+                oneTimingFound = true;
+            }
+
             if(extractedDate != ""){
                 startDate = extractedDate;
                 startDateExtracted = true;
@@ -541,7 +549,7 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
                 startTimeExtracted = true;
             }
 
-            if(startDate == ""){
+            if(extractedDate == ""){
                 std::string currentTime = getCurrentTime();
                 if(startTime >= currentTime){
                     startDate = dateFromBoostToDDMMYYYY(_dateToday);
@@ -554,8 +562,13 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
             startDate = dateFromNumericToBoostFormat(startDate);
 
             if(isValidDate(startDate)){
+                //IMPLEMENT FUNCTION TO CHECK DATE IMMEDIATELY BEFORE CONSIDERING AS DATE
                 TMTaskTime taskTime(startDate, startTime, startDate, startTime);
                 taskTimings.push_back(taskTime);
+                while(!indexOfDatesAndTimes.empty()){
+                    mainIndexOfDatesAndTimes.push(indexOfDatesAndTimes.front());
+                    indexOfDatesAndTimes.pop();
+                }
             } else {
                 //invalid dates won't be added into the vector of taskTimings
             }
