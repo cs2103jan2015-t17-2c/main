@@ -1,37 +1,57 @@
 #ifndef TMEXECUTOR_H
 #define TMEXECUTOR_H
 
+#include <sstream>
+#include <cstdlib>
 #include <vector>
-#include <iostream>
-#include <string>
 
-#include "TMTask.h"
+#include "TMParser.h"
+#include "TMTaskListStates.h"
 #include "TMTaskList.h"
+#include "TMCommandCreator.h"
+
+enum TMDisplay {
+    Default, SpecificDate, DeadlineTasks, UndatedTasks, ArchivedTasks
+	};
 
 
-class TMExecutor{
-	public:
+class TMExecutor {
 	
-	void sortCommandToFunctions(std::string command, std::vector<TMTask> tasks, TMTaskList &tasklist);
+private:
 	
-	void addTasks(std::vector<TMTask> tasks, TMTaskList &tasklist);
+	TMExecutor::TMDisplay _currentDisplay;
+	std::vector<std::string> _displayInfo;
+	std::vector<std::string> _displayColours;
+	std::vector<std::string> _resultOfExecution;
+	static TMExecutor* theOne;
+	TMExecutor();
 	
-	void updateOneTask(TMTask task, std::string component, std::string changeTo, TMTaskList &tasklist);
+public:
 	
-	void deleteOneTask(TMTask task, TMTaskList &tasklist);
-
-	//Mark all tasks that are due today as done
-	void markTodaysTasksAsDone(TMTaskList tasklist);
-
-	void searchKeyword(std::string keyword, TMTaskList &tasklist);
-
-	void searchFreeTime(TMTaskList tasklist);
-
-	void freeUnconfirmed(std::vector<TMTask> confirmedTasks, TMTaskList &tasklist);
-
-	void saveAt(std::string directory);
+	static TMExecutor* getInstance();
+	void executeMain(std::string userInput);
 	
-	void undoLast();
+	bool isDisplayChange(std::string userInput);
+	TMDisplay determineDisplayType(std::string userInput);
+	
+	void setDisplayInfo();
+	void setDisplayColours();
+	std::vector<std::string> getDisplayInfo();
+	std::vector<std::string> getDisplayColours();
+
+	std::vector<std::string> getDefaultInfo();
+	std::vector<std::string> getSpecificDateInfo();
+	std::vector<std::string> getAllDeadlineInfo();
+	std::vector<std::string> getAllUndatedInfo();
+	std::vector<std::string> getAllArchivedInfo();
+
+	std::string getHeaderInfo();
+	std::string getOneWithStartInfo(TMTask task);
+	std::string getOneWithEndInfo(TMTask task);
+	std::string getOnePeriodInfo(TMTask task);
+	std::string getOneUndatedInfo(TMTask task);
+
+	
+	
 };
-
 #endif
