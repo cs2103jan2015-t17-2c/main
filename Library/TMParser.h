@@ -38,6 +38,7 @@ public:
     
     //parse relevant info into the respective tasks
     //commmand must be extracted first
+    //NEED TO IMPLEMENT FUNCTION TO REMOVE OPEN AND CLOSE INVERTED COMMAS
     TMTask parseTaskInfo();
     TMTask parseDeadlinedTaskInfo();
     TMTask parseTimedTaskInfo();
@@ -105,5 +106,7 @@ public:
     std::string getCurrentTime();
     std::string substractNDaysFromDate(std::string,int);
     std::string addNDaysFromDate(std::string,int);
+
+    TMTask convertStringToTMTask(std::string);
 };
 #endif

@@ -82,7 +82,7 @@ void TMParser::initialize(std::string userEntry) {
 	_tokenizedUserEntry = getTokenizedUserEntry(_originalUserInput);
 }
 
-//Preconditions: string parameter string
+//Preconditions: tokens of string delimited by spaces
 //Postconditions: returns vector of strings
 std::vector<std::string> TMParser::getTokenizedUserEntry(std::string userEntry){
     std::vector<std::string> tokenizedUserEntry;
@@ -496,7 +496,7 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
     std::vector<TMTaskTime> taskTimings;
     std::queue<int> indexOfDatesAndTimes;
     std::queue<int> mainIndexOfDatesAndTimes;
-    TaskType taskType = TaskType::WithMultipleTimings;
+    TaskType taskType;
     std::string startTime = "";
     std::string startDate = "";
     std::string stringAfterAnd;
@@ -576,6 +576,7 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
     int lengthOfTaskTimings = taskTimings.size();
 
     for(int i = 0; i < lengthOfTaskTimings; i++){
+        taskType = TaskType::WithStartDateTime;
         TMTask task(taskDescription,taskTimings[i],taskType);
         tasks.push_back(task);
     }
@@ -1456,4 +1457,8 @@ std::string TMParser::getDateFromNextDay(int index){
     date = tempDate.substr(6,2) + tempDate.substr(4,2) + tempDate.substr(0,4);
 
     return date;
+}
+
+TMTask TMParser::convertStringToTMTask(std::string listEntry){
+
 }
