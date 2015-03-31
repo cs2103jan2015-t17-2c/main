@@ -285,21 +285,41 @@ namespace TMGUI {
 					std::vector<TMTask> dated = taskList.getDated();
 					std::vector<TMTask> undated = taskList.getUndated();
 					std::vector<TMTask> archived = taskList.getArchived();
+
+					std::vector<TMTask> allTasks;
+					allTasks.reserve( dated.size() + undated.size() ); // preallocate memory
+					allTasks.insert( allTasks.end(), dated.begin(), dated.end() );
+					allTasks.insert( allTasks.end(), undated.begin(), undated.end() );
+
+					
 					std::vector<TMTask>::iterator iter;
 
 					//displayString = displayString + gcnew String((*iter).c_str());
 					
 					ListViewItem^ entryTimed,entryFloating;
 
-					for(int i=0; i != dated.size() ; ++i){
+					
+					defaultView->Items->Clear();
+					for(int i=0; i != allTasks.size() ; ++i){
 						
 						entryTimed = gcnew ListViewItem(Convert::ToString(i+1));
-						entryTimed->SubItems->Add(gcnew String(( (dated[i].getTaskDescription()).c_str() )));
-						entryTimed->SubItems->Add(gcnew String(( (dated[i].getTaskTime().getStartDate()).c_str() )));
-						entryTimed->SubItems->Add(gcnew String(( (dated[i].getTaskTime().getStartTime()).c_str() )));
-						entryTimed->SubItems->Add(gcnew String(( (dated[i].getTaskTime().getEndDate()).c_str() )));
-						entryTimed->SubItems->Add(gcnew String(( (dated[i].getTaskTime().getEndTime()).c_str() )));
+						entryTimed->SubItems->Add(gcnew String(( (allTasks[i].getTaskDescription()).c_str() )));
+						entryTimed->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getStartDate()).c_str() )));
+						entryTimed->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getStartTime()).c_str() )));
+						entryTimed->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getEndDate()).c_str() )));
+						entryTimed->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getEndTime()).c_str() )));
 
+						/*if(allTasks[i].isClashed()){
+							entryTimed->ForeColor = Color :: Blue;
+						}*/
+
+						if(allTasks[i].getTaskType() == TaskType ::WithEndDateTime){
+							entryTimed->ForeColor = Color :: Red;
+						}
+
+						if(allTasks[i].getTaskType() == TaskType ::Undated){
+							entryTimed->ForeColor = Color :: Gold;
+						}
 
 						defaultView->Items->Add(entryTimed);
 
