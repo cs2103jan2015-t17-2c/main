@@ -4,7 +4,7 @@
 #include "TMTaskTime.h"
 
 enum TaskType {
-    WithStartDateTime, WithEndDateTime, WithPeriod, Undated, Invalid
+    WithStartDateTime, WithEndDateTime, WithPeriod, WithMultipleTimings, Undated, Invalid
 };
 
 class TMTask{

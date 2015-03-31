@@ -41,6 +41,8 @@ public:
     std::vector<TMTask> parseTaskInfo();
     std::vector<TMTask> parseDeadlinedTaskInfo();
     std::vector<TMTask> parseTimedTaskInfo();
+    //create new command block for multiple task timing. multipletiming should be segregated
+    std::vector<TMTask> parseMultipleTimingTaskInfo();
     std::vector<TMTask> parseUndatedTaskInfo();
     //std::vector<TMTask> returnSplitPeriodTasks(std::string, std::string, std::string, std::string, std::string, TaskType);
 
@@ -57,6 +59,8 @@ public:
 
     bool isDeadlinedTask();
     bool isTimedTask();
+    //search for keyword block (time&/date) and (time&/date)
+    bool isMultipleTimingTask();
     bool isValidDate(std::string);
 
     //checks if startDate is not later than endDate and 
