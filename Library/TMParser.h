@@ -44,6 +44,7 @@ public:
     TMTask parseUndatedTaskInfo();
     //to block task with multiple timings >= 2
     std::vector<TMTask> parseMultipleTimingTaskInfo();
+	EditableTaskComponent parseTaskComponent();
 
     //need to check if there is sufficient space at the back first
     std::string extractDayOrNumericDateOrDDMonDate(int, std::queue<int>&);

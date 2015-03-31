@@ -20,9 +20,9 @@ class TMExecutor {
 private:
 	
 	TMExecutor::TMDisplay _currentDisplay;
-	std::vector<std::string> _displayInfo;
-	std::vector<std::string> _displayColours;
-	std::vector<std::string> _resultOfExecution;
+	//std::vector<std::string> _displayInfo;
+	//std::vector<std::string> _displayColours;
+	std::string _resultOfExecution;
 	static TMExecutor* theOne;
 	TMExecutor();
 	
@@ -34,12 +34,13 @@ public:
 	bool isDisplayChange(std::string userInput);
 	TMDisplay determineDisplayType(std::string userInput);
 	
-	void setDisplayInfo();
-	void setDisplayColours();
-	std::vector<std::string> getDisplayInfo();
-	std::vector<std::string> getDisplayColours();
+	//void setDisplayInfo();
+	//void setDisplayColours();
+	//std::vector<std::string> getDisplayInfo();
+	//std::vector<std::string> getDisplayColours();
 
-	std::vector<std::string> getDefaultInfo();
+	//GORDY LOOK AT THESE FUNCTIONS
+	/*std::vector<std::string> getDefaultInfo();
 	std::vector<std::string> getSpecificDateInfo();
 	std::vector<std::string> getAllDeadlineInfo();
 	std::vector<std::string> getAllUndatedInfo();
@@ -49,7 +50,7 @@ public:
 	std::string getOneWithStartInfo(TMTask task);
 	std::string getOneWithEndInfo(TMTask task);
 	std::string getOnePeriodInfo(TMTask task);
-	std::string getOneUndatedInfo(TMTask task);
+	std::string getOneUndatedInfo(TMTask task);*/
 
 	
 	

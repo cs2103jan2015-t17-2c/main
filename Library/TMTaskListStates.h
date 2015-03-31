@@ -15,8 +15,8 @@ private:
 public:
 	static TMTaskListStates* getInstance();
 	void addNewState(TMTaskList taskList);
-	void reverseCurrentState();
-	void progressCurrentState();
+	std::string reverseCurrentState();
+	std::string progressCurrentState();
 	TMTaskList getCurrentTaskList();
 	
 
