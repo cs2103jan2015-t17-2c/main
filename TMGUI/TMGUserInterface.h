@@ -217,11 +217,11 @@ namespace TMGUI {
 					String ^ displayString;
 					
 					exe->executeMain(unmanaged);
-					std::vector<std::string> displayInfo = exe->getDisplayInfo();
-					std::vector<std::string>::iterator iter;
+					//std::vector<std::string> displayInfo = exe->getDisplayInfo();
+					/*std::vector<std::string>::iterator iter;
 					for (iter = displayInfo.begin(); iter != displayInfo.end(); ++iter) {
 						displayString = displayString + gcnew String((*iter).c_str());
-					}
+					}*/
 
 					richTextBox1->Text = displayString;
 

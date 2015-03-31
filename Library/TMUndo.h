@@ -9,8 +9,7 @@ class TMUndo: public TMCommand {
 public:
 	void execute() {
 		TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
-		taskListStates->reverseCurrentState();
-		std::cout << "UNDO CALLED" << std::endl;
+		outcome = taskListStates->reverseCurrentState();
 	}
 };
 

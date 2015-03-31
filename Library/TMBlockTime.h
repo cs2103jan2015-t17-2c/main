@@ -2,6 +2,7 @@
 #define TMBLOCKTIME_H
 
 #include "TMCommand.h"
+const std::string BATCH_NUMBER_INFO = "The batch number for this batch of unconfirmed task(s) is: ";
 
 class TMBlockTime : public TMCommand {
 	
@@ -11,19 +12,27 @@ public:
 		TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
 		TMParser *parser = TMParser::getInstance(); 
 		TMTaskList taskList = taskListStates->getCurrentTaskList();
-		std::vector<TMTask> unmanaged = parser->parseTaskInfo();
-		std::vector<TMTask>::iterator iter;
-		
+		std::ostringstream oss;
 		int i = taskList.getUniqueBatchNum();
-		std::cout << "BATCH NUM IS: " << i <<std::endl; 
+		oss << BATCH_NUMBER_INFO << i << std::endl;
 
-		for (iter = unmanaged.begin(); iter != unmanaged.end(); ++iter) {
-			iter->setAsUnconfirmed();
-			iter->setUnconfirmedBatchNumber(i);
-			taskList.addTask(*iter);
-			
+		if (parser->isMultipleTimingTask()) {
+			std::vector<TMTask> tasks = parser->parseMultipleTimingTaskInfo();
+			std::vector<TMTask>::iterator iter;
+		
+			for (iter = tasks.begin(); iter != tasks.end(); ++iter) {
+				iter->setAsUnconfirmed();
+				iter->setUnconfirmedBatchNumber(i);
+				oss << taskList.addTask(*iter) << std::endl;
+			}
+		} else {
+			TMTask task = parser->parseTaskInfo();
+			task.setAsUnconfirmed();
+			task.setUnconfirmedBatchNumber(i);
+			oss << taskList.addTask(task) << std::endl;
 		}
 		
+		outcome = oss.str();
 		taskListStates->addNewState(taskList);
 	}
 

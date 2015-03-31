@@ -7,6 +7,7 @@
 
 class TMAddTasks : public TMCommand {
 
+
 public:
 	TMAddTasks() {}
 
@@ -15,18 +16,13 @@ public:
 		TMParser *parser = TMParser::getInstance(); 
 		TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
 
-		std::vector<TMTask> tasks = parser -> parseTaskInfo();
+		TMTask task = parser -> parseTaskInfo();
 		TMTaskList taskList = taskListStates->getCurrentTaskList();
-		std::vector<TMTask>::iterator iter;
-		for (iter = tasks.begin(); iter != tasks.end(); ++iter) {
-			taskList.addTask(*iter);
-		}
-	
-		tasks.clear();
+		TMCommand::outcome = taskList.addTask(task);
 		taskListStates->addNewState(taskList);
-		std::cout << "ADD OPERATION COMPLETED." << std::endl;
-		//taskList.displayAllTasks();
+	
 	}
+
 
 };
 

@@ -16,10 +16,14 @@ public:
 		searchResults = taskList.keywordSearch(parser->parseSearchKey());
 
 		std::vector<int>::iterator iter;
+		std::ostringstream oss;
+
 		for (iter = searchResults.begin(); iter != searchResults.end(); ++iter) {
 			TMTask result = taskList.getTaskFromPositionIndex(*iter);
-			std::cout << *iter << ". " << result.getTaskDescription() << std::endl;
+			oss << *iter << ". " << result.getTaskDescription() << std::endl;
 		}
+
+		outcome = oss.str();
 	}
 
 };

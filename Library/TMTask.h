@@ -7,6 +7,10 @@ enum TaskType {
     WithStartDateTime, WithEndDateTime, WithPeriod, Undated, Invalid
 };
 
+enum EditableTaskComponent {
+		Description, StartDate, StartTime, EndDate, EndTime, InvalidComponent
+};
+
 class TMTask{
 private:
     std::string _taskDescription;

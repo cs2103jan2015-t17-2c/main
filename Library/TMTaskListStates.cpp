@@ -1,5 +1,11 @@
 #include "TMTaskListStates.h"
 
+const std::string UNDO_SUCCESS = "Undo last action successfully.";
+const std::string UNDO_FAILURE = "Initial state of the system is reached. Unable to undo.";
+const std::string REDO_SUCCESS = "Redo successfully.";
+const std::string REDO_FAILURE = "Latest state of the system is reached. Unable to redo.";
+
+
 TMTaskListStates* TMTaskListStates::theOne;
 
 TMTaskListStates* TMTaskListStates::getInstance() {
@@ -27,21 +33,23 @@ void TMTaskListStates::addNewState(TMTaskList taskList) {
 	currentTaskList = *currentState;
 }
 
-void TMTaskListStates::reverseCurrentState() {
+std::string TMTaskListStates::reverseCurrentState() {
 	if (currentState != states.begin()) {
 		--currentState;
 		currentTaskList = *currentState;
+		return UNDO_SUCCESS;
 	} else {
-		std::cout << "INITIAL STATE REACHED. CANNOT UNDO ANYMORE" << std::endl;
+		return UNDO_FAILURE;
 	}
 }
 
-void TMTaskListStates::progressCurrentState() {
+std::string TMTaskListStates::progressCurrentState() {
 	if (currentState != states.end()-1) {
 		++currentState;
 		currentTaskList = *currentState;
+		return REDO_SUCCESS;
 	} else {
-		std::cout << "LAST SAVED STATE REACHED. CANNOT REDO ANYMORE" << std::endl;
+		return REDO_FAILURE;
 	}
 }
 

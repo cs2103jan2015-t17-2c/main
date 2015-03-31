@@ -11,7 +11,20 @@
 #include "TMTask.h"
 #include "TMParser.h"
 
-	
+const std::string ADD_SDT_SUCCESS = "Successfully added a task with start date and time!";
+const std::string ADD_EDT_SUCCESS = "Successfully added a task with end date and time!";
+const std::string ADD_PERIOD_SUCCESS = "Successfully added a period task!";
+const std::string ADD_UNDATED_SUCCESS = "Successfully added an undated task!";
+const std::string CLASH_WARNING = "Task to be added clashes with the following tasks:";
+const std::string PROMPT_FOR_REPLY = "Do you want to continue adding this task? (Y/N)";
+const std::string ADD_INVALID = "An invalid task was detected. Please enter a valid task";
+const std::string UPDATE_DESCRIPTION_SUCCESS = "Task description successfully changed.";
+const std::string UPDATE_DATE_SUCCESS = "Task date successfully changed.";
+const std::string UPDATE_TIME_SUCCESS = "Task time successfully changed.";
+const std::string UPDATE_FAILURE = "The component of that task you specified is invalid, please enter a valid component.";
+const std::string DELETE_SUCCESS = "Task successfully removed from database!";
+const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archived.";
+
 	TMTaskList::TMTaskList() {
 		_fileDirectory = "DEFAULT.txt"; //could consider using the name of the year instead
 		}
@@ -251,132 +264,225 @@
 
 
 	//BASIC FUNCTIONS//
-	void TMTaskList::addTask (TMTask task) {
+	std::string TMTaskList::addTask (TMTask task) {
 		TaskType type = task.getTaskType();
 		switch (type) {
 			
 		case WithStartDateTime:
 			_dated.push_back(task);
-			std::cout << "WITH SDT TASK ADDED!" << std::endl;
 			chronoSort();
+			return ADD_SDT_SUCCESS;
 			break;
 
 		case WithEndDateTime:
 			_dated.push_back(task);
-			std::cout << "WITH EDT TASK ADDED!" << std::endl;
 			chronoSort();
+			return ADD_EDT_SUCCESS;
 			break;
 		
 		case WithPeriod:
 				if (hasClash(task)) {
-				std::vector<TMTask> clashesWith;
-				clashesWith = findClashes(task);
-				std::cout << "Clashes in timing of the following tasks:" << std::endl;
+				std::vector<TMTask> clashesWith = findClashes(task);
+				std::ostringstream oss;
+				oss << CLASH_WARNING << std::endl;
 				std::vector<TMTask>::iterator iter;
+				
 				for (iter = clashesWith.begin(); iter != clashesWith.end(); ++iter) {
 					std::string taskDetails;
 					taskDetails = (*iter).getTaskDescription() + " " + (*iter).getTaskTime().getStartDate()
 						+ " " + (*iter).getTaskTime().getStartTime()
 						+ " " + (*iter).getTaskTime().getEndDate()
 						+ " " + (*iter).getTaskTime().getEndTime(); 
-					std::cout << taskDetails << std::endl;
+					oss << taskDetails << std::endl;
 				}
-				std::cout << "Do you want to add this task despite clashes? (Y/N)" << std::endl;
-				std::string usersReply;
-				std::getline(std::cin, usersReply);
 
-				if (usersReply == "n" || usersReply == "N") {
-					return;
-				} 
-			}
-			_dated.push_back(task);
-			std::cout << "WITH PERIOD TASK ADDED!" << std::endl;
-			chronoSort();
-			break;
-
+				oss << PROMPT_FOR_REPLY << std::endl;
+				return oss.str();
+				} else {
+					_dated.push_back(task);
+					chronoSort();
+					return ADD_PERIOD_SUCCESS;
+				}
+				break;
 
 		case Undated: 
 			_undated.push_back(task);
-			std::cout << "UNDATED TASK ADDED!" << std::endl;
 			alphaSort();
+			return ADD_UNDATED_SUCCESS;
 			break;
 
 		case Invalid:
-			std::cout << "INVALID TASK DETECTED. NO ADD WAS CARRIED OUT" << std::endl;
+			return ADD_INVALID;
+			break;
 		}
 	}
 
-	
+	std::string TMTaskList::addClashedTask(TMTask task) {
+		_dated.push_back(task);
+		chronoSort();
+		return ADD_PERIOD_SUCCESS;
+	}
 
 	//NEED TO USE ASSERT TO DETERMINE VALID POSITION INDEX
-	void TMTaskList::updateTask(int positionIndex, std::string componentOfTask, std::string changeTo) {
+	std::string TMTaskList::updateTask(int positionIndex, EditableTaskComponent component, std::string changeTo) {
 		assert(isValidPositionIndex(positionIndex));
 		if (positionIndex <= int(_dated.size())) {
 			TMTask &task = _dated[positionIndex-1];
+			TaskType type = task.getTaskType();
+			switch (type) {
+			
+			case WithStartDateTime:
+				switch (component) {
+				case EditableTaskComponent::Description:
+					task.setTaskDescription(changeTo);
+					return UPDATE_DESCRIPTION_SUCCESS;
+					break;
 
-			if (componentOfTask == "desc") {
-				task.setTaskDescription(changeTo);
-			}
-			if (componentOfTask == "time") {
-				//YET TO CODE
-			}
-			if (componentOfTask == "completion") {
-				if (changeTo == "1") {
-					task.setAsCompleted();
-				}
-				if (changeTo == "0") {
-					task.setAsIncompleted();
-				}
-			}
-			if (componentOfTask == "confirmation") {
-				if (changeTo == "1") {
-					task.setAsConfirmed();
-				}
-				if (changeTo == "0") {
-					task.setAsUnconfirmed();
-				}
-			}
+				case EditableTaskComponent::StartDate:
+					task.getTaskTime().setStartDate(changeTo);
+					return UPDATE_DATE_SUCCESS;
+					break;
 
-			if (componentOfTask == "unconfirmedBatchNum") {
-				if (changeTo == "0") {
-					task.setUnconfirmedBatchNumber(0);
+				case EditableTaskComponent::StartTime:
+					task.getTaskTime().setStartTime(changeTo);
+					return UPDATE_TIME_SUCCESS;
+					break;
+
+				case EditableTaskComponent::EndDate:
+					return UPDATE_FAILURE;
+					break;
+
+				case EditableTaskComponent::EndTime:
+					return UPDATE_FAILURE;
+					break;
+
+				case EditableTaskComponent::InvalidComponent:
+					return UPDATE_FAILURE;
 				}
+				break;
+				
+			case WithEndDateTime:
+				switch (component) {
+				case EditableTaskComponent::Description:
+					task.setTaskDescription(changeTo);
+					return UPDATE_DESCRIPTION_SUCCESS;
+					break;
+
+				case EditableTaskComponent::StartDate:
+					return UPDATE_FAILURE;
+					break;
+
+				case EditableTaskComponent::StartTime:
+					return UPDATE_FAILURE;
+					break;
+
+				case EditableTaskComponent::EndDate:
+					task.getTaskTime().setEndDate(changeTo);
+					return UPDATE_DATE_SUCCESS;
+					break;
+
+				case EditableTaskComponent::EndTime:
+					task.getTaskTime().setEndTime(changeTo);
+					return UPDATE_TIME_SUCCESS;
+					break;
+
+				case EditableTaskComponent::InvalidComponent:
+					return UPDATE_FAILURE;
+				}
+				break;
+
+			case WithPeriod:
+				switch (component) {
+				case EditableTaskComponent::Description:
+					task.setTaskDescription(changeTo);
+					return UPDATE_DESCRIPTION_SUCCESS;
+					break;
+
+				case EditableTaskComponent::StartDate:
+					task.getTaskTime().setStartDate(changeTo);
+					return UPDATE_DATE_SUCCESS;
+					break;
+
+				case EditableTaskComponent::StartTime:
+					task.getTaskTime().setStartTime(changeTo);
+					return UPDATE_TIME_SUCCESS;
+					break;
+
+				case EditableTaskComponent::EndDate:
+					task.getTaskTime().setEndDate(changeTo);
+					return UPDATE_DATE_SUCCESS;
+					break;
+
+				case EditableTaskComponent::EndTime:
+					task.getTaskTime().setEndTime(changeTo);
+					return UPDATE_TIME_SUCCESS;
+					break;
+			
+				case EditableTaskComponent::InvalidComponent:
+					return UPDATE_FAILURE;
+				}
+				break;
 			}
 			
+
 		} else if (positionIndex <= int(_dated.size() + _undated.size())) {
 			TMTask &task = _undated[positionIndex-_dated.size()-1];
-			if (componentOfTask == "desc") {
-				task.setTaskDescription(changeTo);
-			}
-			if (componentOfTask == "completion") {
-				if (changeTo == "1") {
-					task.setAsCompleted();
-				}
-				if (changeTo == "0") {
-					task.setAsIncompleted();
-				}
+			switch (component) {
+				case EditableTaskComponent::Description:
+					task.setTaskDescription(changeTo);
+					return UPDATE_DESCRIPTION_SUCCESS;
+					break;
+
+				case EditableTaskComponent::StartDate:
+					return UPDATE_FAILURE;
+					break;
+
+				case EditableTaskComponent::StartTime:
+					return UPDATE_FAILURE;
+					break;
+
+				case EditableTaskComponent::EndDate:
+					return UPDATE_FAILURE;
+					break;
+
+				case EditableTaskComponent::EndTime:
+					return UPDATE_FAILURE;
+					break;
+			
+				case EditableTaskComponent::InvalidComponent:
+					return UPDATE_FAILURE;
 			}
 		}
 	}
 
 	//NEED TO USE ASSERT TO DETERMINE VALID POSITION INDEX
-	void TMTaskList::removeTask(int positionIndex) {	
+	std::string TMTaskList::removeTask(int positionIndex) {	
 		assert(isValidPositionIndex(positionIndex));
 		if (positionIndex <= int(_dated.size())) {
 			_dated.erase(_dated.begin() + positionIndex - 1);
+			return DELETE_SUCCESS;
 		} else if (positionIndex <= int(_dated.size() + _undated.size())) {
 			int floatingTaskNumber = positionIndex - _dated.size();
 			_undated.erase(_undated.begin() + floatingTaskNumber - 1);
+			return DELETE_SUCCESS;
 		}
 	}
 
 	//NEED TO USE ASSERT TO DETERMINE VALID POSITION INDEX
-	void TMTaskList::archiveOneTask(int positionIndex) {
+	std::string TMTaskList::archiveOneTask(int positionIndex) {
 		assert(isValidPositionIndex(positionIndex));
-		TMTask task = getTaskFromPositionIndex(positionIndex);
+		TMTask &task = getTaskFromPositionIndex(positionIndex);
 		task.setAsCompleted();
 		_archived.push_back(task);
-		removeTask(positionIndex);
+		
+		if (positionIndex <= int(_dated.size())) {
+			_dated.erase(_dated.begin() + positionIndex - 1);
+			return ARCHIVED_SUCCESS;
+		} else {
+			int floatingTaskNumber = positionIndex - _dated.size();
+			_undated.erase(_undated.begin() + floatingTaskNumber - 1);
+			return ARCHIVED_SUCCESS;
+		}
 	}
 
 	void TMTaskList::chronoSort() {
@@ -384,8 +490,6 @@
 		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
 			std::iter_swap(iter, findEarliestTaskIter(iter));
 		}
-		std::cout << "Chronological sort completed." <<std:: endl;
-		
 	}
 
 
@@ -394,7 +498,6 @@
 		for (iter = _undated.begin(); iter != _undated.end(); ++iter) {
 			std::iter_swap(iter, findSmallestAlphaTaskIter(iter));
 		}
-		std::cout << "Alphabetical sort completed." <<std:: endl;
 	}	
 
 	std::vector<int> TMTaskList::keywordSearch(std::string keyword) {
@@ -496,7 +599,7 @@
 
 		//std::search(searchLine.begin(), searchLine.end(), keyword.begin(), keyword.end()) != searchLine.end()
 
-		std::vector<TMTask> tasks;
+	
 		TMParser *parser = TMParser::getInstance(); 
 
 		//Assumes first line in saved text file is as unmodified by user.
@@ -504,24 +607,21 @@
 		//Timed and deadline tasks
 		for (iter = linesFromFile.erase(linesFromFile.begin()); std::search(iter->begin(), iter->end(), M2.begin(), M2.end()) == iter->end();iter = linesFromFile.erase(iter)) {
 			parser->initialize(*iter);
-			tasks = parser->parseTaskInfo();
-			TMTask task = tasks[0];
+			TMTask task = parser->parseTaskInfo();
 			_dated.push_back(task);
 		}
 
 		//Floating tasks
 		for (iter =linesFromFile.erase(linesFromFile.begin()); std::search(iter->begin(), iter->end(), M3.begin(), M3.end()) == iter->end(); iter = linesFromFile.erase(iter)) {
 			parser->initialize(*iter);
-			tasks = parser->parseTaskInfo();
-			TMTask task = tasks[0];
+			TMTask task = parser->parseTaskInfo();
 			_undated.push_back(task);
 		}
 
 		//Completed tasks
 		for (iter = linesFromFile.erase(linesFromFile.begin()); iter != linesFromFile.end(); iter = linesFromFile.erase(iter)) {
 			parser->initialize(*iter);
-			tasks = parser->parseTaskInfo();
-			TMTask task = tasks[0];
+			TMTask task = parser->parseTaskInfo();
 			task.setAsCompleted();
 			_archived.push_back(task);
 		}
@@ -531,6 +631,10 @@
 
 	void TMTaskList::setFileDirectory(std::string directory) {
 		_fileDirectory = directory;
+	}
+
+	std::string TMTaskList::getFileDirectory() {
+		return _fileDirectory;
 	}
 
 	void TMTaskList::leaveReferenceUponExit() {

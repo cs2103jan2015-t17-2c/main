@@ -584,6 +584,10 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
     return tasks;
 }
 
+EditableTaskComponent TMParser::parseTaskComponent() {
+	return Description;
+}
+
 std::string TMParser::extractDayOrNumericDateOrDDMonDate(int index, std::queue<int>& indexOfDatesAndTimes){
     std::string stringAfterOn = returnLowerCase(_tokenizedUserEntry[index]);
     std::string startDate = "";
@@ -1459,6 +1463,6 @@ std::string TMParser::getDateFromNextDay(int index){
     return date;
 }
 
-TMTask TMParser::convertStringToTMTask(std::string listEntry){
+//TMTask TMParser::convertStringToTMTask(std::string listEntry){
 
-}
+//}
