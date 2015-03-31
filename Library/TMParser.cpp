@@ -147,7 +147,7 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
 
 //Preconditions: taskInfo contains only the entry after command. use extractEntryAfterCommand 1st
 //             : use only when in adding or editing information
-std::vector<TMTask> TMParser::parseTaskInfo() {
+TMTask TMParser::parseTaskInfo() {
     if(isDeadlinedTask()){
         return parseDeadlinedTaskInfo();
     } else if(isTimedTask()) {
@@ -158,8 +158,7 @@ std::vector<TMTask> TMParser::parseTaskInfo() {
 }
 
 //Preconditions:task is deadlined task use isDeadlinedTask to check
-std::vector<TMTask> TMParser::parseDeadlinedTaskInfo() {
-    std::vector<TMTask> tasks;
+TMTask TMParser::parseDeadlinedTaskInfo() {
     std::queue<int> indexOfDatesAndTimes;
     TaskType taskType = TaskType::WithEndDateTime;
     std::string dateToMeet = "";
@@ -237,22 +236,19 @@ std::vector<TMTask> TMParser::parseDeadlinedTaskInfo() {
     if(isValidDate(dateToMeet)){
         TMTaskTime taskTime(dateToMeet, timeToMeet, dateToMeet, timeToMeet);
         TMTask task(taskDescription, taskTime, taskType);
-        tasks.push_back(task);
-        return tasks;
+        return task;
     } else {
         //when date is invalid
         TMTaskTime taskTime;
         TMTask task("",taskTime,TaskType::Invalid);
-        tasks.push_back(task);
-        return tasks;
+        return task;
     }
 }
 
 //for now find start time and start date only
 //change to period
 
-std::vector<TMTask> TMParser::parseTimedTaskInfo(){
-    std::vector<TMTask> tasks;
+TMTask TMParser::parseTimedTaskInfo(){
     TaskType taskType;
     std::queue<int> indexOfDatesAndTimes;
     std::queue<int> mainIndexOfDatesAndTimes;
@@ -469,18 +465,15 @@ std::vector<TMTask> TMParser::parseTimedTaskInfo(){
     if(isValidDate(startDate) && isValidDate(endDate) && isValidInfo(startDate,startTime,endDate,endTime)){
         TMTaskTime taskTime(startDate,startTime,endDate,endTime);
         TMTask task(taskDescription,taskTime,taskType);
-        tasks.push_back(task);
+        return task;
     } else {
         TMTaskTime taskTime;
         TMTask task("",taskTime,TaskType::Invalid);
-        tasks.push_back(task);
+        return task;
     }
-    
-    return tasks;
 }
 
-std::vector<TMTask> TMParser::parseUndatedTaskInfo() {
-    std::vector<TMTask> tasks;
+TMTask TMParser::parseUndatedTaskInfo() {
     TaskType taskType = TaskType::Undated;
     TMTaskTime taskTime;
     std::string taskDescription;
@@ -494,9 +487,8 @@ std::vector<TMTask> TMParser::parseUndatedTaskInfo() {
     }
 
     TMTask task(taskDescription,taskTime,taskType);
-    tasks.push_back(task);
 
-    return tasks;
+    return task;
 }
 
 std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){

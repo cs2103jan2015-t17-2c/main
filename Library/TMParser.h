@@ -38,11 +38,11 @@ public:
     
     //parse relevant info into the respective tasks
     //commmand must be extracted first
-    std::vector<TMTask> parseTaskInfo();
-    std::vector<TMTask> parseDeadlinedTaskInfo();
-    std::vector<TMTask> parseTimedTaskInfo();
-    std::vector<TMTask> parseUndatedTaskInfo();
-
+    TMTask parseTaskInfo();
+    TMTask parseDeadlinedTaskInfo();
+    TMTask parseTimedTaskInfo();
+    TMTask parseUndatedTaskInfo();
+    //to block task with multiple timings >= 2
     std::vector<TMTask> parseMultipleTimingTaskInfo();
 
     //need to check if there is sufficient space at the back first
@@ -50,6 +50,7 @@ public:
     std::string extractNumericDateAfterToken(int, std::queue<int>&);
     std::string extractDDMonDateAfterToken(int, std::queue<int>&);
     std::string extractNextDayAfterToken(int, std::queue<int>&);
+    std::string getDateFromNextDay(int);
     std::string extractNextDay(int, std::queue<int>&);
     std::string extractDayAfterToken(int, std::queue<int>&);
     std::string extractTimeAfterToken(int, std::queue<int>&);
@@ -60,8 +61,8 @@ public:
     bool isTimedTask();
     //search for keyword block (time&/date) and (time&/date)
     bool isMultipleTimingTask();
-    bool isValidDate(std::string);
 
+    bool isValidDate(std::string);
     //checks if startDate is not later than endDate and 
     //if startDate == endDate, startTime is no later than endTime
     bool isValidInfo(std::string, std::string, std::string, std::string);
@@ -92,17 +93,17 @@ public:
     std::string parseDirectory();
 
     std::string returnLowerCase(std::string);
+
     std::string dateFromNumericToBoostFormat(std::string);
-    
     std::string dateFromBoostToStandardFormat(const boost::gregorian::date&);
     std::string dateFromBoostToDelimitedDDMMYYYY(const boost::gregorian::date&);
     std::string dateFromBoostToDDMMYYYY(const boost::gregorian::date&);
+
     std::string monthFromWrittenToNumeric(std::string);
 
     std::string timeTo24HFormat(std::string);
     std::string getCurrentTime();
     std::string substractNDaysFromDate(std::string,int);
     std::string addNDaysFromDate(std::string,int);
-    std::string getDateFromNextDay(int);
 };
 #endif
