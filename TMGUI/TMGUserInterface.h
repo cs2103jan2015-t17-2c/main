@@ -234,11 +234,13 @@ namespace TMGUI {
 			// label4
 			// 
 			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(23, 56);
+			this->label4->Font = (gcnew System::Drawing::Font(L"Rockwell", 10.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->label4->Location = System::Drawing::Point(32, 71);
 			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(70, 25);
+			this->label4->Size = System::Drawing::Size(180, 32);
 			this->label4->TabIndex = 10;
-			this->label4->Text = L"label4";
+			this->label4->Text = L"currentTime";
 			// 
 			// timer1
 			// 
@@ -289,111 +291,126 @@ namespace TMGUI {
 					exe->executeMain(unmanaged);
 					statusDisplay->Text = gcnew String(exe->returnResultOfExecution().c_str());
 					
-					//GORDY LOOK HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
-					/*TMDisplay display = exe->getCurrentDisplay();
 					
-					TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
-					TMTaskList taskList = taskListStates->getCurrentTaskList();
-
-					switch (display) {
-					case Default:
-						//INSERT YOUR FUNCTION HERE
-						break;
-					
-					case  DeadlineTasks:
-						//INSERT YOUR FUNCTION HERE
-						break;
-					
-					case UndatedTasks:
-						//INSERT YOUR FUNCTION HERE
-						break;
-					
-					case ArchivedTasks:
-						//INSERT YOUR FUNCTION HERE
-						break;
-					
-					case SearchResults:
-						//INSERT YOUR FUNCTION HERE
-						std::vector<int> indexes = exe->getPositionIndexes();
-						std::vector<int>::iterator iter;
-						for (iter = indexes.begin(); iter != indexes.end(); ++iter) {
-							TMTask task = taskList.getTaskFromPositionIndex(*iter);
-							//PROCEED TO DISPLAY THAT TASK DETAILS
-						}
-						break;
-					}*/
-
-
-					
-					//displayString = displayString + gcnew String((*iter).c_str());
+					TMDisplay display = exe->getCurrentDisplay();
 					
 					TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
 					TMTaskList taskList = taskListStates->getCurrentTaskList();
 					std::vector<TMTask> dated = taskList.getDated();
 					std::vector<TMTask> undated = taskList.getUndated();
-					std::vector<TMTask> archived = taskList.getArchived();
-
+					//std::vector<TMTask> archived = taskList.getArchived();
 					std::vector<TMTask> allTasks;
-					allTasks.reserve( dated.size() + undated.size() ); // preallocate memory
+					allTasks.reserve( dated.size() + undated.size() );
 					allTasks.insert( allTasks.end(), dated.begin(), dated.end() );
 					allTasks.insert( allTasks.end(), undated.begin(), undated.end() );
-
-					
 					std::vector<TMTask>::iterator iter;
-
-					//displayString = displayString + gcnew String((*iter).c_str());
-					
-					ListViewItem^ entryTimed,entryFloating;
-
-					
+	
+					switch (display) {
+					case Default:
+					ListViewItem^ defaultEntry;
 					defaultView->Items->Clear();
 					for(int i=0; i != allTasks.size() ; ++i){
 						
-						entryTimed = gcnew ListViewItem(Convert::ToString(i+1));
-						entryTimed->SubItems->Add(gcnew String(( (allTasks[i].getTaskDescription()).c_str() )));
-						entryTimed->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getStartDate()).c_str() )));
-						entryTimed->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getStartTime()).c_str() )));
-						entryTimed->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getEndDate()).c_str() )));
-						entryTimed->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getEndTime()).c_str() )));
+						defaultEntry = gcnew ListViewItem(Convert::ToString(i+1));
+						defaultEntry->SubItems->Add(gcnew String(( (allTasks[i].getTaskDescription()).c_str() )));
+						defaultEntry->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getStartDate()).c_str() )));
+						defaultEntry->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getStartTime()).c_str() )));
+						defaultEntry->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getEndDate()).c_str() )));
+						defaultEntry->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getEndTime()).c_str() )));
 						
 						std::string confirmationStatus;
 						if (allTasks[i].isConfirmed()) {
 							confirmationStatus = "Yes";
 						} else {
 							confirmationStatus = "No";
-							entryTimed->ForeColor = Color :: Gray;
+							defaultEntry->ForeColor = Color :: Gray;
 						}
-						entryTimed->SubItems->Add(gcnew String(( (confirmationStatus.c_str()) )));
+						defaultEntry->SubItems->Add(gcnew String(( (confirmationStatus.c_str()) )));
 
 						std::string clashStatus;
 						if (allTasks[i].isClashed()) {
 							clashStatus = "Yes";
-							entryTimed->ForeColor = Color :: Blue;
+							defaultEntry->ForeColor = Color :: Blue;
 						} else {
 							clashStatus = "No";
 						}
-						entryTimed->SubItems->Add(gcnew String(( (clashStatus.c_str()) )));
-
-						
-
-						/*if(allTasks[i].isClashed()){
-							entryTimed->ForeColor = Color :: Blue;
-						}*/
+						defaultEntry->SubItems->Add(gcnew String(( (clashStatus.c_str()) )));
 
 						if(allTasks[i].getTaskType() == TaskType ::WithEndDateTime){
-							entryTimed->ForeColor = Color :: Red;
+							defaultEntry->ForeColor = Color :: Red;
 						}
 
 						if(allTasks[i].getTaskType() == TaskType ::Undated){
-							entryTimed->ForeColor = Color :: RosyBrown;
+							defaultEntry->ForeColor = Color :: RosyBrown;
 						}
 
-						defaultView->Items->Add(entryTimed);
+						defaultView->Items->Add(defaultEntry);
+					}
+						break;
+					
+					//case  DeadlineTasks:
+						//INSERT YOUR FUNCTION HERE
+						//break;
+					
+					//case UndatedTasks:
+						//INSERT YOUR FUNCTION HERE
+						//break;
+					
+					//case ArchivedTasks:
+						//INSERT YOUR FUNCTION HERE
+						//break;
+					
+					case SearchResults:
+						ListViewItem^ searchResult;
+						defaultView->Items->Clear();
+						
+						std::vector<int> indexes = exe->getPositionIndexes();
+						std::vector<int>::iterator iter;
+						
+						for (iter = indexes.begin(); iter != indexes.end(); ++iter) {
+							TMTask task = taskList.getTaskFromPositionIndex(*iter);
+							searchResult = gcnew ListViewItem(Convert::ToString(*iter));
+							searchResult->SubItems->Add(gcnew String(( (task.getTaskDescription()).c_str() )));
+							searchResult->SubItems->Add(gcnew String(( (task.getTaskTime().getStartDate()).c_str() )));
+							searchResult->SubItems->Add(gcnew String(( (task.getTaskTime().getStartTime()).c_str() )));
+							searchResult->SubItems->Add(gcnew String(( (task.getTaskTime().getEndDate()).c_str() )));
+							searchResult->SubItems->Add(gcnew String(( (task.getTaskTime().getEndTime()).c_str() )));
+						
+							std::string confirmationStatus;
+							if (task.isConfirmed()) {
+								confirmationStatus = "Yes";
+							} else {
+								confirmationStatus = "No";
+								searchResult->ForeColor = Color :: Gray;
+							}
+							searchResult->SubItems->Add(gcnew String(( (confirmationStatus.c_str()) )));
 
+							std::string clashStatus;
+							if (task.isClashed()) {
+								clashStatus = "Yes";
+								searchResult->ForeColor = Color :: Blue;
+							} else {
+								clashStatus = "No";
+							}
+							searchResult->SubItems->Add(gcnew String(( (clashStatus.c_str()) )));
+
+							if(task.getTaskType() == TaskType ::WithEndDateTime){
+								searchResult->ForeColor = Color :: Red;
+							}
+
+							if(task.getTaskType() == TaskType ::Undated){
+								searchResult->ForeColor = Color :: RosyBrown;
+							}
+
+							defaultView->Items->Add(searchResult);
+						}
+						exe->setCurrentDisplay(Default);
+						break;
 					}
 					userInput->Clear();
 				 }
 			 }
+			
 			 
 
 	
@@ -416,7 +433,7 @@ namespace TMGUI {
 
 private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e) {
 			 DateTime time = DateTime::Now;
-			 String^ format = "dd/MMM/yyyy  hh:mm";
+			 String^ format = "f";
 			 
 			 label4->Text = time.ToString(format);	
 		 }
