@@ -23,21 +23,27 @@ void TMExecutor::executeMain(std::string userInput) {
 	TMTaskList taskList = taskListStates->getCurrentTaskList();
 	TMCommandCreator cmdCreator;
 
-	parser->initialize(userInput);
-	std::string command = parser->extractCommand();
+	if (userInput != "") {
+		parser->initialize(userInput);
+		std::string command = parser->extractCommand();
 	
-	if (isDisplayChange(command)) {
-		_currentDisplay = determineDisplayType(command);
+		if (isDisplayChange(command)) {
+			_currentDisplay = determineDisplayType(command);
+		} else {
+			TMParser::CommandTypes type = parser->determineCommandType(command);
+			TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(type);
+			commandObjPtr->execute();
+			_resultOfExecution = commandObjPtr->outcome;
+			if (type == TMParser::CommandTypes::SearchKeyword || type == TMParser::CommandTypes::SearchDate) {
+				_positionIndexes = commandObjPtr->positionIndexes;
+				_currentDisplay = SearchResults;
+			} 
+		}
 	} else {
-		TMParser::CommandTypes type = parser->determineCommandType(command);
-		TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(type);
+		TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(TMParser::CommandTypes::Invalid);
 		commandObjPtr->execute();
 		_resultOfExecution = commandObjPtr->outcome;
-		if (type == TMParser::CommandTypes::SearchKeyword || type == TMParser::CommandTypes::SearchDate) {
-			_positionIndexes = commandObjPtr->positionIndexes;
-			_currentDisplay = SearchResults;
-		} 
-	}
+		}
 	//taskList.writeToFile();
 	//taskList.leaveReferenceUponExit();
 
