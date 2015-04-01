@@ -15,6 +15,7 @@ class TMCommand{
 	public: 
 	virtual void execute() = 0;
 	std::string outcome;
+	std::vector<int> positionIndexes;
 };
 
 #endif

@@ -102,6 +102,15 @@
     <ClInclude Include="TMExecutor.h">
       <Filter>Header Files\TMExecutor</Filter>
     </ClInclude>
+    <ClInclude Include="TMInvalidCommand.h">
+      <Filter>Header Files\TMCommand</Filter>
+    </ClInclude>
+    <ClInclude Include="TMSearchDate.h">
+      <Filter>Header Files\TMCommand</Filter>
+    </ClInclude>
+    <ClInclude Include="TMUncompleteTasks.h">
+      <Filter>Header Files\TMCommand</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TMParser.cpp">
@@ -124,9 +133,6 @@
     </ClCompile>
     <ClCompile Include="TMExecutor.cpp">
       <Filter>Source Files\TMExecutor</Filter>
-    </ClCompile>
-    <ClCompile Include="Source.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

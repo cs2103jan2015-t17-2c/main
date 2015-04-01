@@ -11,7 +11,7 @@
 #include "TMCommandCreator.h"
 
 enum TMDisplay {
-    Default, SpecificDate, DeadlineTasks, UndatedTasks, ArchivedTasks
+    Default, DeadlineTasks, UndatedTasks, ArchivedTasks, SearchResults
 	};
 
 
@@ -23,6 +23,7 @@ private:
 	//std::vector<std::string> _displayInfo;
 	//std::vector<std::string> _displayColours;
 	std::string _resultOfExecution;
+	std::vector<int> _positionIndexes;
 	static TMExecutor* theOne;
 	TMExecutor();
 	
@@ -30,7 +31,11 @@ public:
 	
 	static TMExecutor* getInstance();
 	void executeMain(std::string userInput);
-	
+	std::string returnResultOfExecution();
+	void setCurrentDisplay(TMDisplay display);
+	TMDisplay getCurrentDisplay();
+	std::vector<int> getPositionIndexes();
+
 	bool isDisplayChange(std::string userInput);
 	TMDisplay determineDisplayType(std::string userInput);
 	

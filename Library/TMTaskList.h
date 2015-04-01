@@ -22,6 +22,8 @@ private:
 	//Contains all the completed timed, deadline and floating tasks
 	std::vector<TMTask> _archived;
 
+	std::vector<TMTask> _clashes;
+
 	//File directory name
 	std::string _fileDirectory;
 
@@ -45,12 +47,21 @@ public:
 	bool endsBeforeTime(TMTask task, TMDateTime time);
 
 	//Postcondition: Returns true if time1 is before time2, returning false if time1 is after or equals to time2
-	bool TMTaskList::isBefore(TMDateTime time1, TMDateTime time2);
+	bool isBefore(TMDateTime time1, TMDateTime time2);
+
+	bool areEquivalentDateTime(TMDateTime time1, TMDateTime time2);
 
 	bool isValidPositionIndex(int positionIndex);
 
+	bool isInDated(int positionIndex);
+
+	bool isInUndated(int positionIndex);
+
+	bool isInArchived(int positionIndex);
+
 	//Postcondition: Returns all tasks that clashes with the task to be added in the form of a vector
-	std::vector<TMTask> findClashes(TMTask task);
+	//Assupmtion: task is not present in taskList
+	void setClashes(TMTask task, std::vector<TMTask>::iterator beginFrom);
 
 	//Find the earliest task in the unsorted tasklist
 	std::vector<TMTask>::iterator findEarliestTaskIter(std::vector<TMTask>::iterator unsortedStart);
@@ -65,6 +76,8 @@ public:
 	bool isUniqueBatchNum(int i);
 
 	std::vector<int> searchUnconfirmedBatchNum(int i);
+
+	void updateClashes(TMTask deleteTask);
 	
 
 	//GETTER FUNCTIONS//
@@ -82,8 +95,6 @@ public:
 
 	//BASIC FUNCTIONS//
 	std::string addTask(TMTask task);
-
-	std::string addClashedTask(TMTask task);
 	
 	std::string updateTask(int positionIndex, EditableTaskComponent component, std::string changeTo);
 	
@@ -101,6 +112,9 @@ public:
 	
 	//Return the position indexes of tasks which match the keyword. Note that the search is not case sensitive.
 	std::vector<int> keywordSearch(std::string keyword);
+
+	//Return the position indexes of tasks which starts or ends with date. 
+	std::vector<int> dateSearch(std::string date);
 
 	//EXPORT AND IMPORT FUNCTIONS//
 	void writeToFile();

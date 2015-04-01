@@ -10,14 +10,16 @@
 #include "TMDeleteTasks.h"
 #include "TMEditTask.h"
 #include "TMSearchKeyword.h"
+#include "TMSearchDate.h"
 #include "TMSaveAt.h"
 #include "TMBlockTime.h"
 #include "TMConfirmTasks.h"
 #include "TMDoneAllToday.h"
 #include "TMCompleteTasks.h"
+#include "TMUncompleteTasks.h"
 #include "TMUndo.h"
 #include "TMRedo.h"
-
+#include "TMInvalidCommand.h"
 
 class TMCommandCreator {
 public:
@@ -45,7 +47,9 @@ public:
 			return newCmdPtr;
 			break;
 
-		case TMParser::CommandTypes::SearchDateTime:
+		case TMParser::CommandTypes::SearchDate:
+			newCmdPtr = new TMSearchDate();
+			return newCmdPtr;
 			break;
 
 		case TMParser::CommandTypes::SaveAt:
@@ -73,8 +77,11 @@ public:
 			return newCmdPtr;
 			break;
 
-		case TMParser::CommandTypes::Incomplete:;
-		
+		case TMParser::CommandTypes::Incomplete:
+			newCmdPtr = new TMUncompleteTasks();
+			return newCmdPtr;
+			break;
+
 		case TMParser::CommandTypes::Undo: 
 			newCmdPtr = new TMUndo();
 			return newCmdPtr;
@@ -86,6 +93,8 @@ public:
 			break;
 
 		case TMParser::CommandTypes::Invalid:
+			newCmdPtr = new TMInvalidCommand();
+			return newCmdPtr;
 			break;
 		
 		}

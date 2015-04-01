@@ -104,7 +104,7 @@ std::vector<std::string> TMParser::getTokenizedUserEntry(std::string userEntry){
 //Preconditions: getTokenizedUserEntry(userEntry) first
 //Postconditions: first token is extracted from vector of string and is no longer there
 std::string TMParser::extractCommand() {
-    std::string  command = _tokenizedUserEntry[0];
+	std::string  command = _tokenizedUserEntry[0];
     _tokenizedUserEntry.erase(_tokenizedUserEntry.begin());
 
     return command;
@@ -115,7 +115,8 @@ std::vector<std::string> TMParser::returnTokens() {
 }
 
 TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
-    command = returnLowerCase(command);
+    
+	command = returnLowerCase(command);
     if(command == CMD_ADD||command == CMD_SHORTCUT_ADD) {
         return CommandTypes::Add;
     } else if (command == CMD_DELETE||command == CMD_SHORTCUT_DELETE) {
