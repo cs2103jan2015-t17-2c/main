@@ -49,6 +49,8 @@ public:
 	//Postcondition: Returns true if time1 is before time2, returning false if time1 is after or equals to time2
 	bool TMTaskList::isBefore(TMDateTime time1, TMDateTime time2);
 
+	bool TMTaskList::areEquivalentDateTime(TMDateTime time1, TMDateTime time2);
+
 	bool isValidPositionIndex(int positionIndex);
 
 	//Postcondition: Returns all tasks that clashes with the task to be added in the form of a vector
