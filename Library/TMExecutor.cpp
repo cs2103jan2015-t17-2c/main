@@ -29,10 +29,14 @@ void TMExecutor::executeMain(std::string userInput) {
 	if (isDisplayChange(command)) {
 		_currentDisplay = determineDisplayType(command);
 	} else {
-	TMParser::CommandTypes type = parser->determineCommandType(command);
-	TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(type);
-	commandObjPtr->execute();
-	_resultOfExecution = commandObjPtr->outcome;
+		TMParser::CommandTypes type = parser->determineCommandType(command);
+		TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(type);
+		commandObjPtr->execute();
+		_resultOfExecution = commandObjPtr->outcome;
+		if (type == TMParser::CommandTypes::SearchKeyword || type == TMParser::CommandTypes::SearchDate) {
+			_positionIndexes = commandObjPtr->positionIndexes;
+			_currentDisplay = SearchResults;
+		} 
 	}
 	//taskList.writeToFile();
 	//taskList.leaveReferenceUponExit();
@@ -47,6 +51,18 @@ std::string TMExecutor::returnResultOfExecution() {
 	return _resultOfExecution;
 }
 
+void TMExecutor::setCurrentDisplay(TMDisplay display) {
+	_currentDisplay = display;
+}
+
+TMDisplay TMExecutor::getCurrentDisplay() {
+	return _currentDisplay;
+}
+
+std::vector<int> TMExecutor::getPositionIndexes() {
+	return _positionIndexes;
+}
+
 bool TMExecutor::isDisplayChange(std::string userInput) {
 	return (userInput.find("display") != std::string::npos);
 }
@@ -54,8 +70,6 @@ bool TMExecutor::isDisplayChange(std::string userInput) {
 TMDisplay TMExecutor::determineDisplayType(std::string userInput) {
 	if (userInput == "viewdefault") {
 		return Default;
-	}else if (userInput == "viewdate") {
-		return SpecificDate;
 	}else if (userInput == "viewdeadline") {
 		return DeadlineTasks;
 	}else if (userInput == "viewundated") {

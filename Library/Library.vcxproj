@@ -79,6 +79,7 @@
     <ClInclude Include="TMInvalidCommand.h" />
     <ClInclude Include="TMRedo.h" />
     <ClInclude Include="TMSaveAt.h" />
+    <ClInclude Include="TMSearchDate.h" />
     <ClInclude Include="TMTaskListStates.h" />
     <ClInclude Include="TMUndo.h" />
     <ClInclude Include="TMSearchKeyword.h" />
@@ -87,6 +88,7 @@
     <ClInclude Include="TMTaskTime.h" />
     <ClInclude Include="TMTaskList.h" />
     <ClInclude Include="TMEditTask.h" />
+    <ClInclude Include="TMUncompleteTasks.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TMDateTime.cpp" />

@@ -23,6 +23,7 @@ const std::string UPDATE_TIME_SUCCESS = "Task time successfully changed.";
 const std::string UPDATE_FAILURE = "The component of that task you specified is invalid, please enter a valid component.";
 const std::string DELETE_SUCCESS = "Task successfully removed from database!";
 const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archived.";
+const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 
 	TMTaskList::TMTaskList() {
 		_fileDirectory = "DEFAULT.txt"; //could consider using the name of the year instead
@@ -118,8 +119,21 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 	}
 
 	bool TMTaskList::isValidPositionIndex(int positionIndex) {
-		return (positionIndex > 0 && positionIndex <= int(_dated.size() + _undated.size()));
+		return (positionIndex > 0 && positionIndex <= int(_dated.size() + _undated.size() + _archived.size()));
 	}
+
+	bool TMTaskList::isInDated(int positionIndex) {
+		return (positionIndex <= int(_dated.size()));
+	}
+
+	bool TMTaskList::isInUndated(int positionIndex) {
+		return (positionIndex <= int(_dated.size() + _undated.size()));
+	}
+
+	bool TMTaskList::isInArchived(int positionIndex) {
+		return (positionIndex <= int(_dated.size() + _undated.size() + _archived.size()));
+	}
+
 
 	void TMTaskList::setClashes(TMTask task, std::vector<TMTask>::iterator beginFrom) { //REVISIT CODE AND CHECK FOR BOUNDARY VALUES
 		_clashes.clear();
@@ -348,16 +362,10 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 		}
 	}
 
-	std::string TMTaskList::addClashedTask(TMTask task) {
-		_dated.push_back(task);
-		chronoSort();
-		return ADD_PERIOD_SUCCESS;
-	}
-
 	//NEED TO USE ASSERT TO DETERMINE VALID POSITION INDEX
 	std::string TMTaskList::updateTask(int positionIndex, EditableTaskComponent component, std::string changeTo) {
 		assert(isValidPositionIndex(positionIndex));
-		if (positionIndex <= int(_dated.size())) {
+		if (isInDated(positionIndex)) {
 			TMTask &task = _dated[positionIndex-1];
 			TaskType type = task.getTaskType();
 			switch (type) {
@@ -456,7 +464,7 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 			}
 			
 
-		} else if (positionIndex <= int(_dated.size() + _undated.size())) {
+		} else if (isInUndated(positionIndex)) {
 			TMTask &task = _undated[positionIndex-_dated.size()-1];
 			switch (component) {
 				case EditableTaskComponent::Description:
@@ -489,15 +497,18 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 	//NEED TO USE ASSERT TO DETERMINE VALID POSITION INDEX
 	std::string TMTaskList::removeTask(int positionIndex) {	
 		assert(isValidPositionIndex(positionIndex));
-		if (positionIndex <= int(_dated.size())) {
+		if (isInDated(positionIndex)) {
 			TMTask deleteTask = getTaskFromPositionIndex(positionIndex);
 			_dated.erase(_dated.begin() + positionIndex - 1);
 			updateClashes(deleteTask);
 			return DELETE_SUCCESS;
-		} else if (positionIndex <= int(_dated.size() + _undated.size())) {
+		} else if (isInUndated(positionIndex)) {
 			int floatingTaskNumber = positionIndex - _dated.size();
 			_undated.erase(_undated.begin() + floatingTaskNumber - 1);
 			return DELETE_SUCCESS;
+		} else if (isInArchived(positionIndex)) {
+			int archivedTaskNumber = positionIndex - _dated.size() - _undated.size();
+			_undated.erase(_undated.begin() + archivedTaskNumber - 1);
 		}
 	}
 
@@ -508,13 +519,15 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 		task.setAsCompleted();
 		_archived.push_back(task);
 		
-		if (positionIndex <= int(_dated.size())) {
+		if (isInDated(positionIndex)) {
 			_dated.erase(_dated.begin() + positionIndex - 1);
 			return ARCHIVED_SUCCESS;
-		} else {
+		} else if (isInUndated(positionIndex)) {
 			int floatingTaskNumber = positionIndex - _dated.size();
 			_undated.erase(_undated.begin() + floatingTaskNumber - 1);
 			return ARCHIVED_SUCCESS;
+		} else if (isInArchived(positionIndex)) {
+			return ARCHIVED_FAILURE;
 		}
 	}
 
@@ -547,6 +560,9 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 		for (iter = _undated.begin(); iter != _undated.end(); ++iter) {
 			taskDescInLower.push_back(toLower((*iter).getTaskDescription()));
 		}
+		for (iter = _archived.begin(); iter != _archived.end(); ++iter) {
+			taskDescInLower.push_back(toLower((*iter).getTaskDescription()));
+		}
 
 		std::vector<std::string>::iterator iterForLower;
 		for (iterForLower = taskDescInLower.begin(); iterForLower != taskDescInLower.end(); ++iterForLower) {
@@ -560,6 +576,27 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 		return searchResults;
 	}
 
+	std::vector<int> TMTaskList::dateSearch(std::string date) {
+		std::vector<int> searchResults;
+		std::vector<TMTask>::iterator iter;
+		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
+			if (iter->getTaskTime().getStartDate() == date || iter->getTaskTime().getEndDate() == date) {
+				searchResults.push_back(getPositionIndexFromTask(*iter));
+			} 
+		}
+
+		for (iter = _archived.begin(); iter != _archived.end(); ++iter) {
+			TMTask task = *iter;
+			TaskType type = task.getTaskType();
+			if (type != TaskType::Undated) {
+				if (iter->getTaskTime().getStartDate() == date || iter->getTaskTime().getEndDate() == date) {
+					searchResults.push_back(getPositionIndexFromTask(*iter));
+				} 
+			}
+		}
+
+		return searchResults;
+	}
 	
 
 
