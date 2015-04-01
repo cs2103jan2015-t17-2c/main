@@ -55,11 +55,10 @@ public:
     std::string extractDDMonDateAfterToken(int, std::queue<int>&);
     std::string extractNextDayAfterToken(int, std::queue<int>&);
     std::string getDateFromNextDay(int);
-    std::string extractNextDay(int, std::queue<int>&);
     std::string extractDayAfterToken(int, std::queue<int>&);
     std::string extractTimeAfterToken(int, std::queue<int>&);
     void extractDateAndOrTime(int, std::queue<int>&, std::string&,std::string&);
-
+    void configureAllDatesAndTimes(std::string, std::string, std::string, std::string);
 
     bool isDeadlinedTask();
     bool isTimedTask();

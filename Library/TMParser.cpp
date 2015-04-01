@@ -663,25 +663,6 @@ std::string TMParser::extractNextDayAfterToken(int index, std::queue<int>& index
     return date;
 }
 
-/*
-std::string TMParser::extractNextDay(std::vector<std::string>& remainingEntry, std::vector<std::string>::iterator iter){
-    std::string stringDay = returnLowerCase(*iter);
-    std::string date;
-    
-    boost::gregorian::greg_weekday day(dayOfWeek(stringDay));
-    boost::gregorian::first_day_of_the_week_after fdaf(day);
-    boost::gregorian::first_day_of_the_week_after firstSundayAfterToday(boost::gregorian::Sunday);
-    boost::gregorian::date dateTM = firstSundayAfterToday.get_date(_dateToday);
-    dateTM = fdaf.get_date(dateTM);
-    std::string tempDate = boost::gregorian::to_iso_string(dateTM);
-
-    date = tempDate.substr(6,2) + tempDate.substr(4,2) + tempDate.substr(0,4);
-    remainingEntry.erase(iter);
-
-    return date;
-}
-*/
-
 std::string TMParser::extractDayAfterToken(int index, std::queue<int>& indexOfDatesAndTimes){
     std::string day = returnLowerCase(_tokenizedUserEntry[index]); 
     int dayInInteger = dayOfWeek(day);
