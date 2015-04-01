@@ -64,7 +64,7 @@ std::vector<int> TMExecutor::getPositionIndexes() {
 }
 
 bool TMExecutor::isDisplayChange(std::string userInput) {
-	return (userInput.find("display") != std::string::npos);
+	return (userInput.find("view") != std::string::npos);
 }
 
 TMDisplay TMExecutor::determineDisplayType(std::string userInput) {

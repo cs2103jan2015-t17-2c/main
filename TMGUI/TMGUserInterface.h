@@ -67,6 +67,9 @@ namespace TMGUI {
 	private: System::Windows::Forms::ColumnHeader^  confirmation;
 	private: System::Windows::Forms::Label^  label4;
 	private: System::Windows::Forms::Timer^  timer1;
+	private: System::Windows::Forms::ColumnHeader^  isClash;
+	private: System::Windows::Forms::ColumnHeader^  isDone;
+
 	private: System::ComponentModel::IContainer^  components;
 
 
@@ -104,13 +107,15 @@ namespace TMGUI {
 			this->confirmation = (gcnew System::Windows::Forms::ColumnHeader());
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
+			this->isClash = (gcnew System::Windows::Forms::ColumnHeader());
+			this->isDone = (gcnew System::Windows::Forms::ColumnHeader());
 			this->SuspendLayout();
 			// 
 			// userInput
 			// 
 			this->userInput->BackColor = System::Drawing::SystemColors::Window;
 			this->userInput->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->userInput->Location = System::Drawing::Point(346, 982);
+			this->userInput->Location = System::Drawing::Point(447, 986);
 			this->userInput->Margin = System::Windows::Forms::Padding(4);
 			this->userInput->Name = L"userInput";
 			this->userInput->Size = System::Drawing::Size(1447, 31);
@@ -123,7 +128,7 @@ namespace TMGUI {
 			this->welcomeMessage->AutoSize = true;
 			this->welcomeMessage->Font = (gcnew System::Drawing::Font(L"Segoe UI", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->welcomeMessage->Location = System::Drawing::Point(70, 952);
+			this->welcomeMessage->Location = System::Drawing::Point(165, 956);
 			this->welcomeMessage->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->welcomeMessage->Name = L"welcomeMessage";
 			this->welcomeMessage->Size = System::Drawing::Size(257, 65);
@@ -162,7 +167,7 @@ namespace TMGUI {
 			this->statusDisplay->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->statusDisplay->ForeColor = System::Drawing::SystemColors::Window;
-			this->statusDisplay->Location = System::Drawing::Point(346, 773);
+			this->statusDisplay->Location = System::Drawing::Point(447, 780);
 			this->statusDisplay->Margin = System::Windows::Forms::Padding(6);
 			this->statusDisplay->Name = L"statusDisplay";
 			this->statusDisplay->ReadOnly = true;
@@ -175,7 +180,7 @@ namespace TMGUI {
 			this->label3->AutoSize = true;
 			this->label3->Font = (gcnew System::Drawing::Font(L"Segoe UI", 21.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label3->Location = System::Drawing::Point(122, 823);
+			this->label3->Location = System::Drawing::Point(217, 817);
 			this->label3->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->label3->Name = L"label3";
 			this->label3->Size = System::Drawing::Size(205, 77);
@@ -184,14 +189,14 @@ namespace TMGUI {
 			// 
 			// defaultView
 			// 
-			this->defaultView->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(7) {this->taskID, this->taskDescription, 
-				this->startDate, this->startTime, this->endDate, this->endTime, this->confirmation});
+			this->defaultView->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(9) {this->taskID, this->taskDescription, 
+				this->startDate, this->startTime, this->endDate, this->endTime, this->confirmation, this->isClash, this->isDone});
 			this->defaultView->Font = (gcnew System::Drawing::Font(L"Rockwell", 10.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->defaultView->FullRowSelect = true;
 			this->defaultView->Location = System::Drawing::Point(28, 106);
 			this->defaultView->Name = L"defaultView";
-			this->defaultView->Size = System::Drawing::Size(1765, 645);
+			this->defaultView->Size = System::Drawing::Size(2111, 645);
 			this->defaultView->TabIndex = 9;
 			this->defaultView->UseCompatibleStateImageBehavior = false;
 			this->defaultView->View = System::Windows::Forms::View::Details;
@@ -248,13 +253,23 @@ namespace TMGUI {
 			this->timer1->Interval = 1;
 			this->timer1->Tick += gcnew System::EventHandler(this, &TMGUserInterface::timer1_Tick);
 			// 
+			// isClash
+			// 
+			this->isClash->Text = L"Clashes";
+			this->isClash->Width = 70;
+			// 
+			// isDone
+			// 
+			this->isDone->Text = L"Compeleted";
+			this->isDone->Width = 105;
+			// 
 			// TMGUserInterface
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(12, 25);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->AutoSize = true;
 			this->BackColor = System::Drawing::Color::LightSteelBlue;
-			this->ClientSize = System::Drawing::Size(1817, 1122);
+			this->ClientSize = System::Drawing::Size(2180, 1122);
 			this->Controls->Add(this->label4);
 			this->Controls->Add(this->defaultView);
 			this->Controls->Add(this->label3);
@@ -266,9 +281,7 @@ namespace TMGUI {
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
 			this->Margin = System::Windows::Forms::Padding(4);
 			this->MaximizeBox = false;
-			this->MaximumSize = System::Drawing::Size(1843, 1193);
 			this->MinimizeBox = false;
-			this->MinimumSize = System::Drawing::Size(1843, 1193);
 			this->Name = L"TMGUserInterface";
 			this->Padding = System::Windows::Forms::Padding(0, 0, 20, 20);
 			this->Text = L"TimeMaster";
@@ -298,11 +311,12 @@ namespace TMGUI {
 					TMTaskList taskList = taskListStates->getCurrentTaskList();
 					std::vector<TMTask> dated = taskList.getDated();
 					std::vector<TMTask> undated = taskList.getUndated();
-					//std::vector<TMTask> archived = taskList.getArchived();
+					std::vector<TMTask> archived = taskList.getArchived();
 					std::vector<TMTask> allTasks;
-					allTasks.reserve( dated.size() + undated.size() );
+					allTasks.reserve( dated.size() + undated.size() + archived.size());
 					allTasks.insert( allTasks.end(), dated.begin(), dated.end() );
 					allTasks.insert( allTasks.end(), undated.begin(), undated.end() );
+					allTasks.insert( allTasks.end(), archived.begin(), archived.end() );
 					std::vector<TMTask>::iterator iter;
 	
 					switch (display) {
@@ -335,6 +349,15 @@ namespace TMGUI {
 							clashStatus = "No";
 						}
 						defaultEntry->SubItems->Add(gcnew String(( (clashStatus.c_str()) )));
+
+						std::string completionStatus;
+						if (allTasks[i].isCompleted()) {
+							completionStatus = "Yes";
+							defaultEntry->ForeColor = Color :: ForestGreen;
+						} else {
+							completionStatus = "No";
+						}
+						defaultEntry->SubItems->Add(gcnew String(( (completionStatus.c_str()) )));
 
 						if(allTasks[i].getTaskType() == TaskType ::WithEndDateTime){
 							defaultEntry->ForeColor = Color :: Red;
@@ -393,6 +416,15 @@ namespace TMGUI {
 								clashStatus = "No";
 							}
 							searchResult->SubItems->Add(gcnew String(( (clashStatus.c_str()) )));
+
+							/*std::string completionStatus;
+							if (task.isCompleted()) {
+								completionStatus = "Yes";
+								searchResult->ForeColor = Color :: ForestGreen;
+							} else {
+								completionStatus = "No";
+							}
+							searchResult->SubItems->Add(gcnew String(( (completionStatus.c_str()) )));*/
 
 							if(task.getTaskType() == TaskType ::WithEndDateTime){
 								searchResult->ForeColor = Color :: Red;
