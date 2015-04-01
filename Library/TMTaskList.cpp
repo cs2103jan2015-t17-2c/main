@@ -276,18 +276,29 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 			positionIndex++;
 		}
 
+		for (iter = _archived.begin(); iter != _archived.end(); ++iter) {
+			if (areEquivalent(task, *iter)) {
+				return positionIndex;
+			}
+			positionIndex++;
+		}
+
 		return 0;
 	}	
 
 	TMTask TMTaskList::getTaskFromPositionIndex(int positionIndex) {
 		assert(isValidPositionIndex(positionIndex));
 
-		if (positionIndex <= int(_dated.size())) {
+		if (isInDated(positionIndex)) {
 			return _dated[positionIndex - 1];
 		}
 
-		if (positionIndex <= int(_dated.size() + _undated.size())) {
+		if (isInUndated(positionIndex)) {
 			return _undated[positionIndex - int(_dated.size()) - 1];
+		}
+
+		if (isInArchived(positionIndex)) {
+			return _archived[positionIndex - int(_dated.size()) - int(_undated.size()) - 1];
 		}
 	}
 
