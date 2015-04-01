@@ -2,6 +2,7 @@
 #define TMBLOCKTIME_H
 
 #include "TMCommand.h"
+
 const std::string BATCH_NUMBER_INFO = "The batch number for this batch of unconfirmed task(s) is: ";
 
 class TMBlockTime : public TMCommand {
