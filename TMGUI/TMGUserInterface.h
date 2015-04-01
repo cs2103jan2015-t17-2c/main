@@ -104,10 +104,10 @@ namespace TMGUI {
 			// 
 			this->userInput->BackColor = System::Drawing::SystemColors::Window;
 			this->userInput->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->userInput->Location = System::Drawing::Point(351, 1012);
+			this->userInput->Location = System::Drawing::Point(346, 982);
 			this->userInput->Margin = System::Windows::Forms::Padding(4);
 			this->userInput->Name = L"userInput";
-			this->userInput->Size = System::Drawing::Size(1295, 31);
+			this->userInput->Size = System::Drawing::Size(1447, 31);
 			this->userInput->TabIndex = 1;
 			this->userInput->TextChanged += gcnew System::EventHandler(this, &TMGUserInterface::userInput_TextChanged);
 			this->userInput->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &TMGUserInterface::userInput_KeyPress);
@@ -117,7 +117,7 @@ namespace TMGUI {
 			this->welcomeMessage->AutoSize = true;
 			this->welcomeMessage->Font = (gcnew System::Drawing::Font(L"Segoe UI", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->welcomeMessage->Location = System::Drawing::Point(70, 982);
+			this->welcomeMessage->Location = System::Drawing::Point(70, 952);
 			this->welcomeMessage->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->welcomeMessage->Name = L"welcomeMessage";
 			this->welcomeMessage->Size = System::Drawing::Size(257, 65);
@@ -160,7 +160,7 @@ namespace TMGUI {
 			this->statusDisplay->Margin = System::Windows::Forms::Padding(6);
 			this->statusDisplay->Name = L"statusDisplay";
 			this->statusDisplay->ReadOnly = true;
-			this->statusDisplay->Size = System::Drawing::Size(1300, 192);
+			this->statusDisplay->Size = System::Drawing::Size(1447, 192);
 			this->statusDisplay->TabIndex = 6;
 			this->statusDisplay->Text = L"";
 			// 
@@ -169,7 +169,7 @@ namespace TMGUI {
 			this->label3->AutoSize = true;
 			this->label3->Font = (gcnew System::Drawing::Font(L"Segoe UI", 21.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label3->Location = System::Drawing::Point(122, 854);
+			this->label3->Location = System::Drawing::Point(122, 823);
 			this->label3->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->label3->Name = L"label3";
 			this->label3->Size = System::Drawing::Size(205, 77);
@@ -182,10 +182,10 @@ namespace TMGUI {
 				this->startDate, this->startTime, this->endDate, this->endTime, this->confirmation});
 			this->defaultView->Font = (gcnew System::Drawing::Font(L"Rockwell", 10.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->defaultView->GridLines = true;
-			this->defaultView->Location = System::Drawing::Point(55, 106);
+			this->defaultView->FullRowSelect = true;
+			this->defaultView->Location = System::Drawing::Point(28, 106);
 			this->defaultView->Name = L"defaultView";
-			this->defaultView->Size = System::Drawing::Size(1591, 645);
+			this->defaultView->Size = System::Drawing::Size(1765, 645);
 			this->defaultView->TabIndex = 9;
 			this->defaultView->UseCompatibleStateImageBehavior = false;
 			this->defaultView->View = System::Windows::Forms::View::Details;
@@ -198,7 +198,7 @@ namespace TMGUI {
 			// taskDescription
 			// 
 			this->taskDescription->Text = L"Task Description";
-			this->taskDescription->Width = 200;
+			this->taskDescription->Width = 260;
 			// 
 			// startDate
 			// 
@@ -223,7 +223,7 @@ namespace TMGUI {
 			// confirmation
 			// 
 			this->confirmation->Text = L"Confirmation";
-			this->confirmation->Width = 85;
+			this->confirmation->Width = 105;
 			// 
 			// TMGUserInterface
 			// 
@@ -246,6 +246,7 @@ namespace TMGUI {
 			this->MinimizeBox = false;
 			this->MinimumSize = System::Drawing::Size(1843, 1193);
 			this->Name = L"TMGUserInterface";
+			this->Padding = System::Windows::Forms::Padding(0, 0, 20, 20);
 			this->Text = L"TMGUserInterface";
 			this->ResumeLayout(false);
 			this->PerformLayout();
@@ -326,7 +327,7 @@ namespace TMGUI {
 						}
 
 						if(allTasks[i].getTaskType() == TaskType ::Undated){
-							entryTimed->ForeColor = Color :: Gold;
+							entryTimed->ForeColor = Color :: RosyBrown;
 						}
 
 						defaultView->Items->Add(entryTimed);
