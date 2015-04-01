@@ -2,8 +2,6 @@
 #define TMSEARCHKEYWORD_H
 
 #include "TMCommand.h"
-#include "TMTaskList.h"
-#include "TMParser.h"
 
 const std::string SEARCH_CONCLUSION = "Number of tasks containing the keyword <";
 

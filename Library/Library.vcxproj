@@ -88,6 +88,7 @@
     <ClInclude Include="TMTaskTime.h" />
     <ClInclude Include="TMTaskList.h" />
     <ClInclude Include="TMEditTask.h" />
+    <ClInclude Include="TMUncompleteTasks.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TMDateTime.cpp" />

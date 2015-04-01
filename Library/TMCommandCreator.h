@@ -16,6 +16,7 @@
 #include "TMConfirmTasks.h"
 #include "TMDoneAllToday.h"
 #include "TMCompleteTasks.h"
+#include "TMUncompleteTasks.h"
 #include "TMUndo.h"
 #include "TMRedo.h"
 #include "TMInvalidCommand.h"
@@ -76,8 +77,11 @@ public:
 			return newCmdPtr;
 			break;
 
-		case TMParser::CommandTypes::Incomplete:;
-		
+		case TMParser::CommandTypes::Incomplete:
+			newCmdPtr = new TMUncompleteTasks();
+			return newCmdPtr;
+			break;
+
 		case TMParser::CommandTypes::Undo: 
 			newCmdPtr = new TMUndo();
 			return newCmdPtr;
