@@ -10,6 +10,7 @@
 #include "TMDeleteTasks.h"
 #include "TMEditTask.h"
 #include "TMSearchKeyword.h"
+#include "TMSearchDate.h"
 #include "TMSaveAt.h"
 #include "TMBlockTime.h"
 #include "TMConfirmTasks.h"
@@ -45,7 +46,9 @@ public:
 			return newCmdPtr;
 			break;
 
-		case TMParser::CommandTypes::SearchDateTime:
+		case TMParser::CommandTypes::SearchDate:
+			newCmdPtr = new TMSearchDate();
+			return newCmdPtr;
 			break;
 
 		case TMParser::CommandTypes::SaveAt:

@@ -5,6 +5,8 @@
 #include "TMTaskList.h"
 #include "TMParser.h"
 
+const std::string SEARCH_CONCLUSION = "Number of tasks containing the keyword <";
+
 class TMSearchKeyword: public TMCommand {
 
 public:
@@ -12,17 +14,10 @@ public:
 		TMParser *parser = TMParser::getInstance(); 
 		TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
 		TMTaskList taskList = taskListStates->getCurrentTaskList();
-		std::vector<int> searchResults;
-		searchResults = taskList.keywordSearch(parser->parseSearchKey());
 
-		std::vector<int>::iterator iter;
+		positionIndexes = taskList.keywordSearch(parser->parseSearchKey());
 		std::ostringstream oss;
-
-		for (iter = searchResults.begin(); iter != searchResults.end(); ++iter) {
-			TMTask result = taskList.getTaskFromPositionIndex(*iter);
-			oss << *iter << ". " << result.getTaskDescription() << std::endl;
-		}
-
+		oss << SEARCH_CONCLUSION << parser->parseSearchKey() << "> is: " positionIndexes.size();
 		outcome = oss.str();
 	}
 

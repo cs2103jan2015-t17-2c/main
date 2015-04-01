@@ -369,6 +369,42 @@ namespace TMGUI {
 					exe->executeMain(unmanaged);
 					statusDisplay->Text = gcnew String(exe->returnResultOfExecution().c_str());
 					
+					//GORDY LOOK HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+					/*TMDisplay display = exe->getCurrentDisplay();
+					
+					TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+					TMTaskList taskList = taskListStates->getCurrentTaskList();
+
+					switch (display) {
+					case Default:
+						//INSERT YOUR FUNCTION HERE
+						break;
+					
+					case  DeadlineTasks:
+						//INSERT YOUR FUNCTION HERE
+						break;
+					
+					case UndatedTasks:
+						//INSERT YOUR FUNCTION HERE
+						break;
+					
+					case ArchivedTasks:
+						//INSERT YOUR FUNCTION HERE
+						break;
+					
+					case SearchResults:
+						//INSERT YOUR FUNCTION HERE
+						std::vector<int> indexes = exe->getPositionIndexes();
+						std::vector<int>::iterator iter;
+						for (iter = indexes.begin(); iter != indexes.end(); ++iter) {
+							TMTask task = taskList.getTaskFromPositionIndex(*iter);
+							//PROCEED TO DISPLAY THAT TASK DETAILS
+						}
+						break;
+					}*/
+
+
+					
 					//displayString = displayString + gcnew String((*iter).c_str());
 					
 					TMTaskListStates *taskListStates = TMTaskListStates::getInstance();

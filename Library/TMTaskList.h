@@ -89,8 +89,6 @@ public:
 
 	//BASIC FUNCTIONS//
 	std::string addTask(TMTask task);
-
-	std::string addClashedTask(TMTask task);
 	
 	std::string updateTask(int positionIndex, EditableTaskComponent component, std::string changeTo);
 	
@@ -108,6 +106,9 @@ public:
 	
 	//Return the position indexes of tasks which match the keyword. Note that the search is not case sensitive.
 	std::vector<int> keywordSearch(std::string keyword);
+
+	//Return the position indexes of tasks which starts or ends with date. 
+	std::vector<int> dateSearch(std::string date);
 
 	//EXPORT AND IMPORT FUNCTIONS//
 	void writeToFile();

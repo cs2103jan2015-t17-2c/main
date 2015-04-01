@@ -348,12 +348,6 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 		}
 	}
 
-	std::string TMTaskList::addClashedTask(TMTask task) {
-		_dated.push_back(task);
-		chronoSort();
-		return ADD_PERIOD_SUCCESS;
-	}
-
 	//NEED TO USE ASSERT TO DETERMINE VALID POSITION INDEX
 	std::string TMTaskList::updateTask(int positionIndex, EditableTaskComponent component, std::string changeTo) {
 		assert(isValidPositionIndex(positionIndex));
@@ -560,6 +554,17 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 		return searchResults;
 	}
 
+	std::vector<int> TMTaskList::dateSearch(std::string date) {
+		std::vector<int> searchResults;
+		std::vector<TMTask>::iterator iter;
+		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
+			if (iter->getTaskTime().getStartDate() == date || iter->getTaskTime().getEndDate() == date) {
+				searchResults.push_back(getPositionIndexFromTask(*iter));
+			} 
+		}
+
+		return searchResults;
+	}
 	
 
 
