@@ -196,7 +196,7 @@ namespace TMGUI {
 			this->defaultView->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(8) {this->taskID, this->taskDescription, 
 				this->startDate, this->startTime, this->endDate, this->endTime, this->confirmation, this->isClash});
 			this->defaultView->GridLines = true;
-			this->defaultView->Location = System::Drawing::Point(99, 112);
+			this->defaultView->Location = System::Drawing::Point(55, 106);
 			this->defaultView->Name = L"defaultView";
 			this->defaultView->Size = System::Drawing::Size(1591, 645);
 			this->defaultView->TabIndex = 9;
@@ -210,17 +210,17 @@ namespace TMGUI {
 			// taskDescription
 			// 
 			this->taskDescription->Text = L"Task Description";
-			this->taskDescription->Width = 273;
+			this->taskDescription->Width = 200;
 			// 
 			// startDate
 			// 
 			this->startDate->Text = L"Start Date";
-			this->startDate->Width = 133;
+			this->startDate->Width = 120;
 			// 
 			// startTime
 			// 
 			this->startTime->Text = L"Start Time";
-			this->startTime->Width = 151;
+			this->startTime->Width = 127;
 			// 
 			// endDate
 			// 
@@ -235,7 +235,7 @@ namespace TMGUI {
 			// confirmation
 			// 
 			this->confirmation->Text = L"Confirmation";
-			this->confirmation->Width = 256;
+			this->confirmation->Width = 155;
 			// 
 			// isClash
 			// 
