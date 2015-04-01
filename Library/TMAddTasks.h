@@ -18,7 +18,7 @@ public:
 
 		TMTask task = parser -> parseTaskInfo();
 		TMTaskList taskList = taskListStates->getCurrentTaskList();
-		TMCommand::outcome = taskList.addTask(task);
+		outcome = taskList.addTask(task);
 		taskListStates->addNewState(taskList);
 	
 	}

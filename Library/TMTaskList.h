@@ -50,7 +50,8 @@ public:
 	bool isValidPositionIndex(int positionIndex);
 
 	//Postcondition: Returns all tasks that clashes with the task to be added in the form of a vector
-	std::vector<TMTask> findClashes(TMTask task);
+	//Assupmtion: task is not present in taskList
+	std::vector<TMTask> findAndSetClashes(TMTask task, std::vector<TMTask>::iterator beginFrom);
 
 	//Find the earliest task in the unsorted tasklist
 	std::vector<TMTask>::iterator findEarliestTaskIter(std::vector<TMTask>::iterator unsortedStart);
@@ -65,6 +66,8 @@ public:
 	bool isUniqueBatchNum(int i);
 
 	std::vector<int> searchUnconfirmedBatchNum(int i);
+
+	void updateClashes(TMTask deleteTask);
 	
 
 	//GETTER FUNCTIONS//

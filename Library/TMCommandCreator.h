@@ -17,7 +17,7 @@
 #include "TMCompleteTasks.h"
 #include "TMUndo.h"
 #include "TMRedo.h"
-
+#include "TMInvalidCommand.h"
 
 class TMCommandCreator {
 public:
@@ -86,6 +86,8 @@ public:
 			break;
 
 		case TMParser::CommandTypes::Invalid:
+			newCmdPtr = new TMInvalidCommand();
+			return newCmdPtr;
 			break;
 		
 		}

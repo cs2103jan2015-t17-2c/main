@@ -30,7 +30,8 @@ public:
 	
 	static TMExecutor* getInstance();
 	void executeMain(std::string userInput);
-	
+	std::string returnResultOfExecution();
+
 	bool isDisplayChange(std::string userInput);
 	TMDisplay determineDisplayType(std::string userInput);
 	

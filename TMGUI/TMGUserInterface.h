@@ -277,6 +277,7 @@ namespace TMGUI {
 					String ^ displayString;
 					
 					exe->executeMain(unmanaged);
+					richTextBox2->Text = gcnew String(exe->returnResultOfExecution().c_str());
 					
 					//displayString = displayString + gcnew String((*iter).c_str());
 					
@@ -308,6 +309,26 @@ namespace TMGUI {
 						entryTimed->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getStartTime()).c_str() )));
 						entryTimed->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getEndDate()).c_str() )));
 						entryTimed->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getEndTime()).c_str() )));
+						
+						std::string confirmationStatus;
+						if (allTasks[i].isConfirmed()) {
+							confirmationStatus = "Yes";
+						} else {
+							confirmationStatus = "No";
+							entryTimed->ForeColor = Color :: Gray;
+						}
+						entryTimed->SubItems->Add(gcnew String(( (confirmationStatus.c_str()) )));
+
+						std::string clashStatus;
+						if (allTasks[i].isClashed()) {
+							clashStatus = "Yes";
+							entryTimed->ForeColor = Color :: Blue;
+						} else {
+							clashStatus = "No";
+						}
+						entryTimed->SubItems->Add(gcnew String(( (clashStatus.c_str()) )));
+
+						
 
 						/*if(allTasks[i].isClashed()){
 							entryTimed->ForeColor = Color :: Blue;
@@ -341,7 +362,7 @@ namespace TMGUI {
 				 if (userInput->Text == "add") {
 					richTextBox2->Text = "add <TIMEMARKER> <BLA>";
 				 } else {
-					 richTextBox2->Text = "";
+					// richTextBox2->Text = "";
 				 }
 			 }
 

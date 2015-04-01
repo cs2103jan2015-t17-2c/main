@@ -43,6 +43,10 @@ void TMExecutor::executeMain(std::string userInput) {
 	return;
 }
 
+std::string TMExecutor::returnResultOfExecution() {
+	return _resultOfExecution;
+}
+
 bool TMExecutor::isDisplayChange(std::string userInput) {
 	return (userInput.find("display") != std::string::npos);
 }

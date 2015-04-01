@@ -76,6 +76,7 @@
     <ClInclude Include="TMDoneAllToday.h" />
     <ClInclude Include="TMConfirmTasks.h" />
     <ClInclude Include="TMExecutor.h" />
+    <ClInclude Include="TMInvalidCommand.h" />
     <ClInclude Include="TMRedo.h" />
     <ClInclude Include="TMSaveAt.h" />
     <ClInclude Include="TMTaskListStates.h" />
@@ -88,7 +89,6 @@
     <ClInclude Include="TMEditTask.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp" />
     <ClCompile Include="TMDateTime.cpp" />
     <ClCompile Include="TMExecutor.cpp" />
     <ClCompile Include="TMTaskListStates.cpp" />
