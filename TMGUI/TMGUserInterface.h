@@ -52,9 +52,10 @@ namespace TMGUI {
 
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::Label^  label2;
-	private: System::Windows::Forms::RichTextBox^  richTextBox2;
+	private: System::Windows::Forms::RichTextBox^  statusDisplay;
+
 	private: System::Windows::Forms::Label^  label3;
-	private: System::Windows::Forms::Label^  label4;
+
 	private: System::Windows::Forms::ListView^  defaultView;
 
 	private: System::Windows::Forms::ColumnHeader^  taskID;
@@ -64,7 +65,7 @@ namespace TMGUI {
 	private: System::Windows::Forms::ColumnHeader^  endDate;
 	private: System::Windows::Forms::ColumnHeader^  endTime;
 	private: System::Windows::Forms::ColumnHeader^  confirmation;
-	private: System::Windows::Forms::ColumnHeader^  isClash;
+
 
 	protected: 
 
@@ -87,9 +88,8 @@ namespace TMGUI {
 			this->welcomeMessage = (gcnew System::Windows::Forms::Label());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
-			this->richTextBox2 = (gcnew System::Windows::Forms::RichTextBox());
+			this->statusDisplay = (gcnew System::Windows::Forms::RichTextBox());
 			this->label3 = (gcnew System::Windows::Forms::Label());
-			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->defaultView = (gcnew System::Windows::Forms::ListView());
 			this->taskID = (gcnew System::Windows::Forms::ColumnHeader());
 			this->taskDescription = (gcnew System::Windows::Forms::ColumnHeader());
@@ -98,17 +98,16 @@ namespace TMGUI {
 			this->endDate = (gcnew System::Windows::Forms::ColumnHeader());
 			this->endTime = (gcnew System::Windows::Forms::ColumnHeader());
 			this->confirmation = (gcnew System::Windows::Forms::ColumnHeader());
-			this->isClash = (gcnew System::Windows::Forms::ColumnHeader());
 			this->SuspendLayout();
 			// 
 			// userInput
 			// 
 			this->userInput->BackColor = System::Drawing::SystemColors::Window;
 			this->userInput->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->userInput->Location = System::Drawing::Point(346, 1035);
+			this->userInput->Location = System::Drawing::Point(351, 1012);
 			this->userInput->Margin = System::Windows::Forms::Padding(4);
 			this->userInput->Name = L"userInput";
-			this->userInput->Size = System::Drawing::Size(1346, 31);
+			this->userInput->Size = System::Drawing::Size(1295, 31);
 			this->userInput->TabIndex = 1;
 			this->userInput->TextChanged += gcnew System::EventHandler(this, &TMGUserInterface::userInput_TextChanged);
 			this->userInput->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &TMGUserInterface::userInput_KeyPress);
@@ -118,7 +117,7 @@ namespace TMGUI {
 			this->welcomeMessage->AutoSize = true;
 			this->welcomeMessage->Font = (gcnew System::Drawing::Font(L"Segoe UI", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->welcomeMessage->Location = System::Drawing::Point(60, 1012);
+			this->welcomeMessage->Location = System::Drawing::Point(70, 982);
 			this->welcomeMessage->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->welcomeMessage->Name = L"welcomeMessage";
 			this->welcomeMessage->Size = System::Drawing::Size(257, 65);
@@ -150,20 +149,20 @@ namespace TMGUI {
 			this->label2->TabIndex = 5;
 			this->label2->Text = L"Master your time with";
 			// 
-			// richTextBox2
+			// statusDisplay
 			// 
-			this->richTextBox2->BackColor = System::Drawing::SystemColors::ActiveCaptionText;
-			this->richTextBox2->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->richTextBox2->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->statusDisplay->BackColor = System::Drawing::SystemColors::ActiveCaptionText;
+			this->statusDisplay->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->statusDisplay->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->richTextBox2->ForeColor = System::Drawing::SystemColors::Window;
-			this->richTextBox2->Location = System::Drawing::Point(346, 787);
-			this->richTextBox2->Margin = System::Windows::Forms::Padding(6);
-			this->richTextBox2->Name = L"richTextBox2";
-			this->richTextBox2->ReadOnly = true;
-			this->richTextBox2->Size = System::Drawing::Size(1344, 202);
-			this->richTextBox2->TabIndex = 6;
-			this->richTextBox2->Text = L"";
+			this->statusDisplay->ForeColor = System::Drawing::SystemColors::Window;
+			this->statusDisplay->Location = System::Drawing::Point(346, 773);
+			this->statusDisplay->Margin = System::Windows::Forms::Padding(6);
+			this->statusDisplay->Name = L"statusDisplay";
+			this->statusDisplay->ReadOnly = true;
+			this->statusDisplay->Size = System::Drawing::Size(1300, 192);
+			this->statusDisplay->TabIndex = 6;
+			this->statusDisplay->Text = L"";
 			// 
 			// label3
 			// 
@@ -177,24 +176,12 @@ namespace TMGUI {
 			this->label3->TabIndex = 7;
 			this->label3->Text = L"Status:";
 			// 
-			// label4
-			// 
-			this->label4->AutoSize = true;
-			this->label4->BackColor = System::Drawing::Color::Transparent;
-			this->label4->Font = (gcnew System::Drawing::Font(L"Segoe UI", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->label4->ForeColor = System::Drawing::Color::Black;
-			this->label4->Location = System::Drawing::Point(1534, 48);
-			this->label4->Margin = System::Windows::Forms::Padding(6, 0, 6, 0);
-			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(163, 41);
-			this->label4->TabIndex = 8;
-			this->label4->Text = L"Overdue: 6";
-			// 
 			// defaultView
 			// 
-			this->defaultView->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(8) {this->taskID, this->taskDescription, 
-				this->startDate, this->startTime, this->endDate, this->endTime, this->confirmation, this->isClash});
+			this->defaultView->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(7) {this->taskID, this->taskDescription, 
+				this->startDate, this->startTime, this->endDate, this->endTime, this->confirmation});
+			this->defaultView->Font = (gcnew System::Drawing::Font(L"Rockwell", 10.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
 			this->defaultView->GridLines = true;
 			this->defaultView->Location = System::Drawing::Point(55, 106);
 			this->defaultView->Name = L"defaultView";
@@ -206,6 +193,7 @@ namespace TMGUI {
 			// taskID
 			// 
 			this->taskID->Text = L"ID";
+			this->taskID->Width = 30;
 			// 
 			// taskDescription
 			// 
@@ -220,44 +208,43 @@ namespace TMGUI {
 			// startTime
 			// 
 			this->startTime->Text = L"Start Time";
-			this->startTime->Width = 127;
+			this->startTime->Width = 120;
 			// 
 			// endDate
 			// 
 			this->endDate->Text = L"End Date";
-			this->endDate->Width = 121;
+			this->endDate->Width = 120;
 			// 
 			// endTime
 			// 
 			this->endTime->Text = L"End Time";
-			this->endTime->Width = 146;
+			this->endTime->Width = 120;
 			// 
 			// confirmation
 			// 
 			this->confirmation->Text = L"Confirmation";
-			this->confirmation->Width = 155;
-			// 
-			// isClash
-			// 
-			this->isClash->Text = L"Clash Status";
-			this->isClash->Width = 178;
+			this->confirmation->Width = 85;
 			// 
 			// TMGUserInterface
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(12, 25);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->BackColor = System::Drawing::Color::Teal;
-			this->ClientSize = System::Drawing::Size(1758, 1138);
+			this->AutoSize = true;
+			this->BackColor = System::Drawing::Color::LightSteelBlue;
+			this->ClientSize = System::Drawing::Size(1817, 1122);
 			this->Controls->Add(this->defaultView);
-			this->Controls->Add(this->label4);
 			this->Controls->Add(this->label3);
-			this->Controls->Add(this->richTextBox2);
+			this->Controls->Add(this->statusDisplay);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->welcomeMessage);
 			this->Controls->Add(this->userInput);
+			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
 			this->Margin = System::Windows::Forms::Padding(4);
 			this->MaximizeBox = false;
+			this->MaximumSize = System::Drawing::Size(1843, 1193);
+			this->MinimizeBox = false;
+			this->MinimumSize = System::Drawing::Size(1843, 1193);
 			this->Name = L"TMGUserInterface";
 			this->Text = L"TMGUserInterface";
 			this->ResumeLayout(false);
@@ -277,7 +264,7 @@ namespace TMGUI {
 					String ^ displayString;
 					
 					exe->executeMain(unmanaged);
-					richTextBox2->Text = gcnew String(exe->returnResultOfExecution().c_str());
+					statusDisplay->Text = gcnew String(exe->returnResultOfExecution().c_str());
 					
 					//displayString = displayString + gcnew String((*iter).c_str());
 					
@@ -360,7 +347,7 @@ namespace TMGUI {
 
 	private: System::Void userInput_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 				 if (userInput->Text == "add") {
-					richTextBox2->Text = "add <TIMEMARKER> <BLA>";
+					statusDisplay->Text = "add <TIMEMARKER> <BLA>";
 				 } else {
 					// richTextBox2->Text = "";
 				 }
