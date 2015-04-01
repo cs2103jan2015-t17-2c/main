@@ -67,11 +67,11 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 		TMDateTime start = task.getTaskTime().getStartDateTime();
 		
 		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
-			if (startsBeforeTime(*iter, start)) {
+			if (startsBeforeTime(*iter, start) && iter->getTaskType() == TaskType::WithPeriod) {
 				if (isTwoClash(*iter, task)) {
 					return true;
 				}
-			} else {
+			} else if (iter->getTaskType() == TaskType::WithPeriod) {
 				if (isTwoClash(task, *iter)) {
 					return true;
 				}
@@ -107,6 +107,16 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 		return true;
 	}
 
+	bool TMTaskList::areEquivalentDateTime(TMDateTime time1, TMDateTime time2) {
+		if (time1.getDate() != time2.getDate()) {
+			return false;
+		} else if (time1.getTime() != time2.getTime()) {
+			return false;
+		}
+
+		return true;
+	}
+
 	bool TMTaskList::isValidPositionIndex(int positionIndex) {
 		return (positionIndex > 0 && positionIndex <= int(_dated.size() + _undated.size()));
 	}
@@ -118,12 +128,12 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 		
 		for (iter = beginFrom; iter != _dated.end(); ++iter) {
 			TMTask &registeredTask = *iter;
-			if (startsBeforeTime(registeredTask, start)) {
+			if (startsBeforeTime(registeredTask, start) && iter->getTaskType() == TaskType::WithPeriod) {
 				if (isTwoClash(registeredTask, task)) {
 					registeredTask.setAsClashed();
 					_clashes.push_back(registeredTask);
 				}
-			} else if (isTwoClash(task, registeredTask)) {
+			} else if (isTwoClash(task, registeredTask) && iter->getTaskType() == TaskType::WithPeriod) {
 					registeredTask.setAsClashed();
 					_clashes.push_back(registeredTask);
 			}
@@ -139,9 +149,15 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 									std::vector<TMTask>::iterator iter;
 		
 									for (iter = unsortedStart; iter != _dated.end(); ++iter) {
+				
 										if (startsBeforeTime(*iter, earliestTask.getTaskTime().getStartDateTime())) {
 											earliestTask = *iter;
 											earliestTaskIter = iter;
+										} else if (areEquivalentDateTime(iter->getTaskTime().getStartDateTime(), earliestTask.getTaskTime().getStartDateTime())) {
+											if ( isBefore(iter->getTaskTime().getEndDateTime(), earliestTask.getTaskTime().getEndDateTime()) ) {
+												earliestTask = *iter;
+												earliestTaskIter = iter;
+											}
 										}
 									}
 
@@ -207,7 +223,7 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 		setClashes(deleteTask, _dated.begin());
 		std::vector<TMTask>::iterator iter;
 		int i = 0;
-		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
+		for (iter = _dated.begin(); iter != _dated.end() && i < _clashes.size(); ++iter) {
 			if (areEquivalent(*iter, _clashes[i])) {
 				iter->setAsUnclashed();
 			}
