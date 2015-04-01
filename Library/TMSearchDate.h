@@ -3,9 +3,9 @@
 
 #include "TMCommand.h"
 
-const std::string SEARCH_CONCLUSION = "Number of tasks with the date <";
+const std::string SEARCH_CONCLUSION_DATE = "Number of tasks with the date <";
 
-class TMSearchKeyword: public TMCommand { 
+class TMSearchDate: public TMCommand { 
 	
 public:
 	void execute() {
@@ -15,7 +15,7 @@ public:
 
 		positionIndexes = taskList.dateSearch(parser->parseSearchDate());
 		std::ostringstream oss;
-		oss << SEARCH_CONCLUSION << parser->parseSearchDate() << "> is: " << positionIndexes.size();
+		oss << SEARCH_CONCLUSION_DATE << parser->parseSearchDate() << "> is: " << positionIndexes.size();
 		outcome = oss.str();*/
 		}
 };

@@ -3,8 +3,6 @@
 
 #include "TMCommand.h"
 
-const std::string SEARCH_CONCLUSION = "Number of tasks with the date <";
-
 class TMUncompleteTasks: public TMCommand { 
 	
 public:
