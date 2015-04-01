@@ -1476,6 +1476,92 @@ std::string TMParser::getDateFromNextDay(int index){
     return date;
 }
 
-//TMTask TMParser::convertStringToTMTask(std::string listEntry){
+TMTask TMParser::convertStringToTMTask(std::string listEntry){
+    std::string taskDescription;
 
-//}
+    int unconfirmedBatchNumber;
+
+    std::string startDay;
+    std::string startMonth;
+    std::string startYear;
+    std::string startTime;
+
+    std::string endDay;
+    std::string endMonth;
+    std::string endYear;
+    std::string endTime;
+
+    bool isCompleted;
+    bool isConfirmed;
+    bool isClashed;
+
+    std::string stringTaskType;
+    TaskType taskType;
+
+    std::istringstream iss(listEntry);
+
+    iss >> taskDescription;
+
+    iss >> unconfirmedBatchNumber;
+
+    iss >> startDay;
+    iss >> startMonth;
+    iss >> startYear;
+    iss >> startTime;
+
+    iss >> endDay;
+    iss >> endMonth;
+    iss >> endYear;
+    iss >> endTime;
+
+    iss >> isCompleted;
+    iss >> isConfirmed;
+    iss >> isClashed;
+
+    iss >> stringTaskType;
+    taskType = convertStringToTaskType(stringTaskType);
+
+    std::string startDate = startDay + "-" + startMonth + "-" + startYear;
+    std::string endDate = endDay + "-" + endMonth + "-" + endYear;
+
+    TMTaskTime taskTime(startDate, startTime, endDate, endTime);
+    TMTask task(taskDescription, taskTime, taskType);
+
+    if(isCompleted){
+        task.setAsCompleted();
+    }
+
+    if(!isConfirmed){
+        task.setAsUnconfirmed();
+    }
+
+    if(isClashed){
+        task.setAsClashed();
+    }
+
+    return task;
+}
+
+//precondition: the string must be one of the 5 types in the exact same format
+TaskType TMParser::convertStringToTaskType(std::string taskType){
+    std::map<std::string, TaskType> taskTypeMap = boost::assign::map_list_of
+        ("WithStartDateTime", TaskType::WithStartDateTime) 
+        ("WithEndDateTime", TaskType::WithEndDateTime)
+        ("WithPeriod", TaskType::WithPeriod)
+        ("Undated", TaskType::Undated)
+        ("Invalid", TaskType::Invalid);
+
+    return taskTypeMap[taskType];
+}
+
+//precondition:: taskType is one of the 5 types
+std::string TMParser::convertTaskTypeToString(TaskType taskType){
+    std::map<TaskType, std::string> stringMap = boost::assign::map_list_of
+        (TaskType::WithStartDateTime, "WithStartDateTime")
+        (TaskType::WithEndDateTime, "WithEndDateTime")
+        (TaskType::WithPeriod, "WithPeriod")
+        (TaskType::Undated, "Undated")
+        (TaskType::Invalid, "Invalid");
+
+    return stringMap[taskType];
+}

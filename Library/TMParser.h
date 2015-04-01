@@ -8,6 +8,8 @@
 #include <vector>
 #include <queue>
 #include <ctype.h>
+#include <map>
+#include <boost/assign/list_of.hpp>
 
 //user input date must be ddmmyyyy
 //time input if in 12hour format must be followed immediately by pm and am
@@ -109,5 +111,7 @@ public:
     std::string addNDaysFromDate(std::string,int);
 
     TMTask convertStringToTMTask(std::string);
+    TaskType convertStringToTaskType(std::string);
+    std::string convertTaskTypeToString(TaskType);
 };
 #endif
