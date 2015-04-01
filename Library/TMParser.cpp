@@ -45,6 +45,7 @@ const std::string DAY_SAT = "sat";
 const std::string DAY_SUN = "sun";
 
 const std::string TOKEN_BEFORE = "before";
+const std::string TOKEN_BY = "by";
 const std::string TOKEN_ON = "on";
 const std::string TOKEN_NEXT = "next";
 const std::string TOKEN_AT = "at";
@@ -177,9 +178,9 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
         }
 
         unitString = returnLowerCase(_tokenizedUserEntry[index]);
+        nextWord = returnLowerCase(_tokenizedUserEntry[index + 1]);
 
-        if(unitString == TOKEN_BEFORE){
-            nextWord = returnLowerCase(_tokenizedUserEntry[index + 1]);
+        if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY){
             if(isNumericDate(nextWord)||isDay(nextWord)||isDDMonDate(nextWord)) {
                 //e.g. before 01012016 (DDMMYYYY)
                 indexOfDatesAndTimes.push(index);
@@ -187,6 +188,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                 dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
                 dateToMeet = substractNDaysFromDate(dateToMeet,1);
                 timeToMeet = "2359";
+                index = indexOfDatesAndTimes.back();
             } else if (isNextDay(index + 1)) {
                 //e.g. before next monday
                 indexOfDatesAndTimes.push(index);
@@ -194,24 +196,35 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                 dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
                 dateToMeet = substractNDaysFromDate(dateToMeet,1);
                 timeToMeet = "2359";
+                index = indexOfDatesAndTimes.back();
             } else if (is12HTime(nextWord)||is24HTime(nextWord)) {
                 indexOfDatesAndTimes.push(index);
                 timeToMeet = extractTimeAfterToken(index + 1, indexOfDatesAndTimes);
+                index = indexOfDatesAndTimes.back();
             } 
         } else if(unitString == TOKEN_ON) {
-            indexOfDatesAndTimes.push(index);
-            dateToMeet = extractDayOrNumericDateOrDDMonDate(index + 1,indexOfDatesAndTimes);
+            if(isNumericDate(nextWord)||isDay(nextWord)||isDDMonDate(nextWord)) {
+                indexOfDatesAndTimes.push(index);
+                dateToMeet = extractDayOrNumericDateOrDDMonDate(index + 1,indexOfDatesAndTimes);
+                index = indexOfDatesAndTimes.back();
 
-            if(dateToMeet != "") {
-                //before date DDMMYYYY
+                if(timeToMeet == "") {
+                    timeToMeet = "2359";
+                }
             }
         } else if(isNextDay(index)){
             dateToMeet = extractNextDayAfterToken(index, indexOfDatesAndTimes);
+            index = indexOfDatesAndTimes.back();
         }
     }
 
     for(int i = 0; i < lengthOfTokenizedUserEntry; i++) {
-        if(i == indexOfDatesAndTimes.front()){
+        int frontIndexOfQueue = -1; //will be -1 (invalid index) if index is empty 
+        if(!indexOfDatesAndTimes.empty()){
+            frontIndexOfQueue = indexOfDatesAndTimes.front();
+        }
+
+        if(i == frontIndexOfQueue){
             indexOfDatesAndTimes.pop();
         } else {
             taskDescription += _tokenizedUserEntry[i];
@@ -221,7 +234,6 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
         }
     }
 
-    //
     if(dateToMeet == ""){
         std::string currentTime = getCurrentTime();
         if(timeToMeet >= currentTime){
@@ -245,9 +257,6 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
         return task;
     }
 }
-
-//for now find start time and start date only
-//change to period
 
 TMTask TMParser::parseTimedTaskInfo(){
     TaskType taskType;
@@ -450,8 +459,14 @@ TMTask TMParser::parseTimedTaskInfo(){
     }
 
     for(int i = 0; i < lengthOfTokenizedUserEntry; i++) {
-        if(i == mainIndexOfDatesAndTimes.front()){
-            mainIndexOfDatesAndTimes.pop();
+        //if indexOfDatesAndTimes is empty then always -1 (invalid index)
+        int frontIndexOfQueue = -1;
+        if(!indexOfDatesAndTimes.empty()){
+            frontIndexOfQueue = indexOfDatesAndTimes.front();
+        }
+
+        if(i == frontIndexOfQueue){
+            indexOfDatesAndTimes.pop();
         } else {
             taskDescription += _tokenizedUserEntry[i];
             if(i != lengthOfTokenizedUserEntry - 1) {
@@ -735,27 +750,27 @@ void TMParser::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAndT
     return;
 }
 
-//need to check if before is the last word of the string. will go out of bound?
-//if before is the last word then it cannot be a deadline
 bool TMParser::isDeadlinedTask() {
     std::string unitString;
     std::string stringAfterBefore;
     int lengthOfTokenizedUserEntry = _tokenizedUserEntry.size();
 
     for(int index = 0; index < lengthOfTokenizedUserEntry; index++){
-        if(index + 1 != lengthOfTokenizedUserEntry){
-            unitString = returnLowerCase(_tokenizedUserEntry[index]);
+        if(index + 1 == lengthOfTokenizedUserEntry){
+            break;
+        }
         
-            if(unitString == TOKEN_BEFORE){
-                stringAfterBefore = returnLowerCase(_tokenizedUserEntry[index + 1]);
+        unitString = returnLowerCase(_tokenizedUserEntry[index]);
+        
+        if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY){
+            stringAfterBefore = returnLowerCase(_tokenizedUserEntry[index + 1]);
 
-                if(isNumericDate(stringAfterBefore)||isDay(stringAfterBefore)||isDDMonDate(stringAfterBefore)) {
-                    return true;
-                } else if (is12HTime(stringAfterBefore)||is24HTime(stringAfterBefore)) {
-                    return true;
-                } else if (isNextDay(index + 1)){ 
-                    return true;
-                }
+            if(isNumericDate(stringAfterBefore)||isDay(stringAfterBefore)||isDDMonDate(stringAfterBefore)) {
+                return true;
+            } else if (is12HTime(stringAfterBefore)||is24HTime(stringAfterBefore)) {
+                return true;
+            } else if (isNextDay(index + 1)){ 
+                return true;
             }
         }
     }
