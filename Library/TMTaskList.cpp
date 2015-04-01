@@ -111,8 +111,8 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 		return (positionIndex > 0 && positionIndex <= int(_dated.size() + _undated.size()));
 	}
 
-	std::vector<TMTask> TMTaskList::findAndSetClashes(TMTask task, std::vector<TMTask>::iterator beginFrom) { //REVISIT CODE AND CHECK FOR BOUNDARY VALUES
-		std::vector<TMTask> clashes;
+	void TMTaskList::setClashes(TMTask task, std::vector<TMTask>::iterator beginFrom) { //REVISIT CODE AND CHECK FOR BOUNDARY VALUES
+		_clashes.clear();
 		std::vector<TMTask>::iterator iter;
 		TMDateTime start = task.getTaskTime().getStartDateTime();
 		
@@ -121,16 +121,15 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 			if (startsBeforeTime(registeredTask, start)) {
 				if (isTwoClash(registeredTask, task)) {
 					registeredTask.setAsClashed();
-					clashes.push_back(registeredTask);
+					_clashes.push_back(registeredTask);
 				}
-			} else if (isTwoClash(registeredTask, *iter)) {
+			} else if (isTwoClash(task, registeredTask)) {
 					registeredTask.setAsClashed();
-					clashes.push_back(registeredTask);
+					_clashes.push_back(registeredTask);
 			}
 			
 		}
 
-		return clashes;
 	}
 
 	std::vector<TMTask>::iterator TMTaskList::findEarliestTaskIter(std::vector<TMTask>::iterator unsortedStart) {
@@ -205,16 +204,26 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 	}
 
 	void  TMTaskList::updateClashes(TMTask deleteTask) {
-		std::vector<TMTask> &clashedWithToBeDeleted = findAndSetClashes(deleteTask, _dated.begin());
+		setClashes(deleteTask, _dated.begin());
 		std::vector<TMTask>::iterator iter;
-		for (iter = clashedWithToBeDeleted.begin(); iter != clashedWithToBeDeleted.end(); ++iter) {
-			iter->setAsUnclashed();
+		int i = 0;
+		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
+			if (areEquivalent(*iter, _clashes[i])) {
+				iter->setAsUnclashed();
+			}
+			++i;
 		}
+	
 
-		/*for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
+		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
 			TMTask &focusTask = *iter;
-			findAndSetClashes(focusTask, iter+1);	
-		}*/
+			if (iter+1 != _dated.end()) {
+				setClashes(focusTask, iter+1);
+				if (int(_clashes.size()) != 0) {
+					iter->setAsClashed();
+				}
+			}
+		}
 
 	}
 
@@ -299,7 +308,7 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 		
 		case WithPeriod:
 			if (int(_dated.size()) != 0 && hasClash(task)) {
-				findAndSetClashes(task, _dated.begin());
+				setClashes(task, _dated.begin());
 				task.setAsClashed();
 				outcome = CLASH_WARNING;
 			} else {

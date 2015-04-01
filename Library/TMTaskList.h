@@ -22,6 +22,8 @@ private:
 	//Contains all the completed timed, deadline and floating tasks
 	std::vector<TMTask> _archived;
 
+	std::vector<TMTask> _clashes;
+
 	//File directory name
 	std::string _fileDirectory;
 
@@ -51,7 +53,7 @@ public:
 
 	//Postcondition: Returns all tasks that clashes with the task to be added in the form of a vector
 	//Assupmtion: task is not present in taskList
-	std::vector<TMTask> findAndSetClashes(TMTask task, std::vector<TMTask>::iterator beginFrom);
+	void setClashes(TMTask task, std::vector<TMTask>::iterator beginFrom);
 
 	//Find the earliest task in the unsorted tasklist
 	std::vector<TMTask>::iterator findEarliestTaskIter(std::vector<TMTask>::iterator unsortedStart);
