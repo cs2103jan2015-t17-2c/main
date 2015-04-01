@@ -65,6 +65,9 @@ namespace TMGUI {
 	private: System::Windows::Forms::ColumnHeader^  endDate;
 	private: System::Windows::Forms::ColumnHeader^  endTime;
 	private: System::Windows::Forms::ColumnHeader^  confirmation;
+	private: System::Windows::Forms::Label^  label4;
+	private: System::Windows::Forms::Timer^  timer1;
+	private: System::ComponentModel::IContainer^  components;
 
 
 	protected: 
@@ -75,7 +78,7 @@ namespace TMGUI {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		System::ComponentModel::Container ^components;
+
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -84,6 +87,7 @@ namespace TMGUI {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			this->components = (gcnew System::ComponentModel::Container());
 			this->userInput = (gcnew System::Windows::Forms::TextBox());
 			this->welcomeMessage = (gcnew System::Windows::Forms::Label());
 			this->label1 = (gcnew System::Windows::Forms::Label());
@@ -98,6 +102,8 @@ namespace TMGUI {
 			this->endDate = (gcnew System::Windows::Forms::ColumnHeader());
 			this->endTime = (gcnew System::Windows::Forms::ColumnHeader());
 			this->confirmation = (gcnew System::Windows::Forms::ColumnHeader());
+			this->label4 = (gcnew System::Windows::Forms::Label());
+			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->SuspendLayout();
 			// 
 			// userInput
@@ -130,7 +136,7 @@ namespace TMGUI {
 			this->label1->AutoSize = true;
 			this->label1->Font = (gcnew System::Drawing::Font(L"Segoe UI Symbol", 18, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label1->Location = System::Drawing::Point(388, 27);
+			this->label1->Location = System::Drawing::Point(1517, 24);
 			this->label1->Margin = System::Windows::Forms::Padding(6, 0, 6, 0);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(276, 65);
@@ -142,7 +148,7 @@ namespace TMGUI {
 			this->label2->AutoSize = true;
 			this->label2->Font = (gcnew System::Drawing::Font(L"Segoe UI Symbol", 11.25F, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label2->Location = System::Drawing::Point(92, 48);
+			this->label2->Location = System::Drawing::Point(1224, 43);
 			this->label2->Margin = System::Windows::Forms::Padding(6, 0, 6, 0);
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(308, 41);
@@ -225,6 +231,21 @@ namespace TMGUI {
 			this->confirmation->Text = L"Confirmation";
 			this->confirmation->Width = 105;
 			// 
+			// label4
+			// 
+			this->label4->AutoSize = true;
+			this->label4->Location = System::Drawing::Point(23, 56);
+			this->label4->Name = L"label4";
+			this->label4->Size = System::Drawing::Size(70, 25);
+			this->label4->TabIndex = 10;
+			this->label4->Text = L"label4";
+			// 
+			// timer1
+			// 
+			this->timer1->Enabled = true;
+			this->timer1->Interval = 1;
+			this->timer1->Tick += gcnew System::EventHandler(this, &TMGUserInterface::timer1_Tick);
+			// 
 			// TMGUserInterface
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(12, 25);
@@ -232,6 +253,7 @@ namespace TMGUI {
 			this->AutoSize = true;
 			this->BackColor = System::Drawing::Color::LightSteelBlue;
 			this->ClientSize = System::Drawing::Size(1817, 1122);
+			this->Controls->Add(this->label4);
 			this->Controls->Add(this->defaultView);
 			this->Controls->Add(this->label3);
 			this->Controls->Add(this->statusDisplay);
@@ -247,7 +269,7 @@ namespace TMGUI {
 			this->MinimumSize = System::Drawing::Size(1843, 1193);
 			this->Name = L"TMGUserInterface";
 			this->Padding = System::Windows::Forms::Padding(0, 0, 20, 20);
-			this->Text = L"TMGUserInterface";
+			this->Text = L"TimeMaster";
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -355,5 +377,12 @@ namespace TMGUI {
 			 }
 
 
+
+private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e) {
+			 DateTime time = DateTime::Now;
+			 String^ format = "dd/MMM/yyyy  hh:mm";
+			 
+			 label4->Text = time.ToString(format);	
+		 }
 };
 }
