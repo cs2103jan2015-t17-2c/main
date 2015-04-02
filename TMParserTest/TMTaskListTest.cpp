@@ -9,47 +9,96 @@ namespace LibraryTest
 
 {	public:
 		
-		TEST_METHOD(addFloatingTaskTest) {}
-		/*{
-			TMParser *parser = TMParser::getInstance(); 
-			TMTaskList *taskList = TMTaskList::getInstance();
-			TMCommandCreator cmdCreator;
+		TEST_METHOD(addFloatingTaskTest) {
+		
+			TMExecutor* exe = TMExecutor::getInstance();
+	
+			std::vector<TMTask> undated;
 
 			std::string userEntry = "add test1";
 			std::string expected = "test1";
 			int expectedUndatedSize = 1;
-			int expectedDatedSize = 0;
+		
 
-			parser->initialize(userEntry);
-			std::string command = parser->extractCommand();
-			TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(parser->determineCommandType(command));
-			commandObjPtr->execute();
+			exe->executeMain(userEntry);
+				
+			TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+			TMTaskList taskList = taskListStates->getCurrentTaskList();
 
-			Assert::AreEqual(expectedUndatedSize,taskList->getUndatedSize());
-			Assert::AreEqual(expectedDatedSize,taskList->getDatedSize());
+			
+
+			Assert::AreEqual(expectedUndatedSize,taskList.getUndatedSize());
+			
 		}
 
-		TEST_METHOD(addDatedTaskTest)
+		TEST_METHOD(addDatedTaskDescriptionTest)
 		{
-			TMParser *parser = TMParser::getInstance(); 
-			TMTaskList *taskList = TMTaskList::getInstance();
-			TMCommandCreator cmdCreator;
+			TMExecutor* exe = TMExecutor::getInstance();
+	
+			
 
-			std::string userEntry = "add test1 on friday at 4pm";
-			std::string expected = "test1";
-			int expectedUndatedSize = 0;
+			std::string userEntry = "add test1 on 01012016 at 5pm";
+			std::string expectedDescription = "test1 ";
+			std::string expectedStartDate = "1 Jan 2016";
 			int expectedDatedSize = 1;
+		
 
-			parser->initialize(userEntry);
-			std::string command = parser->extractCommand();
-			TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(parser->determineCommandType(command));
-			commandObjPtr->execute();
+			exe->executeMain(userEntry);
+				
+			TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+			TMTaskList taskList = taskListStates->getCurrentTaskList();
+			std::vector<TMTask> dated = taskList.getDated();
+			
 
-			//Assert::AreEqual(expectedUndatedSize,taskList->getUndatedSize());
-			Assert::AreEqual(expectedDatedSize,taskList->getDatedSize());
+			Assert::AreEqual(expectedDescription,dated[0].getTaskDescription());
 		}
 
-		TEST_METHOD(TestisTwoClash_1) {  
+		TEST_METHOD(addDatedTaskStartDateTest)
+		{
+			TMExecutor* exe = TMExecutor::getInstance();
+	
+			
+
+			std::string userEntry = "add test1 on 01012016 at 5pm";
+			std::string expectedDescription = "test1 ";
+			std::string expectedStartDate = "01 Jan 2016";
+			int expectedDatedSize = 1;
+		
+
+			exe->executeMain(userEntry);
+				
+			TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+			TMTaskList taskList = taskListStates->getCurrentTaskList();
+			std::vector<TMTask> dated = taskList.getDated();
+			
+
+			Assert::AreEqual(expectedStartDate,dated[0].getTaskTime().getStartDate());
+		}
+
+		TEST_METHOD(addDatedTaskStartTimeTest)
+		{
+			TMExecutor* exe = TMExecutor::getInstance();
+	
+			
+
+			std::string userEntry = "a test1 on 01012016 at 5pm";
+			std::string expectedDescription = "test1 ";
+			std::string expectedStartDate = "01 Jan 2016";
+			std::string expectedStartTime = "1700";
+			int expectedDatedSize = 1;
+		
+
+			exe->executeMain(userEntry);
+				
+			TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+			TMTaskList taskList = taskListStates->getCurrentTaskList();
+			std::vector<TMTask> dated = taskList.getDated();
+			
+
+			Assert::AreEqual(expectedStartTime,dated[0].getTaskTime().getStartTime());
+		}
+
+		/*TEST_METHOD(TestisTwoClash_1) {  
 			//test 1 (Task B starts before Task A ends)
 			TMTaskTime timeA("27 03 2015", "1300", "27 03 2015", "1700");
 			TMTask taskA("Task A", timeA, TaskType::WithPeriod);

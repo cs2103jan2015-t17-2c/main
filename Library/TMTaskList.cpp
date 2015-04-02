@@ -26,7 +26,7 @@ const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archive
 const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 
 	TMTaskList::TMTaskList() {
-		_fileDirectory = "DEFAULT.txt"; //could consider using the name of the year instead
+		_fileName = "DEFAULT.txt"; //could consider using the name of the year instead
 		}
 
 
@@ -613,44 +613,60 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 	
 
 
-	//EXPORT AND IMPORT FUNCTIONS//
-	void TMTaskList::writeToFile(){
+	//EXPORT AND IMPORT FUNCTIONS
+	void TMTaskList::writeToFile() {
 		std::ofstream outFile;
-		int i;
 		std::vector<TMTask>::iterator iter;
+		if (_directoryName == "") {
+			outFile.open(_fileName);
+		} else {
+			std::string fileDirectory = _directoryName + "\\" + _fileName;
+			outFile.open(fileDirectory);
+		}
 
-		outFile.open(_fileDirectory);
-		outFile << "Number of timed and deadline: "  << _dated.size() << "\n";
-		for (i = 0; i < int(_dated.size()); ++i) {
-			outFile << _dated[i].getTaskDescription() << 
-				" " << _dated[i].getTaskTime().getStartDate() << 
-				" " << _dated[i].getTaskTime().getStartTime() << 
-				" " << _dated[i].getTaskTime().getEndDate() <<
-				" " << _dated[i].getTaskTime().getEndTime() << "\n";
+		outFile << "Number of dated tasks: "  << _dated.size() << "\n";
+		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
+			outFile << iter->getTaskDescription() << 
+				" " << iter->getUnconfirmedBatchNumber() <<
+				" " << iter->getTaskTime().getStartDate() << 
+				" " << iter->getTaskTime().getStartTime() << 
+				" " << iter->getTaskTime().getEndDate() <<
+				" " << iter->getTaskTime().getEndTime() << 
+				" " << iter->isCompleted() << 
+				" " << iter->isConfirmed() << 
+				" " << iter->isClashed() << "\n";
 		}
 
 		//outFile << '\n';
 	
 		outFile << "Number of undated tasks: " << _undated.size() << "\n";
-		for (i = 0; i < int(_undated.size()); ++i) {
-			outFile << _undated[i].getTaskDescription() << "\n";
+		for (iter = _undated.begin(); iter != _undated.end(); ++iter) {
+			outFile << iter->getTaskDescription() << 
+				" " << iter->getUnconfirmedBatchNumber() << 
+				" " << iter->isCompleted() << 
+				" " << iter->isConfirmed() << "\n";
 		}
 
 		//outFile << "\n";
 
-		outFile << "Number of completed tasks: " << _archived.size() << "\n";
+		outFile << "Number of completed/archived tasks: " << _archived.size() << "\n";
 		for (iter = _archived.begin(); iter != _archived.end(); iter++) {
 			
-			if (iter->getTaskType() == TaskType::WithPeriod || iter->getTaskType() == TaskType::WithEndDateTime) {
-				outFile << iter->getTaskDescription() <<
+			if (iter->getTaskType() != TaskType::Undated) {
+				outFile << iter->getTaskDescription() << 
+				" " << iter->getUnconfirmedBatchNumber() <<
 				" " << iter->getTaskTime().getStartDate() << 
 				" " << iter->getTaskTime().getStartTime() << 
 				" " << iter->getTaskTime().getEndDate() <<
-				" " << iter->getTaskTime().getEndTime() << '\n';
-			}
-
-			else {
-				outFile << iter->getTaskDescription() << '\n';
+				" " << iter->getTaskTime().getEndTime() << 
+				" " << iter->isCompleted() << 
+				" " << iter->isConfirmed() << 
+				" " << iter->isClashed() << "\n";
+			}else {
+				outFile << iter->getTaskDescription() << 
+				" " << iter->getUnconfirmedBatchNumber() << 
+				" " << iter->isCompleted() << 
+				" " << iter->isConfirmed() << "\n";
 			}
 		}
 
@@ -659,10 +675,11 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 
 	void TMTaskList::loadFromFile() {
 
+		std::string fileDirectory = _directoryName + _fileName;
 		std::ifstream directoryReference("REFERENCE.txt");
-		getline(directoryReference, _fileDirectory);
+		getline(directoryReference, fileDirectory);
 
-		std::ifstream contentReference(_fileDirectory);
+		std::ifstream contentReference(fileDirectory);
 		std::vector<std::string> linesFromFile;
 		std::string line;
 		std::string M1 = "Number of timed and deadline:";
@@ -713,17 +730,17 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 	} 
 
 	void TMTaskList::setFileDirectory(std::string directory) {
-		_fileDirectory = directory;
+		_directoryName = directory;
 	}
 
 	std::string TMTaskList::getFileDirectory() {
-		return _fileDirectory;
+		return _directoryName;
 	}
 
 	void TMTaskList::leaveReferenceUponExit() {
 		std::ofstream outFile;
 		outFile.open("REFERENCE.txt");
-		outFile << _fileDirectory << '\n';
+		outFile << _directoryName + _fileName << '\n';
 		outFile << "THIS FILE IS FOR REFERENCE TO LOAD FROM FILE. DO NOT DELETE" << '\n';
 		outFile.close();
 		}
