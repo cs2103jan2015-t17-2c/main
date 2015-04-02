@@ -58,17 +58,23 @@ public:
     std::string getDateFromNextDay(int);
     std::string extractDay(int, std::queue<int>&);
     std::string extractTime(int, std::queue<int>&);
+    //
+    std::string extractEndTime(int, std::queue<int>&);
+    std::string extractEndDate(int, std::queue<int>&);
+    //used when one time is encountered check if to or '-' follows and then another time
+    bool isTimePeriod(int);
+    bool isDatePeriod(int);
+    //void splitPeriod(std::string, std::string&, std::string&);
+    //
     void extractDateAndOrTime(int, std::queue<int>&, std::string&,std::string&);
     void configureAllDatesAndTimes(std::string, std::string, std::string, std::string);
 
     bool isDeadlinedTask();
     bool isTimedTask();
-    
     //search for keyword block (time&/date) and (time&/date)
     bool isMultipleTimingTask();
 
     bool isValidDate(std::string);
-    
     //checks if startDate is not later than endDate and 
     //if startDate == endDate, startTime is no later than endTime
     bool isValidInfo(std::string, std::string, std::string, std::string);
@@ -77,7 +83,6 @@ public:
     //bool isPeriod(std::string);
     //to test for date in other forms. define another function to convert 
     bool isNumericDate(std::string);
-    //
     bool isDDMonDate(std::string);
     bool isDay(std::string);
     //12pm 1230pm 130am
@@ -85,6 +90,7 @@ public:
     //0800 
     bool is24HTime(std::string);
     bool isNextDay(int);
+    //NOT USED
     bool isNext(std::string);
     bool isAM(std::string);
     bool isPM(std::string);
@@ -96,6 +102,7 @@ public:
     int dayOfWeek(std::string); 
 
     //use after command is extracted
+    //check if position no. is unique
     std::vector<int> parseTaskPositionNo();
     std::string parseSearchKey();
     std::string parseDirectory();
@@ -110,6 +117,8 @@ public:
 
     std::string monthFromWrittenToNumeric(std::string);
 
+    //incomplete
+    //preconditions check if is 12H or 24H first
     std::string timeTo24HFormat(std::string);
     std::string getCurrentTime();
     std::string substractNDaysFromDate(std::string,int);

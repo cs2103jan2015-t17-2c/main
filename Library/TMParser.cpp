@@ -898,7 +898,83 @@ std::string TMParser::extractTime(int index, std::queue<int>& indexOfDatesAndTim
     return time;
 }
 
-//NEED TO RETURN 2 VARIABLES
+//preconditions: check isTimePeriod before using
+std::string TMParser::extractEndTime(int index, std::queue<int>& indexOfDatesAndTimes) {
+    //pushes index of dash (or "to")
+    indexOfDatesAndTimes.push(index);
+    std::string endTimeIn24HFormat = extractTime(index + 1, indexOfDatesAndTimes);
+
+    return endTimeIn24HFormat;
+}
+
+std::string TMParser::extractEndDate(int index, std::queue<int>& indexOfDatesAndTimes) {
+    indexOfDatesAndTimes.push(index);
+    std::string endDate;
+    std::string lowercaseToken = returnLowerCase(_tokenizedUserEntry[index+1]);
+    if(isNumericDate(lowercaseToken)||isDDMonDate(lowercaseToken)||isDay(lowercaseToken)){
+        endDate = extractDayOrNumericDateOrDDMonDate(index + 1, indexOfDatesAndTimes);
+    } else if(isNextDay(index + 1)){
+        endDate = extractNextDay(index + 1, indexOfDatesAndTimes);
+    }
+
+    return endDate;
+}
+
+bool TMParser::isTimePeriod(int index){
+    int lengthOfTokenizedUserEntry = _tokenizedUserEntry.size();
+    //OR "to"
+    if(_tokenizedUserEntry[index] != "-"){
+        return false;
+    }
+
+    if(index + 1 == lengthOfTokenizedUserEntry){
+        return false;
+    }
+
+    std::string lowercaseToken = returnLowerCase(_tokenizedUserEntry[index+1]);
+    if(is12HTime(lowercaseToken)||is24HTime(lowercaseToken)){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool TMParser::isDatePeriod(int index){
+    int lengthOfTokenizedUserEntry = _tokenizedUserEntry.size();
+    //OR "to"
+    if(_tokenizedUserEntry[index] != "-"){
+        return false;
+    }
+
+    if(index + 1 == lengthOfTokenizedUserEntry){
+        return false;
+    }
+
+    std::string lowercaseToken = returnLowerCase(_tokenizedUserEntry[index+1]);
+    if(isNumericDate(lowercaseToken)||isDDMonDate(lowercaseToken)||isDay(lowercaseToken)||
+        isNextDay(index + 1)){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/*
+void TMParser::splitPeriod(std::string period, std::string& start, std::string& end){
+    int indexOfDash = period.find_first_of("-");
+    int indexOfLastCharacter = period.length()-1;
+    //if dash cannot be found or is at the back of possible period
+    if(indexOfDash == std::string::npos||indexOfDash == indexOfLastCharacter){
+        return;
+    }
+    
+    start = period.substr(0,indexOfDash);
+    end = period.substr(indexOfDash + 1);
+
+    return;
+}
+*/
+
 void TMParser::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAndTimes, std::string& extractedDate, std::string& extractedTime){
                 //checks for startTime and startDate
     std::string stringAfterToken = returnLowerCase(_tokenizedUserEntry[index]);
