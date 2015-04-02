@@ -487,102 +487,9 @@ TMTask TMParser::parseTimedTaskInfo(){
     //if obtained only time then check if time passed...
     //if only date obtained then set as 0000
 
-    if((startTimeExtracted||startDateExtracted) && !endTimeExtracted && !endDateExtracted){
-        taskType = TaskType::WithStartDateTime;
-        if(!startTimeExtracted){
-            startTime = "0000";
-        } else if(!startDateExtracted){
-            std::string currentTime = getCurrentTime();
-            if(startTime >= currentTime){
-                boost::gregorian::date currentDate = _dateToday;
-                startDate = dateFromBoostToDDMMYYYY(currentDate);
-            } else {
-                boost::gregorian::date currentDate = _dateToday;
-                 startDate = dateFromBoostToDelimitedDDMMYYYY(currentDate);
-                 startDate = addNDaysFromDate(startDate,1);
-             }
-        } else {
-        //startTime and startDate are found
-        }
-        endDate = startDate;
-        endTime = startTime;
-
-    } else if((endTimeExtracted||endDateExtracted) && !startTimeExtracted && !startDateExtracted) {
-        taskType = TaskType::WithEndDateTime;
-        if(!endTimeExtracted){
-            endTime = "0000";
-        } else if(!endDateExtracted){
-            std::string currentTime = getCurrentTime();
-            if(endTime >= currentTime){
-                boost::gregorian::date currentDate = _dateToday;
-                endDate = dateFromBoostToDDMMYYYY(currentDate);
-            } else {
-                boost::gregorian::date currentDate = _dateToday;
-                 endDate = dateFromBoostToDelimitedDDMMYYYY(currentDate);
-                 endDate = addNDaysFromDate(startDate,1);
-             }
-        } else {
-        //endTime and endDate are found
-        }
-        //no startDateTime, assumed to be current date and atime
-        startDate = dateFromBoostToDDMMYYYY(_dateToday);
-        startTime = getCurrentTime();
-
-    } else if((startDateExtracted||startTimeExtracted) && (endDateExtracted||endTimeExtracted)){
-        taskType = TaskType::WithPeriod;
-        if(!startTimeExtracted){
-            //there's startDate no startTime
-            startTime = "0000";
-            //check if there's no endDate but there's endTime then endDate will be startDate
-            //else there is no endTime but there's endDate then endTime will be 2359
-            if(!endDateExtracted){
-                //if endTime = 0000 plus 1 more day?
-                endDate = startDate;
-            } else if(!endTimeExtracted){
-                endTime = "2359";
-            }
-        } else if(!startDateExtracted){
-            //no startDate but got startTime
-            //no endDate got endTime then should be today till today/tomorrow
-            //got endDate no endTime
-
-            if(!endDateExtracted){
-                startDate = dateFromBoostToDDMMYYYY(_dateToday);
-                if(endTime >= startTime){
-                    endDate = startDate;
-                } else {
-                    endDate = dateFromBoostToDelimitedDDMMYYYY(_dateToday);
-                    endDate = addNDaysFromDate(endDate,1);
-                }
-            } else if (!endTimeExtracted){
-                startDate = endDate;
-                endTime = "2359";
-            } else {
-                if(startTime >= endTime){
-                    startDate = endDate;
-                    startDate = dateFromNumericToBoostFormat(startDate);
-                    startDate = substractNDaysFromDate(startDate,1);
-                } else {
-                    startDate = endDate;
-                }
-            }
-        } else {
-            //startTime and startDate are found
-            if(!endTimeExtracted){
-                endTime = "2359";
-            } else if (!endDateExtracted){
-                endDate = startDate;
-                if(endTime >= startTime){
-
-                } else {
-                    endDate = dateFromNumericToBoostFormat(endDate);
-                    endDate = addNDaysFromDate(endDate,1);
-                }
-            } else {
-                //all attributes found
-            }
-        }
-    }
+    configureAllDatesAndTimes(startDate, startTime, endDate, endTime,
+                              taskType, startDateExtracted, startTimeExtracted,
+                              endDateExtracted, endTimeExtracted);
 
     for(int i = 0; i < lengthOfTokenizedUserEntry; i++) {
         //if indexOfDatesAndTimes is empty then always -1 (invalid index)
@@ -712,20 +619,20 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
     TaskType taskType;
     std::string startTime = "";
     std::string startDate = "";
-    std::string stringAfterAnd;
-    //std::string endTime = "";
-    //std::string endDate = "";
+    std::string endTime = "";
+    std::string endDate = "";
     std::string taskDescription = "";
     std::string unitString;
     bool startTimeExtracted = false;
     bool startDateExtracted = false;
-    //bool endTimeExtracted = false;
-    //bool endDateExtracted = false;
+    bool endTimeExtracted = false;
+    bool endDateExtracted = false;
     bool oneTimingFound = false;
+    std::string stringAfterAnd;
     int lengthOfTokenizedUserEntry = _tokenizedUserEntry.size();
 
     for(int index = 0; index < lengthOfTokenizedUserEntry; index++){
-        std::string extractedDate;
+        std::string extractedStartDate;
         std::string extractedTime;
 
         unitString = returnLowerCase(_tokenizedUserEntry[index]);
@@ -736,24 +643,24 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
                     break;
                 }
 
-                extractDateAndOrTime(index + 1, indexOfDatesAndTimes,extractedDate,extractedTime);
+                extractDateAndOrTime(index + 1, indexOfDatesAndTimes,extractedStartDate,extractedTime);
 
-                if((extractedDate != "")||(extractedTime != "")){
+                if((extractedStartDate != "")||(extractedTime != "")){
                     mainIndexOfDatesAndTimes.push(index);
                 }
             } 
         } else {
-            extractDateAndOrTime(index, indexOfDatesAndTimes, extractedDate, extractedTime);
+            extractDateAndOrTime(index, indexOfDatesAndTimes, extractedStartDate, extractedTime);
         }
         
-        if((extractedDate != "")||(extractedTime != "")){
+        if((extractedStartDate != "")||(extractedTime != "")){
             if(!oneTimingFound){
                 //put in isValid loop?
                 oneTimingFound = true;
             }
 
-            if(extractedDate != ""){
-                startDate = extractedDate;
+            if(extractedStartDate != ""){
+                startDate = extractedStartDate;
                 startDateExtracted = true;
             }
 
@@ -762,7 +669,7 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
                 startTimeExtracted = true;
             }
 
-            if(extractedDate == ""){
+            if(extractedStartDate == ""){
                 std::string currentTime = getCurrentTime();
                 if(startTime >= currentTime){
                     startDate = dateFromBoostToDDMMYYYY(_dateToday);
@@ -774,16 +681,14 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
 
             startDate = dateFromNumericToBoostFormat(startDate);
 
-            if(isValidDate(startDate)){
+            if(isValidDate(startDate)){ //and valid info!
                 //IMPLEMENT FUNCTION TO CHECK DATE IMMEDIATELY BEFORE CONSIDERING AS DATE
-                TMTaskTime taskTime(startDate, startTime, startDate, startTime);
+                TMTaskTime taskTime(startDate, startTime, endDate, endTime);
                 taskTimings.push_back(taskTime);
                 while(!indexOfDatesAndTimes.empty()){
                     mainIndexOfDatesAndTimes.push(indexOfDatesAndTimes.front());
                     indexOfDatesAndTimes.pop();
                 }
-            } else {
-                //invalid dates won't be added into the vector of taskTimings
             }
         }
     }
@@ -898,83 +803,6 @@ std::string TMParser::extractTime(int index, std::queue<int>& indexOfDatesAndTim
     return time;
 }
 
-//preconditions: check isTimePeriod before using
-std::string TMParser::extractEndTime(int index, std::queue<int>& indexOfDatesAndTimes) {
-    //pushes index of dash (or "to")
-    indexOfDatesAndTimes.push(index);
-    std::string endTimeIn24HFormat = extractTime(index + 1, indexOfDatesAndTimes);
-
-    return endTimeIn24HFormat;
-}
-
-std::string TMParser::extractEndDate(int index, std::queue<int>& indexOfDatesAndTimes) {
-    indexOfDatesAndTimes.push(index);
-    std::string endDate;
-    std::string lowercaseToken = returnLowerCase(_tokenizedUserEntry[index+1]);
-    if(isNumericDate(lowercaseToken)||isDDMonDate(lowercaseToken)||isDay(lowercaseToken)){
-        endDate = extractDayOrNumericDateOrDDMonDate(index + 1, indexOfDatesAndTimes);
-    } else if(isNextDay(index + 1)){
-        endDate = extractNextDay(index + 1, indexOfDatesAndTimes);
-    }
-
-    return endDate;
-}
-
-bool TMParser::isTimePeriod(int index){
-    int lengthOfTokenizedUserEntry = _tokenizedUserEntry.size();
-    //OR "to"
-    if(_tokenizedUserEntry[index] != "-"){
-        return false;
-    }
-
-    if(index + 1 == lengthOfTokenizedUserEntry){
-        return false;
-    }
-
-    std::string lowercaseToken = returnLowerCase(_tokenizedUserEntry[index+1]);
-    if(is12HTime(lowercaseToken)||is24HTime(lowercaseToken)){
-        return true;
-    } else {
-        return false;
-    }
-}
-
-bool TMParser::isDatePeriod(int index){
-    int lengthOfTokenizedUserEntry = _tokenizedUserEntry.size();
-    //OR "to"
-    if(_tokenizedUserEntry[index] != "-"){
-        return false;
-    }
-
-    if(index + 1 == lengthOfTokenizedUserEntry){
-        return false;
-    }
-
-    std::string lowercaseToken = returnLowerCase(_tokenizedUserEntry[index+1]);
-    if(isNumericDate(lowercaseToken)||isDDMonDate(lowercaseToken)||isDay(lowercaseToken)||
-        isNextDay(index + 1)){
-        return true;
-    } else {
-        return false;
-    }
-}
-
-/*
-void TMParser::splitPeriod(std::string period, std::string& start, std::string& end){
-    int indexOfDash = period.find_first_of("-");
-    int indexOfLastCharacter = period.length()-1;
-    //if dash cannot be found or is at the back of possible period
-    if(indexOfDash == std::string::npos||indexOfDash == indexOfLastCharacter){
-        return;
-    }
-    
-    start = period.substr(0,indexOfDash);
-    end = period.substr(indexOfDash + 1);
-
-    return;
-}
-*/
-
 void TMParser::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAndTimes, std::string& extractedDate, std::string& extractedTime){
                 //checks for startTime and startDate
     std::string stringAfterToken = returnLowerCase(_tokenizedUserEntry[index]);
@@ -1021,6 +849,102 @@ void TMParser::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAndT
     extractedTime = time;
 
     return;
+}
+
+void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& startTime, std::string& endDate, std::string& endTime, TaskType& taskType, bool startDateExtracted, bool startTimeExtracted, bool endDateExtracted, bool endTimeExtracted){
+    if((startTimeExtracted||startDateExtracted) && !endTimeExtracted && !endDateExtracted){
+        taskType = TaskType::WithStartDateTime;
+        if(!startTimeExtracted){
+            startTime = "0000";
+        } else if(!startDateExtracted){
+            std::string currentTime = getCurrentTime();
+            if(startTime >= currentTime){
+                boost::gregorian::date currentDate = _dateToday;
+                startDate = dateFromBoostToDDMMYYYY(currentDate);
+            } else {
+                boost::gregorian::date currentDate = _dateToday;
+                 startDate = dateFromBoostToDelimitedDDMMYYYY(currentDate);
+                 startDate = addNDaysFromDate(startDate,1);
+             }
+        } else {
+        //startTime and startDate are found
+        }
+        endDate = startDate;
+        endTime = startTime;
+
+    } else if((endTimeExtracted||endDateExtracted) && !startTimeExtracted && !startDateExtracted) {
+        taskType = TaskType::WithEndDateTime;
+        if(!endTimeExtracted){
+            endTime = "0000";
+        } else if(!endDateExtracted){
+            std::string currentTime = getCurrentTime();
+            if(endTime >= currentTime){
+                boost::gregorian::date currentDate = _dateToday;
+                endDate = dateFromBoostToDDMMYYYY(currentDate);
+            } else {
+                boost::gregorian::date currentDate = _dateToday;
+                 endDate = dateFromBoostToDelimitedDDMMYYYY(currentDate);
+                 endDate = addNDaysFromDate(startDate,1);
+             }
+        } else {
+        //endTime and endDate are found
+        }
+        //no startDateTime, assumed to be current date and atime
+        startDate = dateFromBoostToDDMMYYYY(_dateToday);
+        startTime = getCurrentTime();
+
+    } else if((startDateExtracted||startTimeExtracted) && (endDateExtracted||endTimeExtracted)){
+        taskType = TaskType::WithPeriod;
+        if(!startTimeExtracted){
+            //there's startDate no startTime
+            startTime = "0000";
+            //check if there's no endDate but there's endTime then endDate will be startDate
+            //else there is no endTime but there's endDate then endTime will be 2359
+            if(!endDateExtracted){
+                //if endTime = 0000 plus 1 more day?
+                endDate = startDate;
+            } else if(!endTimeExtracted){
+                endTime = "2359";
+            }
+        } else if(!startDateExtracted){
+            //no startDate but got startTime
+            //no endDate got endTime then should be today till today/tomorrow
+            //got endDate no endTime
+
+            if(!endDateExtracted){
+                startDate = dateFromBoostToDDMMYYYY(_dateToday);
+                if(endTime >= startTime){
+                    endDate = startDate;
+                } else {
+                    endDate = dateFromBoostToDelimitedDDMMYYYY(_dateToday);
+                    endDate = addNDaysFromDate(endDate,1);
+                }
+            } else if (!endTimeExtracted){
+                startDate = endDate;
+                endTime = "2359";
+            } else {
+                startDate = endDate;
+                if(startTime >= endTime){
+                    
+                    startDate = dateFromNumericToBoostFormat(startDate);
+                    startDate = substractNDaysFromDate(startDate,1);
+                }
+            }
+        } else {
+            //startTime and startDate are found
+            if(!endTimeExtracted){
+                endTime = "2359";
+            } else if (!endDateExtracted){
+                endDate = startDate;
+                if(endTime < startTime){
+                    endDate = dateFromNumericToBoostFormat(endDate);
+                    endDate = addNDaysFromDate(endDate,1);
+                }
+            } else {
+                //all attributes found
+            }
+        }
+    }
 }
 
 bool TMParser::isDeadlinedTask() {

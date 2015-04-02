@@ -58,16 +58,9 @@ public:
     std::string getDateFromNextDay(int);
     std::string extractDay(int, std::queue<int>&);
     std::string extractTime(int, std::queue<int>&);
-    //
-    std::string extractEndTime(int, std::queue<int>&);
-    std::string extractEndDate(int, std::queue<int>&);
-    //used when one time is encountered check if to or '-' follows and then another time
-    bool isTimePeriod(int);
-    bool isDatePeriod(int);
-    //void splitPeriod(std::string, std::string&, std::string&);
-    //
+
     void extractDateAndOrTime(int, std::queue<int>&, std::string&,std::string&);
-    void configureAllDatesAndTimes(std::string, std::string, std::string, std::string);
+    void configureAllDatesAndTimes(std::string&, std::string&, std::string&, std::string&, TaskType&, bool, bool, bool, bool);
 
     bool isDeadlinedTask();
     bool isTimedTask();
