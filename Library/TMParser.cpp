@@ -1324,9 +1324,18 @@ std::string TMParser::dateFromNumericToBoostFormat(std::string stringDate) {
 
 }
 
+std::string TMParser::dateFromNumericToStandardFormat(std::string stringDate){
+    std::string dateInBoostFormat = dateFromNumericToBoostFormat(stringDate);
+    if(!isValidDate(dateInBoostFormat)){
+        return "";
+    }
+    boost::gregorian::date boostDate = boost::gregorian::from_uk_string(dateInBoostFormat);
+    return dateFromBoostToStandardFormat(boostDate);
+}
+
 std::string TMParser::dateFromBoostToStandardFormat(const boost::gregorian::date& date) {
     std::ostringstream os;
-    boost::gregorian::date_facet* facet(new boost::gregorian::date_facet("%A, %d %B %Y"));
+    boost::gregorian::date_facet* facet(new boost::gregorian::date_facet("%d %b %Y"));
     os.imbue(std::locale(std::cout.getloc(), facet));
     os << date;
     return os.str();
