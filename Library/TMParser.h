@@ -60,7 +60,7 @@ public:
     std::string extractTime(int, std::queue<int>&);
 
     void extractDateAndOrTime(int, std::queue<int>&, std::string&,std::string&);
-    void configureAllDatesAndTimes(std::string&, std::string&, std::string&, std::string&, TaskType&, bool, bool, bool, bool);
+    void configureAllDatesAndTimes(std::string&, std::string&, std::string&, std::string&, TaskType&);
 
     bool isDeadlinedTask();
     bool isTimedTask();
