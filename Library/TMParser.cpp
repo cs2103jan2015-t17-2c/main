@@ -105,6 +105,9 @@ std::vector<std::string> TMParser::getTokenizedUserEntry(std::string userEntry){
 //Preconditions: getTokenizedUserEntry(userEntry) first
 //Postconditions: first token is extracted from vector of string and is no longer there
 std::string TMParser::extractCommand() {
+    if(_tokenizedUserEntry.size() == 0){
+        return "";
+    }
 	std::string  command = _tokenizedUserEntry[0];
     _tokenizedUserEntry.erase(_tokenizedUserEntry.begin());
 
