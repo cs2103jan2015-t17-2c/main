@@ -38,6 +38,7 @@ public:
 	bool isConfirmed();
 	bool isClashed();
     TaskType getTaskType();
+	//std::string getStringTaskType();
 
     void setTaskDescription(std::string);
 

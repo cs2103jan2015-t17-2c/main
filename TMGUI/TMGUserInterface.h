@@ -497,6 +497,7 @@ namespace TMGUI {
 						break;
 
 					case  DeadlineTasks:
+						DisplayState->Text = "Currently displaying: " + "Deadline Tasks!";
 						ListViewItem^ deadlineEntry;
 						defaultView->Items->Clear();
 						for (int j = 0; j != dated.size(); ++j){
@@ -532,6 +533,7 @@ namespace TMGUI {
 						break;
 					
 					case UndatedTasks:
+						DisplayState->Text = "Currently displaying: " + "Undated Tasks!";
 						ListViewItem^ floatingEntry;
 						defaultView->Items->Clear();
 						for (int k = dated.size(); k != dated.size() + undated.size(); ++k){
@@ -563,6 +565,7 @@ namespace TMGUI {
 						break;
 					
 					case ArchivedTasks:
+						DisplayState->Text = "Currently displaying: " + "Archived Tasks!";
 						ListViewItem^ archivedEntry;
 						defaultView->Items->Clear();
 						for (int l = dated.size()+undated.size(); l != dated.size() + undated.size()+archived.size(); ++l){

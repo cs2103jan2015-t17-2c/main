@@ -620,13 +620,19 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 		std::vector<TMTask>::iterator iter;
 
 		outFile.open(_fileDirectory);
-		outFile << "Number of timed and deadline: "  << _dated.size() << "\n";
+		outFile << "Number of dated tasks: "  << _dated.size() << "\n";
 		for (i = 0; i < int(_dated.size()); ++i) {
-			outFile << _dated[i].getTaskDescription() << 
+			outFile << _dated[i].getTaskDescription() <<
+				" " << _dated[i].getUnconfirmedBatchNumber() <<
 				" " << _dated[i].getTaskTime().getStartDate() << 
 				" " << _dated[i].getTaskTime().getStartTime() << 
 				" " << _dated[i].getTaskTime().getEndDate() <<
-				" " << _dated[i].getTaskTime().getEndTime() << "\n";
+				" " << _dated[i].getTaskTime().getEndTime() << 
+				" " << _dated[i].isCompleted() << 
+				" " << _dated[i].isConfirmed() << 
+				" " << _dated[i].isClashed() << 
+				" " << _dated[i].getTaskType() <<
+				"\n";
 		}
 
 		//outFile << '\n';
