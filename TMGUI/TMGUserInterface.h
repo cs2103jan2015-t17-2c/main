@@ -155,33 +155,33 @@ namespace TMGUI {
 			this->welcomeMessage->Size = System::Drawing::Size(129, 32);
 			this->welcomeMessage->TabIndex = 2;
 			this->welcomeMessage->Text = L"Command:";
-			this->welcomeMessage->Click += gcnew System::EventHandler(this, &TMGUserInterface::welcomeMessage_Click);
 			// 
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Font = (gcnew System::Drawing::Font(L"Segoe UI Symbol", 18, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
+			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 18, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->label1->Location = System::Drawing::Point(934, 8);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(141, 32);
+			this->label1->Size = System::Drawing::Size(142, 29);
 			this->label1->TabIndex = 4;
 			this->label1->Text = L"TimeMaster";
 			// 
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Font = (gcnew System::Drawing::Font(L"Segoe UI Symbol", 11.25F, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
+			this->label2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.875F, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label2->Location = System::Drawing::Point(789, 18);
+			this->label2->Location = System::Drawing::Point(791, 15);
+			this->label2->Margin = System::Windows::Forms::Padding(6, 0, 6, 0);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(153, 20);
+			this->label2->Size = System::Drawing::Size(149, 18);
 			this->label2->TabIndex = 5;
 			this->label2->Text = L"Master your time with";
 			// 
 			// statusDisplay
 			// 
-			this->statusDisplay->BackColor = System::Drawing::SystemColors::ActiveCaptionText;
+			this->statusDisplay->BackColor = System::Drawing::SystemColors::WindowText;
 			this->statusDisplay->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
 			this->statusDisplay->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
@@ -196,12 +196,12 @@ namespace TMGUI {
 			// label3
 			// 
 			this->label3->AutoSize = true;
-			this->label3->Font = (gcnew System::Drawing::Font(L"Segoe UI", 21.75F, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
+			this->label3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 22.125F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->label3->Location = System::Drawing::Point(40, 413);
 			this->label3->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(98, 40);
+			this->label3->Size = System::Drawing::Size(107, 36);
 			this->label3->TabIndex = 7;
 			this->label3->Text = L"Status:";
 			// 
@@ -229,7 +229,7 @@ namespace TMGUI {
 			// taskDescription
 			// 
 			this->taskDescription->Text = L"Task Description";
-			this->taskDescription->Width = 318;
+			this->taskDescription->Width = 291;
 			// 
 			// startDate
 			// 
@@ -254,17 +254,17 @@ namespace TMGUI {
 			// confirmation
 			// 
 			this->confirmation->Text = L"Confirmation";
-			this->confirmation->Width = 97;
+			this->confirmation->Width = 102;
 			// 
 			// isClash
 			// 
-			this->isClash->Text = L"Clash";
-			this->isClash->Width = 52;
+			this->isClash->Text = L"Clashes";
+			this->isClash->Width = 64;
 			// 
 			// isDone
 			// 
-			this->isDone->Text = L"Complete";
-			this->isDone->Width = 76;
+			this->isDone->Text = L"Completed";
+			this->isDone->Width = 86;
 			// 
 			// label4
 			// 
@@ -456,6 +456,15 @@ namespace TMGUI {
 						defaultEntry->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getEndDate()).c_str() )));
 						defaultEntry->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getEndTime()).c_str() )));
 						
+
+						if(allTasks[i].getTaskType() == TaskType ::WithEndDateTime){
+							defaultEntry->ForeColor = Color :: Red;
+						}
+
+						if(allTasks[i].getTaskType() == TaskType ::Undated){
+							defaultEntry->ForeColor = Color :: RosyBrown;
+						}
+
 						std::string confirmationStatus;
 						if (allTasks[i].isConfirmed()) {
 							confirmationStatus = "Yes";
@@ -483,32 +492,107 @@ namespace TMGUI {
 						}
 						defaultEntry->SubItems->Add(gcnew String(( (completionStatus.c_str()) )));
 
-						if(allTasks[i].getTaskType() == TaskType ::WithEndDateTime){
-							defaultEntry->ForeColor = Color :: Red;
-						}
-
-						if(allTasks[i].getTaskType() == TaskType ::Undated){
-							defaultEntry->ForeColor = Color :: RosyBrown;
-						}
-
 						defaultView->Items->Add(defaultEntry);
 					}
 						break;
+
+					case  DeadlineTasks:
+						ListViewItem^ deadlineEntry;
+						defaultView->Items->Clear();
+						for (int j = 0; j != dated.size(); ++j){
+							if(dated[j].getTaskType() == TaskType ::WithEndDateTime){
+							
+							deadlineEntry = gcnew ListViewItem(Convert::ToString(j+1));
+							deadlineEntry->SubItems->Add(gcnew String(( (dated[j].getTaskDescription()).c_str() )));
+							deadlineEntry->SubItems->Add(gcnew String(( (dated[j].getTaskTime().getStartDate()).c_str() )));
+							deadlineEntry->SubItems->Add(gcnew String(( (dated[j].getTaskTime().getStartTime()).c_str() )));
+							deadlineEntry->SubItems->Add(gcnew String(( (dated[j].getTaskTime().getEndDate()).c_str() )));
+							deadlineEntry->SubItems->Add(gcnew String(( (dated[j].getTaskTime().getEndTime()).c_str() )));
+						
+							std::string confirmationStatus;
+							if (dated[j].isConfirmed()) {
+								confirmationStatus = "Yes";
+							} else {
+								confirmationStatus = "No";
+							}
+							deadlineEntry->SubItems->Add(gcnew String(( (confirmationStatus.c_str()) )));
+
+							std::string clashStatus = "No";
+							deadlineEntry->SubItems->Add(gcnew String(( (clashStatus.c_str()) )));
+
+							std::string completionStatus= "No";
+							deadlineEntry->SubItems->Add(gcnew String(( (completionStatus.c_str()) )));
+							
+							deadlineEntry->ForeColor = Color :: Red;
+							defaultView->Items->Add(deadlineEntry);
+
+							}	
+						}
+						exe->setCurrentDisplay(Default);
+						break;
 					
-					//case  DeadlineTasks:
-						DisplayState->Text = "Currently displaying: " + "Deadline tasks view!";
-						//INSERT YOUR FUNCTION HERE
-						//break;
+					case UndatedTasks:
+						ListViewItem^ floatingEntry;
+						defaultView->Items->Clear();
+						for (int k = dated.size(); k != dated.size() + undated.size(); ++k){
+							floatingEntry = gcnew ListViewItem(Convert::ToString(k+1));
+							floatingEntry->SubItems->Add(gcnew String(( (undated[k-dated.size()].getTaskDescription()).c_str() )));
+							floatingEntry->SubItems->Add(gcnew String(( (undated[k-dated.size()].getTaskTime().getStartDate()).c_str() )));
+							floatingEntry->SubItems->Add(gcnew String(( (undated[k-dated.size()].getTaskTime().getStartTime()).c_str() )));
+							floatingEntry->SubItems->Add(gcnew String(( (undated[k-dated.size()].getTaskTime().getEndDate()).c_str() )));
+							floatingEntry->SubItems->Add(gcnew String(( (undated[k-dated.size()].getTaskTime().getEndTime()).c_str() )));
+						
+							std::string confirmationStatus;
+							if (undated[k-dated.size()].isConfirmed()) {
+								confirmationStatus = "Yes";
+							} else {
+								confirmationStatus = "No";
+							}
+							floatingEntry->SubItems->Add(gcnew String(( (confirmationStatus.c_str()) )));
+
+							std::string clashStatus = "No";
+							floatingEntry->SubItems->Add(gcnew String(( (clashStatus.c_str()) )));
+
+							std::string completionStatus= "No";
+							floatingEntry->SubItems->Add(gcnew String(( (completionStatus.c_str()) )));
+							
+							floatingEntry->ForeColor = Color :: RosyBrown;
+							defaultView->Items->Add(floatingEntry);
+							exe->setCurrentDisplay(Default);
+						}
+						break;
 					
-					//case UndatedTasks:
-						DisplayState->Text = "Currently displaying: " + "Undated tasks view!";
-						//INSERT YOUR FUNCTION HERE
-						//break;
-					
-					//case ArchivedTasks:
-						DisplayState->Text = "Currently displaying: " + "Archived tasks view!";
-						//INSERT YOUR FUNCTION HERE
-						//break;
+					case ArchivedTasks:
+						ListViewItem^ archivedEntry;
+						defaultView->Items->Clear();
+						for (int l = dated.size()+undated.size(); l != dated.size() + undated.size()+archived.size(); ++l){
+							archivedEntry = gcnew ListViewItem(Convert::ToString(l+1));
+							archivedEntry->SubItems->Add(gcnew String(( (archived[l-dated.size()-undated.size()].getTaskDescription()).c_str() )));
+							archivedEntry->SubItems->Add(gcnew String(( (archived[l-dated.size()-undated.size()].getTaskTime().getStartDate()).c_str() )));
+							archivedEntry->SubItems->Add(gcnew String(( (archived[l-dated.size()-undated.size()].getTaskTime().getStartTime()).c_str() )));
+							archivedEntry->SubItems->Add(gcnew String(( (archived[l-dated.size()-undated.size()].getTaskTime().getEndDate()).c_str() )));
+							archivedEntry->SubItems->Add(gcnew String(( (archived[l-dated.size()-undated.size()].getTaskTime().getEndTime()).c_str() )));
+						
+							std::string confirmationStatus;
+							if (archived[l-dated.size()-undated.size()].isConfirmed()) {
+								confirmationStatus = "Yes";
+							} else {
+								confirmationStatus = "No";
+							}
+							archivedEntry->SubItems->Add(gcnew String(( (confirmationStatus.c_str()) )));
+
+							std::string clashStatus = "No";
+							archivedEntry->SubItems->Add(gcnew String(( (clashStatus.c_str()) )));
+
+							std::string completionStatus= "Yes";
+							archivedEntry->SubItems->Add(gcnew String(( (completionStatus.c_str()) )));
+							
+							archivedEntry->ForeColor = Color :: ForestGreen;
+							defaultView->Items->Add(archivedEntry);
+							exe->setCurrentDisplay(Default);
+						}
+						break;
+
 					
 					case SearchResults:
 						DisplayState->Text = "Currently displaying: " + "Search results view!";
@@ -527,6 +611,15 @@ namespace TMGUI {
 							searchResult->SubItems->Add(gcnew String(( (task.getTaskTime().getEndDate()).c_str() )));
 							searchResult->SubItems->Add(gcnew String(( (task.getTaskTime().getEndTime()).c_str() )));
 						
+							if(task.getTaskType() == TaskType ::WithEndDateTime){
+								searchResult->ForeColor = Color :: Red;
+							}
+
+							if(task.getTaskType() == TaskType ::Undated){
+								searchResult->ForeColor = Color :: RosyBrown;
+							}
+
+
 							std::string confirmationStatus;
 							if (task.isConfirmed()) {
 								confirmationStatus = "Yes";
@@ -545,23 +638,16 @@ namespace TMGUI {
 							}
 							searchResult->SubItems->Add(gcnew String(( (clashStatus.c_str()) )));
 
-							/*std::string completionStatus;
+							std::string completionStatus;
 							if (task.isCompleted()) {
 								completionStatus = "Yes";
 								searchResult->ForeColor = Color :: ForestGreen;
 							} else {
 								completionStatus = "No";
 							}
-							searchResult->SubItems->Add(gcnew String(( (completionStatus.c_str()) )));*/
+							searchResult->SubItems->Add(gcnew String(( (completionStatus.c_str()) )));
 
-							if(task.getTaskType() == TaskType ::WithEndDateTime){
-								searchResult->ForeColor = Color :: Red;
-							}
-
-							if(task.getTaskType() == TaskType ::Undated){
-								searchResult->ForeColor = Color :: RosyBrown;
-							}
-
+							
 							defaultView->Items->Add(searchResult);
 						}
 						exe->setCurrentDisplay(Default);
@@ -574,14 +660,9 @@ namespace TMGUI {
 			 
 
 	
-	private: System::Void welcomeMessage_Click(System::Object^  sender, System::EventArgs^  e) {
-		 }
-
-	private: System::Void dataGridView1_CellContentClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
-		 }
-
-
+	
 	private: System::Void userInput_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+
 				 if (userInput->Text == "a") {
 					statusDisplay->Text = "add <task description> {{<time markers> <time/time period>} {<date markers> <date/date period>}/{day}}";
 				 }
@@ -597,7 +678,6 @@ namespace TMGUI {
 				if (userInput->Text == "s") {
 					statusDisplay->Text = "search <keyword(s)>";
 				}
-
 			 }
 
 

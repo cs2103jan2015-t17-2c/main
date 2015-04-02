@@ -8,6 +8,8 @@
 #include <vector>
 #include <queue>
 #include <ctype.h>
+#include <map>
+#include <boost/assign/list_of.hpp>
 
 //user input date must be ddmmyyyy
 //time input if in 12hour format must be followed immediately by pm and am
@@ -53,11 +55,10 @@ public:
     std::string extractDDMonDateAfterToken(int, std::queue<int>&);
     std::string extractNextDayAfterToken(int, std::queue<int>&);
     std::string getDateFromNextDay(int);
-    std::string extractNextDay(int, std::queue<int>&);
     std::string extractDayAfterToken(int, std::queue<int>&);
     std::string extractTimeAfterToken(int, std::queue<int>&);
     void extractDateAndOrTime(int, std::queue<int>&, std::string&,std::string&);
-
+    void configureAllDatesAndTimes(std::string, std::string, std::string, std::string);
 
     bool isDeadlinedTask();
     bool isTimedTask();
@@ -109,5 +110,7 @@ public:
     std::string addNDaysFromDate(std::string,int);
 
     TMTask convertStringToTMTask(std::string);
+    TaskType convertStringToTaskType(std::string);
+    std::string convertTaskTypeToString(TaskType);
 };
 #endif

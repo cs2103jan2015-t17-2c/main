@@ -9,7 +9,6 @@ TMTask::TMTask(std::string taskDescription, TMTaskTime taskTime, TaskType taskTy
     _isConfirmed = true;
     _isClashed = false;
     _taskType = taskType;
-	_unconfirmedBatchNumber = 0;
 }
 
 std::string TMTask::getTaskDescription(){
