@@ -63,10 +63,12 @@ public:
 
     bool isDeadlinedTask();
     bool isTimedTask();
+    
     //search for keyword block (time&/date) and (time&/date)
     bool isMultipleTimingTask();
 
     bool isValidDate(std::string);
+    
     //checks if startDate is not later than endDate and 
     //if startDate == endDate, startTime is no later than endTime
     bool isValidInfo(std::string, std::string, std::string, std::string);
@@ -78,7 +80,9 @@ public:
     //
     bool isDDMonDate(std::string);
     bool isDay(std::string);
+    //12pm 1230pm 130am
     bool is12HTime(std::string);
+    //0800 
     bool is24HTime(std::string);
     bool isNextDay(int);
     bool isNext(std::string);
@@ -117,5 +121,7 @@ public:
 
     void addErrorMessage(std::string);
     std::string getErrorMessage();
+
+    int numberOfWordsInQuote(std::string);
 };
 #endif
