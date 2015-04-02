@@ -192,14 +192,14 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
             } else if (isNextDay(index + 1)) {
                 //e.g. before next monday
                 indexOfDatesAndTimes.push(index);
-                dateToMeet = extractNextDayAfterToken(index + 1, indexOfDatesAndTimes);
+                dateToMeet = extractNextDay(index + 1, indexOfDatesAndTimes);
                 dateToMeet = dateFromNumericToBoostFormat(dateToMeet);
                 dateToMeet = substractNDaysFromDate(dateToMeet,1);
                 timeToMeet = "2359";
                 index = indexOfDatesAndTimes.back();
             } else if (is12HTime(nextWord)||is24HTime(nextWord)) {
                 indexOfDatesAndTimes.push(index);
-                timeToMeet = extractTimeAfterToken(index + 1, indexOfDatesAndTimes);
+                timeToMeet = extractTime(index + 1, indexOfDatesAndTimes);
                 index = indexOfDatesAndTimes.back();
             } 
         } else if(unitString == TOKEN_ON) {
@@ -213,7 +213,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                 }
             }
         } else if(isNextDay(index)){
-            dateToMeet = extractNextDayAfterToken(index, indexOfDatesAndTimes);
+            dateToMeet = extractNextDay(index, indexOfDatesAndTimes);
             index = indexOfDatesAndTimes.back();
         }
     }
@@ -287,7 +287,7 @@ TMTask TMParser::parseTimedTaskInfo(){
         unitString = returnLowerCase(_tokenizedUserEntry[index]);
 
         if(unitString == TOKEN_AT) {
-            startTime = extractTimeAfterToken(index + 1, indexOfDatesAndTimes);
+            startTime = extractTime(index + 1, indexOfDatesAndTimes);
             if(startTime != ""){
                 startTimeExtracted = true;
                 mainIndexOfDatesAndTimes.push(index);
@@ -295,7 +295,8 @@ TMTask TMParser::parseTimedTaskInfo(){
                     mainIndexOfDatesAndTimes.push(indexOfDatesAndTimes.front());
                     indexOfDatesAndTimes.pop();
                 }
-            } //else no time treat at as description continue searching
+                index = mainIndexOfDatesAndTimes.back();
+            }
         } else if(unitString == TOKEN_ON) {
             startDate = extractDayOrNumericDateOrDDMonDate(index + 1, indexOfDatesAndTimes);
             if(startDate != ""){
@@ -305,6 +306,7 @@ TMTask TMParser::parseTimedTaskInfo(){
                     mainIndexOfDatesAndTimes.push(indexOfDatesAndTimes.front());
                     indexOfDatesAndTimes.pop();
                 }
+                index = mainIndexOfDatesAndTimes.back();
             }
         } else if(unitString == TOKEN_FROM){
             std::string extractedDate;
@@ -324,6 +326,7 @@ TMTask TMParser::parseTimedTaskInfo(){
                     mainIndexOfDatesAndTimes.push(indexOfDatesAndTimes.front());
                     indexOfDatesAndTimes.pop();
                 }
+                index = mainIndexOfDatesAndTimes.back();
             }
         } else if (unitString == TOKEN_TO){
             std::string extractedDate;
@@ -344,15 +347,17 @@ TMTask TMParser::parseTimedTaskInfo(){
                     mainIndexOfDatesAndTimes.push(indexOfDatesAndTimes.front());
                     indexOfDatesAndTimes.pop();
                 }
+                index = mainIndexOfDatesAndTimes.back();
             }
         } else if(isNextDay(index)) {
-            startDate = extractNextDayAfterToken(index, indexOfDatesAndTimes);
+            startDate = extractNextDay(index, indexOfDatesAndTimes);
             startDateExtracted = true;
 
             while(!indexOfDatesAndTimes.empty()){
                 mainIndexOfDatesAndTimes.push(indexOfDatesAndTimes.front());
                 indexOfDatesAndTimes.pop();
             }
+            index = mainIndexOfDatesAndTimes.back();
         } else {
             //cannot find any markers
         }
@@ -360,7 +365,6 @@ TMTask TMParser::parseTimedTaskInfo(){
     //if obtained only time then check if time passed...
     //if only date obtained then set as 0000
 
-    //assume user will surely use from and to combination
     if((startTimeExtracted||startDateExtracted) && !endTimeExtracted && !endDateExtracted){
         taskType = TaskType::WithStartDateTime;
         if(!startTimeExtracted){
@@ -461,12 +465,12 @@ TMTask TMParser::parseTimedTaskInfo(){
     for(int i = 0; i < lengthOfTokenizedUserEntry; i++) {
         //if indexOfDatesAndTimes is empty then always -1 (invalid index)
         int frontIndexOfQueue = -1;
-        if(!indexOfDatesAndTimes.empty()){
-            frontIndexOfQueue = indexOfDatesAndTimes.front();
+        if(!mainIndexOfDatesAndTimes.empty()){
+            frontIndexOfQueue = mainIndexOfDatesAndTimes.front();
         }
 
         if(i == frontIndexOfQueue){
-            indexOfDatesAndTimes.pop();
+            mainIndexOfDatesAndTimes.pop();
         } else {
             taskDescription += _tokenizedUserEntry[i];
             if(i != lengthOfTokenizedUserEntry - 1) {
@@ -622,11 +626,11 @@ std::string TMParser::extractDayOrNumericDateOrDDMonDate(int index, std::queue<i
     std::string startDate = "";
 
     if(isNumericDate(stringAfterOn)){
-        startDate = extractNumericDateAfterToken(index,indexOfDatesAndTimes);
+        startDate = extractNumericDate(index,indexOfDatesAndTimes);
     } else if(isDay(stringAfterOn)){
-        startDate = extractDayAfterToken(index,indexOfDatesAndTimes);
+        startDate = extractDay(index,indexOfDatesAndTimes);
     } else if(isDDMonDate(stringAfterOn)){               
-        startDate = extractDDMonDateAfterToken(index,indexOfDatesAndTimes);
+        startDate = extractDDMonDate(index,indexOfDatesAndTimes);
     } else {
         //found on but cannot find following date or day
     }
@@ -634,13 +638,13 @@ std::string TMParser::extractDayOrNumericDateOrDDMonDate(int index, std::queue<i
     return startDate;
 }
 
-std::string TMParser::extractNumericDateAfterToken(int index, std::queue<int>& indexOfDatesAndTimes){
+std::string TMParser::extractNumericDate(int index, std::queue<int>& indexOfDatesAndTimes){
     std::string startDate = returnLowerCase(_tokenizedUserEntry[index]);
     indexOfDatesAndTimes.push(index);
     return startDate;
 }
 
-std::string TMParser::extractDDMonDateAfterToken(int index, std::queue<int>& indexOfDatesAndTimes){
+std::string TMParser::extractDDMonDate(int index, std::queue<int>& indexOfDatesAndTimes){
     std::string dd = "";
     std::string month = "";
     std::string yyyy = "";
@@ -669,7 +673,7 @@ std::string TMParser::extractDDMonDateAfterToken(int index, std::queue<int>& ind
 }
 
 //preconditions: isNextDay is true. used for deadline. comes after "before".
-std::string TMParser::extractNextDayAfterToken(int index, std::queue<int>& indexOfDatesAndTimes){
+std::string TMParser::extractNextDay(int index, std::queue<int>& indexOfDatesAndTimes){
     //check for day after next, then check for time iter + 1 = next
     std::string date = getDateFromNextDay(index);
     indexOfDatesAndTimes.push(index);
@@ -678,7 +682,7 @@ std::string TMParser::extractNextDayAfterToken(int index, std::queue<int>& index
     return date;
 }
 
-std::string TMParser::extractDayAfterToken(int index, std::queue<int>& indexOfDatesAndTimes){
+std::string TMParser::extractDay(int index, std::queue<int>& indexOfDatesAndTimes){
     std::string day = returnLowerCase(_tokenizedUserEntry[index]); 
     int dayInInteger = dayOfWeek(day);
     boost::gregorian::first_day_of_the_week_after fdaf(dayInInteger);
@@ -689,7 +693,7 @@ std::string TMParser::extractDayAfterToken(int index, std::queue<int>& indexOfDa
     return startDate;
 }
 
-std::string TMParser::extractTimeAfterToken(int index, std::queue<int>& indexOfDatesAndTimes){
+std::string TMParser::extractTime(int index, std::queue<int>& indexOfDatesAndTimes){
     std::string stringAfterAt = returnLowerCase(_tokenizedUserEntry[index]);      
     std::string time = "";
 
@@ -716,22 +720,22 @@ void TMParser::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAndT
             std::string stringAfterDate = returnLowerCase(_tokenizedUserEntry[index + 1]);
             
             if(is12HTime(stringAfterDate)||is24HTime(stringAfterDate)) {
-                time = extractTimeAfterToken(index + 1, indexOfDatesAndTimes);
+                time = extractTime(index + 1, indexOfDatesAndTimes);
             }
         }
     } else if(isNextDay(index)) {
-        date = extractNextDayAfterToken(index, indexOfDatesAndTimes);
+        date = extractNextDay(index, indexOfDatesAndTimes);
 
         if(index + 1 != lengthOfTokenizedUserEntry){
             std::string stringAfterNextDay = returnLowerCase(_tokenizedUserEntry[index + 1]);
 
             if(is12HTime(stringAfterNextDay)||is24HTime(stringAfterNextDay)) {
-                time = extractTimeAfterToken(index + 1, indexOfDatesAndTimes);
+                time = extractTime(index + 1, indexOfDatesAndTimes);
             }
 
         }
     } else if(is12HTime(stringAfterToken)||is24HTime(stringAfterToken)){
-        time = extractTimeAfterToken(index, indexOfDatesAndTimes);
+        time = extractTime(index, indexOfDatesAndTimes);
 
         if(index + 1 != lengthOfTokenizedUserEntry){
 
@@ -739,7 +743,7 @@ void TMParser::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAndT
             if(isNumericDate(stringAfterTime)||isDay(stringAfterTime)){
                 date = extractDayOrNumericDateOrDDMonDate(index + 1, indexOfDatesAndTimes);
             } else if(isNextDay(index + 1)){
-                date = extractNextDayAfterToken(index + 1, indexOfDatesAndTimes);
+                date = extractNextDay(index + 1, indexOfDatesAndTimes);
             }
         }
     } 
@@ -921,13 +925,12 @@ bool TMParser::isValidInfo(std::string startDate, std::string startTime, std::st
         if(startTime <= endTime){
             return true;
         } else {
-            //create print error message or string constant
-            std::cout << "Error: start time is later than end time\n";
+            addErrorMessage("Error: start time is later than end time\n");
             return false;
         }
     } else {
         //create print error message or string constant
-        std::cout << "Error: end date is later than start date\n";
+        addErrorMessage("Error: end date is later than start date\n");
         return false;
     }
 }
@@ -958,7 +961,6 @@ bool TMParser::isPeriod(std::string token) {
 */
 bool TMParser::isNumericDate(std::string token) {
     //DDMMYYYY DDMMYYYY
-    //need more rigorous testing of dates
     int lengthOfToken = token.size();
     if(lengthOfToken == 8||lengthOfToken == 6) {
         if(isInteger(token)){
@@ -1561,4 +1563,20 @@ std::string TMParser::convertTaskTypeToString(TaskType taskType){
         (TaskType::Invalid, "Invalid");
 
     return stringMap[taskType];
+}
+
+void TMParser::addErrorMessage(std::string errorMessage){
+    _errorMessages.push_back(errorMessage);
+    return;
+}
+
+std::string TMParser::getErrorMessage(){
+    int numberOfErrorMessages = _errorMessages.size();
+    std::string errorMessages;
+
+    for(int i = 0; i < numberOfErrorMessages; i++){
+        errorMessages += _errorMessages[i];
+    }
+
+    return errorMessages;
 }

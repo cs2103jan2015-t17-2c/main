@@ -20,6 +20,7 @@ private:
     boost::gregorian::date _dateToday;
 	std::string _originalUserInput;
 	std::vector<std::string> _tokenizedUserEntry;
+    std::vector<std::string> _errorMessages;
 	static TMParser* theOne;
 	TMParser();
 
@@ -51,12 +52,12 @@ public:
 
     //need to check if there is sufficient space at the back first
     std::string extractDayOrNumericDateOrDDMonDate(int, std::queue<int>&);
-    std::string extractNumericDateAfterToken(int, std::queue<int>&);
-    std::string extractDDMonDateAfterToken(int, std::queue<int>&);
-    std::string extractNextDayAfterToken(int, std::queue<int>&);
+    std::string extractNumericDate(int, std::queue<int>&);
+    std::string extractDDMonDate(int, std::queue<int>&);
+    std::string extractNextDay(int, std::queue<int>&);
     std::string getDateFromNextDay(int);
-    std::string extractDayAfterToken(int, std::queue<int>&);
-    std::string extractTimeAfterToken(int, std::queue<int>&);
+    std::string extractDay(int, std::queue<int>&);
+    std::string extractTime(int, std::queue<int>&);
     void extractDateAndOrTime(int, std::queue<int>&, std::string&,std::string&);
     void configureAllDatesAndTimes(std::string, std::string, std::string, std::string);
 
@@ -112,5 +113,8 @@ public:
     TMTask convertStringToTMTask(std::string);
     TaskType convertStringToTaskType(std::string);
     std::string convertTaskTypeToString(TaskType);
+
+    void addErrorMessage(std::string);
+    std::string getErrorMessage();
 };
 #endif
