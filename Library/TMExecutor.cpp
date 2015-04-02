@@ -74,16 +74,19 @@ bool TMExecutor::isDisplayChange(std::string userInput) {
 }
 
 TMDisplay TMExecutor::determineDisplayType(std::string userInput) {
-	if (userInput == "viewdefault") {
+	if (userInput == "viewd") {
 		return Default;
-	}else if (userInput == "viewdeadline") {
+	}else if (userInput == "viewdd") {
 		return DeadlineTasks;
-	}else if (userInput == "viewundated") {
+	}else if (userInput == "viewu") {
 		return UndatedTasks;
-	}else if (userInput == "viewarchived") {
+	}else if (userInput == "viewa") {
 		return ArchivedTasks;
+	}else if (userInput == "views") {
+		return SearchResults;
 	}
 }
+
 
 /*
 void TMExecutor::setDisplayInfo() {

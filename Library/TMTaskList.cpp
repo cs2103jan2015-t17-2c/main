@@ -508,18 +508,24 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 	//NEED TO USE ASSERT TO DETERMINE VALID POSITION INDEX
 	std::string TMTaskList::removeTask(int positionIndex) {	
 		assert(isValidPositionIndex(positionIndex));
+		
 		if (isInDated(positionIndex)) {
 			TMTask deleteTask = getTaskFromPositionIndex(positionIndex);
 			_dated.erase(_dated.begin() + positionIndex - 1);
-			updateClashes(deleteTask);
+			if (deleteTask.getTaskType() == TaskType::WithPeriod) {
+				updateClashes(deleteTask);
+			}
 			return DELETE_SUCCESS;
+
 		} else if (isInUndated(positionIndex)) {
 			int floatingTaskNumber = positionIndex - _dated.size();
 			_undated.erase(_undated.begin() + floatingTaskNumber - 1);
 			return DELETE_SUCCESS;
+
 		} else if (isInArchived(positionIndex)) {
 			int archivedTaskNumber = positionIndex - _dated.size() - _undated.size();
-			_undated.erase(_undated.begin() + archivedTaskNumber - 1);
+			_archived.erase(_archived.begin() + archivedTaskNumber - 1);
+			return DELETE_SUCCESS;
 		}
 	}
 
@@ -530,12 +536,8 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 		task.setAsCompleted();
 		_archived.push_back(task);
 		
-		if (isInDated(positionIndex)) {
-			_dated.erase(_dated.begin() + positionIndex - 1);
-			return ARCHIVED_SUCCESS;
-		} else if (isInUndated(positionIndex)) {
-			int floatingTaskNumber = positionIndex - _dated.size();
-			_undated.erase(_undated.begin() + floatingTaskNumber - 1);
+		if (isInDated(positionIndex) || isInUndated(positionIndex)) {
+			std::string str = removeTask(positionIndex);
 			return ARCHIVED_SUCCESS;
 		} else if (isInArchived(positionIndex)) {
 			return ARCHIVED_FAILURE;

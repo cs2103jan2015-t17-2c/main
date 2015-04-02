@@ -26,7 +26,7 @@ public:
 		//Remove those tasks from archived
 		for (iterTask = toBeRemoved.begin(); iterTask != toBeRemoved.end(); ++iterTask) {
 			int positionIndex = taskList.getPositionIndexFromTask(*iterTask);
-			oss << taskList.archiveOneTask(positionIndex) << std::endl;
+			oss << taskList.removeTask(positionIndex) << std::endl;
 		}
 		//Add new tasks to taskList
 		for (iterTask = reAddTasks.begin(); iterTask != reAddTasks.end(); ++iterTask) {
