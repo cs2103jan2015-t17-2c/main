@@ -818,11 +818,11 @@ void TMParser::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAndT
     } else if(isNextDay(index)) {
         date = extractNextDay(index, indexOfDatesAndTimes);
 
-        if(index + 1 != lengthOfTokenizedUserEntry){
-            std::string stringAfterNextDay = returnLowerCase(_tokenizedUserEntry[index + 1]);
+        if(index + 2 != lengthOfTokenizedUserEntry){
+            std::string stringAfterNextDay = returnLowerCase(_tokenizedUserEntry[index + 2]);
 
             if(is12HTime(stringAfterNextDay)||is24HTime(stringAfterNextDay)) {
-                time = extractTime(index + 1, indexOfDatesAndTimes);
+                time = extractTime(index + 2, indexOfDatesAndTimes);
             }
 
         }
@@ -832,7 +832,7 @@ void TMParser::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAndT
         if(index + 1 != lengthOfTokenizedUserEntry){
 
             std::string stringAfterTime = returnLowerCase(_tokenizedUserEntry[index + 1]);
-            if(isNumericDate(stringAfterTime)||isDay(stringAfterTime)){
+            if(isNumericDate(stringAfterTime)||isDay(stringAfterTime)||isDDMonDate(stringAfterTime)){
                 date = extractDayOrNumericDateOrDDMonDate(index + 1, indexOfDatesAndTimes);
             } else if(isNextDay(index + 1)){
                 date = extractNextDay(index + 1, indexOfDatesAndTimes);
