@@ -710,8 +710,25 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
 }
 
 
-EditableTaskComponent TMParser::parseTaskComponent() {
-	return Description;
+EditableTaskComponent TMParser::parseEditableTaskComponent() {
+	std::string userSpecifiedComponent = _tokenizedUserEntry[1];
+	if (userSpecifiedComponent == "name") {
+		return Description;
+	} else if (userSpecifiedComponent == "startdate") {
+		return StartDate;
+	} else if (userSpecifiedComponent == "starttime") {
+		return StartTime;
+	}  else if (userSpecifiedComponent == "enddate") {
+		return EndDate;
+	} else if (userSpecifiedComponent == "endtime") {
+		return EndTime;
+	} else {
+		return InvalidComponent;
+	}
+}
+
+std::string TMParser::parseDescription() {
+	return _tokenizedUserEntry[2];
 }
 
 std::string TMParser::extractDayOrNumericDateOrDDMonDate(int index, std::queue<int>& indexOfDatesAndTimes){

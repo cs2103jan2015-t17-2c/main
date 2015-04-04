@@ -21,6 +21,7 @@ const std::string UPDATE_DESCRIPTION_SUCCESS = "Task description successfully ch
 const std::string UPDATE_DATE_SUCCESS = "Task date successfully changed.";
 const std::string UPDATE_TIME_SUCCESS = "Task time successfully changed.";
 const std::string UPDATE_FAILURE = "The component of that task you specified is invalid, please enter a valid component.";
+const std::string UPDATE_ARCHIVE_FAILURE = "Unable to update an archived task.";
 const std::string DELETE_SUCCESS = "Task successfully removed from database!";
 const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archived.";
 const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
@@ -257,6 +258,8 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 
 	}
 
+
+
 	//GETTER FUNCTIONS//
 	int TMTaskList::getPositionIndexFromTask(TMTask task) {
 		std::vector<TMTask>::iterator iter;
@@ -377,24 +380,30 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 	std::string TMTaskList::updateTask(int positionIndex, EditableTaskComponent component, std::string changeTo) {
 		assert(isValidPositionIndex(positionIndex));
 		if (isInDated(positionIndex)) {
-			TMTask &task = _dated[positionIndex-1];
+			TMTask task = _dated[positionIndex-1];
 			TaskType type = task.getTaskType();
 			switch (type) {
 			
 			case WithStartDateTime:
 				switch (component) {
 				case EditableTaskComponent::Description:
+					removeTask(positionIndex);
 					task.setTaskDescription(changeTo);
+					addTask(task);
 					return UPDATE_DESCRIPTION_SUCCESS;
 					break;
 
 				case EditableTaskComponent::StartDate:
+					removeTask(positionIndex);
 					task.getTaskTime().setStartDate(changeTo);
+					addTask(task);
 					return UPDATE_DATE_SUCCESS;
 					break;
 
 				case EditableTaskComponent::StartTime:
+					removeTask(positionIndex);
 					task.getTaskTime().setStartTime(changeTo);
+					addTask(task);
 					return UPDATE_TIME_SUCCESS;
 					break;
 
@@ -414,7 +423,9 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 			case WithEndDateTime:
 				switch (component) {
 				case EditableTaskComponent::Description:
+					removeTask(positionIndex);
 					task.setTaskDescription(changeTo);
+					addTask(task);
 					return UPDATE_DESCRIPTION_SUCCESS;
 					break;
 
@@ -427,12 +438,16 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 					break;
 
 				case EditableTaskComponent::EndDate:
+					removeTask(positionIndex);
 					task.getTaskTime().setEndDate(changeTo);
+					addTask(task);
 					return UPDATE_DATE_SUCCESS;
 					break;
 
 				case EditableTaskComponent::EndTime:
+					removeTask(positionIndex);
 					task.getTaskTime().setEndTime(changeTo);
+					addTask(task);
 					return UPDATE_TIME_SUCCESS;
 					break;
 
@@ -444,27 +459,37 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 			case WithPeriod:
 				switch (component) {
 				case EditableTaskComponent::Description:
+					removeTask(positionIndex);
 					task.setTaskDescription(changeTo);
+					addTask(task);
 					return UPDATE_DESCRIPTION_SUCCESS;
 					break;
 
 				case EditableTaskComponent::StartDate:
+					removeTask(positionIndex);
 					task.getTaskTime().setStartDate(changeTo);
+					addTask(task);
 					return UPDATE_DATE_SUCCESS;
 					break;
 
 				case EditableTaskComponent::StartTime:
+					removeTask(positionIndex);
 					task.getTaskTime().setStartTime(changeTo);
+					addTask(task);
 					return UPDATE_TIME_SUCCESS;
 					break;
 
 				case EditableTaskComponent::EndDate:
+					removeTask(positionIndex);
 					task.getTaskTime().setEndDate(changeTo);
+					addTask(task);
 					return UPDATE_DATE_SUCCESS;
 					break;
 
 				case EditableTaskComponent::EndTime:
+					removeTask(positionIndex);
 					task.getTaskTime().setEndTime(changeTo);
+					addTask(task);
 					return UPDATE_TIME_SUCCESS;
 					break;
 			
@@ -476,10 +501,12 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 			
 
 		} else if (isInUndated(positionIndex)) {
-			TMTask &task = _undated[positionIndex-_dated.size()-1];
+			TMTask task = _undated[positionIndex-_dated.size()-1];
 			switch (component) {
 				case EditableTaskComponent::Description:
+					removeTask(positionIndex);
 					task.setTaskDescription(changeTo);
+					addTask(task);
 					return UPDATE_DESCRIPTION_SUCCESS;
 					break;
 
@@ -502,7 +529,10 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 				case EditableTaskComponent::InvalidComponent:
 					return UPDATE_FAILURE;
 			}
+		} else if (isInUndated(positionIndex)) {
+			return UPDATE_ARCHIVE_FAILURE;
 		}
+
 	}
 
 	//NEED TO USE ASSERT TO DETERMINE VALID POSITION INDEX
