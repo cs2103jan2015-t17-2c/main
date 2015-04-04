@@ -9,6 +9,7 @@
 #include <queue>
 #include <ctype.h>
 #include <map>
+#include <algorithm>
 #include "TMConstants.h"
 #include "DateChecker.h"
 #include "TaskChecker.h"
@@ -72,6 +73,7 @@ public:
     //use after command is extracted
     //check if position no. is unique
     std::vector<int> parseTaskPositionNo();
+    bool isUniqueIndex(int, std::vector<int>);
     std::string parseSearchKey();
     std::string parseDirectory();
 

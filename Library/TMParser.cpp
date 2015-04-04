@@ -827,18 +827,61 @@ int TMParser::numberOfWords(std::string remainingEntry) {
 }
 
 //precondition: command extracted
+//postcondition: returns unique and valid indices
 std::vector<int> TMParser::parseTaskPositionNo() {
     int intTaskPositionNo;
+    int secondIntTaskPositionNo;
     std::vector<int> vectorTaskPositionNo;
     int vectorSize = _tokenizedUserEntry.size();
+
     for(int i = 0; i < vectorSize; i++) {
-        std::string taskPositionNo = _tokenizedUserEntry[i];
-        intTaskPositionNo = std::stoi(taskPositionNo);
-        vectorTaskPositionNo.push_back(intTaskPositionNo);
+        if(isInteger(_tokenizedUserEntry[i])) {//will skip the first "-"
+            std::string taskPositionNo = _tokenizedUserEntry[i];
+            intTaskPositionNo = std::stoi(taskPositionNo);
+            
+            if(i + 1 == vectorSize - 1) {//next token is the last token 
+                if(isUniqueIndex(intTaskPositionNo, vectorTaskPositionNo)) {
+                    vectorTaskPositionNo.push_back(intTaskPositionNo);
+                }
+                continue;
+            }
+
+            if(_tokenizedUserEntry[i+1] != "-") { //next token may be a digit or not
+                if(isUniqueIndex(intTaskPositionNo, vectorTaskPositionNo)) {
+                    vectorTaskPositionNo.push_back(intTaskPositionNo);
+                }
+                continue;
+            }
+
+            if(isInteger(_tokenizedUserEntry[i+2])) {
+                std::string secondTaskPositionNo = _tokenizedUserEntry[i+2];
+                secondIntTaskPositionNo = std::stoi(secondTaskPositionNo);
+                if(intTaskPositionNo <= secondIntTaskPositionNo) {
+                    while(intTaskPositionNo <= secondIntTaskPositionNo) {
+                        if(isUniqueIndex(intTaskPositionNo, vectorTaskPositionNo)) {
+                            vectorTaskPositionNo.push_back(intTaskPositionNo);
+                        }
+                        intTaskPositionNo++;
+                    }
+                }
+                i = i + 2;
+            } else {
+                if(isUniqueIndex(intTaskPositionNo, vectorTaskPositionNo)) {
+                    vectorTaskPositionNo.push_back(intTaskPositionNo);
+                }
+                continue;
+            }
+
+        }
     }
     return vectorTaskPositionNo;
 }
 
+bool TMParser::isUniqueIndex(int index, std::vector<int> vectorTaskPositionNumber) {
+    std::vector<int>::iterator iter;
+    iter = std::find(vectorTaskPositionNumber.begin(), vectorTaskPositionNumber.end(), index);
+    return (iter == vectorTaskPositionNumber.end());
+}
 //precondition: command extracted
 std::string TMParser::parseSearchKey() {
     std::string searchKey;
