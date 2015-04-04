@@ -839,7 +839,7 @@ std::vector<int> TMParser::parseTaskPositionNo() {
             std::string taskPositionNo = _tokenizedUserEntry[i];
             intTaskPositionNo = std::stoi(taskPositionNo);
             
-            if(i + 1 == vectorSize - 1) {//next token is the last token 
+            if(i + 1 >= vectorSize - 1) {//next token is the last token 
                 if(isUniqueIndex(intTaskPositionNo, vectorTaskPositionNo)) {
                     vectorTaskPositionNo.push_back(intTaskPositionNo);
                 }
