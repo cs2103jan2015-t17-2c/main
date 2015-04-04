@@ -19,6 +19,6 @@ public:
     //0800 
     bool is24HTime(std::string);
 
-    bool isInteger(std::string);
+    bool isPositiveInteger(std::string);
 };
 #endif

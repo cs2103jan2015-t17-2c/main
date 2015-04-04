@@ -27,20 +27,27 @@ bool DateChecker::isValidDate(std::string date){
     return true;
 }
 
-bool DateChecker::isInteger(std::string token) {
+bool DateChecker::isPositiveInteger(std::string token) {
     for(std::string::iterator it = token.begin(); it < token.end(); it++) {
         if(!isdigit(*it)) {
             return false;
         }
     }
-    return true;
+
+    int integer = std::stoi(token);
+
+    if(integer > 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 bool DateChecker::isNumericDate(std::string token) {
     //DDMMYYYY DDMMYYYY
     int lengthOfToken = token.size();
     if(lengthOfToken == 8||lengthOfToken == 6) {
-        if(!isInteger(token)){
+        if(!isPositiveInteger(token)){
             return false;
         }
         FormatConverter *formatConverter = FormatConverter::getInstance();
@@ -68,7 +75,7 @@ bool DateChecker::isDDMonDate(std::string token){
     dd = token.substr(0,positionOfNextDash);//dd = dd
     int lengthOfdd = dd.length();
     //check whether length is 1 or 2 whether from 1-31?
-    if(!isInteger(dd)||!(lengthOfdd == 1||lengthOfdd == 2)){
+    if(!isPositiveInteger(dd)||!(lengthOfdd == 1||lengthOfdd == 2)){
         return false;
     }
 
@@ -82,7 +89,7 @@ bool DateChecker::isDDMonDate(std::string token){
         }
         yyyy = token.substr(positionOfNextDash + 1);
         int lengthOfyyyy = yyyy.length();
-        if(!isInteger(yyyy)||!(lengthOfyyyy == 2||lengthOfyyyy == 4)){
+        if(!isPositiveInteger(yyyy)||!(lengthOfyyyy == 2||lengthOfyyyy == 4)){
             return false;
         }
         if(lengthOfyyyy == 2){

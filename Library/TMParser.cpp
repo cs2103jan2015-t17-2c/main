@@ -791,13 +791,19 @@ bool TMParser::isValidInfo(std::string startDate, std::string startTime, std::st
     }
 }
 
-bool TMParser::isInteger(std::string token) {
+bool TMParser::isPositiveInteger(std::string token) {
     for(std::string::iterator it = token.begin(); it < token.end(); it++) {
         if(!isdigit(*it)) {
             return false;
         }
     }
-    return true;
+
+    int integer = std::stoi(token);
+    if(integer > 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
 /*
 bool TMParser::isPeriod(std::string token) {
@@ -834,46 +840,35 @@ std::vector<int> TMParser::parseTaskPositionNo() {
     int intTaskPositionNo;
     int secondIntTaskPositionNo;
     std::vector<int> vectorTaskPositionNo;
+    std::string token;
     int vectorSize = _tokenizedUserEntry.size();
 
     for(int i = 0; i < vectorSize; i++) {
-        if(isInteger(_tokenizedUserEntry[i])) {//will skip the first "-"
-            std::string taskPositionNo = _tokenizedUserEntry[i];
-            intTaskPositionNo = std::stoi(taskPositionNo);
+        token = _tokenizedUserEntry[i];
+        int positionOfFirstDash = token.find_first_of("-");
+
+        if(isPositiveInteger(token)) {//will skip the first "-"
+            intTaskPositionNo = std::stoi(token);
             
-            if(i + 1 >= vectorSize - 1) {//next token is the last token 
-                if(isUniqueIndex(intTaskPositionNo, vectorTaskPositionNo)) {
-                    vectorTaskPositionNo.push_back(intTaskPositionNo);
-                }
-                continue;
+            if(isUniqueIndex(intTaskPositionNo, vectorTaskPositionNo)) {
+                vectorTaskPositionNo.push_back(intTaskPositionNo);
             }
+        } else if (positionOfFirstDash != std::string::npos && token[0] != '-'
+            && token[token.length()-1] != '-'){
+                std::string firstHalfOfToken = token.substr(0, positionOfFirstDash);
+                std::string secondHalfOfToken = token.substr(positionOfFirstDash + 1);
 
-            if(_tokenizedUserEntry[i+1] != "-") { //next token may be a digit or not
-                if(isUniqueIndex(intTaskPositionNo, vectorTaskPositionNo)) {
-                    vectorTaskPositionNo.push_back(intTaskPositionNo);
-                }
-                continue;
-            }
+                if(isPositiveInteger(firstHalfOfToken) && isPositiveInteger(secondHalfOfToken)){
+                    int firstInteger = std::stoi(firstHalfOfToken);
+                    int secondInteger = std::stoi(secondHalfOfToken);
 
-            if(isInteger(_tokenizedUserEntry[i+2])) {
-                std::string secondTaskPositionNo = _tokenizedUserEntry[i+2];
-                secondIntTaskPositionNo = std::stoi(secondTaskPositionNo);
-                if(intTaskPositionNo <= secondIntTaskPositionNo) {
-                    while(intTaskPositionNo <= secondIntTaskPositionNo) {
-                        if(isUniqueIndex(intTaskPositionNo, vectorTaskPositionNo)) {
-                            vectorTaskPositionNo.push_back(intTaskPositionNo);
+                    while(firstInteger <= secondInteger) {
+                        if(isUniqueIndex(firstInteger, vectorTaskPositionNo)) {
+                            vectorTaskPositionNo.push_back(firstInteger);
                         }
-                        intTaskPositionNo++;
+                        firstInteger++;
                     }
                 }
-                i = i + 2;
-            } else {
-                if(isUniqueIndex(intTaskPositionNo, vectorTaskPositionNo)) {
-                    vectorTaskPositionNo.push_back(intTaskPositionNo);
-                }
-                continue;
-            }
-
         }
     }
     return vectorTaskPositionNo;

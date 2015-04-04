@@ -64,7 +64,7 @@ public:
     //if startDate == endDate, startTime is no later than endTime
     bool isValidInfo(std::string, std::string, std::string, std::string);
 
-    bool isInteger(std::string);
+    bool isPositiveInteger(std::string);
     //bool isPeriod(std::string);
     //to test for date in other forms. define another function to convert 
 
