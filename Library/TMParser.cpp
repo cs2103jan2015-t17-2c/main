@@ -113,7 +113,9 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
         return CommandTypes::Block;
 	} else if (command == CMD_CONFIRM) {
         return CommandTypes::Confirm; 
-	} else {
+	} else if (command == CMD_QUIT||command == CMD_SHORTCUT_QUIT||command == CMD_EXIT||command == CMD_CLOSE) {
+        return CommandTypes::Exit;
+    } else {
         return CommandTypes::Invalid;
     }
 }

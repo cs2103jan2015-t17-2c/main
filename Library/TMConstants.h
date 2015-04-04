@@ -15,6 +15,9 @@ static const std::string CMD_STORE = "store";
 static const std::string CMD_DONEALL = "doneall";
 static const std::string CMD_BLOCK = "block";
 static const std::string CMD_CONFIRM = "confirm";
+static const std::string CMD_QUIT = "quit";
+static const std::string CMD_EXIT = "exit";
+static const std::string CMD_CLOSE = "close";
 
 static const std::string CMD_SHORTCUT_ADD = "a";
 static const std::string CMD_SHORTCUT_DELETE = "d";
@@ -26,6 +29,7 @@ static const std::string CMD_SHORTCUT_SEARCH = "se";
 static const std::string CMD_SHORTCUT_EDIT= "e";
 static const std::string CMD_SHORTCUT_STORE = "st";
 static const std::string CMD_SHORTCUT_DONEALL = "da";
+static const std::string CMD_SHORTCUT_QUIT = "q";
 
 static const std::string DAY_YESTERDAY = "yesterday";
 static const std::string DAY_TODAY = "today";
