@@ -43,7 +43,6 @@ public:
 
     void setTaskDescription(std::string);
 
-
     //Preconditions: TMTaskTime must be created prior to setting
     void setTaskTime(TMTaskTime);
     void setAsCompleted();
