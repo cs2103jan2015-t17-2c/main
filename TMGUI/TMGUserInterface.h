@@ -416,11 +416,12 @@ namespace TMGUI {
 	private: System::Void userInput_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
 				
 				 if(e->KeyChar == (char)13){
-					 //if(userInput->Text == "quit" || "exit" || "q" || "close"){
-						//Application :: Exit();
-					//}
-					//else{
-					 
+					
+					if (userInput->Text == "quit" || userInput->Text =="exit" || userInput->Text =="q" || userInput->Text =="close"){
+						Application :: Exit();
+					}
+					else{
+
 					statusDisplay->Text = "";
 					String ^ str = userInput->Text;
 					std::string unmanaged = msclr::interop::marshal_as<std::string>(str);
@@ -681,7 +682,8 @@ namespace TMGUI {
 					}
 					userInput->Clear();
 				 }
-			 //}
+				 
+			 }
 			 }
 			
 			 
