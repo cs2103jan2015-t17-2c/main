@@ -468,6 +468,7 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 				case EditableTaskComponent::StartDate:
 					removeTask(positionIndex);
 					task.getTaskTime().setStartDate(changeTo);
+					task.setAsUnclashed();
 					addTask(task);
 					return UPDATE_DATE_SUCCESS;
 					break;
@@ -475,6 +476,7 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 				case EditableTaskComponent::StartTime:
 					removeTask(positionIndex);
 					task.getTaskTime().setStartTime(changeTo);
+					task.setAsUnclashed();
 					addTask(task);
 					return UPDATE_TIME_SUCCESS;
 					break;
@@ -482,6 +484,7 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 				case EditableTaskComponent::EndDate:
 					removeTask(positionIndex);
 					task.getTaskTime().setEndDate(changeTo);
+					task.setAsUnclashed();
 					addTask(task);
 					return UPDATE_DATE_SUCCESS;
 					break;
@@ -489,6 +492,7 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 				case EditableTaskComponent::EndTime:
 					removeTask(positionIndex);
 					task.getTaskTime().setEndTime(changeTo);
+					task.setAsUnclashed();
 					addTask(task);
 					return UPDATE_TIME_SUCCESS;
 					break;
