@@ -40,8 +40,8 @@ TaskType TMTask::getTaskType(){
     return _taskType;
 }
 
-/*std::string TMTask::getStringTaskType(){
-	std::map<TaskType, std::string> stringMap = boost::assign::map_list_of
+std::string TMTask::getTaskTypeAsString(){
+    std::map<TaskType, std::string> stringMap = boost::assign::map_list_of
         (TaskType::WithStartDateTime, "WithStartDateTime")
         (TaskType::WithEndDateTime, "WithEndDateTime")
         (TaskType::WithPeriod, "WithPeriod")
@@ -49,8 +49,7 @@ TaskType TMTask::getTaskType(){
         (TaskType::Invalid, "Invalid");
 
     return stringMap[_taskType];
-	
-}*/
+}
 
 void TMTask::setTaskDescription(std::string newTaskDescription){
     _taskDescription = newTaskDescription;
