@@ -340,6 +340,11 @@ namespace TMGUI {
 
 				 if(e->KeyChar == (char)13){
 				
+					if (userInput->Text == "quit" || userInput->Text =="exit" || userInput->Text =="q" || userInput->Text =="close"){
+						//taskList.writeToFile();
+						Application :: Exit();
+					}
+					else{
 					
 
 					statusDisplay->Text = "";
@@ -359,11 +364,6 @@ namespace TMGUI {
 					TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
 					TMTaskList taskList = taskListStates->getCurrentTaskList();
 					
-					if (userInput->Text == "quit" || userInput->Text =="exit" || userInput->Text =="q" || userInput->Text =="close"){
-						//taskList.writeToFile();
-						Application :: Exit();
-					}
-					else{
 					
 					std::vector<TMTask> dated = taskList.getDated();
 					std::vector<TMTask> undated = taskList.getUndated();
