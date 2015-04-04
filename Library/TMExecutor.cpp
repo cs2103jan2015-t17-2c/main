@@ -15,8 +15,6 @@ TMExecutor::TMExecutor() {
 }
 
 void TMExecutor::executeMain(std::string userInput) {
-	//_displayInfo.clear();
-	//_displayColours.clear();
 
 	TMParser *parser = TMParser::getInstance(); 
 	TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
@@ -44,11 +42,10 @@ void TMExecutor::executeMain(std::string userInput) {
 		commandObjPtr->execute();
 		_resultOfExecution = commandObjPtr->outcome;
 		}
-	//taskList.writeToFile();
-	//taskList.leaveReferenceUponExit();
 
-	//setDisplayInfo();
-	//setDisplayColours();
+	taskList = taskListStates->getCurrentTaskList();
+	taskList.writeToFile();
+	//taskList.leaveReferenceUponExit();
 
 	return;
 }

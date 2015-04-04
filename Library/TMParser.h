@@ -58,8 +58,9 @@ public:
     std::string getDateFromNextDay(int);
     std::string extractDay(int, std::queue<int>&);
     std::string extractTime(int, std::queue<int>&);
+
     void extractDateAndOrTime(int, std::queue<int>&, std::string&,std::string&);
-    void configureAllDatesAndTimes(std::string, std::string, std::string, std::string);
+    void configureAllDatesAndTimes(std::string&, std::string&, std::string&, std::string&, TaskType&);
 
     bool isDeadlinedTask();
     bool isTimedTask();
@@ -75,12 +76,14 @@ public:
     //bool isPeriod(std::string);
     //to test for date in other forms. define another function to convert 
     bool isNumericDate(std::string);
-    //
     bool isDDMonDate(std::string);
     bool isDay(std::string);
+    //12pm 1230pm 130am
     bool is12HTime(std::string);
+    //0800 
     bool is24HTime(std::string);
     bool isNextDay(int);
+    //NOT USED
     bool isNext(std::string);
     bool isAM(std::string);
     bool isPM(std::string);
@@ -92,6 +95,7 @@ public:
     int dayOfWeek(std::string); 
 
     //use after command is extracted
+    //check if position no. is unique
     std::vector<int> parseTaskPositionNo();
     std::string parseSearchKey();
     std::string parseDirectory();
@@ -99,12 +103,15 @@ public:
     std::string returnLowerCase(std::string);
 
     std::string dateFromNumericToBoostFormat(std::string);
+    std::string dateFromNumericToStandardFormat(std::string);
     std::string dateFromBoostToStandardFormat(const boost::gregorian::date&);
     std::string dateFromBoostToDelimitedDDMMYYYY(const boost::gregorian::date&);
     std::string dateFromBoostToDDMMYYYY(const boost::gregorian::date&);
 
     std::string monthFromWrittenToNumeric(std::string);
 
+    //incomplete
+    //preconditions check if is 12H or 24H first
     std::string timeTo24HFormat(std::string);
     std::string getCurrentTime();
     std::string substractNDaysFromDate(std::string,int);
@@ -116,5 +123,7 @@ public:
 
     void addErrorMessage(std::string);
     std::string getErrorMessage();
+
+    int numberOfWordsInQuote(std::string);
 };
 #endif

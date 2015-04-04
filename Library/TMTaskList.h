@@ -23,9 +23,12 @@ private:
 	std::vector<TMTask> _archived;
 
 	std::vector<TMTask> _clashes;
+	
+	//File name
+	std::string _fileName;
 
-	//File directory name
-	std::string _fileDirectory;
+	//Directory name
+	std::string _directoryName;
 
 public:
 	TMTaskList();
