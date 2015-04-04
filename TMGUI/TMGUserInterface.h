@@ -418,10 +418,10 @@ namespace TMGUI {
 				 if(e->KeyChar == (char)13){
 					statusDisplay->Text = "";
 					String ^ str = userInput->Text;
-					if(str == "quit" || "exit" || "q" || "close"){
-						Application :: Exit();
-					}
-					else{
+					//if(str == "quit" || "exit" || "q" || "close"){
+					//	Application :: Exit();
+					//}
+					//else{
 					std::string unmanaged = msclr::interop::marshal_as<std::string>(str);
 					
 					TMExecutor* exe = TMExecutor::getInstance();
@@ -661,7 +661,7 @@ namespace TMGUI {
 						break;
 					}
 					userInput->Clear();
-				 }
+				 //}
 			 }
 			 }
 			
