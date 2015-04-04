@@ -66,11 +66,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CurrentDateAndTime.h" />
+    <ClInclude Include="DateChecker.h" />
+    <ClInclude Include="Extractor.h" />
+    <ClInclude Include="FormatConverter.h" />
+    <ClInclude Include="TaskChecker.h" />
+    <ClInclude Include="TimeChecker.h" />
     <ClInclude Include="TMAddTasks.h" />
     <ClInclude Include="TMBlockTime.h" />
     <ClInclude Include="TMCommand.h" />
     <ClInclude Include="TMCommandCreator.h" />
     <ClInclude Include="TMCompleteTasks.h" />
+    <ClInclude Include="TMConstants.h" />
     <ClInclude Include="TMDateTime.h" />
     <ClInclude Include="TMDeleteTasks.h" />
     <ClInclude Include="TMDoneAllToday.h" />
@@ -91,6 +98,11 @@
     <ClInclude Include="TMUncompleteTasks.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DateChecker.cpp" />
+    <ClCompile Include="Extractor.cpp" />
+    <ClCompile Include="FormatConverter.cpp" />
+    <ClCompile Include="TaskChecker.cpp" />
+    <ClCompile Include="TimeChecker.cpp" />
     <ClCompile Include="TMDateTime.cpp" />
     <ClCompile Include="TMExecutor.cpp" />
     <ClCompile Include="TMTaskListStates.cpp" />

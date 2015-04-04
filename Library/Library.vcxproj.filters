@@ -40,6 +40,30 @@
     <Filter Include="Source Files\TMExecutor">
       <UniqueIdentifier>{513dd6dc-e43d-43c3-9e41-89271b52d6b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\TMChecker">
+      <UniqueIdentifier>{7da82b15-7d68-48d9-93e1-394a0aef392d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\TMChecker">
+      <UniqueIdentifier>{2526236f-6ee4-42e3-82d3-7b1ea354a657}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\TMConverter">
+      <UniqueIdentifier>{6ee78757-04ff-43ad-8547-b750475d6ac7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\TMConverter">
+      <UniqueIdentifier>{83867465-758b-4248-b011-df4e06924263}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\TMConstants">
+      <UniqueIdentifier>{83d5980f-7e95-4453-a05f-7d04ae539523}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\TMExtractor">
+      <UniqueIdentifier>{fb776302-f718-4f7f-92df-c0c93a970891}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\TMExtractor">
+      <UniqueIdentifier>{da5dbb11-a996-465b-9370-f81589367b90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\CurrentDateAndTime">
+      <UniqueIdentifier>{53f42ecc-f49c-4a3d-9c43-ffdaa01f70bf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TMCommand.h">
@@ -111,6 +135,27 @@
     <ClInclude Include="TMUncompleteTasks.h">
       <Filter>Header Files\TMCommand</Filter>
     </ClInclude>
+    <ClInclude Include="TimeChecker.h">
+      <Filter>Header Files\TMChecker</Filter>
+    </ClInclude>
+    <ClInclude Include="DateChecker.h">
+      <Filter>Header Files\TMChecker</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskChecker.h">
+      <Filter>Header Files\TMChecker</Filter>
+    </ClInclude>
+    <ClInclude Include="FormatConverter.h">
+      <Filter>Header Files\TMConverter</Filter>
+    </ClInclude>
+    <ClInclude Include="TMConstants.h">
+      <Filter>Header Files\TMConstants</Filter>
+    </ClInclude>
+    <ClInclude Include="Extractor.h">
+      <Filter>Header Files\TMExtractor</Filter>
+    </ClInclude>
+    <ClInclude Include="CurrentDateAndTime.h">
+      <Filter>Header Files\CurrentDateAndTime</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TMParser.cpp">
@@ -133,6 +178,21 @@
     </ClCompile>
     <ClCompile Include="TMExecutor.cpp">
       <Filter>Source Files\TMExecutor</Filter>
+    </ClCompile>
+    <ClCompile Include="DateChecker.cpp">
+      <Filter>Source Files\TMChecker</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeChecker.cpp">
+      <Filter>Source Files\TMChecker</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskChecker.cpp">
+      <Filter>Source Files\TMChecker</Filter>
+    </ClCompile>
+    <ClCompile Include="FormatConverter.cpp">
+      <Filter>Source Files\TMConverter</Filter>
+    </ClCompile>
+    <ClCompile Include="Extractor.cpp">
+      <Filter>Source Files\TMExtractor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
