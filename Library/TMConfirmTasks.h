@@ -12,43 +12,36 @@ public:
 		TMTaskList taskList = taskListStates->getCurrentTaskList();
 		
 		std::vector<int> confirmedTasksIndexes = parser->parseTaskPositionNo();
-		std::vector<int>::iterator iter1;
-		std::vector<int>::iterator iter2;
-		std::vector<int> batchNums;
-		std::vector<TMTask> deleteTasks;
-		std::vector<TMTask> toBeAddedTasks;
+		std::vector<int>::iterator intIter;
+		std::vector<int>::iterator resultsIter;
+		std::vector<int> batchNumbers;
+		std::vector<TMTask> toBeAdded;
 		std::vector<TMTask>::iterator taskIter;
 		std::ostringstream oss;
 
 		//Creating new confirmed tasks and storing the batch numbers of confirmed tasks into a vector
-		for (iter1 = confirmedTasksIndexes.begin(); iter1 != confirmedTasksIndexes.end(); ++iter1) {
-			TMTask task = taskList.getTaskFromPositionIndex(*iter1);
+		for (intIter = confirmedTasksIndexes.begin(); intIter != confirmedTasksIndexes.end(); ++intIter) {
+			TMTask task = taskList.getTaskFromPositionIndex(*intIter);
 			int batchNum = task.getUnconfirmedBatchNumber();
-			batchNums.push_back(batchNum);
+			batchNumbers.push_back(batchNum);
+			
 			task.setAsConfirmed();
 			task.setUnconfirmedBatchNumber(0);
-			toBeAddedTasks.push_back(task);
+			toBeAdded.push_back(task);
 		}
 
 		//Removing tasks sharing similar batch numbers
-		for (iter1 = batchNums.begin(); iter1 != batchNums.end(); ++iter1) {
+		for (intIter = batchNumbers.begin(); intIter != batchNumbers.end(); ++intIter) {
 			std::vector<int> results;
-			results = taskList.searchUnconfirmedBatchNum(*iter1);
-			if (!results.empty()) {
-				for (iter2 = results.begin(); iter2 != results.end(); ++iter2) {
-					TMTask task = taskList.getTaskFromPositionIndex(*iter2);
-					deleteTasks.push_back(task);
-				}
-
-				for (taskIter = deleteTasks.begin(); taskIter != deleteTasks.end(); ++taskIter) {
-					int positionIndex = taskList.getPositionIndexFromTask(*taskIter);
-					oss << taskList.removeTask(positionIndex) << std::endl;
-				}
+			results = taskList.searchUnconfirmedBatchNum(*intIter);
+			for (resultsIter = results.begin(); resultsIter != results.end(); ++resultsIter) {
+				oss << taskList.removeTask(*resultsIter) << std::endl;
+				updatePositionIndexes(results, *resultsIter);
 			}
 		}
 
 		//Adding confirmed tasks
-		for (taskIter = toBeAddedTasks.begin(); taskIter != toBeAddedTasks.end(); ++taskIter) {
+		for (taskIter = toBeAdded.begin(); taskIter != toBeAdded.end(); ++taskIter) {
 			taskList.addTask(*taskIter);
 		}
 

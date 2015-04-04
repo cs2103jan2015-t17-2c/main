@@ -12,20 +12,18 @@ public:
 		TMParser *parser = TMParser::getInstance(); 
 		TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
 		TMTaskList taskList = taskListStates->getCurrentTaskList();
+		
 		std::vector<int> deleteIndexes = parser->parseTaskPositionNo();
 		std::vector <int>::iterator intIter;
-		std::vector<TMTask> deleteTasks;
-		std::vector<TMTask>::iterator taskIter;
 		std::ostringstream oss;
 		
-		for (intIter = deleteIndexes.begin(); intIter !=deleteIndexes.end(); ++intIter) {
-			TMTask task = taskList.getTaskFromPositionIndex(*intIter);
-			deleteTasks.push_back(task);
-		}
-
-		for (taskIter = deleteTasks.begin(); taskIter != deleteTasks.end(); ++taskIter) {
-			int positionIndex = taskList.getPositionIndexFromTask(*taskIter);
-			oss << taskList.removeTask(positionIndex) << std::endl;
+		if (noRepeatedIndexes(deleteIndexes)) {
+			for (intIter = deleteIndexes.begin(); intIter != deleteIndexes.end(); ++intIter) {
+				oss << taskList.removeTask(*intIter) << std::endl;
+				updatePositionIndexes(deleteIndexes, *intIter);
+			}
+		} else {
+			oss << WARNING_REPEATED_INDEXES_SPECIFIED << std::endl;
 		}
 
 		outcome = oss.str();
