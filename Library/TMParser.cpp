@@ -21,6 +21,7 @@ TMParser* TMParser::getInstance() {
 void TMParser::initialize(std::string userEntry) {
 	_originalUserInput = userEntry;
 	_tokenizedUserEntry = getTokenizedUserEntry(_originalUserInput);
+    _errorMessages.clear();
 }
 
 //Preconditions: tokens of string delimited by spaces
