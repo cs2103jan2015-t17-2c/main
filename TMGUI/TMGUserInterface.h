@@ -416,12 +416,13 @@ namespace TMGUI {
 	private: System::Void userInput_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
 				
 				 if(e->KeyChar == (char)13){
-					statusDisplay->Text = "";
-					String ^ str = userInput->Text;
-					//if(str == "quit" || "exit" || "q" || "close"){
-					//	Application :: Exit();
+					 //if(userInput->Text == "quit" || "exit" || "q" || "close"){
+						//Application :: Exit();
 					//}
 					//else{
+					 
+					statusDisplay->Text = "";
+					String ^ str = userInput->Text;
 					std::string unmanaged = msclr::interop::marshal_as<std::string>(str);
 					
 					TMExecutor* exe = TMExecutor::getInstance();
@@ -440,10 +441,10 @@ namespace TMGUI {
 					std::vector<TMTask> undated = taskList.getUndated();
 					std::vector<TMTask> archived = taskList.getArchived();
 					std::vector<TMTask> allTasks;
-					allTasks.reserve( dated.size() + undated.size() + archived.size());
+					allTasks.reserve( dated.size() + undated.size());
 					allTasks.insert( allTasks.end(), dated.begin(), dated.end() );
 					allTasks.insert( allTasks.end(), undated.begin(), undated.end() );
-					allTasks.insert( allTasks.end(), archived.begin(), archived.end() );
+			
 					std::vector<TMTask>::iterator iter;
 	
 					switch (display) {
@@ -455,8 +456,15 @@ namespace TMGUI {
 						
 						defaultEntry = gcnew ListViewItem(Convert::ToString(i+1));
 						defaultEntry->SubItems->Add(gcnew String(( (allTasks[i].getTaskDescription()).c_str() )));
+						if(allTasks[i].getTaskType() == TaskType ::WithEndDateTime){
+							defaultEntry->SubItems->Add("");
+							defaultEntry->SubItems->Add(""); 
+						}
+						else{
 						defaultEntry->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getStartDate()).c_str() )));
 						defaultEntry->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getStartTime()).c_str() )));
+						}
+						
 						defaultEntry->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getEndDate()).c_str() )));
 						defaultEntry->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getEndTime()).c_str() )));
 						
@@ -509,8 +517,8 @@ namespace TMGUI {
 							
 							deadlineEntry = gcnew ListViewItem(Convert::ToString(j+1));
 							deadlineEntry->SubItems->Add(gcnew String(( (dated[j].getTaskDescription()).c_str() )));
-							deadlineEntry->SubItems->Add(gcnew String(( (dated[j].getTaskTime().getStartDate()).c_str() )));
-							deadlineEntry->SubItems->Add(gcnew String(( (dated[j].getTaskTime().getStartTime()).c_str() )));
+							deadlineEntry->SubItems->Add("");
+							deadlineEntry->SubItems->Add("");
 							deadlineEntry->SubItems->Add(gcnew String(( (dated[j].getTaskTime().getEndDate()).c_str() )));
 							deadlineEntry->SubItems->Add(gcnew String(( (dated[j].getTaskTime().getEndTime()).c_str() )));
 						
@@ -543,10 +551,6 @@ namespace TMGUI {
 						for (int k = dated.size(); k != dated.size() + undated.size(); ++k){
 							floatingEntry = gcnew ListViewItem(Convert::ToString(k+1));
 							floatingEntry->SubItems->Add(gcnew String(( (undated[k-dated.size()].getTaskDescription()).c_str() )));
-							floatingEntry->SubItems->Add(gcnew String(( (undated[k-dated.size()].getTaskTime().getStartDate()).c_str() )));
-							floatingEntry->SubItems->Add(gcnew String(( (undated[k-dated.size()].getTaskTime().getStartTime()).c_str() )));
-							floatingEntry->SubItems->Add(gcnew String(( (undated[k-dated.size()].getTaskTime().getEndDate()).c_str() )));
-							floatingEntry->SubItems->Add(gcnew String(( (undated[k-dated.size()].getTaskTime().getEndTime()).c_str() )));
 						
 							std::string confirmationStatus;
 							if (undated[k-dated.size()].isConfirmed()) {
@@ -575,8 +579,17 @@ namespace TMGUI {
 						for (int l = dated.size()+undated.size(); l != dated.size() + undated.size()+archived.size(); ++l){
 							archivedEntry = gcnew ListViewItem(Convert::ToString(l+1));
 							archivedEntry->SubItems->Add(gcnew String(( (archived[l-dated.size()-undated.size()].getTaskDescription()).c_str() )));
+							if(archived[l-dated.size()-undated.size()].getTaskType() == TaskType ::WithEndDateTime){
+								archivedEntry->SubItems->Add("");
+								archivedEntry->SubItems->Add("");
+							}
+							else{
+							
 							archivedEntry->SubItems->Add(gcnew String(( (archived[l-dated.size()-undated.size()].getTaskTime().getStartDate()).c_str() )));
 							archivedEntry->SubItems->Add(gcnew String(( (archived[l-dated.size()-undated.size()].getTaskTime().getStartTime()).c_str() )));
+							
+							}
+							
 							archivedEntry->SubItems->Add(gcnew String(( (archived[l-dated.size()-undated.size()].getTaskTime().getEndDate()).c_str() )));
 							archivedEntry->SubItems->Add(gcnew String(( (archived[l-dated.size()-undated.size()].getTaskTime().getEndTime()).c_str() )));
 						
@@ -613,8 +626,14 @@ namespace TMGUI {
 							TMTask task = taskList.getTaskFromPositionIndex(*iter);
 							searchResult = gcnew ListViewItem(Convert::ToString(*iter));
 							searchResult->SubItems->Add(gcnew String(( (task.getTaskDescription()).c_str() )));
-							searchResult->SubItems->Add(gcnew String(( (task.getTaskTime().getStartDate()).c_str() )));
-							searchResult->SubItems->Add(gcnew String(( (task.getTaskTime().getStartTime()).c_str() )));
+							if(task.getTaskType() == TaskType ::WithEndDateTime){
+								searchResult->SubItems->Add("");
+								searchResult->SubItems->Add("");
+							}
+							else{
+								searchResult->SubItems->Add(gcnew String(( (task.getTaskTime().getStartDate()).c_str() )));
+								searchResult->SubItems->Add(gcnew String(( (task.getTaskTime().getStartTime()).c_str() )));
+							}
 							searchResult->SubItems->Add(gcnew String(( (task.getTaskTime().getEndDate()).c_str() )));
 							searchResult->SubItems->Add(gcnew String(( (task.getTaskTime().getEndTime()).c_str() )));
 						
@@ -661,8 +680,8 @@ namespace TMGUI {
 						break;
 					}
 					userInput->Clear();
-				 //}
-			 }
+				 }
+			 //}
 			 }
 			
 			 

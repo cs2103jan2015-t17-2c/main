@@ -1,5 +1,5 @@
-Number of dated tasks: 0
-Number of undated tasks: 2
-t2 0 0 1
-test 0 0 1
-Number of completed/archived tasks: 0
+Number of dated tasks: 1
+t2  0 04 Apr 2015 2359 04 Apr 2015 2359 0 1 0
+Number of undated tasks: 0
+Number of completed/archived tasks: 1
+t1  0 06 Apr 2015 0000 06 Apr 2015 0000 1 1 0
