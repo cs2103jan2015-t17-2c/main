@@ -1,17 +1,15 @@
 #include "Extractor.h"
 
 Extractor::Extractor() {
+    formatConverter = FormatConverter::getInstance();
+    timeChecker = TimeChecker::getInstance();
+    dateChecker = DateChecker::getInstance();
 }
 
 Extractor* Extractor::getInstance() {
 	if (theOne == NULL) {
 		theOne = new Extractor();
 	}
-
-    formatConverter = FormatConverter::getInstance();
-    timeChecker = TimeChecker::getInstance();
-    dateChecker = DateChecker::getInstance();
-
 	return theOne;
 }
 

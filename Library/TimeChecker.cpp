@@ -1,12 +1,12 @@
 #include "TimeChecker.h"
 
 TimeChecker::TimeChecker() {
+    formatConverter = FormatConverter::getInstance();
 }
 
 TimeChecker* TimeChecker::getInstance() {
     if (theOne == NULL) {
 		theOne = new TimeChecker();
-        formatConverter = FormatConverter::getInstance();
 	}
 	return theOne;
 }

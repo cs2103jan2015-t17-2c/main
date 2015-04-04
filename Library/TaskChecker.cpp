@@ -1,14 +1,14 @@
 #include "TaskChecker.h"
 
 TaskChecker::TaskChecker() {
+    formatConverter = FormatConverter::getInstance();
+    dateChecker = DateChecker::getInstance();
+    timeChecker = TimeChecker::getInstance();
 }
 
 TaskChecker* TaskChecker::getInstance() {
     if (theOne == NULL) {
 		theOne = new TaskChecker();
-        formatConverter = FormatConverter::getInstance();
-        dateChecker = DateChecker::getInstance();
-        timeChecker = TimeChecker::getInstance();
 	}
 	return theOne;
 }

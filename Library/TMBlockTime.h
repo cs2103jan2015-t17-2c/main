@@ -2,6 +2,7 @@
 #define TMBLOCKTIME_H
 
 #include "TMCommand.h"
+#include "TaskChecker.h"
 
 const std::string BATCH_NUMBER_INFO = "The batch number for this batch of unconfirmed task(s) is: ";
 
@@ -11,13 +12,14 @@ public:
 
 	void execute() {
 		TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
-		TMParser *parser = TMParser::getInstance(); 
+		TMParser *parser = TMParser::getInstance();
+        TaskChecker *taskChecker = TaskChecker::getInstance();
 		TMTaskList taskList = taskListStates->getCurrentTaskList();
 		std::ostringstream oss;
 		int i = taskList.getUniqueBatchNum();
 		oss << BATCH_NUMBER_INFO << i << std::endl;
 
-		if (parser->isMultipleTimingTask()) {
+		if (taskChecker->isMultipleTimingTask(parser->returnTokens())) {
 			std::vector<TMTask> tasks = parser->parseMultipleTimingTaskInfo();
 			std::vector<TMTask>::iterator iter;
 		

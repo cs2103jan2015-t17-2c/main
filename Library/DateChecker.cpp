@@ -1,12 +1,12 @@
 #include "DateChecker.h"
 
 DateChecker::DateChecker() {
+    formatConverter = FormatConverter::getInstance();
 }
 
 DateChecker* DateChecker::getInstance() {
     if (theOne == NULL) {
 		theOne = new DateChecker();
-        formatConverter = FormatConverter::getInstance();
 	}
 	return theOne;
 }

@@ -4,16 +4,16 @@
 TMParser* TMParser::theOne;
 
 TMParser::TMParser() {
+    taskChecker = TaskChecker::getInstance();
+    dateChecker = DateChecker::getInstance();
+    timeChecker = TimeChecker::getInstance();
+    formatConverter = FormatConverter::getInstance();
+    extractor = Extractor::getInstance();
 }
 
 TMParser* TMParser::getInstance() {
 	if (theOne == NULL) {
 		theOne = new TMParser();
-        taskChecker = TaskChecker::getInstance();
-        dateChecker = DateChecker::getInstance();
-        timeChecker = TimeChecker::getInstance();
-        formatConverter = FormatConverter::getInstance();
-        extractor = Extractor::getInstance();
 	}
 	return theOne;
 }
@@ -241,7 +241,6 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
     }
 
     if(dateToMeet == ""){
-        std::string currentTime = getCurrentTime();
         dateToMeet = formatConverter->dateFromBoostToDDMMYYYY(currentDate);
         if(timeToMeet < currentTime){
             //OR EQUALS?
