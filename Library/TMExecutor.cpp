@@ -32,7 +32,7 @@ void TMExecutor::executeMain(std::string userInput) {
 			TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(type);
 			commandObjPtr->execute();
 			_resultOfExecution = parser->getErrorMessage() + commandObjPtr->outcome;
-			if (type == TMParser::CommandTypes::SearchKeyword || type == TMParser::CommandTypes::SearchDate) {
+			if (type == TMParser::CommandTypes::SearchKeyword) {
 				_positionIndexes = commandObjPtr->positionIndexes;
 				_currentDisplay = SearchResults;
 			} 

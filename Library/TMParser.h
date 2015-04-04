@@ -41,7 +41,7 @@ public:
 	void TMParser::initialize(std::string userEntry);
 
     enum CommandTypes {
-        Add, Delete, Edit, SearchKeyword, SearchDate, SaveAt, Block, Confirm, Complete, CompleteAllToday, Incomplete,  Undo, Redo, Invalid
+        Add, Delete, Edit, SearchKeyword, SaveAt, Block, Confirm, Complete, CompleteAllToday, Incomplete,  Undo, Redo, Invalid
     };
 
     std::vector<std::string> getTokenizedUserEntry(std::string);
@@ -58,7 +58,8 @@ public:
     TMTask parseUndatedTaskInfo();
     //to block task with multiple timings >= 2
     std::vector<TMTask> parseMultipleTimingTaskInfo();
-	EditableTaskComponent parseTaskComponent();
+	EditableTaskComponent parseEditableTaskComponent();
+	std::string parseDescription();
 
     //need to check if there is sufficient space at the back first
     void configureAllDatesAndTimes(std::string&, std::string&, std::string&, std::string&, TaskType&);

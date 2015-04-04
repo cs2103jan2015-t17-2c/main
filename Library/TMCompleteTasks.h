@@ -3,7 +3,6 @@
 
 #include "TMCommand.h"
 
-
 class TMCompleteTasks : public TMCommand {
 
 public:
@@ -15,18 +14,15 @@ public:
 
 		std::vector<int> completeIndexes = parser->parseTaskPositionNo();
 		std::vector<int>::iterator intIter;
-		std::vector<TMTask> completedTasks;
-		std::vector<TMTask>::iterator taskIter;
 		std::ostringstream oss;
 		
-		for (intIter = completeIndexes.begin(); intIter != completeIndexes.end(); ++intIter) {
-			TMTask task = taskList.getTaskFromPositionIndex(*intIter);
-			completedTasks.push_back(task);
-		}
-
-		for (taskIter = completedTasks.begin(); taskIter != completedTasks.end(); ++taskIter) {
-			int positionIndex = taskList.getPositionIndexFromTask(*taskIter);
-			oss << taskList.archiveOneTask(positionIndex) << std::endl;
+		if (noRepeatedIndexes(completeIndexes)) {
+			for (intIter = completeIndexes.begin(); intIter != completeIndexes.end(); ++intIter) {
+				oss << taskList.archiveOneTask(*intIter) << std::endl;
+				updatePositionIndexes(completeIndexes, *intIter);
+			}
+		} else {
+			oss << WARNING_REPEATED_INDEXES_SPECIFIED << std::endl;
 		}
 
 		outcome = oss.str();

@@ -129,9 +129,6 @@
     <ClInclude Include="TMInvalidCommand.h">
       <Filter>Header Files\TMCommand</Filter>
     </ClInclude>
-    <ClInclude Include="TMSearchDate.h">
-      <Filter>Header Files\TMCommand</Filter>
-    </ClInclude>
     <ClInclude Include="TMUncompleteTasks.h">
       <Filter>Header Files\TMCommand</Filter>
     </ClInclude>

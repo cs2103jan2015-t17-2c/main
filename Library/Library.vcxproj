@@ -86,7 +86,6 @@
     <ClInclude Include="TMInvalidCommand.h" />
     <ClInclude Include="TMRedo.h" />
     <ClInclude Include="TMSaveAt.h" />
-    <ClInclude Include="TMSearchDate.h" />
     <ClInclude Include="TMTaskListStates.h" />
     <ClInclude Include="TMUndo.h" />
     <ClInclude Include="TMSearchKeyword.h" />

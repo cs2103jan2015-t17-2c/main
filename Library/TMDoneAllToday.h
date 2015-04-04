@@ -21,21 +21,22 @@ public:
 		 
 
 		int numDated = taskList.getDatedSize();
-		std::vector<TMTask> completedTasks;
+		std::vector<int> completeIndexes;
 		std::ostringstream oss;
 
 		for (int i = 1; i <= numDated; i++) {
 			TMTask task = taskList.getTaskFromPositionIndex(i);
 			if (task.getTaskTime().getEndDate() == strDateToday) {
-				completedTasks.push_back(taskList.getTaskFromPositionIndex(i));
+				completeIndexes.push_back(i);
 			}
 		}
 
-		std::vector<TMTask>::iterator iter;
-		for (iter = completedTasks.begin(); iter != completedTasks.end(); ++iter) {
-			int positionIndex = taskList.getPositionIndexFromTask(*iter);
-			oss << taskList.archiveOneTask(positionIndex) << std::endl; 
+		std::vector<int>::iterator iter;
+		for (iter = completeIndexes.begin(); iter != completeIndexes.end(); ++iter) {
+			oss << taskList.archiveOneTask(*iter) << std::endl;
+			updatePositionIndexes(completeIndexes, *iter);
 		}
+
 		outcome = oss.str();
 		taskListStates->addNewState(taskList);		
 	}
