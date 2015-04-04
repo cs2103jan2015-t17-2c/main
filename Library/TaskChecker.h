@@ -12,9 +12,6 @@ class TaskChecker {
 private:
     static TaskChecker* theOne;
     TaskChecker();
-    static FormatConverter* formatConverter;
-    static DateChecker* dateChecker;
-    static TimeChecker* timeChecker;
 
 public:
     static TaskChecker* getInstance();

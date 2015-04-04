@@ -4,11 +4,6 @@
 TMParser* TMParser::theOne;
 
 TMParser::TMParser() {
-    taskChecker = TaskChecker::getInstance();
-    dateChecker = DateChecker::getInstance();
-    timeChecker = TimeChecker::getInstance();
-    formatConverter = FormatConverter::getInstance();
-    extractor = Extractor::getInstance();
 }
 
 TMParser* TMParser::getInstance() {
@@ -92,7 +87,7 @@ std::vector<std::string> TMParser::returnTokens() {
 }
 
 TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
-    
+    FormatConverter *formatConverter = FormatConverter::getInstance();
 	command = formatConverter->returnLowerCase(command);
     if(command == CMD_ADD||command == CMD_SHORTCUT_ADD) {
         return CommandTypes::Add;
@@ -126,6 +121,7 @@ TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
 //Preconditions: taskInfo contains only the entry after command. use extractEntryAfterCommand 1st
 //             : use only when in adding or editing information
 TMTask TMParser::parseTaskInfo() {
+    TaskChecker *taskChecker = TaskChecker::getInstance();
     if(taskChecker->isDeadlinedTask(_tokenizedUserEntry)){
         return parseDeadlinedTaskInfo();
     } else if(taskChecker->isTimedTask(_tokenizedUserEntry)) {
@@ -146,6 +142,11 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
 
     std::string unitString;
     std::string nextWord;
+
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    TimeChecker *timeChecker = TimeChecker::getInstance();
+    DateChecker *dateChecker = DateChecker::getInstance();
+    Extractor *extractor = Extractor::getInstance();
 
     for(int index = 0; index < lengthOfTokenizedUserEntry; index++){
 
@@ -275,6 +276,11 @@ TMTask TMParser::parseTimedTaskInfo(){
     std::string unitString;
     int lengthOfTokenizedUserEntry = _tokenizedUserEntry.size();
 
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    TimeChecker *timeChecker = TimeChecker::getInstance();
+    DateChecker *dateChecker = DateChecker::getInstance();
+    Extractor *extractor = Extractor::getInstance();
+
     //will not check last string. last string treated as task desc
     
     for(int index = 0; index < lengthOfTokenizedUserEntry; index++){
@@ -331,7 +337,7 @@ TMTask TMParser::parseTimedTaskInfo(){
             }
         } else if(unitString == TOKEN_FROM){
             extractor->extractDateAndOrTime(index + 1, indexOfDatesAndTimes, startDate, startTime, _tokenizedUserEntry);
-            if((startDate != "")||(startDate != "")){
+            if((startDate != "")||(startTime != "")){
                 mainIndexOfDatesAndTimes.push(index);
                 while(!indexOfDatesAndTimes.empty()){
                     mainIndexOfDatesAndTimes.push(indexOfDatesAndTimes.front());
@@ -356,7 +362,7 @@ TMTask TMParser::parseTimedTaskInfo(){
             }
         } else if (unitString == TOKEN_TO){
             extractor->extractDateAndOrTime(index + 1, indexOfDatesAndTimes, endDate, endTime, _tokenizedUserEntry);
-            if((startDate != "")||(endTime != "")){  
+            if((endDate != "")||(endTime != "")){  
                 mainIndexOfDatesAndTimes.push(index);
                 while(!indexOfDatesAndTimes.empty()){
                     mainIndexOfDatesAndTimes.push(indexOfDatesAndTimes.front());
@@ -438,6 +444,11 @@ TMTask TMParser::parseUndatedTaskInfo() {
     std::string nextWord;
 
     int lengthOfVector = _tokenizedUserEntry.size();
+
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    TimeChecker *timeChecker = TimeChecker::getInstance();
+    DateChecker *dateChecker = DateChecker::getInstance();
+    Extractor *extractor = Extractor::getInstance();
 
     for(int index = 0; index < lengthOfVector; index++){
         if(index + 1 == lengthOfVector){
@@ -526,6 +537,10 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
     std::string taskDescription;
     bool oneTimingFound = false;
     int lengthOfTokenizedUserEntry = _tokenizedUserEntry.size();
+
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    DateChecker *dateChecker = DateChecker::getInstance();
+    Extractor *extractor = Extractor::getInstance();
 
     for(int index = 0; index < lengthOfTokenizedUserEntry; index++){
         std::string startTime;
@@ -669,6 +684,7 @@ std::string TMParser::parseDescription() {
 }
 
 void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& startTime, std::string& endDate, std::string& endTime, TaskType& taskType){
+    FormatConverter *formatConverter = FormatConverter::getInstance();
     if((startTime != ""||startDate != "") && endTime == "" && endDate == ""){
         taskType = TaskType::WithStartDateTime;
         if(startTime == ""){
@@ -846,6 +862,7 @@ std::string TMParser::parseDirectory() {
 
 //preconditions date dd mm yyyy use dateFromUserToBoost
 std::string TMParser::substractNDaysFromDate(std::string date, int n){
+    FormatConverter *formatConverter = FormatConverter::getInstance();
     date = formatConverter->dateFromNumericToBoostFormat(date);
     boost::gregorian::date initialBoostDate = boost::gregorian::from_uk_string(date);
     boost::gregorian::date_duration dateDuration(n);
@@ -855,6 +872,7 @@ std::string TMParser::substractNDaysFromDate(std::string date, int n){
 
 //preconditions date dd mm yyyy use dateFromUserToBoost
 std::string TMParser::addNDaysFromDate(std::string date, int n){
+    FormatConverter *formatConverter = FormatConverter::getInstance();
     date = formatConverter->dateFromNumericToBoostFormat(date);
     boost::gregorian::date initialBoostDate = boost::gregorian::from_uk_string(date);
     boost::gregorian::date_duration dateDuration(n);

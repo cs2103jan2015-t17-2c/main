@@ -11,19 +11,22 @@ namespace TMParserTest{
 
 		TEST_METHOD(timeTo24HFormatTest){
             TMParser *parser = TMParser::getInstance(); 
-			Assert::AreEqual((std::string)"1200",parser->timeTo24HFormat("12pm"));
+            FormatConverter *formatConverter = FormatConverter::getInstance();
+			Assert::AreEqual((std::string)"1200",formatConverter->timeFrom12HourPMToHHMM("12pm"));
 		}
 
         TEST_METHOD(dateFromNumericToStandardFormat){
-            TMParser *parser = TMParser::getInstance(); 
+            TMParser *parser = TMParser::getInstance();
+            FormatConverter *formatConverter = FormatConverter::getInstance();
             std::string date("01012015");
-            Assert::AreEqual((std::string)"01 Jan 2015",parser->dateFromNumericToStandardFormat(date));
+            Assert::AreEqual((std::string)"01 Jan 2015",formatConverter->dateFromNumericToStandardFormat(date));
         }
 
         TEST_METHOD(timeTo24HFormat){
             TMParser *parser = TMParser::getInstance();
+            FormatConverter *formatConverter = FormatConverter::getInstance();
             std::string time("12am");
-            Assert::AreEqual((std::string)"0000",parser->timeTo24HFormat(time));
+            Assert::AreEqual((std::string)"0000",formatConverter->timeFrom12HourAMToHHMM(time));
         }
 
 	};

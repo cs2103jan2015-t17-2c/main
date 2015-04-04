@@ -1,7 +1,8 @@
 #include "TimeChecker.h"
 
+TimeChecker* TimeChecker::theOne;
+
 TimeChecker::TimeChecker() {
-    formatConverter = FormatConverter::getInstance();
 }
 
 TimeChecker* TimeChecker::getInstance() {
@@ -68,6 +69,7 @@ bool TimeChecker::is12HTime(std::string timeToken){
 
 bool TimeChecker::isAM(std::string token){
     std::string lastTwoCharacters = token.substr(token.length()-2,2);
+    FormatConverter *formatConverter = FormatConverter::getInstance();
     lastTwoCharacters = formatConverter->returnLowerCase(lastTwoCharacters);
     if(lastTwoCharacters == "am"){
         return true;
@@ -78,6 +80,7 @@ bool TimeChecker::isAM(std::string token){
 
 bool TimeChecker::isPM(std::string token){
     std::string lastTwoCharacters = token.substr(token.length()-2,2);
+    FormatConverter *formatConverter = FormatConverter::getInstance();
     lastTwoCharacters = formatConverter->returnLowerCase(lastTwoCharacters);
     if(lastTwoCharacters == "pm"){
         return true;

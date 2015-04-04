@@ -13,9 +13,6 @@ class Extractor {
 private:
     static Extractor* theOne;
     Extractor();
-    static FormatConverter* formatConverter;
-    static TimeChecker* timeChecker;
-    static DateChecker* dateChecker;
 
 public:
     static Extractor* getInstance();

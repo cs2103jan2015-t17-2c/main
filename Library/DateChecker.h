@@ -11,7 +11,6 @@ class DateChecker {
 private:
     static DateChecker* theOne;
     DateChecker();
-    static FormatConverter* formatConverter;
 
 public:
     static DateChecker* getInstance();

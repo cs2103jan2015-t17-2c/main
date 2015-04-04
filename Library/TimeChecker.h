@@ -8,7 +8,6 @@ class TimeChecker {
 private:
     static TimeChecker* theOne;
     TimeChecker();
-    static FormatConverter* formatConverter;
 
 public:
     static TimeChecker* getInstance();

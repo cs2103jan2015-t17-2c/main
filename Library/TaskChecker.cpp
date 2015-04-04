@@ -1,9 +1,9 @@
 #include "TaskChecker.h"
 
+TaskChecker* TaskChecker::theOne;
+
 TaskChecker::TaskChecker() {
-    formatConverter = FormatConverter::getInstance();
-    dateChecker = DateChecker::getInstance();
-    timeChecker = TimeChecker::getInstance();
+
 }
 
 TaskChecker* TaskChecker::getInstance() {
@@ -14,6 +14,9 @@ TaskChecker* TaskChecker::getInstance() {
 }
 
 bool TaskChecker::isDeadlinedTask(std::vector<std::string> tokenizedUserEntry) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    DateChecker *dateChecker = DateChecker::getInstance();
+    TimeChecker *timeChecker = TimeChecker::getInstance();
     std::string unitString;
     std::string stringAfterBefore;
     int lengthOfTokenizedUserEntry = tokenizedUserEntry.size();
@@ -42,6 +45,9 @@ bool TaskChecker::isDeadlinedTask(std::vector<std::string> tokenizedUserEntry) {
 }
 
 bool TaskChecker::isTimedTask(std::vector<std::string> tokenizedUserEntry) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    DateChecker *dateChecker = DateChecker::getInstance();
+    TimeChecker *timeChecker = TimeChecker::getInstance();
     std::string unitString;
     std::string stringAfterToken;
     int lengthOfTokenizedUserEntry = tokenizedUserEntry.size();
@@ -103,6 +109,9 @@ bool TaskChecker::isTimedTask(std::vector<std::string> tokenizedUserEntry) {
 //user input must be date and/or time first followed by and date and/or time
 //CHECK FOR PERIOD TOO 2-4PM AND MORE
 bool TaskChecker::isMultipleTimingTask(std::vector<std::string> tokenizedUserEntry){
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    DateChecker *dateChecker = DateChecker::getInstance();
+    TimeChecker *timeChecker = TimeChecker::getInstance();
     std::string unitString;
     std::string stringAfterAnd;
     int lengthOfTokenizedUserEntry = tokenizedUserEntry.size();

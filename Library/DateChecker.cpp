@@ -1,7 +1,9 @@
 #include "DateChecker.h"
 
+DateChecker* DateChecker::theOne;
+
 DateChecker::DateChecker() {
-    formatConverter = FormatConverter::getInstance();
+    
 }
 
 DateChecker* DateChecker::getInstance() {
@@ -41,7 +43,7 @@ bool DateChecker::isNumericDate(std::string token) {
         if(!isInteger(token)){
             return false;
         }
-
+        FormatConverter *formatConverter = FormatConverter::getInstance();
         if(!isValidDate(formatConverter->dateFromNumericToBoostFormat(token))){
             return false;
         }
@@ -89,6 +91,7 @@ bool DateChecker::isDDMonDate(std::string token){
         }
     } else {
         month = token;
+        FormatConverter *formatConverter = FormatConverter::getInstance();
         std::string dateToday = formatConverter->dateFromBoostToDDMMYYYY(currentDate);
         yyyy = dateToday.substr(4,4);
         if(!isMonth(month)){
@@ -106,6 +109,7 @@ bool DateChecker::isDDMonDate(std::string token){
 }
 
 bool DateChecker::isMonth(std::string token){
+    FormatConverter *formatConverter = FormatConverter::getInstance();
     token = formatConverter->returnLowerCase(token);
     if(token == "jan"||
        token == "january"||
@@ -136,6 +140,7 @@ bool DateChecker::isMonth(std::string token){
 }
 
 bool DateChecker::isDay(std::string token) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
     token = formatConverter->returnLowerCase(token);
     if(token == DAY_MON||
        token == DAY_MONDAY||
@@ -158,6 +163,7 @@ bool DateChecker::isDay(std::string token) {
 }
 
 bool DateChecker::isNextDay(int index, std::vector<std::string> tokenizedUserEntry){
+    FormatConverter *formatConverter = FormatConverter::getInstance();
     std::string firstWord = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
 
     if(firstWord == TOKEN_NEXT){

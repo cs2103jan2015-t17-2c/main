@@ -1,5 +1,7 @@
 #include "FormatConverter.h"
 
+FormatConverter *FormatConverter::theOne;
+
 FormatConverter::FormatConverter() {
 }
 

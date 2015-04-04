@@ -29,11 +29,6 @@ private:
     std::vector<std::string> _errorMessages;
 	static TMParser* theOne;
 	TMParser();
-    static TaskChecker* taskChecker;
-    static DateChecker* dateChecker;
-    static TimeChecker* timeChecker;
-    static FormatConverter* formatConverter;
-    static Extractor* extractor;
 
 public:
     static TMParser* getInstance();

@@ -1,9 +1,8 @@
 #include "Extractor.h"
 
+Extractor* Extractor::theOne;
+
 Extractor::Extractor() {
-    formatConverter = FormatConverter::getInstance();
-    timeChecker = TimeChecker::getInstance();
-    dateChecker = DateChecker::getInstance();
 }
 
 Extractor* Extractor::getInstance() {
@@ -14,6 +13,8 @@ Extractor* Extractor::getInstance() {
 }
 
 std::string Extractor::extractDayOrNumericDateOrDDMonDate(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry){
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    DateChecker *dateChecker = DateChecker::getInstance();
     std::string stringAfterOn = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
     std::string startDate = "";
 
@@ -31,6 +32,7 @@ std::string Extractor::extractDayOrNumericDateOrDDMonDate(int index, std::queue<
 }
 
 std::string Extractor::extractNumericDate(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry){
+    FormatConverter *formatConverter = FormatConverter::getInstance();
     std::string startDate = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
     indexOfDatesAndTimes.push(index);
     return startDate;
@@ -40,6 +42,7 @@ std::string Extractor::extractDDMonDate(int index, std::queue<int>& indexOfDates
     std::string dd = "";
     std::string month = "";
     std::string yyyy = "";
+    FormatConverter *formatConverter = FormatConverter::getInstance();
     std::string stringDate = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
 
     int positionOfNextDash = stringDate.find_first_of("-");
@@ -76,6 +79,7 @@ std::string Extractor::extractNextDay(int index, std::queue<int>& indexOfDatesAn
 
 //preconditions only used after token before
 std::string Extractor::getDateFromNextDay(int index, std::vector<std::string> tokenizedUserEntry){
+    FormatConverter *formatConverter = FormatConverter::getInstance();
     std::string stringDay = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
     std::string date;
 
@@ -92,6 +96,7 @@ std::string Extractor::getDateFromNextDay(int index, std::vector<std::string> to
 }
 
 std::string Extractor::extractDay(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry){
+    FormatConverter *formatConverter = FormatConverter::getInstance();
     std::string day = formatConverter->returnLowerCase(tokenizedUserEntry[index]); 
     int dayInInteger = dayOfWeek(day);
     boost::gregorian::first_day_of_the_week_after fdaf(dayInInteger);
@@ -103,16 +108,16 @@ std::string Extractor::extractDay(int index, std::queue<int>& indexOfDatesAndTim
 }
 
 std::string Extractor::extractTime(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry){
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    TimeChecker *timeChecker = TimeChecker::getInstance();
     std::string stringAfterAt = formatConverter->returnLowerCase(tokenizedUserEntry[index]);      
     std::string time = "";
 
     if(timeChecker->is12HTime(stringAfterAt)) {
         if(timeChecker->isAM(stringAfterAt)){
             time = formatConverter->timeFrom12HourAMToHHMM(stringAfterAt);
-            indexOfDatesAndTimes.push(index);
         } else if (timeChecker->isPM(stringAfterAt)) {
             time = formatConverter->timeFrom12HourPMToHHMM(stringAfterAt);
-            indexOfDatesAndTimes.push(index);
         }
         indexOfDatesAndTimes.push(index);
     } else if (timeChecker->is24HTime(stringAfterAt)){
@@ -124,7 +129,10 @@ std::string Extractor::extractTime(int index, std::queue<int>& indexOfDatesAndTi
 }
 
 void Extractor::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAndTimes, std::string& extractedDate, std::string& extractedTime, std::vector<std::string> tokenizedUserEntry){
-                //checks for startTime and startDate
+    //checks for startTime and startDate
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    TimeChecker *timeChecker = TimeChecker::getInstance();
+    DateChecker *dateChecker = DateChecker::getInstance();
     std::string stringAfterToken = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
     std::string date = "";
     std::string time = "";
