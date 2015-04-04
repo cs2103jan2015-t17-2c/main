@@ -30,7 +30,7 @@ public:
 	void TMParser::initialize(std::string userEntry);
 
     enum CommandTypes {
-        Add, Delete, Edit, SearchKeyword, SearchDate, SaveAt, Block, Confirm, Complete, CompleteAllToday, Incomplete,  Undo, Redo, Invalid
+        Add, Delete, Edit, SearchKeyword, SaveAt, Block, Confirm, Complete, CompleteAllToday, Incomplete,  Undo, Redo, Invalid
     };
 
     std::vector<std::string> getTokenizedUserEntry(std::string);
