@@ -2,6 +2,7 @@
 #define TMTASK_H
 #include <string>
 #include "TMTaskTime.h"
+#include <boost/assign/list_of.hpp>
 
 enum TaskType {
     WithStartDateTime, WithEndDateTime, WithPeriod, Undated, Invalid
@@ -38,6 +39,7 @@ public:
 	bool isConfirmed();
 	bool isClashed();
     TaskType getTaskType();
+    std::string getTaskTypeAsString();
 
     void setTaskDescription(std::string);
 
