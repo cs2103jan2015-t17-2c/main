@@ -16,7 +16,7 @@ public:
     static DateChecker* getInstance();
 
     bool isValidDate(std::string);
-    bool isInteger(std::string);
+    bool isPositiveInteger(std::string);
     bool isNumericDate(std::string);
     bool isDDMonDate(std::string);
     bool isMonth(std::string);

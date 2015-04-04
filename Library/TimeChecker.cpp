@@ -94,7 +94,7 @@ bool TimeChecker::is24HTime(std::string timeToken) {
     //to consider: 8 1-10(change to pm?) 
     unsigned int lengthOfTimeToken = timeToken.size();
     if(lengthOfTimeToken == 2){
-        if(isInteger(timeToken)){
+        if(isPositiveInteger(timeToken)){
             int hour = std::stoi(timeToken);
             if(hour >= 0 && hour <= 23) {
                 return true;
@@ -105,7 +105,7 @@ bool TimeChecker::is24HTime(std::string timeToken) {
             return false;
         }
     } else if (lengthOfTimeToken == 4) {
-        if(isInteger(timeToken)) {
+        if(isPositiveInteger(timeToken)) {
             int hour = std::stoi(timeToken.substr(0,2));
             if(hour >= 0 && hour <= 23) {
                 int minute = std::stoi(timeToken.substr(2,2));
@@ -122,7 +122,7 @@ bool TimeChecker::is24HTime(std::string timeToken) {
         }
     } else if(lengthOfTimeToken == 5) {
         if(timeToken[2] == ':') {
-            if(isInteger(timeToken.substr(0,2)) && isInteger(timeToken.substr(3,2))) {
+            if(isPositiveInteger(timeToken.substr(0,2)) && isPositiveInteger(timeToken.substr(3,2))) {
                 int hour = std::stoi(timeToken.substr(0,2));
                 if(hour >= 0 && hour <= 23) {
                     int minute = std::stoi(timeToken.substr(3,2));
@@ -145,11 +145,18 @@ bool TimeChecker::is24HTime(std::string timeToken) {
     }
 }
 
-bool TimeChecker::isInteger(std::string token) {
+bool TimeChecker::isPositiveInteger(std::string token) {
     for(std::string::iterator it = token.begin(); it < token.end(); it++) {
         if(!isdigit(*it)) {
             return false;
         }
     }
-    return true;
+
+    int integer = std::stoi(token);
+
+    if(integer > 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
