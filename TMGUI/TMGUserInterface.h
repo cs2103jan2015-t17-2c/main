@@ -11,6 +11,7 @@
 #include "TMTaskList.h"
 #include "TMCommandCreator.h"
 #include "TMCommand.h"
+#include "TMSplash.h"
 
 namespace TMGUI {
 
@@ -20,6 +21,7 @@ namespace TMGUI {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::Threading;
 
 	/// <summary>
 	/// Summary for TMGUserInterface
@@ -29,8 +31,19 @@ namespace TMGUI {
 	public:
 		TMGUserInterface(void)
 		{
+			Thread^ splash = gcnew Thread( gcnew ThreadStart (this,&TMGUI :: TMGUserInterface :: SplashStart));
+			splash->Start();
+			Thread::Sleep(3500);
 			InitializeComponent();
+			splash->Abort();
+			this->Show();
+			Activate();
 		}
+
+	public:
+		void SplashStart(){
+			Application::Run(gcnew TMSplash);
+	}
 
 	protected:
 		/// <summary>
@@ -50,8 +63,8 @@ namespace TMGUI {
 	private: System::Windows::Forms::Label^  welcomeMessage;
 
 
-	private: System::Windows::Forms::Label^  label1;
-	private: System::Windows::Forms::Label^  label2;
+
+
 	private: System::Windows::Forms::RichTextBox^  statusDisplay;
 
 	private: System::Windows::Forms::Label^  label3;
@@ -70,7 +83,7 @@ namespace TMGUI {
 	private: System::Windows::Forms::ColumnHeader^  isClash;
 	private: System::Windows::Forms::ColumnHeader^  isDone;
 	private: System::Windows::Forms::Label^  DisplayState;
-	private: System::Windows::Forms::Label^  label5;
+
 
 
 
@@ -104,8 +117,6 @@ namespace TMGUI {
 			this->components = (gcnew System::ComponentModel::Container());
 			this->userInput = (gcnew System::Windows::Forms::TextBox());
 			this->welcomeMessage = (gcnew System::Windows::Forms::Label());
-			this->label1 = (gcnew System::Windows::Forms::Label());
-			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->statusDisplay = (gcnew System::Windows::Forms::RichTextBox());
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->defaultView = (gcnew System::Windows::Forms::ListView());
@@ -121,7 +132,6 @@ namespace TMGUI {
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->DisplayState = (gcnew System::Windows::Forms::Label());
-			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->SuspendLayout();
 			// 
 			// userInput
@@ -151,29 +161,6 @@ namespace TMGUI {
 			this->welcomeMessage->TabIndex = 2;
 			this->welcomeMessage->Text = L"Command:";
 			// 
-			// label1
-			// 
-			this->label1->AutoSize = true;
-			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 18, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->label1->Location = System::Drawing::Point(1642, 35);
-			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(277, 55);
-			this->label1->TabIndex = 4;
-			this->label1->Text = L"TimeMaster";
-			// 
-			// label2
-			// 
-			this->label2->AutoSize = true;
-			this->label2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.875F, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->label2->Location = System::Drawing::Point(1336, 52);
-			this->label2->Margin = System::Windows::Forms::Padding(6, 0, 6, 0);
-			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(293, 33);
-			this->label2->TabIndex = 5;
-			this->label2->Text = L"Master your time with";
-			// 
 			// statusDisplay
 			// 
 			this->statusDisplay->BackColor = System::Drawing::SystemColors::WindowText;
@@ -181,7 +168,7 @@ namespace TMGUI {
 			this->statusDisplay->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->statusDisplay->ForeColor = System::Drawing::SystemColors::Window;
-			this->statusDisplay->Location = System::Drawing::Point(367, 639);
+			this->statusDisplay->Location = System::Drawing::Point(367, 720);
 			this->statusDisplay->Name = L"statusDisplay";
 			this->statusDisplay->ReadOnly = true;
 			this->statusDisplay->Size = System::Drawing::Size(1347, 124);
@@ -193,7 +180,7 @@ namespace TMGUI {
 			this->label3->AutoSize = true;
 			this->label3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 22.125F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label3->Location = System::Drawing::Point(89, 652);
+			this->label3->Location = System::Drawing::Point(104, 720);
 			this->label3->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label3->Name = L"label3";
 			this->label3->Size = System::Drawing::Size(212, 67);
@@ -247,7 +234,7 @@ namespace TMGUI {
 			// 
 			// confirmation
 			// 
-			this->confirmation->Text = L"Confirmation";
+			this->confirmation->Text = L"Confirmed";
 			this->confirmation->Width = 90;
 			// 
 			// isClash
@@ -265,7 +252,7 @@ namespace TMGUI {
 			this->label4->AutoSize = true;
 			this->label4->Font = (gcnew System::Drawing::Font(L"Segoe UI Semibold", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label4->Location = System::Drawing::Point(44, 51);
+			this->label4->Location = System::Drawing::Point(828, 51);
 			this->label4->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label4->Name = L"label4";
 			this->label4->Size = System::Drawing::Size(197, 45);
@@ -284,23 +271,11 @@ namespace TMGUI {
 			this->DisplayState->Font = (gcnew System::Drawing::Font(L"Segoe UI Light", 12, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)), 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->DisplayState->ForeColor = System::Drawing::Color::Black;
-			this->DisplayState->Location = System::Drawing::Point(486, 20);
+			this->DisplayState->Location = System::Drawing::Point(828, 628);
 			this->DisplayState->Name = L"DisplayState";
 			this->DisplayState->Size = System::Drawing::Size(232, 45);
 			this->DisplayState->TabIndex = 11;
 			this->DisplayState->Text = L"Default display";
-			// 
-			// label5
-			// 
-			this->label5->AutoSize = true;
-			this->label5->Font = (gcnew System::Drawing::Font(L"Segoe UI Symbol", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->label5->Location = System::Drawing::Point(154, 804);
-			this->label5->Name = L"label5";
-			this->label5->Size = System::Drawing::Size(1475, 51);
-			this->label5->TabIndex = 12;
-			this->label5->Text = L"Add (a)-Undo (u)-Redo (r)-Delete (d)-Edit (e)-Complete (c)-Complete all today-(do" 
-				L"neall)";
 			// 
 			// TMGUserInterface
 			// 
@@ -309,14 +284,11 @@ namespace TMGUI {
 			this->AutoSize = true;
 			this->BackColor = System::Drawing::Color::LightSteelBlue;
 			this->ClientSize = System::Drawing::Size(1949, 1032);
-			this->Controls->Add(this->label5);
 			this->Controls->Add(this->DisplayState);
 			this->Controls->Add(this->label4);
 			this->Controls->Add(this->defaultView);
 			this->Controls->Add(this->label3);
 			this->Controls->Add(this->statusDisplay);
-			this->Controls->Add(this->label2);
-			this->Controls->Add(this->label1);
 			this->Controls->Add(this->welcomeMessage);
 			this->Controls->Add(this->userInput);
 			this->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
@@ -327,6 +299,7 @@ namespace TMGUI {
 			this->MinimizeBox = false;
 			this->Name = L"TMGUserInterface";
 			this->Padding = System::Windows::Forms::Padding(0, 0, 10, 10);
+			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"TimeMaster";
 			this->Load += gcnew System::EventHandler(this, &TMGUserInterface::TMGUserInterface_Load);
 			this->ResumeLayout(false);
@@ -336,12 +309,15 @@ namespace TMGUI {
 #pragma endregion
 	
 	private: System::Void userInput_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
+
 				 
 
 				 if(e->KeyChar == (char)13){
 				
 					if (userInput->Text == "quit" || userInput->Text =="exit" || userInput->Text =="q" || userInput->Text =="close"){
-						//taskList.writeToFile();
+						TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+						TMTaskList taskList = taskListStates->getCurrentTaskList();
+						taskList.leaveReferenceUponExit();
 						Application :: Exit();
 					}
 					else{

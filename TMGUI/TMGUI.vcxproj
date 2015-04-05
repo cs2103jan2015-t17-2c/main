@@ -82,9 +82,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TMGUserInterface.cpp" />
+    <ClCompile Include="TMSplash.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TMGUserInterface.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="TMSplash.h">
       <FileType>CppForm</FileType>
     </ClInclude>
   </ItemGroup>
@@ -92,6 +96,9 @@
     <EmbeddedResource Include="TMGUserInterface.resx">
       <DependentUpon>TMGUserInterface.h</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TMSplash.resx">
+      <DependentUpon>TMSplash.h</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

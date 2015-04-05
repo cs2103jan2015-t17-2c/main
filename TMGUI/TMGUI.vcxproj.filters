@@ -18,9 +18,15 @@
     <ClCompile Include="TMGUserInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TMSplash.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TMGUserInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TMSplash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
