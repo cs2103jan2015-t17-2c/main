@@ -42,6 +42,7 @@ namespace TMGUI {
 	private: System::Windows::Forms::Label^  title;
 	private: System::Windows::Forms::Label^  initialize;
 	private: System::Windows::Forms::Label^  initials;
+	private: System::Windows::Forms::Label^  slogan;
 	private: System::ComponentModel::IContainer^  components;
 
 	private:
@@ -63,11 +64,12 @@ namespace TMGUI {
 			this->title = (gcnew System::Windows::Forms::Label());
 			this->initialize = (gcnew System::Windows::Forms::Label());
 			this->initials = (gcnew System::Windows::Forms::Label());
+			this->slogan = (gcnew System::Windows::Forms::Label());
 			this->SuspendLayout();
 			// 
 			// progressBar
 			// 
-			this->progressBar->Location = System::Drawing::Point(210, 347);
+			this->progressBar->Location = System::Drawing::Point(198, 474);
 			this->progressBar->Name = L"progressBar";
 			this->progressBar->Size = System::Drawing::Size(471, 39);
 			this->progressBar->TabIndex = 0;
@@ -81,38 +83,55 @@ namespace TMGUI {
 			// title
 			// 
 			this->title->AutoSize = true;
-			this->title->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->title->Font = (gcnew System::Drawing::Font(L"Corbel", 19.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
+			this->title->ForeColor = System::Drawing::SystemColors::ButtonFace;
 			this->title->Location = System::Drawing::Point(288, 111);
 			this->title->Name = L"title";
-			this->title->Size = System::Drawing::Size(307, 61);
+			this->title->Size = System::Drawing::Size(292, 64);
 			this->title->TabIndex = 1;
 			this->title->Text = L"TimeMaster";
 			// 
 			// initialize
 			// 
 			this->initialize->AutoSize = true;
-			this->initialize->Location = System::Drawing::Point(389, 307);
+			this->initialize->Font = (gcnew System::Drawing::Font(L"Corbel", 7.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->initialize->Location = System::Drawing::Point(368, 446);
 			this->initialize->Name = L"initialize";
-			this->initialize->Size = System::Drawing::Size(125, 25);
+			this->initialize->Size = System::Drawing::Size(119, 26);
 			this->initialize->TabIndex = 2;
 			this->initialize->Text = L"Initializing...";
 			// 
 			// initials
 			// 
 			this->initials->AutoSize = true;
-			this->initials->Location = System::Drawing::Point(335, 617);
+			this->initials->Font = (gcnew System::Drawing::Font(L"Corbel", 7.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->initials->Location = System::Drawing::Point(309, 606);
 			this->initials->Name = L"initials";
-			this->initials->Size = System::Drawing::Size(207, 25);
+			this->initials->Size = System::Drawing::Size(227, 26);
 			this->initials->TabIndex = 3;
-			this->initials->Text = L"© GANWENXL 2015";
+			this->initials->Text = L"© GANWENXLTKM 2015";
+			// 
+			// slogan
+			// 
+			this->slogan->AutoSize = true;
+			this->slogan->Font = (gcnew System::Drawing::Font(L"Corbel", 10.125F, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->slogan->Location = System::Drawing::Point(247, 175);
+			this->slogan->Name = L"slogan";
+			this->slogan->Size = System::Drawing::Size(378, 33);
+			this->slogan->TabIndex = 4;
+			this->slogan->Text = L"Master Your Time, Master Your Life";
 			// 
 			// TMSplash
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(12, 25);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->BackColor = System::Drawing::Color::LightSteelBlue;
+			this->BackColor = System::Drawing::Color::LightSlateGray;
 			this->ClientSize = System::Drawing::Size(890, 651);
+			this->Controls->Add(this->slogan);
 			this->Controls->Add(this->initials);
 			this->Controls->Add(this->initialize);
 			this->Controls->Add(this->title);
@@ -127,7 +146,7 @@ namespace TMGUI {
 		}
 #pragma endregion
 	private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e) {
-				 progressBar->Increment(2);
+				 progressBar->Increment(4);
 				 if(progressBar->Value == 100){
 					 timer1->Stop();
 					

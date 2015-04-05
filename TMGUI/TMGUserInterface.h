@@ -33,7 +33,7 @@ namespace TMGUI {
 		{
 			Thread^ splash = gcnew Thread( gcnew ThreadStart (this,&TMGUI :: TMGUserInterface :: SplashStart));
 			splash->Start();
-			Thread::Sleep(3500);
+			Thread::Sleep(2650);
 			InitializeComponent();
 			splash->Abort();
 			this->Show();
@@ -67,7 +67,7 @@ namespace TMGUI {
 
 	private: System::Windows::Forms::RichTextBox^  statusDisplay;
 
-	private: System::Windows::Forms::Label^  label3;
+
 
 	private: System::Windows::Forms::ListView^  defaultView;
 
@@ -83,6 +83,10 @@ namespace TMGUI {
 	private: System::Windows::Forms::ColumnHeader^  isClash;
 	private: System::Windows::Forms::ColumnHeader^  isDone;
 	private: System::Windows::Forms::Label^  DisplayState;
+	private: System::Windows::Forms::Label^  todayIs;
+	private: System::Windows::Forms::Label^  nowShowing;
+
+
 
 
 
@@ -118,7 +122,6 @@ namespace TMGUI {
 			this->userInput = (gcnew System::Windows::Forms::TextBox());
 			this->welcomeMessage = (gcnew System::Windows::Forms::Label());
 			this->statusDisplay = (gcnew System::Windows::Forms::RichTextBox());
-			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->defaultView = (gcnew System::Windows::Forms::ListView());
 			this->taskID = (gcnew System::Windows::Forms::ColumnHeader());
 			this->taskDescription = (gcnew System::Windows::Forms::ColumnHeader());
@@ -132,6 +135,8 @@ namespace TMGUI {
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->DisplayState = (gcnew System::Windows::Forms::Label());
+			this->todayIs = (gcnew System::Windows::Forms::Label());
+			this->nowShowing = (gcnew System::Windows::Forms::Label());
 			this->SuspendLayout();
 			// 
 			// userInput
@@ -140,10 +145,10 @@ namespace TMGUI {
 			this->userInput->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
 			this->userInput->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->userInput->Location = System::Drawing::Point(367, 890);
+			this->userInput->Location = System::Drawing::Point(51, 775);
 			this->userInput->Margin = System::Windows::Forms::Padding(2);
 			this->userInput->Name = L"userInput";
-			this->userInput->Size = System::Drawing::Size(1347, 50);
+			this->userInput->Size = System::Drawing::Size(1868, 50);
 			this->userInput->TabIndex = 0;
 			this->userInput->TextChanged += gcnew System::EventHandler(this, &TMGUserInterface::userInput_TextChanged);
 			this->userInput->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &TMGUserInterface::userInput_KeyDown);
@@ -152,46 +157,37 @@ namespace TMGUI {
 			// welcomeMessage
 			// 
 			this->welcomeMessage->AutoSize = true;
-			this->welcomeMessage->Font = (gcnew System::Drawing::Font(L"Segoe UI", 18, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
+			this->welcomeMessage->Font = (gcnew System::Drawing::Font(L"Corbel", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->welcomeMessage->Location = System::Drawing::Point(70, 876);
+			this->welcomeMessage->ForeColor = System::Drawing::SystemColors::ButtonFace;
+			this->welcomeMessage->Location = System::Drawing::Point(44, 734);
 			this->welcomeMessage->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->welcomeMessage->Name = L"welcomeMessage";
-			this->welcomeMessage->Size = System::Drawing::Size(256, 65);
+			this->welcomeMessage->Size = System::Drawing::Size(391, 39);
 			this->welcomeMessage->TabIndex = 2;
-			this->welcomeMessage->Text = L"Command:";
+			this->welcomeMessage->Text = L"What would you like to do\?";
 			// 
 			// statusDisplay
 			// 
-			this->statusDisplay->BackColor = System::Drawing::SystemColors::WindowText;
-			this->statusDisplay->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->statusDisplay->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->statusDisplay->BackColor = System::Drawing::SystemColors::InactiveCaption;
+			this->statusDisplay->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->statusDisplay->Font = (gcnew System::Drawing::Font(L"Corbel", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->statusDisplay->ForeColor = System::Drawing::SystemColors::Window;
-			this->statusDisplay->Location = System::Drawing::Point(367, 720);
+			this->statusDisplay->ForeColor = System::Drawing::SystemColors::InfoText;
+			this->statusDisplay->Location = System::Drawing::Point(52, 599);
+			this->statusDisplay->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
 			this->statusDisplay->Name = L"statusDisplay";
 			this->statusDisplay->ReadOnly = true;
-			this->statusDisplay->Size = System::Drawing::Size(1347, 124);
+			this->statusDisplay->Size = System::Drawing::Size(1574, 132);
 			this->statusDisplay->TabIndex = 6;
 			this->statusDisplay->Text = L"";
 			// 
-			// label3
-			// 
-			this->label3->AutoSize = true;
-			this->label3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 22.125F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->label3->Location = System::Drawing::Point(104, 720);
-			this->label3->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
-			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(212, 67);
-			this->label3->TabIndex = 7;
-			this->label3->Text = L"Status:";
-			// 
 			// defaultView
 			// 
+			this->defaultView->BackColor = System::Drawing::SystemColors::HighlightText;
 			this->defaultView->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(9) {this->taskID, this->taskDescription, 
 				this->startDate, this->startTime, this->endDate, this->endTime, this->confirmation, this->isClash, this->isDone});
-			this->defaultView->Font = (gcnew System::Drawing::Font(L"Segoe UI", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->defaultView->Font = (gcnew System::Drawing::Font(L"Corbel", 10.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->defaultView->FullRowSelect = true;
 			this->defaultView->Location = System::Drawing::Point(52, 98);
@@ -205,57 +201,66 @@ namespace TMGUI {
 			// taskID
 			// 
 			this->taskID->Text = L"ID";
-			this->taskID->Width = 30;
+			this->taskID->Width = 25;
 			// 
 			// taskDescription
 			// 
 			this->taskDescription->Text = L"Task Description";
-			this->taskDescription->Width = 200;
+			this->taskDescription->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->taskDescription->Width = 245;
 			// 
 			// startDate
 			// 
 			this->startDate->Text = L"Start Date";
+			this->startDate->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->startDate->Width = 90;
 			// 
 			// startTime
 			// 
 			this->startTime->Text = L"Start Time";
+			this->startTime->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->startTime->Width = 90;
 			// 
 			// endDate
 			// 
 			this->endDate->Text = L"End Date";
+			this->endDate->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->endDate->Width = 90;
 			// 
 			// endTime
 			// 
 			this->endTime->Text = L"End Time";
+			this->endTime->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->endTime->Width = 90;
 			// 
 			// confirmation
 			// 
 			this->confirmation->Text = L"Confirmed";
-			this->confirmation->Width = 90;
+			this->confirmation->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->confirmation->Width = 80;
 			// 
 			// isClash
 			// 
 			this->isClash->Text = L"Clashes";
-			this->isClash->Width = 90;
+			this->isClash->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->isClash->Width = 70;
 			// 
 			// isDone
 			// 
 			this->isDone->Text = L"Completed";
-			this->isDone->Width = 90;
+			this->isDone->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->isDone->Width = 80;
 			// 
 			// label4
 			// 
 			this->label4->AutoSize = true;
-			this->label4->Font = (gcnew System::Drawing::Font(L"Segoe UI Semibold", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+			this->label4->Font = (gcnew System::Drawing::Font(L"Corbel", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label4->Location = System::Drawing::Point(828, 51);
+			this->label4->ForeColor = System::Drawing::SystemColors::ButtonFace;
+			this->label4->Location = System::Drawing::Point(44, 51);
 			this->label4->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(197, 45);
+			this->label4->Size = System::Drawing::Size(182, 39);
 			this->label4->TabIndex = 10;
 			this->label4->Text = L"currentTime";
 			// 
@@ -268,26 +273,52 @@ namespace TMGUI {
 			// DisplayState
 			// 
 			this->DisplayState->AutoSize = true;
-			this->DisplayState->Font = (gcnew System::Drawing::Font(L"Segoe UI Light", 12, static_cast<System::Drawing::FontStyle>((System::Drawing::FontStyle::Bold | System::Drawing::FontStyle::Italic)), 
-				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->DisplayState->ForeColor = System::Drawing::Color::Black;
-			this->DisplayState->Location = System::Drawing::Point(828, 628);
+			this->DisplayState->Font = (gcnew System::Drawing::Font(L"Corbel", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->DisplayState->ForeColor = System::Drawing::SystemColors::ButtonFace;
+			this->DisplayState->Location = System::Drawing::Point(1630, 636);
+			this->DisplayState->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->DisplayState->Name = L"DisplayState";
-			this->DisplayState->Size = System::Drawing::Size(232, 45);
+			this->DisplayState->Size = System::Drawing::Size(213, 39);
 			this->DisplayState->TabIndex = 11;
 			this->DisplayState->Text = L"Default display";
+			// 
+			// todayIs
+			// 
+			this->todayIs->AutoSize = true;
+			this->todayIs->Font = (gcnew System::Drawing::Font(L"Corbel", 10.875F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->todayIs->ForeColor = System::Drawing::SystemColors::ButtonFace;
+			this->todayIs->Location = System::Drawing::Point(45, 15);
+			this->todayIs->Name = L"todayIs";
+			this->todayIs->Size = System::Drawing::Size(117, 36);
+			this->todayIs->TabIndex = 12;
+			this->todayIs->Text = L"Today is";
+			// 
+			// nowShowing
+			// 
+			this->nowShowing->AutoSize = true;
+			this->nowShowing->Font = (gcnew System::Drawing::Font(L"Corbel", 10.125F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->nowShowing->ForeColor = System::Drawing::SystemColors::ButtonFace;
+			this->nowShowing->Location = System::Drawing::Point(1632, 603);
+			this->nowShowing->Name = L"nowShowing";
+			this->nowShowing->Size = System::Drawing::Size(118, 33);
+			this->nowShowing->TabIndex = 13;
+			this->nowShowing->Text = L"Showing";
 			// 
 			// TMGUserInterface
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(13, 26);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->AutoSize = true;
-			this->BackColor = System::Drawing::Color::LightSteelBlue;
+			this->BackColor = System::Drawing::Color::LightSlateGray;
 			this->ClientSize = System::Drawing::Size(1949, 1032);
+			this->Controls->Add(this->nowShowing);
+			this->Controls->Add(this->todayIs);
 			this->Controls->Add(this->DisplayState);
 			this->Controls->Add(this->label4);
 			this->Controls->Add(this->defaultView);
-			this->Controls->Add(this->label3);
 			this->Controls->Add(this->statusDisplay);
 			this->Controls->Add(this->welcomeMessage);
 			this->Controls->Add(this->userInput);
@@ -298,7 +329,7 @@ namespace TMGUI {
 			this->MaximizeBox = false;
 			this->MinimizeBox = false;
 			this->Name = L"TMGUserInterface";
-			this->Padding = System::Windows::Forms::Padding(0, 0, 10, 10);
+			this->Padding = System::Windows::Forms::Padding(0, 0, 30, 30);
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"TimeMaster";
 			this->Load += gcnew System::EventHandler(this, &TMGUserInterface::TMGUserInterface_Load);
@@ -353,7 +384,7 @@ namespace TMGUI {
 	
 					switch (display) {
 					case Default:
-					DisplayState->Text = "Currently displaying: " + "Default view!";
+					DisplayState->Text = "Default display";
 					ListViewItem^ defaultEntry;
 					defaultView->Items->Clear();
 					for(int i=0; i != allTasks.size() ; ++i){
@@ -413,7 +444,7 @@ namespace TMGUI {
 						break;
 
 					case  DeadlineTasks:
-						DisplayState->Text = "Currently displaying: " + "Deadline Tasks!";
+						DisplayState->Text = "Deadlined Tasks";
 						ListViewItem^ deadlineEntry;
 						defaultView->Items->Clear();
 						for (int j = 0; j != dated.size(); ++j){
@@ -449,13 +480,17 @@ namespace TMGUI {
 						break;
 					
 					case UndatedTasks:
-						DisplayState->Text = "Currently displaying: " + "Undated Tasks!";
+						DisplayState->Text = "Undated Tasks";
 						ListViewItem^ floatingEntry;
 						defaultView->Items->Clear();
 						for (int k = dated.size(); k != dated.size() + undated.size(); ++k){
 							floatingEntry = gcnew ListViewItem(Convert::ToString(k+1));
 							floatingEntry->SubItems->Add(gcnew String(( (undated[k-dated.size()].getTaskDescription()).c_str() )));
-						
+							floatingEntry->SubItems->Add("");
+							floatingEntry->SubItems->Add("");
+							floatingEntry->SubItems->Add("");
+							floatingEntry->SubItems->Add("");
+
 							std::string confirmationStatus;
 							if (undated[k-dated.size()].isConfirmed()) {
 								confirmationStatus = "Yes";
@@ -477,7 +512,7 @@ namespace TMGUI {
 						break;
 					
 					case ArchivedTasks:
-						DisplayState->Text = "Currently displaying: " + "Archived Tasks!";
+						DisplayState->Text = "Archived Tasks";
 						ListViewItem^ archivedEntry;
 						defaultView->Items->Clear();
 						for (int l = dated.size()+undated.size(); l != dated.size() + undated.size()+archived.size(); ++l){
@@ -519,7 +554,7 @@ namespace TMGUI {
 
 					
 					case SearchResults:
-						DisplayState->Text = "Currently displaying: " + "Search results view!";
+						DisplayState->Text = "Search results";
 						ListViewItem^ searchResult;
 						defaultView->Items->Clear();
 						
