@@ -22,12 +22,7 @@ private:
 
 
 public:
-    //constructor for deadlined tasks and timed tasks
     TMTask(std::string, TMTaskTime, TaskType);
-    //constructor for timedTask with multiple timings
-
-    //constructor for floating tasks
-    TMTask(std::string, TaskType);
 
     std::string getTaskDescription();
     int getUnconfirmedBatchNumber();
