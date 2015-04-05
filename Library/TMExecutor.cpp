@@ -45,7 +45,7 @@ void TMExecutor::executeMain(std::string userInput) {
 
 	taskList = taskListStates->getCurrentTaskList();
 	taskList.writeToFile();
-	//taskList.leaveReferenceUponExit();
+	taskList.leaveReferenceUponExit();
 
 	return;
 }

@@ -16,8 +16,7 @@ public:
         TaskChecker *taskChecker = TaskChecker::getInstance();
 		TMTaskList taskList = taskListStates->getCurrentTaskList();
 		std::ostringstream oss;
-		int i = taskList.getUniqueBatchNum();
-		oss << BATCH_NUMBER_INFO << i << std::endl;
+		int i = taskList.generateUniqueBatchNum();
 
 		if (taskChecker->isMultipleTimingTask(parser->returnTokens())) {
 			std::vector<TMTask> tasks = parser->parseMultipleTimingTaskInfo();
