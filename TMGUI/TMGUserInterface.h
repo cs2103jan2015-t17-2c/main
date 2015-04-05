@@ -35,7 +35,7 @@ namespace TMGUI {
 		{
 			Thread^ splash = gcnew Thread( gcnew ThreadStart (this,&TMGUI :: TMGUserInterface :: SplashStart));
 			splash->Start();
-			Thread::Sleep(2650);
+			Thread::Sleep(2450);
 			InitializeComponent();
 			splash->Abort();
 			this->Show();
@@ -680,7 +680,7 @@ private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows
 			 }
 			 
 			 if(e->KeyCode == Keys::F1){
-				 ShellExecuteA(NULL,"open","C:\\Users\\adagior\\Desktop\\TimeMaster\\readme.pdf",NULL,NULL,0);
+				 ShellExecuteA(NULL,"open","..\\readme.pdf",NULL,NULL,0);
 			 }
 
 		 }
