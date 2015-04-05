@@ -195,20 +195,20 @@ TMTask FormatConverter::convertStringToTMTask(std::string listEntry){
 	int unconfirmedBatchNumber;
 
     TaskType taskType;
-    //std::cout << "IN FUNCTION" << std::endl;
-    //std::cout << listEntry << std::endl;
+    std::cout << "IN FUNCTION" << std::endl;
+    std::cout << listEntry << std::endl;
     std::istringstream iss(listEntry);
 
 	iss >> stringTaskType;
 	taskType = convertStringToTaskType(stringTaskType);
-    //std::cout << stringTaskType << std::endl;
+    std::cout << stringTaskType << std::endl;
     
 	if (taskType != TaskType::Undated) {
 
         iss >> token;
-       //std::cout << token << std::endl;
+       std::cout << token << std::endl;
         while(token != "||") {  
-            //std::cout << token << std::endl;
+            std::cout << token << std::endl;
             taskDescription = taskDescription + token + " ";
             iss >> token;
         }
@@ -251,13 +251,13 @@ TMTask FormatConverter::convertStringToTMTask(std::string listEntry){
 		}
 
 		task.setUnconfirmedBatchNumber(unconfirmedBatchNumber);
-        //std::cout << "reached end\n";
+        std::cout << "reached end\n";
 		return task;
 	} else {
 		iss >> token;
 
         while(token != "||"){
-		    //std::cout << token << std::endl;
+		    std::cout << token << std::endl;
             taskDescription = taskDescription + token + " ";
             iss >> token;
         }
@@ -274,7 +274,8 @@ TMTask FormatConverter::convertStringToTMTask(std::string listEntry){
 		if(isCompleted){
 			task.setAsCompleted();
 		}
-        //std::cout << "reached end\n";
+        std::cout << "reached end\n";
+		system("pause");
 		return task;
 	}
 }

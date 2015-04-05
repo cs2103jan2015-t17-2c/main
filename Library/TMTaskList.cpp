@@ -497,7 +497,7 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 		outFile << DATED_TASK_DISPLAY_FORMAT << "\n";
 		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
 			outFile << iter->getTaskTypeAsString() <<
-			" "	<< iter->getTaskDescription() << "||" 
+			" "	<< iter->getTaskDescription() << " ||" 
 			" " << iter->getTaskTime().getStartDate() << 
 			" " << iter->getTaskTime().getStartTime() << 
 			" " << iter->getTaskTime().getEndDate() <<
@@ -514,7 +514,7 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 		outFile << UNDATED_TASK_DISPLAY_FORMAT << "\n";
 		for (iter = _undated.begin(); iter != _undated.end(); ++iter) {
 			outFile << iter->getTaskTypeAsString() << 
-				" "	<< iter->getTaskDescription() << "||" 
+				" "	<< iter->getTaskDescription() << " ||" 
 				" " << iter->isCompleted() << "\n";
 		}
 
@@ -525,7 +525,7 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 			
 			if (iter->getTaskType() != TaskType::Undated) {
 				outFile << iter->getTaskTypeAsString() <<
-				" "	<< iter->getTaskDescription() << "||" 
+				" "	<< iter->getTaskDescription() << " ||" 
 				" " << iter->getTaskTime().getStartDate() << 
 				" " << iter->getTaskTime().getStartTime() << 
 				" " << iter->getTaskTime().getEndDate() <<
@@ -536,7 +536,7 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 				" " << iter->getUnconfirmedBatchNumber() << "\n";
 			} else {
 				outFile << iter->getTaskTypeAsString() << 
-				" "	<< iter->getTaskDescription() << "||" 
+				" "	<< iter->getTaskDescription() << " ||" 
 				" " << iter->isCompleted() << "\n";
 			}
 		}
@@ -556,49 +556,37 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 				linesFromFile.push_back(line);
 			}
 		}
-		std::cout << "SIZE OF LINESFROMFILE: " << linesFromFile.size() << std::endl;
+		
 		contentReference.close();
 
 		std::vector<std::string>::iterator iter;
 		FormatConverter* converter = FormatConverter::getInstance();
 
-		//std::search(searchLine.begin(), searchLine.end(), keyword.begin(), keyword.end()) != searchLine.end()
+		
 
-		//Removes first two irrelevant lines in the text file.
-		iter = linesFromFile.erase(linesFromFile.begin());
-		iter = linesFromFile.erase(linesFromFile.begin());
-		std::cout << "SIZE OF LINESFROMFILE: " << linesFromFile.size() << std::endl;
-		std::cout << "BEGIN: " << *(linesFromFile.begin()) << std::endl;
-
-		//Assumes first line in saved text file is as unmodified by user.
-		//Loop stops when M2 is detected
 		//Dated tasks
-		for (iter = linesFromFile.begin(); !isFoundInLine(UNDATED_HEADER, *iter); ++iter) {
-			std::cout << "hi" << std::endl;
+		iter = linesFromFile.begin() + 2;	//Skips first two irrelevant lines in the text file.
+		while (!isFoundInLine(UNDATED_HEADER, *iter)) {
 			TMTask task = converter->convertStringToTMTask(*iter);
 			_dated.push_back(task);
+			iter++;
 		}
 
 		//Undated tasks
-		iter = linesFromFile.erase(linesFromFile.begin());
-		iter = linesFromFile.erase(linesFromFile.begin());
-		std::cout << "SIZE OF LINESFROMFILE: " << linesFromFile.size() << std::endl;
-		std::cout << "BEGIN: " << *(linesFromFile.begin()) << std::endl;
-
+		iter = iter + 2;
 		while (!isFoundInLine(ARCHIVED_HEADER, *iter)) {
-			std::cout << "hi" << std::endl;
 			TMTask task = converter->convertStringToTMTask(*iter);
 			_undated.push_back(task);
-			++iter;
+			iter++;
 		}
 
-		//Completed tasks
-		iter = linesFromFile.erase(linesFromFile.begin());
 
+		//Completed tasks
+		iter++;
 		while (iter != linesFromFile.end()) {
 			TMTask task = converter->convertStringToTMTask(*iter);
 			_archived.push_back(task);
-			++iter;
+			iter++;
 		}
 
 		return LOAD_SUCCESS;
@@ -621,10 +609,9 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 		}
 
 	bool TMTaskList::isFoundInLine(std::string text, std::string line) {
-		if (std::search(line.begin(), line.end(), text.begin(), text.end()) == line.end()) {
-			return false;
-		}
-	return true;
+		bool result = (std::search(line.begin(), line.end(), text.begin(), text.end()) != line.end());
+		std::cout << "RESULT: " << result << std::endl;
+		return std::search(line.begin(), line.end(), text.begin(), text.end()) != line.end();
 	}
 
 	void TMTaskList::determineLoadOrCreateFile() {
