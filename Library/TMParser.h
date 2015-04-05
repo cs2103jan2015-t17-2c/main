@@ -57,8 +57,6 @@ public:
 
     //to block task with multiple timings >= 2
     std::vector<TMTask> parseMultipleTimingTaskInfo();
-	EditableTaskComponent parseEditableTaskComponent();
-	std::string parseDescription();
 
     void configureAllDatesAndTimes(std::string&, std::string&, std::string&, std::string&, TaskType&);
 

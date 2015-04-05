@@ -3,25 +3,30 @@
 
 #include <fstream>
 #include <vector>
+#include <algorithm>
 #include <string>
+#include <iomanip>
+#include <Windows.h>
+#include <boost\date_time.hpp>
+
 #include "TMDateTime.h"
 #include "TMTask.h"
-#include <assert.h>
-#include <Windows.h>
+#include "FormatConverter.h"
 
 
 class TMTaskList{
 private:
 	
-	//Contains all the incompleted timed and deadline tasks for the current year
+	//Contains all the incompleted dated tasks for the current year
 	std::vector<TMTask> _dated; 
 	
-	//Contains all the incompleted floating tasks
+	//Contains all the incompleted undated tasks for the current year
 	std::vector<TMTask> _undated; 
 
-	//Contains all the completed timed, deadline and floating tasks
+	//Contains all the completed dated and undated tasks for the current year
 	std::vector<TMTask> _archived;
 
+	//A temporary container which stores tasks that clashes with a task of interest
 	std::vector<TMTask> _clashes;
 	
 	//File name
@@ -43,17 +48,17 @@ public:
 	//Precondition: task1 starts before task2
 	bool isTwoClash(TMTask task1, TMTask task2);
 
-	//Postcondition: Returns true if task starts before tmTime
+	//Postcondition: Returns true if task starts before time
 	bool startsBeforeTime(TMTask task, TMDateTime time);
 
-	//Postcondition: Returns true if task ends before tmTime
+	//Postcondition: Returns true if task ends before time
 	bool endsBeforeTime(TMTask task, TMDateTime time);
 
 	//Postcondition: Returns true if time1 is before time2, returning false if time1 is after or equals to time2
 	bool isBefore(TMDateTime time1, TMDateTime time2);
 
 	bool areEquivalentDateTime(TMDateTime time1, TMDateTime time2);
-
+ 
 	bool isValidPositionIndex(int positionIndex);
 
 	bool isInDated(int positionIndex);
@@ -62,25 +67,32 @@ public:
 
 	bool isInArchived(int positionIndex);
 
-	//Postcondition: Returns all tasks that clashes with the task to be added in the form of a vector
-	//Assupmtion: task is not present in taskList
+	bool isUniqueBatchNum(int i);
+
+	
+	//Assupmtion: task to be added to taskList is yet to be added
+	//Set the clash status of tasks which clashes with the task to be added 
+	//Adds tasks which clashes with task into _clashes vector, with the targeted search region specified by iterator beginFrom,
+	//which is an iterator of the vector _dated
 	void setClashes(TMTask task, std::vector<TMTask>::iterator beginFrom);
 
-	//Find the earliest task in the unsorted tasklist
+	//Updates the clash status of current tasks that clashes with the task to be removed or archived.
+	//Remaining tasks which clashes with each other after removal of involved task will have their clash status set as clashed.
+	void updateClashes(TMTask deleteTask);
+
+	//Returns the iterator of the earliest task in the unsorted tasklist
 	std::vector<TMTask>::iterator findEarliestTaskIter(std::vector<TMTask>::iterator unsortedStart);
 
+	//Returns the iterator of the task with description containing the earliest alphabet in the unsorted tasklist
 	std::vector<TMTask>::iterator findSmallestAlphaTaskIter(std::vector<TMTask>::iterator unsortedStart);
 	
 	//Postcondition: Returns a string which consists of only lowercase letters
 	std::string toLower(std::string toBeConverted);
 
-	int getUniqueBatchNum();
-
-	bool isUniqueBatchNum(int i);
-
+	//Returns the positionIndexes of tasks which unconfirmed batch number is i in a vector
 	std::vector<int> searchUnconfirmedBatchNum(int i);
 
-	void updateClashes(TMTask deleteTask);
+	
 	
 
 	//GETTER FUNCTIONS//
@@ -94,38 +106,41 @@ public:
 	std::vector<TMTask> getDated();
 	std::vector<TMTask> getUndated();
 	std::vector<TMTask> getArchived();
+	
+	//Returns a unique unconfirmed batch number such that tasks that have been blocked at the same instance share the same unconfirmed batch number
+	int generateUniqueBatchNum();
 
 
 	//BASIC FUNCTIONS//
 	std::string addTask(TMTask task);
 	
-	std::string updateTask(int positionIndex, EditableTaskComponent component, std::string changeTo);
+	//Removes the outdated task from taskList and adds alteredTask
+	std::string updateTask(int positionIndex, TMTask alteredTask);
 	
 	std::string removeTask(int positionIndex);
 	
-	//Archive a selected task
+	//Carried out when the task is marked as completed by the user
 	std::string archiveOneTask(int positionIndex);
 	
 	//Sorts tasks in tasklist in chronological order according to their start dates
-	//Precondition: timedAndDeadline vector not empty
+	//Precondition: _dated vector not empty
 	void chronoSort();
 	
-	//Sort task in alphabetical order using their description
+	//Sorts tasks in alphabetical order of their description
 	void alphaSort();
 	
-	//Return the position indexes of tasks which match the keyword. Note that the search is not case sensitive.
+	//Return the position indexes of tasks which match the keyword
+	//Note that the search is not case sensitive.
 	std::vector<int> keywordSearch(std::string keyword);
-
-	//Return the position indexes of tasks which starts or ends with date. 
-	std::vector<int> dateSearch(std::string date);
 
 	//EXPORT AND IMPORT FUNCTIONS//
 	void writeToFile();
-	void loadFromFile();
+	std::string loadFromFile(std::string pathName);
 	void setFileDirectory(std::string directory);
 	std::string getFileDirectory();
 	void leaveReferenceUponExit();
-
+	bool isFoundInLine(std::string text, std::string line);
+	void determineLoadOrCreateFile();
 };
 
 #endif
