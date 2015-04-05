@@ -84,5 +84,7 @@ public:
     std::string getErrorMessage();
 
     int numberOfWordsInQuote(std::string);
+
+    void editDateOrTimeInInvertedCommas(std::string, int, bool, bool);
 };
 #endif

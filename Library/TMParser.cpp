@@ -201,18 +201,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                 timeToMeet = extractor->extractTime(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
                 index = indexOfDatesAndTimes.back();
             } else {
-                if(nextWord[0] == '"' && nextWord[nextWord.length()-1] == '"' && nextWord.length() != 1){
-                    if(numberOfWordsInQuote(nextWord) == 1){
-                        nextWord = nextWord.substr(1,nextWord.length()-2);
-                        if(timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)||
-                           dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
-                           dateChecker->isOneDelimitedDate(nextWord)){
-                               //what about for next day?
-                               std::string nextWordOriginal = _tokenizedUserEntry[index + 1];
-                               _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
-                        }
-                    }
-                }
+                editDateOrTimeInInvertedCommas(nextWord, index, true, true);
             }
         } else if(unitString == TOKEN_ON) {
             if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)) {
@@ -224,16 +213,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                     timeToMeet = "2359";
                 }
             } else {
-                if(nextWord[0] == '"' && nextWord[nextWord.length()-1] == '"' && nextWord.length() != 1){
-                    if(numberOfWordsInQuote(nextWord) == 1){
-                        nextWord = nextWord.substr(1,nextWord.length()-2);
-                        if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)){
-                               //what about for next day?
-                            std::string nextWordOriginal = _tokenizedUserEntry[index + 1];
-                            _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
-                        }
-                    }
-                }
+                editDateOrTimeInInvertedCommas(nextWord, index, true, false);
             }
         } else if(dateChecker->isNextDay(index, _tokenizedUserEntry)){
             dateToMeet = extractor->extractNextDay(index, indexOfDatesAndTimes, _tokenizedUserEntry);
@@ -291,6 +271,7 @@ TMTask TMParser::parseTimedTaskInfo(){
     std::string endDate = "";
     std::string taskDescription = "";
     std::string unitString;
+    std::string nextWord;
     int lengthOfTokenizedUserEntry = _tokenizedUserEntry.size();
 
     FormatConverter *formatConverter = FormatConverter::getInstance();
@@ -307,6 +288,7 @@ TMTask TMParser::parseTimedTaskInfo(){
         }
 
         unitString = formatConverter->returnLowerCase(_tokenizedUserEntry[index]);
+        nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
 
         if(unitString == TOKEN_AT) {
             startTime = extractor->extractTime(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
@@ -318,17 +300,7 @@ TMTask TMParser::parseTimedTaskInfo(){
                 }
                 index = mainIndexOfDatesAndTimes.back();
             } else {
-                std::string nextWordOriginal = _tokenizedUserEntry[index + 1];
-                std::string nextWord = formatConverter->returnLowerCase(nextWordOriginal);
-                if(nextWord[0] == '"' && nextWord[nextWord.length()-1] == '"' && nextWord.length() != 1){
-                    if(numberOfWordsInQuote(nextWord) == 1){
-                        nextWord = nextWord.substr(1,nextWord.length()-2);
-                        if(timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)){
-                               //what about for next day?
-                               _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
-                        }
-                    }
-                }
+                editDateOrTimeInInvertedCommas(nextWord, index, false, true);
             }
         } else if(unitString == TOKEN_ON) {
             startDate = extractor->extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
@@ -340,17 +312,7 @@ TMTask TMParser::parseTimedTaskInfo(){
                 }
                 index = mainIndexOfDatesAndTimes.back();
             } else {
-                std::string nextWordOriginal = _tokenizedUserEntry[index + 1];
-                std::string nextWord = formatConverter->returnLowerCase(nextWordOriginal);
-                if(nextWord[0] == '"' && nextWord[nextWord.length()-1] == '"' && nextWord.length() != 1){
-                    if(numberOfWordsInQuote(nextWord) == 1){
-                        nextWord = nextWord.substr(1,nextWord.length()-2);
-                        if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)){
-                               //what about for next day?
-                            _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
-                        }
-                    }
-                }
+                editDateOrTimeInInvertedCommas(nextWord, index, true, false);
             }
         } else if(unitString == TOKEN_FROM){
             extractor->extractDateAndOrTime(index + 1, indexOfDatesAndTimes, startDate, startTime, _tokenizedUserEntry);
@@ -362,20 +324,7 @@ TMTask TMParser::parseTimedTaskInfo(){
                 }
                 index = mainIndexOfDatesAndTimes.back();
             } else {
-                std::string nextWordOriginal = _tokenizedUserEntry[index + 1];
-                std::string nextWord = formatConverter->returnLowerCase(nextWordOriginal);
-                if(nextWord[0] == '"' && nextWord[nextWord.length()-1] == '"' && nextWord.length() != 1){
-                    if(numberOfWordsInQuote(nextWord) == 1){
-                        nextWord = nextWord.substr(1,nextWord.length()-2);
-                        if(timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)||
-                           dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
-                           dateChecker->isOneDelimitedDate(nextWord)){
-                               //what about for next day?
-                               _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
-                               index = index + 1;
-                        }
-                    }
-                }
+                editDateOrTimeInInvertedCommas(nextWord, index, true, true);
             }
         } else if (unitString == TOKEN_TO){
             extractor->extractDateAndOrTime(index + 1, indexOfDatesAndTimes, endDate, endTime, _tokenizedUserEntry);
@@ -387,20 +336,7 @@ TMTask TMParser::parseTimedTaskInfo(){
                 }
                 index = mainIndexOfDatesAndTimes.back();
             } else {
-                std::string nextWordOriginal = _tokenizedUserEntry[index + 1];
-                std::string nextWord = formatConverter->returnLowerCase(nextWordOriginal);
-                if(nextWord[0] == '"' && nextWord[nextWord.length()-1] == '"' && nextWord.length() != 1){
-                    if(numberOfWordsInQuote(nextWord) == 1){
-                        nextWord = nextWord.substr(1,nextWord.length()-2);
-                        if(timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)||
-                           dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
-                           dateChecker->isOneDelimitedDate(nextWord)){
-                               //what about for next day?
-                               _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
-                               index = index + 1;
-                        }
-                    }
-                }
+                editDateOrTimeInInvertedCommas(nextWord, index, true, true);
             }
         } else if(dateChecker->isNextDay(index, _tokenizedUserEntry)) {
             startDate = extractor->extractNextDay(index, indexOfDatesAndTimes, _tokenizedUserEntry);
@@ -476,56 +412,14 @@ TMTask TMParser::parseUndatedTaskInfo() {
         nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
 
         if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY) {
-            if(nextWord[0] == '"' && nextWord[nextWord.length()-1] == '"' && nextWord.length() != 1){
-                if(numberOfWordsInQuote(nextWord) == 1){
-                    nextWord = nextWord.substr(1,nextWord.length()-2);
-                    if(timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)||
-                        dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
-                        dateChecker->isOneDelimitedDate(nextWord)){
-                               //what about for next day?
-                            std::string nextWordOriginal = _tokenizedUserEntry[index + 1];
-                            _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
-                    }
-                }
-            }
+            editDateOrTimeInInvertedCommas(nextWord, index, true, true);
         } else if(unitString == TOKEN_ON) {
-            if(nextWord[0] == '"' && nextWord[nextWord.length()-1] == '"' && nextWord.length() != 1){
-                if(numberOfWordsInQuote(nextWord) == 1){
-                    nextWord = nextWord.substr(1,nextWord.length()-2);
-                    if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)){
-                        //what about for next day?
-                        std::string nextWordOriginal = _tokenizedUserEntry[index + 1];
-                        _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
-                    }
-                }
-            }
+            editDateOrTimeInInvertedCommas(nextWord, index, true, false);
         } else if(unitString == TOKEN_AT){
-            std::string nextWordOriginal = _tokenizedUserEntry[index + 1];
-            std::string nextWord = formatConverter->returnLowerCase(nextWordOriginal);
-            if(nextWord[0] == '"' && nextWord[nextWord.length()-1] == '"' && nextWord.length() != 1){
-                if(numberOfWordsInQuote(nextWord) == 1){
-                    nextWord = nextWord.substr(1,nextWord.length()-2);
-                    if(timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)){
-                        //what about for next day?
-                        _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
-                    }
-                }
-            }
+            editDateOrTimeInInvertedCommas(nextWord, index, false, true);
         } else if(unitString == TOKEN_FROM||unitString == TOKEN_TO){
-            std::string nextWordOriginal = _tokenizedUserEntry[index + 1];
-            std::string nextWord = formatConverter->returnLowerCase(nextWordOriginal);
-            if(nextWord[0] == '"' && nextWord[nextWord.length()-1] == '"' && nextWord.length() != 1){
-                if(numberOfWordsInQuote(nextWord) == 1){
-                    nextWord = nextWord.substr(1,nextWord.length()-2);
-                    if(timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)||
-                       dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
-                       dateChecker->isOneDelimitedDate(nextWord)){
-                           //what about for next day?
-                           _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
-                           index = index + 1;
-                      }
-                }
-            }
+            editDateOrTimeInInvertedCommas(nextWord, index, true, true);
+            //index = index + 1;?
         } else {
             //test next day
         }
@@ -938,4 +832,43 @@ int TMParser::numberOfWordsInQuote(std::string quote){
     }
 
     return numberOfWords;
+}
+
+void TMParser::editDateOrTimeInInvertedCommas(std::string nextWord, int index, bool checkDate, bool checkTime) {
+    TimeChecker *timeChecker = TimeChecker::getInstance();
+    DateChecker *dateChecker = DateChecker::getInstance();
+
+    if(nextWord[0] == '"' && nextWord[nextWord.length()-1] == '"' && nextWord.length() != 1){
+        if(numberOfWordsInQuote(nextWord) != 1){
+            return;
+        }
+        
+        nextWord = nextWord.substr(1,nextWord.length()-2);
+
+        if(checkDate && checkTime) {
+            if(timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)||
+               dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
+               dateChecker->isOneDelimitedDate(nextWord)){
+                //what about for next day? "next Xday" treated as a single token
+                std::string nextWordOriginal = _tokenizedUserEntry[index + 1];
+                _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
+            }
+        } else if(checkDate) {
+            if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
+               dateChecker->isOneDelimitedDate(nextWord)){
+                //what about for next day?
+                std::string nextWordOriginal = _tokenizedUserEntry[index + 1];
+                _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
+            }
+        
+        } else if(checkTime) {
+            if(timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)){
+                //what about for next day?
+                std::string nextWordOriginal = _tokenizedUserEntry[index + 1];
+                _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
+            }
+        }
+    }
+
+    return;
 }
