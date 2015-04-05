@@ -35,7 +35,7 @@ namespace TMGUI {
 		{
 			Thread^ splash = gcnew Thread( gcnew ThreadStart (this,&TMGUI :: TMGUserInterface :: SplashStart));
 			splash->Start();
-			Thread::Sleep(2650);
+			Thread::Sleep(2450);
 			InitializeComponent();
 			splash->Abort();
 			this->Show();
@@ -87,6 +87,7 @@ namespace TMGUI {
 	private: System::Windows::Forms::Label^  DisplayState;
 	private: System::Windows::Forms::Label^  todayIs;
 	private: System::Windows::Forms::Label^  nowShowing;
+	private: System::Windows::Forms::Label^  label1;
 
 
 
@@ -139,6 +140,7 @@ namespace TMGUI {
 			this->DisplayState = (gcnew System::Windows::Forms::Label());
 			this->todayIs = (gcnew System::Windows::Forms::Label());
 			this->nowShowing = (gcnew System::Windows::Forms::Label());
+			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->SuspendLayout();
 			// 
 			// userInput
@@ -309,6 +311,18 @@ namespace TMGUI {
 			this->nowShowing->TabIndex = 13;
 			this->nowShowing->Text = L"Showing";
 			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Font = (gcnew System::Drawing::Font(L"Corbel", 10.125F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->label1->ForeColor = System::Drawing::SystemColors::ButtonFace;
+			this->label1->Location = System::Drawing::Point(1715, 57);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(194, 33);
+			this->label1->TabIndex = 14;
+			this->label1->Text = L"Press F1 for help";
+			// 
 			// TMGUserInterface
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(13, 26);
@@ -316,6 +330,7 @@ namespace TMGUI {
 			this->AutoSize = true;
 			this->BackColor = System::Drawing::Color::LightSlateGray;
 			this->ClientSize = System::Drawing::Size(1949, 1032);
+			this->Controls->Add(this->label1);
 			this->Controls->Add(this->nowShowing);
 			this->Controls->Add(this->todayIs);
 			this->Controls->Add(this->DisplayState);
@@ -680,7 +695,7 @@ private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows
 			 }
 			 
 			 if(e->KeyCode == Keys::F1){
-				 ShellExecuteA(NULL,"open","C:\\Users\\adagior\\Desktop\\TimeMaster\\readme.pdf",NULL,NULL,0);
+				 ShellExecuteA(NULL,"open","..\\readme.pdf",NULL,NULL,0);
 			 }
 
 		 }
