@@ -58,7 +58,21 @@ bool DateChecker::isNumericDate(std::string token) {
         return true;
     }
 
-    return false;
+    std::string day = token.substr(0,2);
+    std::string month = token.substr(2,2);
+    std::string year = token.substr(4);
+
+    if(year.length() == 2){
+        year = "20" + year;
+    }
+
+    std::string date = day + " " + month + " " + year;
+
+    if(isValidDate(date)) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 bool DateChecker::isDDMonDate(std::string token){

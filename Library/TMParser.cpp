@@ -82,6 +82,27 @@ std::string TMParser::extractCommand() {
     return command;
 }
 
+std::string TMParser::extractTokenAfterCommand() {
+    if(_tokenizedUserEntry.size() == 0){
+        //ERROR MESSAGE: INDEX OF TASK NOT SPECIFIED
+        return "";
+    } else if (_tokenizedUserEntry.size() == 1) {
+        //ERROR MESSAGE: MISSING NEW TASK INFO
+        return "";
+    }
+
+	std::string token = _tokenizedUserEntry[0];
+
+    if(!isPositiveInteger(token)) {
+        //ERROR MESSAGE: INDEX OF TASK MUST BE A POSITIVE INTEGER
+        return "";
+    }
+
+    _tokenizedUserEntry.erase(_tokenizedUserEntry.begin());
+
+    return token;
+}
+
 std::vector<std::string> TMParser::returnTokens() {
 	return _tokenizedUserEntry;
 }

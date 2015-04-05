@@ -42,6 +42,8 @@ public:
 
     std::vector<std::string> getTokenizedUserEntry(std::string);
     std::string extractCommand();
+    //use only after command has been extracted
+    std::string extractTokenAfterCommand();
 	std::vector<std::string> returnTokens();
 
     CommandTypes determineCommandType(std::string);
@@ -52,12 +54,12 @@ public:
     TMTask parseDeadlinedTaskInfo();
     TMTask parseTimedTaskInfo();
     TMTask parseUndatedTaskInfo();
+
     //to block task with multiple timings >= 2
     std::vector<TMTask> parseMultipleTimingTaskInfo();
 	EditableTaskComponent parseEditableTaskComponent();
 	std::string parseDescription();
 
-    //need to check if there is sufficient space at the back first
     void configureAllDatesAndTimes(std::string&, std::string&, std::string&, std::string&, TaskType&);
 
     //checks if startDate is not later than endDate and 
