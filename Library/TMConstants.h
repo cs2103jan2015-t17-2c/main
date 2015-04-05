@@ -58,6 +58,10 @@ static const std::string TOKEN_AT = "at";
 static const std::string TOKEN_FROM = "from";
 static const std::string TOKEN_TO = "to";
 
+static const char DELIMITER_SLASH = '/';
+static const char DELIMITER_FULLSTOP = '.';
+static const char DELIMITER_DASH = '-';
+
 /* in 3 hours, etc. for deadlined task
 const std::string PERIOD_HOUR = "hour";
 const std::string PERIOD_HOURS = "hours";

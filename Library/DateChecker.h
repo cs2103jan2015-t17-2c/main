@@ -20,15 +20,10 @@ public:
 
     //DDMMYY DDMMYYYY
     bool isNumericDate(std::string);
-
-    //DD/MM    DD/MM/YY    DD/MM/YYYY    
-    bool isSlashedNumericDate(std::string);
-
-    //DD.MM    DD.MM.YY    DD.MM.YYYY
-    bool isDottedNumericDate(std::string);
-    bool isOneNumericDateForm(std::string, char);
-
-    bool isDDMonDate(std::string); //3-mar 3-mar-14
+    
+    bool isOneDelimitedDate(std::string);
+    char returnDelimiter(std::string);
+    bool isDelimitedDate(std::string, char);
 
     bool isMonth(std::string);
     bool isNumericMonth(std::string);

@@ -17,11 +17,13 @@ private:
 public:
     static Extractor* getInstance();
 
-    std::string extractDayOrNumericDateOrDDMonDate(int, std::queue<int>&, std::vector<std::string>);
+    std::string extractDayOrNumericDateOrDelimitedDate(int, std::queue<int>&, std::vector<std::string>);
     std::string extractNumericDate(int, std::queue<int>&, std::vector<std::string>);
-    std::string extractDDMonDate(int, std::queue<int>&, std::vector<std::string>);
+    std::string extractDelimitedDate(int, std::queue<int>&, std::vector<std::string>, char);
+
     std::string extractNextDay(int, std::queue<int>&, std::vector<std::string>);
     std::string getDateFromNextDay(int, std::vector<std::string>);
+
     std::string extractDay(int, std::queue<int>&, std::vector<std::string>);
     std::string extractTime(int, std::queue<int>&, std::vector<std::string>);
 

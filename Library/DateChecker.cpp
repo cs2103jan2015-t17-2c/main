@@ -54,48 +54,73 @@ bool DateChecker::isNumericDate(std::string token) {
         if(!isValidDate(formatConverter->dateFromNumericToBoostFormat(token))){
             return false;
         }
+        
+        std::string day = token.substr(0,2);
+        std::string month = token.substr(2,2);
+        std::string year = token.substr(4);
 
+        if(year.length() == 2){
+            year = "20" + year;
+        }
+
+        std::string date = day + " " + month + " " + year;
+
+        if(isValidDate(date)) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+
+}
+
+bool DateChecker::isOneDelimitedDate(std::string token){
+    if(isDelimitedDate(token, DELIMITER_DASH)) {
         return true;
-    }
-
-    std::string day = token.substr(0,2);
-    std::string month = token.substr(2,2);
-    std::string year = token.substr(4);
-
-    if(year.length() == 2){
-        year = "20" + year;
-    }
-
-    std::string date = day + " " + month + " " + year;
-
-    if(isValidDate(date)) {
+    } else if(isDelimitedDate(token, DELIMITER_FULLSTOP)) {
+        return true;
+    } else if(isDelimitedDate(token, DELIMITER_SLASH)) {
         return true;
     } else {
         return false;
     }
 }
 
-bool DateChecker::isSlashedNumericDate(std::string token) {
-    return isOneNumericDateForm(token,'/');
+//preconditions check isOneDelimitedDate first
+char DateChecker::returnDelimiter(std::string token) {
+     if(isDelimitedDate(token, DELIMITER_DASH)) {
+        return DELIMITER_DASH;
+    } else if(isDelimitedDate(token, DELIMITER_FULLSTOP)) {
+        return DELIMITER_FULLSTOP;
+    } else {
+        return DELIMITER_SLASH;
+    }
 }
 
-bool DateChecker::isDottedNumericDate(std::string token) {
-    return isOneNumericDateForm(token,'.');
-}
-
-bool DateChecker::isOneNumericDateForm(std::string token, char key) {
+bool DateChecker::isDelimitedDate(std::string token, char key) {
     std::string day = "";
     std::string month = "";
     std::string year = "";
 
+    int tokenLength = token.length();
+
+    for(int i = 0; i < tokenLength; i++) {
+        if(!(isalnum(token[i])||token[i] == key)) {
+            return false;
+        }
+    }
+
     int positionOfNextKey = token.find_first_of(key);
 
-    if(positionOfNextKey == std::string::npos||token[0] == key||token[token.length()-1] == key){
+    if(positionOfNextKey == std::string::npos||token[0] == key||token[tokenLength-1] == key){
         return false;
     }
 
     day = token.substr(0,positionOfNextKey);
     int lengthOfDay = day.length();
+
     if(!isPositiveInteger(day)||!(lengthOfDay == 1||lengthOfDay == 2)){
         return false;
     }
@@ -105,22 +130,27 @@ bool DateChecker::isOneNumericDateForm(std::string token, char key) {
     
     if(positionOfNextKey != std::string::npos){
         month = token.substr(0,positionOfNextKey);
-        if(!isNumericMonth(month)){
+
+        if(!isNumericMonth(month) && !isMonth(month)){
             return false;
         }
+
         year = token.substr(positionOfNextKey + 1);
         int lengthOfYear = year.length();
         if(!isPositiveInteger(year)||!(lengthOfYear == 2||lengthOfYear == 4)){
             return false;
         }
+
         if(lengthOfYear == 2){
             year = "20" + year;
         }
     } else {
         month = token;
-        if(!isNumericMonth(month)){
+
+        if(!isNumericMonth(month) && !isMonth(month)){
             return false;
         }
+
         FormatConverter *formatConverter = FormatConverter::getInstance();
         std::string dateToday = formatConverter->dateFromBoostToDDMMYYYY(currentDate);
         year = dateToday.substr(4,4);
@@ -132,61 +162,7 @@ bool DateChecker::isOneNumericDateForm(std::string token, char key) {
         return false;
     }
 
-    return true;
-}
-
-bool DateChecker::isDDMonDate(std::string token) {
-    std::string dd = "";
-    std::string month = "";
-    std::string yyyy = "";
-
-    int positionOfNextDash = token.find_first_of("-");
-
-    if(positionOfNextDash == std::string::npos){
-        return false;
-    }
-
-    dd = token.substr(0,positionOfNextDash);//dd = dd
-    int lengthOfdd = dd.length();
-    //check whether length is 1 or 2 whether from 1-31?
-    if(!isPositiveInteger(dd)||!(lengthOfdd == 1||lengthOfdd == 2)){
-        return false;
-    }
-
-    token = token.substr(positionOfNextDash + 1); //stringDate = mm-yyyy 
-    positionOfNextDash = token.find_first_of("-");
-    
-    if(positionOfNextDash != std::string::npos){
-        month = token.substr(0,positionOfNextDash);
-        if(!isMonth(month)){
-            return false;
-        }
-        yyyy = token.substr(positionOfNextDash + 1);
-        int lengthOfyyyy = yyyy.length();
-        if(!isPositiveInteger(yyyy)||!(lengthOfyyyy == 2||lengthOfyyyy == 4)){
-            return false;
-        }
-        if(lengthOfyyyy == 2){
-            yyyy = "20" + yyyy;
-        } else {
-        }
-    } else {
-        month = token;
-        FormatConverter *formatConverter = FormatConverter::getInstance();
-        std::string dateToday = formatConverter->dateFromBoostToDDMMYYYY(currentDate);
-        yyyy = dateToday.substr(4,4);
-        if(!isMonth(month)){
-            return false;
-        }
-    }
-
-    std::string date = dd + "-" + month + "-" + yyyy;
-    
-    if(!isValidDate(date)){
-        return false;
-    }
-
-    return true;
+    return true;    
 }
 
 bool DateChecker::isMonth(std::string token) {

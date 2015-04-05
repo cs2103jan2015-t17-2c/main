@@ -181,10 +181,10 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
         nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
 
         if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY){
-            if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isDDMonDate(nextWord)) {
+            if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)) {
                 //e.g. before 01012016 (DDMMYYYY)
                 indexOfDatesAndTimes.push(index);
-                dateToMeet = extractor->extractDayOrNumericDateOrDDMonDate(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
+                dateToMeet = extractor->extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
                 dateToMeet = substractNDaysFromDate(dateToMeet,1);
                 timeToMeet = "2359";
                 index = indexOfDatesAndTimes.back();
@@ -205,7 +205,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                         nextWord = nextWord.substr(1,nextWord.length()-2);
                         if(timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)||
                            dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
-                           dateChecker->isDDMonDate(nextWord)){
+                           dateChecker->isOneDelimitedDate(nextWord)){
                                //what about for next day?
                                std::string nextWordOriginal = _tokenizedUserEntry[index + 1];
                                _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
@@ -214,9 +214,9 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                 }
             }
         } else if(unitString == TOKEN_ON) {
-            if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isDDMonDate(nextWord)) {
+            if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)) {
                 indexOfDatesAndTimes.push(index);
-                dateToMeet = extractor->extractDayOrNumericDateOrDDMonDate(index + 1,indexOfDatesAndTimes, _tokenizedUserEntry);
+                dateToMeet = extractor->extractDayOrNumericDateOrDelimitedDate(index + 1,indexOfDatesAndTimes, _tokenizedUserEntry);
                 index = indexOfDatesAndTimes.back();
 
                 if(timeToMeet == "") {
@@ -226,7 +226,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                 if(nextWord[0] == '"' && nextWord[nextWord.length()-1] == '"' && nextWord.length() != 1){
                     if(numberOfWordsInQuote(nextWord) == 1){
                         nextWord = nextWord.substr(1,nextWord.length()-2);
-                        if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isDDMonDate(nextWord)){
+                        if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)){
                                //what about for next day?
                             std::string nextWordOriginal = _tokenizedUserEntry[index + 1];
                             _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
@@ -250,13 +250,6 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
             indexOfDatesAndTimes.pop();
         } else {
             std::string token = _tokenizedUserEntry[i];
-            /*
-            if(token[0] == '"' && token[token.length()-1] == '"' && token.length() != 1){
-                if(numberOfWordsInQuote(token) == 1){
-                    token = token.substr(1,token.length()-2);
-                }
-            }
-            */
             taskDescription += token;
             if(i != lengthOfTokenizedUserEntry - 1) {
                 taskDescription += " ";
@@ -337,7 +330,7 @@ TMTask TMParser::parseTimedTaskInfo(){
                 }
             }
         } else if(unitString == TOKEN_ON) {
-            startDate = extractor->extractDayOrNumericDateOrDDMonDate(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
+            startDate = extractor->extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
             if(startDate != ""){
                 mainIndexOfDatesAndTimes.push(index);
                 while(!indexOfDatesAndTimes.empty()){
@@ -351,7 +344,7 @@ TMTask TMParser::parseTimedTaskInfo(){
                 if(nextWord[0] == '"' && nextWord[nextWord.length()-1] == '"' && nextWord.length() != 1){
                     if(numberOfWordsInQuote(nextWord) == 1){
                         nextWord = nextWord.substr(1,nextWord.length()-2);
-                        if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isDDMonDate(nextWord)){
+                        if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)){
                                //what about for next day?
                             _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
                         }
@@ -375,7 +368,7 @@ TMTask TMParser::parseTimedTaskInfo(){
                         nextWord = nextWord.substr(1,nextWord.length()-2);
                         if(timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)||
                            dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
-                           dateChecker->isDDMonDate(nextWord)){
+                           dateChecker->isOneDelimitedDate(nextWord)){
                                //what about for next day?
                                _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
                                index = index + 1;
@@ -400,7 +393,7 @@ TMTask TMParser::parseTimedTaskInfo(){
                         nextWord = nextWord.substr(1,nextWord.length()-2);
                         if(timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)||
                            dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
-                           dateChecker->isDDMonDate(nextWord)){
+                           dateChecker->isOneDelimitedDate(nextWord)){
                                //what about for next day?
                                _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
                                index = index + 1;
@@ -487,7 +480,7 @@ TMTask TMParser::parseUndatedTaskInfo() {
                     nextWord = nextWord.substr(1,nextWord.length()-2);
                     if(timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)||
                         dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
-                        dateChecker->isDDMonDate(nextWord)){
+                        dateChecker->isOneDelimitedDate(nextWord)){
                                //what about for next day?
                             std::string nextWordOriginal = _tokenizedUserEntry[index + 1];
                             _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
@@ -498,7 +491,7 @@ TMTask TMParser::parseUndatedTaskInfo() {
             if(nextWord[0] == '"' && nextWord[nextWord.length()-1] == '"' && nextWord.length() != 1){
                 if(numberOfWordsInQuote(nextWord) == 1){
                     nextWord = nextWord.substr(1,nextWord.length()-2);
-                    if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isDDMonDate(nextWord)){
+                    if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)){
                         //what about for next day?
                         std::string nextWordOriginal = _tokenizedUserEntry[index + 1];
                         _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
@@ -525,7 +518,7 @@ TMTask TMParser::parseUndatedTaskInfo() {
                     nextWord = nextWord.substr(1,nextWord.length()-2);
                     if(timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)||
                        dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
-                       dateChecker->isDDMonDate(nextWord)){
+                       dateChecker->isOneDelimitedDate(nextWord)){
                            //what about for next day?
                            _tokenizedUserEntry[index + 1] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
                            index = index + 1;
@@ -656,8 +649,7 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
         startDate = formatConverter->dateFromNumericToBoostFormat(startDate);
         endDate = formatConverter->dateFromNumericToBoostFormat(endDate);
 
-        if(dateChecker->isValidDate(startDate) && dateChecker->isValidDate(endDate) && isValidInfo(startDate, startTime, endDate, endTime)){ //and valid info!
-            //IMPLEMENT FUNCTION TO CHECK DATE IMMEDIATELY BEFORE CONSIDERING AS DATE
+        if(dateChecker->isValidDate(startDate) && dateChecker->isValidDate(endDate) && isValidInfo(startDate, startTime, endDate, endTime)){
             TMTaskTime taskTime(startDate, startTime, endDate, endTime);
             taskTimings.push_back(taskTime);
         }
@@ -859,7 +851,6 @@ int TMParser::numberOfWords(std::string remainingEntry) {
 //postcondition: returns unique and valid indices
 std::vector<int> TMParser::parseTaskPositionNo() {
     int intTaskPositionNo;
-    int secondIntTaskPositionNo;
     std::vector<int> vectorTaskPositionNo;
     std::string token;
     int vectorSize = _tokenizedUserEntry.size();
@@ -921,7 +912,7 @@ std::string TMParser::parseDirectory() {
     return directory;
 }
 
-//preconditions date dd mm yyyy use dateFromUserToBoost
+//preconditions ddmmyyyy
 std::string TMParser::substractNDaysFromDate(std::string date, int n){
     FormatConverter *formatConverter = FormatConverter::getInstance();
     date = formatConverter->dateFromNumericToBoostFormat(date);
@@ -931,7 +922,7 @@ std::string TMParser::substractNDaysFromDate(std::string date, int n){
     return formatConverter->dateFromBoostToDDMMYYYY(finalBoostDate);
 }
 
-//preconditions date dd mm yyyy use dateFromUserToBoost
+//preconditions ddmmyyyy
 std::string TMParser::addNDaysFromDate(std::string date, int n){
     FormatConverter *formatConverter = FormatConverter::getInstance();
     date = formatConverter->dateFromNumericToBoostFormat(date);

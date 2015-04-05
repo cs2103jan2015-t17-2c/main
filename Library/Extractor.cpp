@@ -12,7 +12,7 @@ Extractor* Extractor::getInstance() {
 	return theOne;
 }
 
-std::string Extractor::extractDayOrNumericDateOrDDMonDate(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry){
+std::string Extractor::extractDayOrNumericDateOrDelimitedDate(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry){
     FormatConverter *formatConverter = FormatConverter::getInstance();
     DateChecker *dateChecker = DateChecker::getInstance();
     std::string stringAfterOn = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
@@ -22,8 +22,9 @@ std::string Extractor::extractDayOrNumericDateOrDDMonDate(int index, std::queue<
         startDate = extractNumericDate(index,indexOfDatesAndTimes, tokenizedUserEntry);
     } else if(dateChecker->isDay(stringAfterOn)){
         startDate = extractDay(index,indexOfDatesAndTimes, tokenizedUserEntry);
-    } else if(dateChecker->isDDMonDate(stringAfterOn)){               
-        startDate = extractDDMonDate(index,indexOfDatesAndTimes, tokenizedUserEntry);
+    } else if(dateChecker->isOneDelimitedDate(stringAfterOn)) {
+        char delimiter = dateChecker->returnDelimiter(stringAfterOn);
+        startDate = extractDelimitedDate(index,indexOfDatesAndTimes,tokenizedUserEntry,delimiter);
     } else {
         //found on but cannot find following date or day
     }
@@ -38,42 +39,54 @@ std::string Extractor::extractNumericDate(int index, std::queue<int>& indexOfDat
     return startDate;
 }
 
-std::string Extractor::extractDDMonDate(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry){
-    std::string dd = "";
+std::string Extractor::extractDelimitedDate(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry, char key) {
+    std::string day = "";
     std::string month = "";
-    std::string yyyy = "";
+    std::string year = "";
     FormatConverter *formatConverter = FormatConverter::getInstance();
-    std::string stringDate = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
+    DateChecker *dateChecker = DateChecker::getInstance();
+    std::string stringDate = tokenizedUserEntry[index];
 
-    int positionOfNextDash = stringDate.find_first_of("-");
-    dd = stringDate.substr(0,positionOfNextDash);
-    int lengthOfdd = dd.length();
-    if(lengthOfdd == 1){
-        dd = "0" + dd;
+    int positionOfNextKey = stringDate.find_first_of(key);
+    day = stringDate.substr(0,positionOfNextKey);
+    int lengthOfDay = day.length();
+    if(lengthOfDay == 1){
+        day = "0" + day;
     }
-    stringDate = stringDate.substr(positionOfNextDash + 1); //stringDate = mm-yyyy 
-    positionOfNextDash = stringDate.find_first_of("-");
+    stringDate = stringDate.substr(positionOfNextKey + 1); 
+    positionOfNextKey = stringDate.find_first_of(key);
     
-    if(positionOfNextDash != std::string::npos){
-        month = stringDate.substr(0,positionOfNextDash);
-        yyyy = stringDate.substr(positionOfNextDash + 1);
+    if(positionOfNextKey != std::string::npos){
+        month = stringDate.substr(0,positionOfNextKey);
+        year = stringDate.substr(positionOfNextKey + 1);
     } else {
         month = stringDate;
         std::string dateToday = formatConverter->dateFromBoostToDDMMYYYY(currentDate);
-        yyyy = dateToday.substr(4);
+        year = dateToday.substr(4);
     }
-    month = formatConverter->monthFromWrittenToNumeric(month);
+
+    if(dateChecker->isMonth(month)) {
+        month = formatConverter->monthFromWrittenToNumeric(month);
+    }
+
+    if(month.length() == 1) {
+        month = "0" + month;
+    }
+
+    if(year.length() == 2) {
+        year = "20" + year;
+    }
+
     indexOfDatesAndTimes.push(index);
-    return dd + month + yyyy;
+    return day + month + year;
 }
 
 //preconditions: isNextDay is true. used for deadline. comes after "before".
 std::string Extractor::extractNextDay(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry){
-    //check for day after next, then check for time iter + 1 = next
     std::string date = getDateFromNextDay(index, tokenizedUserEntry);
     indexOfDatesAndTimes.push(index);
     indexOfDatesAndTimes.push(index + 1);
-    //
+
     return date;
 }
 
@@ -138,8 +151,8 @@ void Extractor::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAnd
     std::string time = "";
     int lengthOfTokenizedUserEntry = tokenizedUserEntry.size();
 
-    if(dateChecker->isDay(stringAfterToken)||dateChecker->isNumericDate(stringAfterToken)||dateChecker->isDDMonDate(stringAfterToken)) {
-        date = extractDayOrNumericDateOrDDMonDate(index, indexOfDatesAndTimes, tokenizedUserEntry);
+    if(dateChecker->isDay(stringAfterToken)||dateChecker->isNumericDate(stringAfterToken)||dateChecker->isOneDelimitedDate(stringAfterToken)) {
+        date = extractDayOrNumericDateOrDelimitedDate(index, indexOfDatesAndTimes, tokenizedUserEntry);
         
         if(index + 1 != lengthOfTokenizedUserEntry) {
             std::string stringAfterDate = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
@@ -165,8 +178,8 @@ void Extractor::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAnd
         if(index + 1 != lengthOfTokenizedUserEntry){
 
             std::string stringAfterTime = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
-            if(dateChecker->isNumericDate(stringAfterTime)||dateChecker->isDay(stringAfterTime)||dateChecker->isDDMonDate(stringAfterTime)){
-                date = extractDayOrNumericDateOrDDMonDate(index + 1, indexOfDatesAndTimes, tokenizedUserEntry);
+            if(dateChecker->isNumericDate(stringAfterTime)||dateChecker->isDay(stringAfterTime)||dateChecker->isOneDelimitedDate(stringAfterTime)){
+                date = extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, tokenizedUserEntry);
             } else if(dateChecker->isNextDay(index + 1, tokenizedUserEntry)){
                 date = extractNextDay(index + 1, indexOfDatesAndTimes, tokenizedUserEntry);
             }

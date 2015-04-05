@@ -31,7 +31,7 @@ bool TaskChecker::isDeadlinedTask(std::vector<std::string> tokenizedUserEntry) {
         if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY){
             stringAfterBefore = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
 
-            if(dateChecker->isNumericDate(stringAfterBefore)||dateChecker->isDay(stringAfterBefore)||dateChecker->isDDMonDate(stringAfterBefore)) {
+            if(dateChecker->isNumericDate(stringAfterBefore)||dateChecker->isDay(stringAfterBefore)||dateChecker->isOneDelimitedDate(stringAfterBefore)) {
                 return true;
             } else if (timeChecker->is12HTime(stringAfterBefore)||timeChecker->is24HTime(stringAfterBefore)) {
                 return true;
@@ -68,13 +68,13 @@ bool TaskChecker::isTimedTask(std::vector<std::string> tokenizedUserEntry) {
         }
         
         if(unitString == TOKEN_ON){
-            if(dateChecker->isNumericDate(stringAfterToken)||dateChecker->isDay(stringAfterToken)||dateChecker->isDDMonDate(stringAfterToken)){
+            if(dateChecker->isNumericDate(stringAfterToken)||dateChecker->isDay(stringAfterToken)||dateChecker->isOneDelimitedDate(stringAfterToken)){
                 return true;
             }
         }
         
         if(unitString == TOKEN_FROM){
-            if(dateChecker->isNumericDate(stringAfterToken)||dateChecker->isDay(stringAfterToken)||dateChecker->isDDMonDate(stringAfterToken)){
+            if(dateChecker->isNumericDate(stringAfterToken)||dateChecker->isDay(stringAfterToken)||dateChecker->isOneDelimitedDate(stringAfterToken)){
                 //check for time after date
                 return true;
             } else if(timeChecker->is12HTime(stringAfterToken)||timeChecker->is24HTime(stringAfterToken)){
@@ -87,7 +87,7 @@ bool TaskChecker::isTimedTask(std::vector<std::string> tokenizedUserEntry) {
         
         if(unitString == TOKEN_TO){
 
-            if(dateChecker->isNumericDate(stringAfterToken)||dateChecker->isDay(stringAfterToken)||dateChecker->isDDMonDate(stringAfterToken)) {
+            if(dateChecker->isNumericDate(stringAfterToken)||dateChecker->isDay(stringAfterToken)||dateChecker->isOneDelimitedDate(stringAfterToken)) {
                 //check for time after date
                 return true;
             } else if(timeChecker->is12HTime(stringAfterToken)||timeChecker->is24HTime(stringAfterToken)){
@@ -123,7 +123,7 @@ bool TaskChecker::isMultipleTimingTask(std::vector<std::string> tokenizedUserEnt
         unitString = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
 
         if(!oneTimingIsFound){
-            if(dateChecker->isNumericDate(unitString)||dateChecker->isDay(unitString)||dateChecker->isDDMonDate(unitString)||
+            if(dateChecker->isNumericDate(unitString)||dateChecker->isDay(unitString)||dateChecker->isOneDelimitedDate(unitString)||
                 timeChecker->is12HTime(unitString)||timeChecker->is24HTime(unitString)){
                     oneTimingIsFound = true;
             } else if (dateChecker->isNextDay(index, tokenizedUserEntry)){
@@ -137,7 +137,7 @@ bool TaskChecker::isMultipleTimingTask(std::vector<std::string> tokenizedUserEnt
 
                 stringAfterAnd = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
                 if(dateChecker->isNumericDate(stringAfterAnd)||dateChecker->isDay(stringAfterAnd)||
-                    dateChecker->isDDMonDate(stringAfterAnd)||timeChecker->is12HTime(stringAfterAnd)||
+                    dateChecker->isOneDelimitedDate(stringAfterAnd)||timeChecker->is12HTime(stringAfterAnd)||
                     timeChecker->is24HTime(stringAfterAnd)){
                     moreThanOneTimingIsFound = true;
 
