@@ -119,7 +119,7 @@ namespace TMGUI {
 			this->slogan->AutoSize = true;
 			this->slogan->Font = (gcnew System::Drawing::Font(L"Corbel", 10.125F, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->slogan->Location = System::Drawing::Point(247, 175);
+			this->slogan->Location = System::Drawing::Point(235, 175);
 			this->slogan->Name = L"slogan";
 			this->slogan->Size = System::Drawing::Size(378, 33);
 			this->slogan->TabIndex = 4;
