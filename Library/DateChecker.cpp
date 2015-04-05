@@ -14,7 +14,7 @@ DateChecker* DateChecker::getInstance() {
 }
 
 //Preconditions: dd mm yyyy
-bool DateChecker::isValidDate(std::string date){
+bool DateChecker::isValidDate(std::string date) {
     boost::gregorian::date boostDate;
     try {
         boostDate = boost::gregorian::from_uk_string(date);
@@ -75,7 +75,67 @@ bool DateChecker::isNumericDate(std::string token) {
     }
 }
 
-bool DateChecker::isDDMonDate(std::string token){
+bool DateChecker::isSlashedNumericDate(std::string token) {
+    return isOneNumericDateForm(token,'/');
+}
+
+bool DateChecker::isDottedNumericDate(std::string token) {
+    return isOneNumericDateForm(token,'.');
+}
+
+bool DateChecker::isOneNumericDateForm(std::string token, char key) {
+    std::string day = "";
+    std::string month = "";
+    std::string year = "";
+
+    int positionOfNextKey = token.find_first_of(key);
+
+    if(positionOfNextKey == std::string::npos||token[0] == key||token[token.length()-1] == key){
+        return false;
+    }
+
+    day = token.substr(0,positionOfNextKey);
+    int lengthOfDay = day.length();
+    if(!isPositiveInteger(day)||!(lengthOfDay == 1||lengthOfDay == 2)){
+        return false;
+    }
+
+    token = token.substr(positionOfNextKey + 1); 
+    positionOfNextKey = token.find_first_of(key);
+    
+    if(positionOfNextKey != std::string::npos){
+        month = token.substr(0,positionOfNextKey);
+        if(!isNumericMonth(month)){
+            return false;
+        }
+        year = token.substr(positionOfNextKey + 1);
+        int lengthOfYear = year.length();
+        if(!isPositiveInteger(year)||!(lengthOfYear == 2||lengthOfYear == 4)){
+            return false;
+        }
+        if(lengthOfYear == 2){
+            year = "20" + year;
+        }
+    } else {
+        month = token;
+        if(!isNumericMonth(month)){
+            return false;
+        }
+        FormatConverter *formatConverter = FormatConverter::getInstance();
+        std::string dateToday = formatConverter->dateFromBoostToDDMMYYYY(currentDate);
+        year = dateToday.substr(4,4);
+    }
+
+    std::string date = day + "-" + month + "-" + year;
+    
+    if(!isValidDate(date)){
+        return false;
+    }
+
+    return true;
+}
+
+bool DateChecker::isDDMonDate(std::string token) {
     std::string dd = "";
     std::string month = "";
     std::string yyyy = "";
@@ -129,7 +189,7 @@ bool DateChecker::isDDMonDate(std::string token){
     return true;
 }
 
-bool DateChecker::isMonth(std::string token){
+bool DateChecker::isMonth(std::string token) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
     token = formatConverter->returnLowerCase(token);
     if(token == "jan"||
@@ -160,6 +220,25 @@ bool DateChecker::isMonth(std::string token){
     }
 }
 
+bool DateChecker::isNumericMonth(std::string token) {
+    if(token == "1"||token == "01"||
+       token == "2"||token == "02"||
+       token == "3"||token == "03"||
+       token == "4"||token == "04"||
+       token == "5"||token == "05"||
+       token == "6"||token == "06"||
+       token == "7"||token == "07"||
+       token == "8"||token == "08"||
+       token == "9"||token == "09"||
+       token == "10"||
+       token == "11"||
+       token == "12") {
+           return true;
+    } else {
+        return false;
+    }
+}
+
 bool DateChecker::isDay(std::string token) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
     token = formatConverter->returnLowerCase(token);
@@ -183,7 +262,7 @@ bool DateChecker::isDay(std::string token) {
     }
 }
 
-bool DateChecker::isNextDay(int index, std::vector<std::string> tokenizedUserEntry){
+bool DateChecker::isNextDay(int index, std::vector<std::string> tokenizedUserEntry) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
     std::string firstWord = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
 
