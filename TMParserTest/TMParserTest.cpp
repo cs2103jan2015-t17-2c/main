@@ -28,6 +28,5 @@ namespace TMParserTest{
             std::string time("12am");
             Assert::AreEqual((std::string)"0000",formatConverter->timeFrom12HourAMToHHMM(time));
         }
-
 	};
 }

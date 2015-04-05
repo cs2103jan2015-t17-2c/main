@@ -193,20 +193,22 @@ TMTask FormatConverter::convertStringToTMTask(std::string listEntry){
 	bool isClashed;
     bool isConfirmed;
 	int unconfirmedBatchNumber;
-    
-    TaskType taskType;
 
+    TaskType taskType;
+    //std::cout << "IN FUNCTION" << std::endl;
+    //std::cout << listEntry << std::endl;
     std::istringstream iss(listEntry);
 
 	iss >> stringTaskType;
 	taskType = convertStringToTaskType(stringTaskType);
+    //std::cout << stringTaskType << std::endl;
     
 	if (taskType != TaskType::Undated) {
 
         iss >> token;
-
-        while(token != "||"){
-		    
+       //std::cout << token << std::endl;
+        while(token != "||") {  
+            //std::cout << token << std::endl;
             taskDescription = taskDescription + token + " ";
             iss >> token;
         }
@@ -249,13 +251,13 @@ TMTask FormatConverter::convertStringToTMTask(std::string listEntry){
 		}
 
 		task.setUnconfirmedBatchNumber(unconfirmedBatchNumber);
-
+        //std::cout << "reached end\n";
 		return task;
 	} else {
 		iss >> token;
 
         while(token != "||"){
-		    
+		    //std::cout << token << std::endl;
             taskDescription = taskDescription + token + " ";
             iss >> token;
         }
@@ -263,15 +265,16 @@ TMTask FormatConverter::convertStringToTMTask(std::string listEntry){
         if(taskDescription != "") {
             taskDescription.erase(taskDescription.end()-1);
         }
+
 		iss >> isCompleted;
-		std::cout << taskDescription << isCompleted << std::endl;
+
 		TMTaskTime taskTime;
 		TMTask task(taskDescription, taskTime, taskType);
 		
 		if(isCompleted){
 			task.setAsCompleted();
 		}
-
+        //std::cout << "reached end\n";
 		return task;
 	}
 }

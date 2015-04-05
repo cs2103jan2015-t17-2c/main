@@ -83,18 +83,19 @@ std::string TMParser::extractCommand() {
 }
 
 std::string TMParser::extractTokenAfterCommand() {
+    ErrorMessageReport *errorMessageReport = ErrorMessageReport::getInstance(); 
     if(_tokenizedUserEntry.size() == 0){
-        //ERROR MESSAGE: INDEX OF TASK NOT SPECIFIED
+        errorMessageReport->addErrorMessage("Index of task not specified\n");
         return "";
     } else if (_tokenizedUserEntry.size() == 1) {
-        //ERROR MESSAGE: MISSING NEW TASK INFO
+        errorMessageReport->addErrorMessage("Missing new task information\n");
         return "";
     }
 
 	std::string token = _tokenizedUserEntry[0];
 
     if(!isPositiveInteger(token)) {
-        //ERROR MESSAGE: INDEX OF TASK MUST BE A POSITIVE INTEGER
+        errorMessageReport->addErrorMessage("Index of task must be a positive integer\n");
         return "";
     }
 

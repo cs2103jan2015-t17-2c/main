@@ -17,7 +17,7 @@
 #include "FormatConverter.h"
 #include "Extractor.h"
 #include "CurrentDateAndTime.h"
-//#include <boost/assign/list_of.hpp>
+#include "ErrorMessageReport.h"
 
 //user input date must be ddmmyyyy
 //time input if in 12hour format must be followed immediately by pm and am
