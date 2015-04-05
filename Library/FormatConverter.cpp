@@ -177,6 +177,7 @@ TMTask FormatConverter::convertStringToTMTask(std::string listEntry){
     
 	std::string stringTaskType;
 	std::string taskDescription;
+    std::string token;
 
     std::string startDay;
     std::string startMonth;
@@ -201,8 +202,18 @@ TMTask FormatConverter::convertStringToTMTask(std::string listEntry){
 	taskType = convertStringToTaskType(stringTaskType);
     
 	if (taskType != TaskType::Undated) {
-		std::cout << "start" << std::endl;
-		iss >> taskDescription;
+
+        iss >> token;
+
+        while(token != "||"){
+		    
+            taskDescription = taskDescription + token + " ";
+            iss >> token;
+        }
+
+        if(taskDescription != "") {
+            taskDescription.erase(taskDescription.end()-1);
+        }
 
 		iss >> startDay;
 		iss >> startMonth;
@@ -214,11 +225,10 @@ TMTask FormatConverter::convertStringToTMTask(std::string listEntry){
 		iss >> endYear;
 		iss >> endTime;
 
-		iss >> std::boolalpha >> isCompleted;
-		iss >> std::boolalpha >> isClashed;
-		iss >> std::boolalpha >> isConfirmed;
+		iss >> isCompleted;
+		iss >> isClashed;
+		iss >> isConfirmed;
 		iss >> unconfirmedBatchNumber;
-		std::cout << "end" << std::endl;
 
 		std::string startDate = startDay + "-" + startMonth + "-" + startYear;
 		std::string endDate = endDay + "-" + endMonth + "-" + endYear;
@@ -242,8 +252,17 @@ TMTask FormatConverter::convertStringToTMTask(std::string listEntry){
 
 		return task;
 	} else {
-		std::cout << "start" << std::endl;
-		iss >> taskDescription;
+		iss >> token;
+
+        while(token != "||"){
+		    
+            taskDescription = taskDescription + token + " ";
+            iss >> token;
+        }
+
+        if(taskDescription != "") {
+            taskDescription.erase(taskDescription.end()-1);
+        }
 		iss >> isCompleted;
 		std::cout << taskDescription << isCompleted << std::endl;
 		TMTaskTime taskTime;
