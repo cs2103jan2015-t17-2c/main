@@ -497,7 +497,7 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 		outFile << DATED_TASK_DISPLAY_FORMAT << "\n";
 		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
 			outFile << iter->getTaskTypeAsString() <<
-			" "	<< iter->getTaskDescription() << 
+			" "	<< iter->getTaskDescription() << "||" 
 			" " << iter->getTaskTime().getStartDate() << 
 			" " << iter->getTaskTime().getStartTime() << 
 			" " << iter->getTaskTime().getEndDate() <<
@@ -514,7 +514,7 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 		outFile << UNDATED_TASK_DISPLAY_FORMAT << "\n";
 		for (iter = _undated.begin(); iter != _undated.end(); ++iter) {
 			outFile << iter->getTaskTypeAsString() << 
-				" "	<< iter->getTaskDescription() << 
+				" "	<< iter->getTaskDescription() << "||" 
 				" " << iter->isCompleted() << "\n";
 		}
 
@@ -525,7 +525,7 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 			
 			if (iter->getTaskType() != TaskType::Undated) {
 				outFile << iter->getTaskTypeAsString() <<
-				" "	<< iter->getTaskDescription() << 
+				" "	<< iter->getTaskDescription() << "||" 
 				" " << iter->getTaskTime().getStartDate() << 
 				" " << iter->getTaskTime().getStartTime() << 
 				" " << iter->getTaskTime().getEndDate() <<
@@ -536,7 +536,7 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 				" " << iter->getUnconfirmedBatchNumber() << "\n";
 			} else {
 				outFile << iter->getTaskTypeAsString() << 
-				" "	<< iter->getTaskDescription() << 
+				" "	<< iter->getTaskDescription() << "||" 
 				" " << iter->isCompleted() << "\n";
 			}
 		}

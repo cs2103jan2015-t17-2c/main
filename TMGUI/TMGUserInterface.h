@@ -677,7 +677,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			 label4->Text = time.ToString(format);	
 		 }
 private: System::Void TMGUserInterface_Load(System::Object^  sender, System::EventArgs^  e) {
-		 //TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+		 TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
 		 }
 
 private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
