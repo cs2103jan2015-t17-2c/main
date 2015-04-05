@@ -214,9 +214,9 @@ TMTask FormatConverter::convertStringToTMTask(std::string listEntry){
 		iss >> endYear;
 		iss >> endTime;
 
-		iss >> isCompleted;
-		iss >> isClashed;
-		iss >> isConfirmed;
+		iss >> std::boolalpha >> isCompleted;
+		iss >> std::boolalpha >> isClashed;
+		iss >> std::boolalpha >> isConfirmed;
 		iss >> unconfirmedBatchNumber;
 		std::cout << "end" << std::endl;
 
