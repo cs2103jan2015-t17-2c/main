@@ -21,7 +21,18 @@ const std::string LOAD_SUCCESS = "Database loaded successfully.";
 const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program where to load existing data from. Please do not delete.";
 
 	TMTaskList::TMTaskList() {
-		_fileName = "DEFAULT.txt"; //could consider using the name of the year instead
+		boost::gregorian::date dateToday =  boost::gregorian::day_clock::local_day();
+		std::locale facet(std::locale::classic(), new boost::gregorian::date_facet("%d %b %Y"));
+		std::ostringstream stream;
+		stream.imbue(facet);
+		std::string  strDateToday;
+		stream << dateToday;
+		strDateToday = stream.str();
+		std::string year, defaultFileName;
+		
+		year = strDateToday.substr(strDateToday.size()-4, 4);
+		defaultFileName = year + " Schedule.txt"; 
+		_fileName = defaultFileName; 
 		}
 
 
