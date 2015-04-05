@@ -1,7 +1,6 @@
-Number of dated tasks: 2
-t1  0 05 Apr 2015 1030 05 Apr 2015 1230 0 1 1
-t3  0 05 Apr 2015 1030 05 Apr 2015 1230 0 1 1
-Number of undated tasks: 2
-t1 from 10:30pm to 12:30pm 0 0 1
-t2 from 10.30pm to 12.30pm 0 0 1
+Number of dated tasks: 3
+t2  0 05 Apr 2015 1000 05 Apr 2015 1200 0 1 1
+t2  0 05 Apr 2015 1030 05 Apr 2015 1630 0 1 1
+t1  0 05 Apr 2015 2100 06 Apr 2015 1200 0 1 0
+Number of undated tasks: 0
 Number of completed/archived tasks: 0
