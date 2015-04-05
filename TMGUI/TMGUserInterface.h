@@ -12,6 +12,7 @@
 #include "TMCommandCreator.h"
 #include "TMCommand.h"
 #include "TMSplash.h"
+#include <shellapi.h>
 
 namespace TMGUI {
 
@@ -22,6 +23,7 @@ namespace TMGUI {
 	using namespace System::Data;
 	using namespace System::Drawing;
 	using namespace System::Threading;
+	using namespace System::Diagnostics;
 
 	/// <summary>
 	/// Summary for TMGUserInterface
@@ -676,6 +678,9 @@ private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows
 					userInput->Focus();
 			 }
 			 
+			 if(e->KeyCode == Keys::F1){
+				 ShellExecuteA(NULL,"open","C:\\Users\\adagior\\Desktop\\TimeMaster\\readme.pdf",NULL,NULL,0);
+			 }
 
 		 }
 };
