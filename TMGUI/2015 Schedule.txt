@@ -1,8 +1,5 @@
 Number of dated tasks: 0
 <Task Type> <Task Description> <Start Date> <Start Time> <End Date> <End Time> <Completion> <Clash> <Confirmation> <Unconfirmed Batch Number>
-Number of undated tasks: 3
+Number of undated tasks: 0
 <Task Type> <Task Description> <Completion>
-Undated t1 || 0
-Undated t2 || 0
-Undated t2 || 0
 Number of completed/archived tasks: 0
