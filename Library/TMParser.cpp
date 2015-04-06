@@ -547,7 +547,7 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
     return tasks;
 }
 
-void configureQueuesAndIndex(std::queue<int>& mainIndexOfDatesAndTimes, std::queue<int> indexOfDatesAndTimes, int& index) {
+void TMParser::configureQueuesAndIndex(std::queue<int>& mainIndexOfDatesAndTimes, std::queue<int> indexOfDatesAndTimes, int& index) {
     mainIndexOfDatesAndTimes.push(index);
     while(!indexOfDatesAndTimes.empty()){
         mainIndexOfDatesAndTimes.push(indexOfDatesAndTimes.front());
