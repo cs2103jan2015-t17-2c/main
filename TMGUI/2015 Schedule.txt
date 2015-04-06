@@ -1,10 +1,5 @@
-Number of dated tasks: 4
+Number of dated tasks: 0
 <Task Type> <Task Description> <Start Date> <Start Time> <End Date> <End Time> <Completion> <Clash> <Confirmation> <Unconfirmed Batch Number>
-WithEndDateTime t4 || 11 Apr 2015 2359 11 Apr 2015 2359 0 0 1 0
-WithEndDateTime t1 || 12 Apr 2015 2359 12 Apr 2015 2359 0 0 1 0
-WithStartDateTime t5 || 13 Apr 2015 0000 13 Apr 2015 0000 0 0 1 0
-WithEndDateTime t2 || 13 Apr 2015 2359 13 Apr 2015 2359 0 0 1 0
-Number of undated tasks: 1
+Number of undated tasks: 0
 <Task Type> <Task Description> <Completion>
-Undated t4 || 0
 Number of completed/archived tasks: 0

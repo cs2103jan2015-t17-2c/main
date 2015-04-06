@@ -68,6 +68,10 @@ bool TimeChecker::is12HTime(std::string timeToken){
 }
 
 bool TimeChecker::isAM(std::string token){
+    if(token.length() < 3) {
+        return false;
+    }
+
     std::string lastTwoCharacters = token.substr(token.length()-2,2);
     FormatConverter *formatConverter = FormatConverter::getInstance();
     lastTwoCharacters = formatConverter->returnLowerCase(lastTwoCharacters);
@@ -79,6 +83,10 @@ bool TimeChecker::isAM(std::string token){
 }
 
 bool TimeChecker::isPM(std::string token){
+    if(token.length() < 3) {
+        return false;
+    }
+
     std::string lastTwoCharacters = token.substr(token.length()-2,2);
     FormatConverter *formatConverter = FormatConverter::getInstance();
     lastTwoCharacters = formatConverter->returnLowerCase(lastTwoCharacters);
