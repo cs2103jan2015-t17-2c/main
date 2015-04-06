@@ -174,14 +174,13 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
 
     for(int index = 0; index < lengthOfTokenizedUserEntry; index++){
 
-        if(index + 1 == lengthOfTokenizedUserEntry){
-            break;
-        }
-
         unitString = formatConverter->returnLowerCase(_tokenizedUserEntry[index]);
-        nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
 
         if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY){
+            if(index + 1 == lengthOfTokenizedUserEntry){
+                break;
+            }
+            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
             if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)) {
                 //e.g. before 01012016 (DDMMYYYY)
                 indexOfDatesAndTimes.push(index);
@@ -208,6 +207,10 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                 editDateOrTimeInInvertedCommas(nextWord, index, true, true);
             }
         } else if(unitString == TOKEN_ON) {
+            if(index + 1 == lengthOfTokenizedUserEntry){
+                break;
+            }
+            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
             if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)) {
                 indexOfDatesAndTimes.push(index);
                 dateToMeet = extractor->extractDayOrNumericDateOrDelimitedDate(index + 1,indexOfDatesAndTimes, _tokenizedUserEntry);
@@ -223,7 +226,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
             dateToMeet = extractor->extractNextDay(index, indexOfDatesAndTimes, _tokenizedUserEntry);
             index = indexOfDatesAndTimes.back();
         } else {
-            editDateOrTimeInInvertedCommas(nextWord, index, true, false);
+            editDateOrTimeInInvertedCommas(unitString, index - 1, true, false);
         }
     }
 
@@ -291,57 +294,65 @@ TMTask TMParser::parseTimedTaskInfo(){
     
     for(int index = 0; index < lengthOfTokenizedUserEntry; index++){
 
-        if(index + 1 == lengthOfTokenizedUserEntry){
-            break;
-        }
-
         unitString = formatConverter->returnLowerCase(_tokenizedUserEntry[index]);
-        nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
 
         if(unitString == TOKEN_AT) {
+            if(index + 1 == lengthOfTokenizedUserEntry){
+                break;
+            }
+            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
             if(timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)){
                 startTime = extractor->extractTime(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
-                configureQueuesAndIndex(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
+                configureQueuesAndIndexAfterToken(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
             } else {
                 editDateOrTimeInInvertedCommas(nextWord, index, false, true);
             }
         } else if(unitString == TOKEN_ON) {
+            if(index + 1 == lengthOfTokenizedUserEntry){
+                break;
+            }
+            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
             if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)){
                 startDate = extractor->extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
-                configureQueuesAndIndex(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
+                configureQueuesAndIndexAfterToken(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
             } else {
                 editDateOrTimeInInvertedCommas(nextWord, index, true, false);
             }
         } else if(unitString == TOKEN_FROM){
+            if(index + 1 == lengthOfTokenizedUserEntry){
+                break;
+            }
+            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
             if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
                 dateChecker->isOneDelimitedDate(nextWord)||
                 dateChecker->isNextDay(index + 1, _tokenizedUserEntry)||
                 timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)) {
                     extractor->extractDateAndOrTime(index + 1, indexOfDatesAndTimes, startDate, startTime, _tokenizedUserEntry);
-                    configureQueuesAndIndex(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
+                    configureQueuesAndIndexAfterToken(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
             } else {
                 editDateOrTimeInInvertedCommas(nextWord, index, true, true);
             }
         } else if (unitString == TOKEN_TO){
+            if(index + 1 == lengthOfTokenizedUserEntry){
+                break;
+            }
+            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
             if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
                 dateChecker->isOneDelimitedDate(nextWord)||
                 dateChecker->isNextDay(index + 1, _tokenizedUserEntry)||
                 timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)) {
                     extractor->extractDateAndOrTime(index + 1, indexOfDatesAndTimes, endDate, endTime, _tokenizedUserEntry);
-                    configureQueuesAndIndex(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
+                    configureQueuesAndIndexAfterToken(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
             } else {
                 editDateOrTimeInInvertedCommas(nextWord, index, true, true);
             }
         } else if(dateChecker->isNextDay(index, _tokenizedUserEntry)) {
             startDate = extractor->extractNextDay(index, indexOfDatesAndTimes, _tokenizedUserEntry);
+            configureQueuesAndIndex(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
         } else {
-            editDateOrTimeInInvertedCommas(nextWord, index, true, false);
-            //check if next day is encompassed by open close inverted commas
-            //cannot find any markers
+            editDateOrTimeInInvertedCommas(unitString, index - 1, true, false);
         }
     }
-    //if obtained only time then check if time passed...
-    //if only date obtained then set as 0000
 
     configureAllDatesAndTimes(startDate, startTime, endDate, endTime, taskType);
 
@@ -393,24 +404,36 @@ TMTask TMParser::parseUndatedTaskInfo() {
     Extractor *extractor = Extractor::getInstance();
 
     for(int index = 0; index < lengthOfVector; index++){
-        if(index + 1 == lengthOfVector){
-            break;
-        }
 
         unitString = formatConverter->returnLowerCase(_tokenizedUserEntry[index]);
-        nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
 
         if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY) {
+            if(index + 1 == lengthOfVector){
+                break;
+            }
+            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
             editDateOrTimeInInvertedCommas(nextWord, index, true, true);
         } else if(unitString == TOKEN_ON) {
+            if(index + 1 == lengthOfVector){
+                break;
+            }
+            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
             editDateOrTimeInInvertedCommas(nextWord, index, true, false);
         } else if(unitString == TOKEN_AT){
+            if(index + 1 == lengthOfVector){
+                break;
+            }
+            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
             editDateOrTimeInInvertedCommas(nextWord, index, false, true);
         } else if(unitString == TOKEN_FROM||unitString == TOKEN_TO){
+            if(index + 1 == lengthOfVector){
+                break;
+            }
+            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
             editDateOrTimeInInvertedCommas(nextWord, index, true, true);
             //index = index + 1;?
         } else {
-            //test next day
+            editDateOrTimeInInvertedCommas(unitString, index - 1, true, false);
         }
     }
 
@@ -561,6 +584,14 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
 }
 
 void TMParser::configureQueuesAndIndex(std::queue<int>& mainIndexOfDatesAndTimes, std::queue<int>& indexOfDatesAndTimes, int& index) {
+    while(!indexOfDatesAndTimes.empty()){
+        mainIndexOfDatesAndTimes.push(indexOfDatesAndTimes.front());
+        indexOfDatesAndTimes.pop();
+    }
+    index = mainIndexOfDatesAndTimes.back();
+}
+
+void TMParser::configureQueuesAndIndexAfterToken(std::queue<int>& mainIndexOfDatesAndTimes, std::queue<int>& indexOfDatesAndTimes, int& index) {
     mainIndexOfDatesAndTimes.push(index);
     while(!indexOfDatesAndTimes.empty()){
         mainIndexOfDatesAndTimes.push(indexOfDatesAndTimes.front());

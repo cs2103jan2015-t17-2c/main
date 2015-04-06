@@ -153,6 +153,16 @@ bool TimeChecker::is24HTime(std::string timeToken) {
     }
 }
 
+bool TimeChecker::isTimeWithoutPeriod(std::string token) {
+    int intToken = std::stoi(token);
+
+    if(intToken >= 1 && intToken <=12) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 bool TimeChecker::isPositiveInteger(std::string token) {
     for(std::string::iterator it = token.begin(); it < token.end(); it++) {
         if(!isdigit(*it)) {

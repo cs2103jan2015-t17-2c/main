@@ -59,6 +59,7 @@ public:
     std::vector<TMTask> parseMultipleTimingTaskInfo();
     //used for timedtask
     void configureQueuesAndIndex(std::queue<int>&, std::queue<int>&, int&);
+    void configureQueuesAndIndexAfterToken(std::queue<int>&, std::queue<int>&, int&);
 
     void editDateOrTimeInInvertedCommas(std::string, int, bool, bool);
 
