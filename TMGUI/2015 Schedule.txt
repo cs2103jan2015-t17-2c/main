@@ -1,8 +1,10 @@
-Number of dated tasks: 0
+Number of dated tasks: 3
 <Task Type> <Task Description> <Start Date> <Start Time> <End Date> <End Time> <Completion> <Clash> <Confirmation> <Unconfirmed Batch Number>
-Number of undated tasks: 3
+WithStartDateTime watch game of thrones || 06 Apr 2015 2300 06 Apr 2015 2300 0 0 1 0
+WithEndDateTime do homework || 10 Apr 2015 1900 10 Apr 2015 1900 0 0 1 0
+WithEndDateTime t3  || 11 Apr 2015 2359 11 Apr 2015 2359 0 0 1 0
+Number of undated tasks: 2
 <Task Type> <Task Description> <Completion>
 Undated t1 || 0
-Undated t1 || 0
-Undated t2 || 0
+Undated t3 || 0
 Number of completed/archived tasks: 0
