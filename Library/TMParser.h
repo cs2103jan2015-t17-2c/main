@@ -57,6 +57,9 @@ public:
 
     //to block task with multiple timings >= 2
     std::vector<TMTask> parseMultipleTimingTaskInfo();
+    void configureQueuesAndIndex(std::queue<int>&, std::queue<int>, int&);
+
+    void editDateOrTimeInInvertedCommas(std::string, int, bool, bool);
 
     void configureAllDatesAndTimes(std::string&, std::string&, std::string&, std::string&, TaskType&);
 
@@ -84,7 +87,5 @@ public:
     std::string getErrorMessage();
 
     int numberOfWordsInQuote(std::string);
-
-    void editDateOrTimeInInvertedCommas(std::string, int, bool, bool);
 };
 #endif
