@@ -188,7 +188,7 @@ namespace TMGUI {
 			this->userInput->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
 			this->userInput->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->userInput->Location = System::Drawing::Point(51, 775);
+			this->userInput->Location = System::Drawing::Point(52, 845);
 			this->userInput->Margin = System::Windows::Forms::Padding(2);
 			this->userInput->Name = L"userInput";
 			this->userInput->Size = System::Drawing::Size(1868, 50);
@@ -203,7 +203,7 @@ namespace TMGUI {
 			this->welcomeMessage->Font = (gcnew System::Drawing::Font(L"Corbel", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->welcomeMessage->ForeColor = System::Drawing::SystemColors::ButtonFace;
-			this->welcomeMessage->Location = System::Drawing::Point(44, 734);
+			this->welcomeMessage->Location = System::Drawing::Point(44, 804);
 			this->welcomeMessage->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->welcomeMessage->Name = L"welcomeMessage";
 			this->welcomeMessage->Size = System::Drawing::Size(391, 39);
@@ -217,11 +217,11 @@ namespace TMGUI {
 			this->statusDisplay->Font = (gcnew System::Drawing::Font(L"Corbel", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->statusDisplay->ForeColor = System::Drawing::SystemColors::InfoText;
-			this->statusDisplay->Location = System::Drawing::Point(52, 599);
+			this->statusDisplay->Location = System::Drawing::Point(51, 629);
 			this->statusDisplay->Margin = System::Windows::Forms::Padding(4, 3, 4, 3);
 			this->statusDisplay->Name = L"statusDisplay";
 			this->statusDisplay->ReadOnly = true;
-			this->statusDisplay->Size = System::Drawing::Size(1574, 132);
+			this->statusDisplay->Size = System::Drawing::Size(1869, 172);
 			this->statusDisplay->TabIndex = 6;
 			this->statusDisplay->Text = L"";
 			// 
@@ -319,7 +319,7 @@ namespace TMGUI {
 			this->DisplayState->Font = (gcnew System::Drawing::Font(L"Corbel", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->DisplayState->ForeColor = System::Drawing::SystemColors::ButtonFace;
-			this->DisplayState->Location = System::Drawing::Point(1630, 636);
+			this->DisplayState->Location = System::Drawing::Point(1707, 582);
 			this->DisplayState->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->DisplayState->Name = L"DisplayState";
 			this->DisplayState->Size = System::Drawing::Size(213, 39);
@@ -344,11 +344,11 @@ namespace TMGUI {
 			this->nowShowing->Font = (gcnew System::Drawing::Font(L"Corbel", 10.125F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->nowShowing->ForeColor = System::Drawing::SystemColors::ButtonFace;
-			this->nowShowing->Location = System::Drawing::Point(1632, 603);
+			this->nowShowing->Location = System::Drawing::Point(1476, 586);
 			this->nowShowing->Name = L"nowShowing";
-			this->nowShowing->Size = System::Drawing::Size(118, 33);
+			this->nowShowing->Size = System::Drawing::Size(214, 33);
 			this->nowShowing->TabIndex = 13;
-			this->nowShowing->Text = L"Showing";
+			this->nowShowing->Text = L"The above shows";
 			// 
 			// label1
 			// 
