@@ -1,2 +1,2 @@
-DEFAULT.txt
+2015 Schedule.txt
 This file directs the program where to load existing data from. Please do not delete.
