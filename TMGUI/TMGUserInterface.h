@@ -349,7 +349,7 @@ namespace TMGUI {
 			this->Padding = System::Windows::Forms::Padding(0, 0, 30, 30);
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"TimeMaster";
-			//this->Load += gcnew System::EventHandler(this, &TMGUserInterface::TMGUserInterface_Load);
+			this->Load += gcnew System::EventHandler(this, &TMGUserInterface::TMGUserInterface_Load);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
