@@ -349,7 +349,7 @@ namespace TMGUI {
 			this->Padding = System::Windows::Forms::Padding(0, 0, 30, 30);
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"TimeMaster";
-			this->Load += gcnew System::EventHandler(this, &TMGUserInterface::TMGUserInterface_Load);
+			//this->Load += gcnew System::EventHandler(this, &TMGUserInterface::TMGUserInterface_Load);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -676,9 +676,9 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			 
 			 label4->Text = time.ToString(format);	
 		 }
-private: System::Void TMGUserInterface_Load(System::Object^  sender, System::EventArgs^  e) {
+/*private: System::Void TMGUserInterface_Load(System::Object^  sender, System::EventArgs^  e) {
 		 TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
-		 }
+		 }*/
 
 private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 			
