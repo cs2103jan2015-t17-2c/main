@@ -57,6 +57,7 @@ public:
 
     //to block task with multiple timings >= 2
     std::vector<TMTask> parseMultipleTimingTaskInfo();
+    //used for timedtask
     void configureQueuesAndIndex(std::queue<int>&, std::queue<int>, int&);
 
     void editDateOrTimeInInvertedCommas(std::string, int, bool, bool);

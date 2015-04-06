@@ -222,7 +222,9 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
     }
 
     for(int i = 0; i < lengthOfTokenizedUserEntry; i++) {
-        int frontIndexOfQueue = -1; //will be -1 (invalid index) if index is empty 
+        //will be -1 (invalid index) if index is empty 
+        int frontIndexOfQueue = -1;
+
         if(!indexOfDatesAndTimes.empty()){
             frontIndexOfQueue = indexOfDatesAndTimes.front();
         }
@@ -293,7 +295,6 @@ TMTask TMParser::parseTimedTaskInfo(){
         if(unitString == TOKEN_AT) {
             startTime = extractor->extractTime(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
             if(startTime != ""){
-                mainIndexOfDatesAndTimes.push(index);
                 configureQueuesAndIndex(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
             } else {
                 editDateOrTimeInInvertedCommas(nextWord, index, false, true);
@@ -301,7 +302,6 @@ TMTask TMParser::parseTimedTaskInfo(){
         } else if(unitString == TOKEN_ON) {
             startDate = extractor->extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
             if(startDate != ""){
-                mainIndexOfDatesAndTimes.push(index);
                 configureQueuesAndIndex(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
             } else {
                 editDateOrTimeInInvertedCommas(nextWord, index, true, false);
@@ -309,7 +309,6 @@ TMTask TMParser::parseTimedTaskInfo(){
         } else if(unitString == TOKEN_FROM){
             extractor->extractDateAndOrTime(index + 1, indexOfDatesAndTimes, startDate, startTime, _tokenizedUserEntry);
             if((startDate != "")||(startTime != "")){
-                mainIndexOfDatesAndTimes.push(index);
                 configureQueuesAndIndex(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
             } else {
                 editDateOrTimeInInvertedCommas(nextWord, index, true, true);
@@ -317,15 +316,12 @@ TMTask TMParser::parseTimedTaskInfo(){
         } else if (unitString == TOKEN_TO){
             extractor->extractDateAndOrTime(index + 1, indexOfDatesAndTimes, endDate, endTime, _tokenizedUserEntry);
             if((endDate != "")||(endTime != "")){  
-                mainIndexOfDatesAndTimes.push(index);
                 configureQueuesAndIndex(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
             } else {
                 editDateOrTimeInInvertedCommas(nextWord, index, true, true);
             }
         } else if(dateChecker->isNextDay(index, _tokenizedUserEntry)) {
             startDate = extractor->extractNextDay(index, indexOfDatesAndTimes, _tokenizedUserEntry);
-
-
         } else {
             //check if next day is encompassed by open close inverted commas
             //cannot find any markers
@@ -552,6 +548,7 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
 }
 
 void configureQueuesAndIndex(std::queue<int>& mainIndexOfDatesAndTimes, std::queue<int> indexOfDatesAndTimes, int& index) {
+    mainIndexOfDatesAndTimes.push(index);
     while(!indexOfDatesAndTimes.empty()){
         mainIndexOfDatesAndTimes.push(indexOfDatesAndTimes.front());
         indexOfDatesAndTimes.pop();
