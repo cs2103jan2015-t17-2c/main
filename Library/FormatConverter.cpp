@@ -275,7 +275,7 @@ TMTask FormatConverter::convertStringToTMTask(std::string listEntry){
 			task.setAsCompleted();
 		}
         std::cout << "reached end\n";
-		system("pause");
+		
 		return task;
 	}
 }

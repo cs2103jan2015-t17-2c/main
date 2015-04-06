@@ -47,6 +47,67 @@ namespace TMGUI {
 			Application::Run(gcnew TMSplash);
 	}
 
+		void displayTasks(std::vector<TMTask> taskList){
+			ListViewItem^ defaultEntry;
+			defaultView->Items->Clear();
+			for(int i=0; i != taskList.size() ; ++i){
+				defaultEntry = gcnew ListViewItem(Convert::ToString(i+1));
+				defaultEntry->SubItems->Add(gcnew String(( (taskList[i].getTaskDescription()).c_str() )));
+				if(taskList[i].getTaskType() == TaskType ::WithEndDateTime){
+					defaultEntry->SubItems->Add("");
+					defaultEntry->SubItems->Add(""); 
+				} else{
+				defaultEntry->SubItems->Add(gcnew String(( (taskList[i].getTaskTime().getStartDate()).c_str() )));
+				defaultEntry->SubItems->Add(gcnew String(( (taskList[i].getTaskTime().getStartTime()).c_str() )));
+				}
+				
+				defaultEntry->SubItems->Add(gcnew String(( (taskList[i].getTaskTime().getEndDate()).c_str() )));
+				defaultEntry->SubItems->Add(gcnew String(( (taskList[i].getTaskTime().getEndTime()).c_str() )));
+				
+				if(taskList[i].getTaskType() == TaskType ::WithEndDateTime){
+					defaultEntry->ForeColor = Color :: Red;
+				}
+
+				if(taskList[i].getTaskType() == TaskType ::Undated){
+					defaultEntry->ForeColor = Color :: RosyBrown;
+				}
+
+				std::string confirmationStatus;
+						
+				if (taskList[i].isConfirmed()) {
+					confirmationStatus = "Yes";
+				} else {
+					confirmationStatus = "No";
+					defaultEntry->ForeColor = Color :: Gray;
+				}
+				
+				defaultEntry->SubItems->Add(gcnew String(( (confirmationStatus.c_str()) )));
+
+				std::string clashStatus;
+				
+				if (taskList[i].isClashed()) {
+					clashStatus = "Yes";
+					defaultEntry->ForeColor = Color :: Blue;
+				} else {
+					clashStatus = "No";
+				}
+				
+				defaultEntry->SubItems->Add(gcnew String(( (clashStatus.c_str()) )));
+
+				std::string completionStatus;
+				
+				if (taskList[i].isCompleted()) {
+					completionStatus = "Yes";
+					defaultEntry->ForeColor = Color :: ForestGreen;
+				} else {
+					completionStatus = "No";
+				}
+					defaultEntry->SubItems->Add(gcnew String(( (completionStatus.c_str()) )));
+
+					defaultView->Items->Add(defaultEntry);
+			}
+		}
+
 	protected:
 		/// <summary>
 		/// Clean up any resources being used.
@@ -63,16 +124,8 @@ namespace TMGUI {
 
 	private: System::Windows::Forms::TextBox^  userInput;
 	private: System::Windows::Forms::Label^  welcomeMessage;
-
-
-
-
 	private: System::Windows::Forms::RichTextBox^  statusDisplay;
-
-
-
 	private: System::Windows::Forms::ListView^  defaultView;
-
 	private: System::Windows::Forms::ColumnHeader^  taskID;
 	private: System::Windows::Forms::ColumnHeader^  taskDescription;
 	private: System::Windows::Forms::ColumnHeader^  startDate;
@@ -88,19 +141,6 @@ namespace TMGUI {
 	private: System::Windows::Forms::Label^  todayIs;
 	private: System::Windows::Forms::Label^  nowShowing;
 	private: System::Windows::Forms::Label^  label1;
-
-
-
-
-
-
-
-
-
-
-
-
-
 	private: System::ComponentModel::IContainer^  components;
 
 
@@ -349,7 +389,7 @@ namespace TMGUI {
 			this->Padding = System::Windows::Forms::Padding(0, 0, 30, 30);
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"TimeMaster";
-			//this->Load += gcnew System::EventHandler(this, &TMGUserInterface::TMGUserInterface_Load);
+			this->Load += gcnew System::EventHandler(this, &TMGUserInterface::TMGUserInterface_Load);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -392,72 +432,17 @@ namespace TMGUI {
 					std::vector<TMTask> dated = taskList.getDated();
 					std::vector<TMTask> undated = taskList.getUndated();
 					std::vector<TMTask> archived = taskList.getArchived();
-					std::vector<TMTask> allTasks;
-					allTasks.reserve( dated.size() + undated.size());
-					allTasks.insert( allTasks.end(), dated.begin(), dated.end() );
-					allTasks.insert( allTasks.end(), undated.begin(), undated.end() );
+					std::vector<TMTask> defaultTasks;
+					defaultTasks.reserve( dated.size() + undated.size());
+					defaultTasks.insert( defaultTasks.end(), dated.begin(), dated.end() );
+					defaultTasks.insert( defaultTasks.end(), undated.begin(), undated.end() );
 			
 					std::vector<TMTask>::iterator iter;
 	
 					switch (display) {
 					case Default:
 					DisplayState->Text = "Default display";
-					ListViewItem^ defaultEntry;
-					defaultView->Items->Clear();
-					for(int i=0; i != allTasks.size() ; ++i){
-						
-						defaultEntry = gcnew ListViewItem(Convert::ToString(i+1));
-						defaultEntry->SubItems->Add(gcnew String(( (allTasks[i].getTaskDescription()).c_str() )));
-						if(allTasks[i].getTaskType() == TaskType ::WithEndDateTime){
-							defaultEntry->SubItems->Add("");
-							defaultEntry->SubItems->Add(""); 
-						}
-						else{
-						defaultEntry->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getStartDate()).c_str() )));
-						defaultEntry->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getStartTime()).c_str() )));
-						}
-						
-						defaultEntry->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getEndDate()).c_str() )));
-						defaultEntry->SubItems->Add(gcnew String(( (allTasks[i].getTaskTime().getEndTime()).c_str() )));
-						
-
-						if(allTasks[i].getTaskType() == TaskType ::WithEndDateTime){
-							defaultEntry->ForeColor = Color :: Red;
-						}
-
-						if(allTasks[i].getTaskType() == TaskType ::Undated){
-							defaultEntry->ForeColor = Color :: RosyBrown;
-						}
-
-						std::string confirmationStatus;
-						if (allTasks[i].isConfirmed()) {
-							confirmationStatus = "Yes";
-						} else {
-							confirmationStatus = "No";
-							defaultEntry->ForeColor = Color :: Gray;
-						}
-						defaultEntry->SubItems->Add(gcnew String(( (confirmationStatus.c_str()) )));
-
-						std::string clashStatus;
-						if (allTasks[i].isClashed()) {
-							clashStatus = "Yes";
-							defaultEntry->ForeColor = Color :: Blue;
-						} else {
-							clashStatus = "No";
-						}
-						defaultEntry->SubItems->Add(gcnew String(( (clashStatus.c_str()) )));
-
-						std::string completionStatus;
-						if (allTasks[i].isCompleted()) {
-							completionStatus = "Yes";
-							defaultEntry->ForeColor = Color :: ForestGreen;
-						} else {
-							completionStatus = "No";
-						}
-						defaultEntry->SubItems->Add(gcnew String(( (completionStatus.c_str()) )));
-
-						defaultView->Items->Add(defaultEntry);
-					}
+					displayTasks(defaultTasks);
 						break;
 
 					case  DeadlineTasks:
@@ -639,10 +624,7 @@ namespace TMGUI {
 					userInput->Clear();
 				 }
 				 
-			 }
-			
-			 
-			 
+			 }		 
 }
 			
 			 
@@ -677,7 +659,17 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			 label4->Text = time.ToString(format);	
 		 }
 private: System::Void TMGUserInterface_Load(System::Object^  sender, System::EventArgs^  e) {
-		 TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+			TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+			TMTaskList taskList = taskListStates->getCurrentTaskList();
+			std::vector<TMTask> dated = taskList.getDated();
+			std::vector<TMTask> undated = taskList.getUndated();
+			std::vector<TMTask> defaultTasks;
+
+			defaultTasks.reserve( dated.size() + undated.size());
+			defaultTasks.insert( defaultTasks.end(), dated.begin(), dated.end() );
+			defaultTasks.insert( defaultTasks.end(), undated.begin(), undated.end() );
+
+			displayTasks(defaultTasks);
 		 }
 
 private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
@@ -699,5 +691,7 @@ private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows
 			 }
 
 		 }
+
+
 };
 }
