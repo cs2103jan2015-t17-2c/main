@@ -235,11 +235,11 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
         //will be -1 (invalid index) if index is empty 
         int frontIndexOfQueue = -1;
 
-        if(!indexOfDatesAndTimes.empty()){
+        if(!indexOfDatesAndTimes.empty()) {
             frontIndexOfQueue = indexOfDatesAndTimes.front();
         }
 
-        if(i == frontIndexOfQueue){
+        if(i == frontIndexOfQueue) {
             indexOfDatesAndTimes.pop();
         } else {
             std::string token = _tokenizedUserEntry[i];
@@ -252,7 +252,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
 
     configureEndTimeWithoutPeriods(timeToMeet);
 
-    if(dateToMeet == ""){
+    if(dateToMeet == "") {
         dateToMeet = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
         if(timeToMeet < currentTime()){
             //OR EQUALS?
