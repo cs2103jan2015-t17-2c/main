@@ -254,7 +254,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
         configureDayMonth(dateToMeet);
     }
 
-    if(timeToMeet.length() <= 2 && timeToMeet.length() >=1) {
+    if(timeChecker->isTimeWithoutPeriod(timeToMeet)) {
         configureEndTimeWithoutPeriods(timeToMeet);
     }
 
@@ -575,10 +575,18 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
     }
     
     for(int i = 0; i < lengthOfTokenizedUserEntry; i++) {
-        if(i == mainIndexOfDatesAndTimes.front()){
+        //will be -1 (invalid index) if index is empty 
+        int frontIndexOfQueue = -1;
+
+        if(!mainIndexOfDatesAndTimes.empty()) {
+            frontIndexOfQueue = mainIndexOfDatesAndTimes.front();
+        }
+
+        if(i == frontIndexOfQueue) {
             mainIndexOfDatesAndTimes.pop();
         } else {
-            taskDescription += _tokenizedUserEntry[i];
+            std::string token = _tokenizedUserEntry[i];
+            taskDescription += token;
             if(i != lengthOfTokenizedUserEntry - 1) {
                 taskDescription += " ";
             }
