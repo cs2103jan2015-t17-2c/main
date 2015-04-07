@@ -5,8 +5,10 @@
 #include <vector>
 #include <Windows.h>
 #include <msclr\marshal_cppstd.h>
+#include <boost\date_time.hpp>
 
 #include "TMExecutor.h"
+#include "CurrentDateAndTime.h"
 #include "TMParser.h"
 #include "TMTaskList.h"
 #include "TMCommandCreator.h"
@@ -110,7 +112,7 @@ namespace TMGUI {
 				}
 
 				if(taskList[taskPosition].getTaskType() == TaskType ::Undated){
-					defaultEntry->ForeColor = Color :: RosyBrown;
+					defaultEntry->ForeColor = Color :: DarkGoldenrod;
 				}
 
 				std::string confirmationStatus;
@@ -124,26 +126,26 @@ namespace TMGUI {
 				
 				defaultEntry->SubItems->Add(gcnew String(( (confirmationStatus.c_str()) )));
 
-				std::string clashStatus;
-				
 				if (taskList[taskPosition].isClashed()) {
-					clashStatus = "Yes";
 					defaultEntry->ForeColor = Color :: Blue;
-				} else {
-					clashStatus = "No";
-				}
-				
-				defaultEntry->SubItems->Add(gcnew String(( (clashStatus.c_str()) )));
-
-				std::string completionStatus;
+				} 
 				
 				if (taskList[taskPosition].isCompleted()) {
-					completionStatus = "Yes";
 					defaultEntry->ForeColor = Color :: ForestGreen;
-				} else {
-					completionStatus = "No";
+				} 
+				
+				boost::gregorian::date dateToday = currentDate();
+				std::string timeNow = currentTime();
+				if (taskList[taskPosition].getTaskTime().getEndBoostDate() < dateToday){
+					defaultEntry->SubItems->Add("!");
 				}
-					defaultEntry->SubItems->Add(gcnew String(( (completionStatus.c_str()) )));
+
+				if (taskList[taskPosition].getTaskTime().getEndBoostDate() == dateToday){
+					if(taskList[taskPosition].getTaskTime().getEndTime() < timeNow){
+						defaultEntry->SubItems->Add("!");
+					
+					}
+				}
 
 					defaultView->Items->Add(defaultEntry);
 			
@@ -182,6 +184,7 @@ namespace TMGUI {
 	private: System::Windows::Forms::Label^  todayIs;
 	private: System::Windows::Forms::Label^  nowShowing;
 	private: System::Windows::Forms::Label^  label1;
+private: System::Windows::Forms::ColumnHeader^  hasPassed;
 	private: System::ComponentModel::IContainer^  components;
 
 
@@ -214,6 +217,7 @@ namespace TMGUI {
 			this->endDate = (gcnew System::Windows::Forms::ColumnHeader());
 			this->endTime = (gcnew System::Windows::Forms::ColumnHeader());
 			this->confirmation = (gcnew System::Windows::Forms::ColumnHeader());
+			this->hasPassed = (gcnew System::Windows::Forms::ColumnHeader());
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->DisplayState = (gcnew System::Windows::Forms::Label());
@@ -268,8 +272,8 @@ namespace TMGUI {
 			// defaultView
 			// 
 			this->defaultView->BackColor = System::Drawing::SystemColors::HighlightText;
-			this->defaultView->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(7) {this->taskID, this->taskDescription, 
-				this->startDate, this->startTime, this->endDate, this->endTime, this->confirmation});
+			this->defaultView->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(8) {this->taskID, this->taskDescription, 
+				this->startDate, this->startTime, this->endDate, this->endTime, this->confirmation, this->hasPassed});
 			this->defaultView->Font = (gcnew System::Drawing::Font(L"Corbel", 10.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->defaultView->FullRowSelect = true;
@@ -290,7 +294,7 @@ namespace TMGUI {
 			// 
 			this->taskDescription->Text = L"Task Description";
 			this->taskDescription->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
-			this->taskDescription->Width = 245;
+			this->taskDescription->Width = 360;
 			// 
 			// startDate
 			// 
@@ -321,6 +325,12 @@ namespace TMGUI {
 			this->confirmation->Text = L"Confirmed";
 			this->confirmation->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->confirmation->Width = 80;
+			// 
+			// hasPassed
+			// 
+			this->hasPassed->Text = L"";
+			this->hasPassed->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->hasPassed->Width = 25;
 			// 
 			// label4
 			// 
