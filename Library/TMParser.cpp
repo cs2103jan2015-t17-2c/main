@@ -669,6 +669,9 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
         if(startTime == ""){
             startTime = "0000";
         } else if(startDate == ""){
+            if(timeChecker->isTimeWithoutPeriod(startTime)) {
+                configureStartTimeWithoutPeriods(startTime);
+            }
             startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate);
             if(startTime <= currentTime){
                 startDate = addNDaysFromDate(startDate,1);
@@ -680,13 +683,16 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
         endTime = startTime;
 
     } else if((endTime != ""||endDate != "") && startTime == "" && startDate == "") {
-        taskType = TaskType::WithEndDateTime;
+        taskType = TaskType::WithPeriod;
         if(endTime == ""){
             endTime = "0000";
         } else if(endDate == ""){
+            if(timeChecker->isTimeWithoutPeriod(endTime)) {
+                configureEndTimeWithoutPeriods(endTime);
+            }
             endDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate);
             if(endTime <= currentTime){
-                endDate = addNDaysFromDate(startDate,1);
+                endDate = addNDaysFromDate(endDate,1);
              }
         } else {
         //endTime and endDate are found
@@ -715,7 +721,7 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
 
             if(endDate == "") {
                 if(timeChecker->isTimeWithoutPeriod(startTime) && timeChecker->isTimeWithoutPeriod(endTime)) {
-                    configureTimeWithoutPeriods(startTime, endTime);
+                    configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
                 }
                 startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate);
                 if(endTime >= startTime){
@@ -738,6 +744,9 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
             if(endTime == ""){
                 endTime = "2359";
             } else if (endDate == ""){
+                if(timeChecker->isTimeWithoutPeriod(endTime)) {
+                    configureEndTimeWithoutPeriods(endTime);
+                }
                 endDate = startDate;
                 if(endTime < startTime){
                     endDate = addNDaysFromDate(endDate,1);
@@ -749,7 +758,7 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
     }
 }
 
-void TMParser::configureTimeWithoutPeriods(std::string& stringStartTime, std::string& stringEndTime) {
+void TMParser::configureStartTimeEndTimeWithoutPeriods(std::string& stringStartTime, std::string& stringEndTime) {
     int startTime = std::stoi(stringStartTime);
     int endTime = std::stoi(stringEndTime);
     std::string startTimeWithPeriod;
@@ -799,6 +808,38 @@ void TMParser::configureTimeWithoutPeriods(std::string& stringStartTime, std::st
         stringEndTime = formatConverter->timeFrom12HourAMToHHMM(endTimeWithPeriod);
     } else {
         stringEndTime = formatConverter->timeFrom12HourPMToHHMM(endTimeWithPeriod);
+    }
+
+    return;
+}
+
+void TMParser::configureStartTimeWithoutPeriods(std::string& stringStartTime) {
+    int startTime = std::stoi(stringStartTime);
+    std::string startTimeWithPeriod;
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+
+    if(startTime >= 8 && startTime <= 11) {
+        startTimeWithPeriod = stringStartTime + "am";
+        stringStartTime = formatConverter->timeFrom12HourAMToHHMM(startTimeWithPeriod);
+    } else {
+        startTimeWithPeriod = stringStartTime + "pm";
+        stringStartTime = formatConverter->timeFrom12HourPMToHHMM(startTimeWithPeriod);
+    }
+    
+    return;
+}
+
+void TMParser::configureEndTimeWithoutPeriods(std::string& stringEndTime) {
+    int endTime = std::stoi(stringEndTime);
+    std::string endTimeWithPeriod;
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+
+    if(endTime == 12 || (endTime >= 1 && endTime <=8)) {
+        endTimeWithPeriod = stringEndTime + "pm";
+        stringEndTime = formatConverter->timeFrom12HourPMToHHMM(endTimeWithPeriod);
+    } else {
+        endTimeWithPeriod = stringEndTime + "am";
+        stringEndTime = formatConverter->timeFrom12HourAMToHHMM(endTimeWithPeriod);
     }
 
     return;

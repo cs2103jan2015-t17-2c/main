@@ -70,8 +70,9 @@ public:
     //if on same day full time specified but start time more than end time ERROR
     //if full date specified for both and start date more than end date ERROR
     
-    //must implement function to check if extracted is 1 2 or 3 positive integer between 1-12
-    void configureTimeWithoutPeriods(std::string&, std::string&);
+    void configureStartTimeEndTimeWithoutPeriods(std::string&, std::string&);
+    void configureStartTimeWithoutPeriods(std::string&);
+    void configureEndTimeWithoutPeriods(std::string&);
 
     //checks if startDate is not later than endDate and 
     //if startDate == endDate, startTime is no later than endTime
