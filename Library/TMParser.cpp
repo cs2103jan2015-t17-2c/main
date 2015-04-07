@@ -176,7 +176,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
 
         unitString = formatConverter->returnLowerCase(_tokenizedUserEntry[index]);
 
-        if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY) {
+        if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY||unitString == TOKEN_SHORTCUT_BEFORE) {
             if(index + 1 == lengthOfTokenizedUserEntry){
                 break;
             }
@@ -185,7 +185,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                 //e.g. before 01012016 (DDMMYYYY)
                 indexOfDatesAndTimes.push(index);
                 dateToMeet = extractor->extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
-                if(unitString == TOKEN_BEFORE) {
+                if(unitString == TOKEN_BEFORE||unitString == TOKEN_SHORTCUT_BEFORE) {
                     dateToMeet = substractNDaysFromDate(dateToMeet,1);
                 }
                 timeToMeet = "2359";
@@ -194,7 +194,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                 //e.g. before next monday
                 indexOfDatesAndTimes.push(index);
                 dateToMeet = extractor->extractNextDay(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
-                if(unitString == TOKEN_BEFORE) {
+                if(unitString == TOKEN_BEFORE||unitString == TOKEN_SHORTCUT_BEFORE) {
                     dateToMeet = substractNDaysFromDate(dateToMeet,1);
                 }
                 timeToMeet = "2359";
@@ -213,7 +213,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
             } else if (dateChecker->isTomorrow(nextWord)) {
                 indexOfDatesAndTimes.push(index);
                 dateToMeet = extractor->extractTomorrow(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
-                if(unitString == TOKEN_BEFORE) {
+                if(unitString == TOKEN_BEFORE||unitString == TOKEN_SHORTCUT_BEFORE) {
                     dateToMeet = substractNDaysFromDate(dateToMeet,1);
                 }
                 timeToMeet = "2359";
@@ -325,7 +325,7 @@ TMTask TMParser::parseTimedTaskInfo(){
 
         unitString = formatConverter->returnLowerCase(_tokenizedUserEntry[index]);
 
-        if(unitString == TOKEN_AT) {
+        if(unitString == TOKEN_AT||unitString == TOKEN_SHORTCUT_AT) {
             if(index + 1 == lengthOfTokenizedUserEntry){
                 break;
             }
@@ -348,7 +348,7 @@ TMTask TMParser::parseTimedTaskInfo(){
             } else {
                 editDateOrTimeInInvertedCommas(nextWord, index + 1, true, false);
             }
-        } else if(unitString == TOKEN_FROM){
+        } else if(unitString == TOKEN_FROM||unitString == TOKEN_SHORTCUT_FROM){
             if(index + 1 == lengthOfTokenizedUserEntry){
                 break;
             }
@@ -364,7 +364,7 @@ TMTask TMParser::parseTimedTaskInfo(){
             } else {
                 editDateOrTimeInInvertedCommas(nextWord, index + 1, true, true);
             }
-        } else if (unitString == TOKEN_TO||unitString == TOKEN_DASH){
+        } else if (unitString == TOKEN_TO||unitString == TOKEN_SHORTCUT_TO||unitString == TOKEN_DASH){
             if(index + 1 == lengthOfTokenizedUserEntry){
                 break;
             }
@@ -447,7 +447,7 @@ TMTask TMParser::parseUndatedTaskInfo() {
 
         unitString = formatConverter->returnLowerCase(_tokenizedUserEntry[index]);
 
-        if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY) {
+        if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY||unitString == TOKEN_SHORTCUT_BEFORE) {
             if(index + 1 == lengthOfVector){
                 break;
             }
@@ -459,18 +459,19 @@ TMTask TMParser::parseUndatedTaskInfo() {
             }
             nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
             editDateOrTimeInInvertedCommas(nextWord, index + 1, true, false);
-        } else if(unitString == TOKEN_AT){
+        } else if(unitString == TOKEN_AT||unitString == TOKEN_SHORTCUT_AT){
             if(index + 1 == lengthOfVector){
                 break;
             }
             nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
             editDateOrTimeInInvertedCommas(nextWord, index, false, true);
-        } else if(unitString == TOKEN_FROM||unitString == TOKEN_TO){
-            if(index + 1 == lengthOfVector){
+        } else if(unitString == TOKEN_FROM||unitString == TOKEN_SHORTCUT_FROM||
+            unitString == TOKEN_TO||unitString == TOKEN_SHORTCUT_TO){
+                if(index + 1 == lengthOfVector){
                 break;
-            }
-            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
-            editDateOrTimeInInvertedCommas(nextWord, index + 1, true, true);
+                }
+                nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
+                editDateOrTimeInInvertedCommas(nextWord, index + 1, true, true);
             //index = index + 1;?
         } else {
             editDateOrTimeInInvertedCommas(unitString, index, true, false);
@@ -535,7 +536,9 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
                     }
 
                     if(indexOfLastExtracted + 1 != lengthOfTokenizedUserEntry){
-                        if(_tokenizedUserEntry[indexOfLastExtracted + 1] == "-"){
+                        if(_tokenizedUserEntry[indexOfLastExtracted + 1] == TOKEN_DASH||
+                            _tokenizedUserEntry[indexOfLastExtracted + 1] == TOKEN_SHORTCUT_TO||
+                            _tokenizedUserEntry[indexOfLastExtracted + 1] == TOKEN_TO){
                             if(indexOfLastExtracted + 2 != lengthOfTokenizedUserEntry){
                                 extractor->extractDateAndOrTime(indexOfLastExtracted + 2, indexOfDatesAndTimes, endDate, endTime, _tokenizedUserEntry);
                                 if((endDate != "")||(endTime != "")){
@@ -572,7 +575,9 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
                 }
 
                 if(indexOfLastExtracted + 1 != lengthOfTokenizedUserEntry){
-                    if(_tokenizedUserEntry[indexOfLastExtracted + 1] == "-"){
+                    if(_tokenizedUserEntry[indexOfLastExtracted + 1] == TOKEN_DASH||
+                       _tokenizedUserEntry[indexOfLastExtracted + 1] == TOKEN_SHORTCUT_TO||
+                       _tokenizedUserEntry[indexOfLastExtracted + 1] == TOKEN_TO) {
                         if(indexOfLastExtracted + 2 != lengthOfTokenizedUserEntry){
                             extractor->extractDateAndOrTime(indexOfLastExtracted + 2, indexOfDatesAndTimes, endDate, endTime, _tokenizedUserEntry);
                             if((endDate != "")||(endTime != "")){
@@ -693,7 +698,7 @@ bool TMParser::isNextDayInInvertedCommas(std::string nextWord) {
 
     std::string firstPart = nextWord.substr(0,4);
 
-    if(firstPart != TOKEN_NEXT) {
+    if(!(firstPart == TOKEN_NEXT||firstPart == TOKEN_SHORTCUT_NEXT)) {
         return false;
     }
 

@@ -261,7 +261,7 @@ bool DateChecker::isNextDay(int index, std::vector<std::string> tokenizedUserEnt
     FormatConverter *formatConverter = FormatConverter::getInstance();
     std::string firstWord = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
 
-    if(firstWord == TOKEN_NEXT){
+    if(firstWord == TOKEN_NEXT||firstWord == TOKEN_SHORTCUT_NEXT){
         int lengthOfTokenizedUserEntry = tokenizedUserEntry.size();
         if(index + 1 != lengthOfTokenizedUserEntry) {
             std::string secondWord = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);

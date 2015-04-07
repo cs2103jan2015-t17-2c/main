@@ -25,6 +25,7 @@ public:
     bool isOneDelimitedDate(std::string);
     char returnDelimiter(std::string);
     bool isDelimitedDate(std::string, char);
+    bool isSpacedDate(int, std::vector<std::string>);
 
     //DDMMYYYY
     bool isUnoccurredDate(std::string);

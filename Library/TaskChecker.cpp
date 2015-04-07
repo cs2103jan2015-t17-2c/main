@@ -28,7 +28,7 @@ bool TaskChecker::isDeadlinedTask(std::vector<std::string> tokenizedUserEntry) {
         
         unitString = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
         
-        if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY) {
+        if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY||unitString == TOKEN_SHORTCUT_BEFORE) {
             stringAfterBefore = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
 
             if(dateChecker->isNumericDate(stringAfterBefore)||dateChecker->isDay(stringAfterBefore)||dateChecker->isOneDelimitedDate(stringAfterBefore)) {
@@ -66,7 +66,7 @@ bool TaskChecker::isTimedTask(std::vector<std::string> tokenizedUserEntry) {
         unitString = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
         stringAfterToken = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
         
-        if(unitString == TOKEN_AT){
+        if(unitString == TOKEN_AT||unitString == TOKEN_SHORTCUT_AT){
             if(timeChecker->is12HTime(stringAfterToken)||timeChecker->is24HTime(stringAfterToken)||timeChecker->isTimeWithoutPeriod(stringAfterToken)){
                 return true;
             }
@@ -78,7 +78,7 @@ bool TaskChecker::isTimedTask(std::vector<std::string> tokenizedUserEntry) {
             }
         }
         
-        if(unitString == TOKEN_FROM){
+        if(unitString == TOKEN_FROM||unitString == TOKEN_SHORTCUT_FROM){
             if(dateChecker->isNumericDate(stringAfterToken)||dateChecker->isDay(stringAfterToken)||dateChecker->isOneDelimitedDate(stringAfterToken)){
                 //check for time after date
                 return true;
@@ -94,7 +94,7 @@ bool TaskChecker::isTimedTask(std::vector<std::string> tokenizedUserEntry) {
             }
         }
         
-        if(unitString == TOKEN_TO){
+        if(unitString == TOKEN_TO||unitString == TOKEN_SHORTCUT_TO){
 
             if(dateChecker->isNumericDate(stringAfterToken)||dateChecker->isDay(stringAfterToken)||dateChecker->isOneDelimitedDate(stringAfterToken)) {
                 //check for time after date

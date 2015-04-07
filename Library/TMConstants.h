@@ -53,12 +53,17 @@ static const std::string DAY_SAT = "sat";
 static const std::string DAY_SUN = "sun";
 
 static const std::string TOKEN_BEFORE = "before";
+static const std::string TOKEN_SHORTCUT_BEFORE = "bfr";
 static const std::string TOKEN_BY = "by";
 static const std::string TOKEN_ON = "on";
 static const std::string TOKEN_NEXT = "next";
+static const std::string TOKEN_SHORTCUT_NEXT = "nxt";
 static const std::string TOKEN_AT = "at";
+static const std::string TOKEN_SHORTCUT_AT = "@";
 static const std::string TOKEN_FROM = "from";
+static const std::string TOKEN_SHORTCUT_FROM = "fr";
 static const std::string TOKEN_TO = "to";
+static const std::string TOKEN_SHORTCUT_TO = "2";
 static const std::string TOKEN_DASH = "-";
 
 static const char DELIMITER_SLASH = '/';
