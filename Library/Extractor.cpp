@@ -136,6 +136,9 @@ std::string Extractor::extractTime(int index, std::queue<int>& indexOfDatesAndTi
     } else if (timeChecker->is24HTime(stringAfterAt)){
         time = formatConverter->timeFrom24HourToHHMM(stringAfterAt);
         indexOfDatesAndTimes.push(index);
+    } else if (timeChecker->isTimeWithoutPeriod(stringAfterAt)) {
+        time = stringAfterAt;
+        indexOfDatesAndTimes.push(index);
     }
 
     return time;
@@ -156,7 +159,7 @@ void Extractor::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAnd
         if(index + 1 != lengthOfTokenizedUserEntry) {
             std::string stringAfterDate = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
             
-            if(timeChecker->is12HTime(stringAfterDate)||timeChecker->is24HTime(stringAfterDate)) {
+            if(timeChecker->is12HTime(stringAfterDate)||timeChecker->is24HTime(stringAfterDate)||timeChecker->isTimeWithoutPeriod(stringAfterDate)) {
                 extractedTime = extractTime(index + 1, indexOfDatesAndTimes, tokenizedUserEntry);
             }
         }
@@ -166,12 +169,12 @@ void Extractor::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAnd
         if(index + 2 != lengthOfTokenizedUserEntry){
             std::string stringAfterNextDay = formatConverter->returnLowerCase(tokenizedUserEntry[index + 2]);
 
-            if(timeChecker->is12HTime(stringAfterNextDay)||timeChecker->is24HTime(stringAfterNextDay)) {
+            if(timeChecker->is12HTime(stringAfterNextDay)||timeChecker->is24HTime(stringAfterNextDay)||timeChecker->isTimeWithoutPeriod(stringAfterNextDay)) {
                 extractedTime = extractTime(index + 2, indexOfDatesAndTimes, tokenizedUserEntry);
             }
 
         }
-    } else if(timeChecker->is12HTime(stringAfterToken)||timeChecker->is24HTime(stringAfterToken)){
+    } else if(timeChecker->is12HTime(stringAfterToken)||timeChecker->is24HTime(stringAfterToken)||timeChecker->isTimeWithoutPeriod(stringAfterToken)){
         extractedTime = extractTime(index, indexOfDatesAndTimes, tokenizedUserEntry);
 
         if(index + 1 != lengthOfTokenizedUserEntry){

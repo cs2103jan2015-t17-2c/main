@@ -101,18 +101,8 @@ bool TimeChecker::is24HTime(std::string timeToken) {
     //format: 10/ 1030/ 10:30 consider single digit e.g 8!!!
     //to consider: 8 1-10(change to pm?) 
     unsigned int lengthOfTimeToken = timeToken.size();
-    if(lengthOfTimeToken == 2){
-        if(isPositiveInteger(timeToken)){
-            int hour = std::stoi(timeToken);
-            if(hour >= 0 && hour <= 23) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    } else if (lengthOfTimeToken == 4) {
+    
+    if (lengthOfTimeToken == 4) {
         if(isPositiveInteger(timeToken)) {
             int hour = std::stoi(timeToken.substr(0,2));
             if(hour >= 0 && hour <= 23) {
@@ -154,6 +144,10 @@ bool TimeChecker::is24HTime(std::string timeToken) {
 }
 
 bool TimeChecker::isTimeWithoutPeriod(std::string token) {
+    if(token.length() < 1 || token.length() > 2) {
+        return false;
+    }
+
     int intToken = std::stoi(token);
 
     if(intToken >= 1 && intToken <=12) {

@@ -23,8 +23,9 @@ public:
 
     std::string extractNextDay(int, std::queue<int>&, std::vector<std::string>);
     std::string getDateFromNextDay(int, std::vector<std::string>);
-
     std::string extractDay(int, std::queue<int>&, std::vector<std::string>);
+
+    //is without period return 1 or 2 digit string else return HHMM
     std::string extractTime(int, std::queue<int>&, std::vector<std::string>);
 
     void extractDateAndOrTime(int, std::queue<int>&, std::string&,std::string&, std::vector<std::string>);
