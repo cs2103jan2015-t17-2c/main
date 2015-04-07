@@ -250,11 +250,17 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
         }
     }
 
-    configureEndTimeWithoutPeriods(timeToMeet);
+    if(dateToMeet.length() == 4) {
+        configureDayMonth(dateToMeet);
+    }
+
+    if(timeToMeet.length() <= 2 && timeToMeet.length() >=1) {
+        configureEndTimeWithoutPeriods(timeToMeet);
+    }
 
     if(dateToMeet == "") {
         dateToMeet = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
-        if(timeToMeet < currentTime()){
+        if(timeToMeet <= currentTime()){
             //OR EQUALS?
             dateToMeet = addNDaysFromDate(dateToMeet,1);
         }
@@ -668,12 +674,15 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
 
     if((startTime != ""||startDate != "") && endTime == "" && endDate == ""){
         taskType = TaskType::WithStartDateTime;
+        configureDayMonth(startDate);
+        if(timeChecker->isTimeWithoutPeriod(startTime)) {
+            configureStartTimeWithoutPeriods(startTime);
+        }
+
         if(startTime == ""){
             startTime = "0000";
+            
         } else if(startDate == ""){
-            if(timeChecker->isTimeWithoutPeriod(startTime)) {
-                configureStartTimeWithoutPeriods(startTime);
-            }
             startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
             if(startTime <= currentTime()){
                 startDate = addNDaysFromDate(startDate,1);
@@ -686,12 +695,14 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
 
     } else if((endTime != ""||endDate != "") && startTime == "" && startDate == "") {
         taskType = TaskType::WithPeriod;
+        configureDayMonth(endDate);
+        if(timeChecker->isTimeWithoutPeriod(endTime)) {
+            configureEndTimeWithoutPeriods(endTime);
+        }
+
         if(endTime == ""){
             endTime = "0000";
         } else if(endDate == ""){
-            if(timeChecker->isTimeWithoutPeriod(endTime)) {
-                configureEndTimeWithoutPeriods(endTime);
-            }
             endDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
             if(endTime <= currentTime()){
                 endDate = addNDaysFromDate(endDate,1);
@@ -703,38 +714,80 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
         startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
         startTime = currentTime();
 
-    } else if((startDate != ""||startTime != "") && (endDate != ""||endTime != "")){
+    } else if((startDate != ""||startTime != "") && (endDate != ""||endTime != "")) {
         taskType = TaskType::WithPeriod;
+        //startDate only
         if(startTime == ""){
-            //startDate only
             startTime = "0000";
-            //check if there's no endDate but there's endTime then endDate will be startDate
+
+            //if no endDate but there's endTime then endDate will be startDate
+            // add 1 more day to end date if end time 0000
+
             //else there is no endTime but there's endDate then endTime will be 2359
             if(endDate == ""){
-                //if endTime = 0000 plus 1 more day?
+                //if endTime = 0000 plus 1 more day
+                configureDayMonth(startDate);
+                if(timeChecker->isTimeWithoutPeriod(endTime)) {
+                    configureEndTimeWithoutPeriods(endTime);
+                }
                 endDate = startDate;
+                if(endTime == "0000") {
+                    endDate = addNDaysFromDate(endDate, 1);
+                }
             } else if(endTime == ""){
+                if(startDate.length() == 4 && endDate.length() == 4) {
+                    configureStartDayMonthEndDayMonth(startDate, endDate);
+                }
+                //need to consider 4 8, 8 4
                 endTime = "2359";
+            } else {
+                if(startDate.length() == 4 && endDate.length() == 4) {
+                    configureStartDayMonthEndDayMonth(startDate, endDate);
+                }
+                //need to consider 4 8, 8 4
+                configureEndTimeWithoutPeriods(endTime);
+                //same start and end date end time 0000 then add one more day to next day
             }
-        } else if(startDate == ""){
+        } else if(startDate == "") {
             //startTime only
             //no endDate got endTime then should be today till today/tomorrow
             //got endDate no endTime
-
             if(endDate == "") {
+                //WHAT ABOUT FOR TIME WITH PERIOD TIME WITHOUT PERIOD
                 if(timeChecker->isTimeWithoutPeriod(startTime) && timeChecker->isTimeWithoutPeriod(endTime)) {
                     configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
                 }
                 startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
-                if(endTime >= startTime){
+
+                //if time passed then start date is tomorrow's date
+                if(startTime <= currentTime()) {
+                    startDate = addNDaysFromDate(startDate, 1);
+                }
+
+                if(endTime > startTime){
                     endDate = startDate;
                 } else { 
                     endDate = addNDaysFromDate(startDate,1);
                 }
-            } else if (endTime == ""){
-                startDate = endDate;
+
+            } else if (endTime == "") {
+                if(timeChecker->isTimeWithoutPeriod(startTime)) {
+                    configureStartTimeWithoutPeriods(startTime);
+                }
+                startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
+                //if start time has passed
+                if(startTime <= currentTime()) {
+                   startDate = addNDaysFromDate(startDate, 1);
+                }
+
+                configureStartDayMonthEndDayMonth(startDate.substr(0,4),endDate);
                 endTime = "2359";
             } else {
+                //startTime endDate endTime
+                //startDate = endDate or one day earlier
+                if(timeChecker->isTimeWithoutPeriod(startTime) && timeChecker->isTimeWithoutPeriod(endTime)) {
+                    configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
+                }
                 startDate = endDate;
                 if(startTime >= endTime){
                     
@@ -744,17 +797,21 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
         } else {
             //startTime and startDate are found
             if(endTime == ""){
+                configureStartDayMonthEndDayMonth(startDate, endDate);
                 endTime = "2359";
             } else if (endDate == ""){
-                if(timeChecker->isTimeWithoutPeriod(endTime)) {
-                    configureEndTimeWithoutPeriods(endTime);
+                //start Date startTime endTime
+                configureDayMonth(startDate);
+                if(timeChecker->isTimeWithoutPeriod(endTime) && timeChecker->isTimeWithoutPeriod(startTime)) {
+                    configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
                 }
                 endDate = startDate;
-                if(endTime < startTime){
+                if(endTime <= startTime){
                     endDate = addNDaysFromDate(endDate,1);
                 }
             } else {
                 //all attributes found
+                configureStartDayMonthEndDayMonth(startDate, endDate);
                 if(timeChecker->isTimeWithoutPeriod(startTime) && timeChecker->isTimeWithoutPeriod(endTime)) {
                     configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
                 }
@@ -764,7 +821,12 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
 }
 
 //preconditions date is only 4 digits in length
+//postconditions 
 void TMParser::configureDayMonth(std::string& stringDate) {
+    if(stringDate.length() != 4) {
+        return;
+    }
+
     FormatConverter *formatConverter = FormatConverter::getInstance();
     DateChecker *dateChecker = DateChecker::getInstance();
 
@@ -775,9 +837,45 @@ void TMParser::configureDayMonth(std::string& stringDate) {
     if(dateChecker->isUnoccurredDate(stringDate)) {
         return;
     } else {
-
+        //for 29 FEB!!!
+        stringDate = addNYearsFromDate(stringDate, 1);
         return;
     }
+}
+
+//preconditions date is only 4 digits in length
+void TMParser::configureStartDayMonthEndDayMonth(std::string& startDate, std::string& endDate) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    DateChecker *dateChecker = DateChecker::getInstance();
+
+    std::string stringCurrentDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
+    std::string stringCurrentYear = stringCurrentDate.substr(4);
+
+    std::string stringStartDate = startDate + stringCurrentYear;
+    std::string stringEndDate = endDate + stringCurrentYear;
+
+    if(dateChecker->isUnoccurredDate(stringStartDate)) {
+
+    } else {
+        stringStartDate = addNYearsFromDate(stringStartDate, 1);
+    }
+
+    startDate = stringStartDate;
+
+    stringStartDate = formatConverter->dateFromNumericToBoostFormat(stringStartDate);
+    stringEndDate = formatConverter->dateFromNumericToBoostFormat(stringEndDate);
+    boost::gregorian::date boostStartDate = boost::gregorian::from_uk_string(stringStartDate);
+    boost::gregorian::date boostEndDate = boost::gregorian::from_uk_string(stringEndDate);
+
+    while(boostEndDate < boostStartDate) {
+        stringEndDate = addNYearsFromDate(stringEndDate, 1);
+        stringEndDate = formatConverter->dateFromNumericToBoostFormat(stringEndDate);
+        boostEndDate = boost::gregorian::from_uk_string(stringEndDate);
+    }
+
+    endDate = formatConverter->dateFromBoostToDDMMYYYY(boostEndDate);
+
+    return;
 }
 
 void TMParser::configureStartTimeEndTimeWithoutPeriods(std::string& stringStartTime, std::string& stringEndTime) {

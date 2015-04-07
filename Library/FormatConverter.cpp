@@ -168,8 +168,6 @@ std::string FormatConverter::monthFromWrittenToNumeric(std::string month){
         return "11";
     } else if (month == "dec"||month == "december") {
         return "12";
-    } else {
-        return "-1";
     }
 }
 

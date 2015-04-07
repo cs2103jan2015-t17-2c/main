@@ -100,6 +100,7 @@ char DateChecker::returnDelimiter(std::string token) {
 }
 
 bool DateChecker::isDelimitedDate(std::string token, char key) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
     std::string day = "";
     std::string month = "";
     std::string year = "";
@@ -151,7 +152,13 @@ bool DateChecker::isDelimitedDate(std::string token, char key) {
             return false;
         }
 
-        FormatConverter *formatConverter = FormatConverter::getInstance();
+        month = formatConverter->monthFromWrittenToNumeric(month);
+
+        //only certain years have 29 Feb
+        if((day+month) == "2902"){
+            return true;
+        }
+
         std::string dateToday = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
         year = dateToday.substr(4,4);
     }
@@ -166,6 +173,8 @@ bool DateChecker::isDelimitedDate(std::string token, char key) {
 }
 
 bool DateChecker::isUnoccurredDate(std::string date) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    date = formatConverter->dateFromNumericToBoostFormat(date);
     boost::gregorian::date boostDate = boost::gregorian::from_uk_string(date);
 
     if(boostDate > currentDate()) {
