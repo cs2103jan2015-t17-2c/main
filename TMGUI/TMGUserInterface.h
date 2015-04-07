@@ -138,11 +138,13 @@ namespace TMGUI {
 				std::string timeNow = currentTime();
 				if (taskList[taskPosition].getTaskTime().getEndBoostDate() < dateToday){
 					defaultEntry->SubItems->Add("!");
+					defaultEntry->Font = gcnew System::Drawing::Font ("Corbel",11,FontStyle :: Bold);
 				}
 
 				if (taskList[taskPosition].getTaskTime().getEndBoostDate() == dateToday){
 					if(taskList[taskPosition].getTaskTime().getEndTime() < timeNow){
 						defaultEntry->SubItems->Add("!");
+						defaultEntry->Font = gcnew System::Drawing::Font ("Corbel",11,FontStyle :: Bold);
 					
 					}
 				}
