@@ -112,10 +112,10 @@ public:
 
 
 	//BASIC FUNCTIONS//
-	std::string addTask(TMTask task);
+	std::string addTask(TMTask &task);
 	
 	//Removes the outdated task from taskList and adds alteredTask
-	std::string updateTask(int positionIndex, TMTask alteredTask);
+	std::string updateTask(int positionIndex, TMTask &alteredTask);
 	
 	std::string removeTask(int positionIndex);
 	

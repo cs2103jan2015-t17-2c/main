@@ -23,15 +23,20 @@ public:
 			std::vector<TMTask>::iterator iter;
 		
 			for (iter = tasks.begin(); iter != tasks.end(); ++iter) {
-				iter->setAsUnconfirmed();
-				iter->setUnconfirmedBatchNumber(i);
-				oss << taskList.addTask(*iter) << std::endl;
+				TMTask task = *iter;
+				task.setAsUnconfirmed();
+				task.setUnconfirmedBatchNumber(i);
+				oss << taskList.addTask(task) << std::endl;
+				int positionIndex = taskList.getPositionIndexFromTask(task);
+				positionIndexes.push_back(positionIndex);
 			}
 		} else {
 			TMTask task = parser->parseTaskInfo();
 			task.setAsUnconfirmed();
 			task.setUnconfirmedBatchNumber(i);
 			oss << taskList.addTask(task) << std::endl;
+			int positionIndex = taskList.getPositionIndexFromTask(task);
+			positionIndexes.push_back(positionIndex);
 		}
 		
 		outcome = oss.str();

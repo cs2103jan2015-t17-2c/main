@@ -15,6 +15,8 @@ public:
 		int positionIndex = std::stoi(parser->extractTokenAfterCommand());
 		TMTask alteredTask = parser->parseTaskInfo();
 		outcome = taskList.updateTask(positionIndex, alteredTask);
+		int index = taskList.getPositionIndexFromTask(alteredTask);
+		positionIndexes.push_back(index);
 
 		taskListStates->addNewState(taskList);
 	}

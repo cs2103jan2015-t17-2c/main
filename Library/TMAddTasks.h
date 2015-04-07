@@ -19,6 +19,9 @@ public:
 		TMTask task = parser -> parseTaskInfo();
 		TMTaskList taskList = taskListStates->getCurrentTaskList();
 		outcome = taskList.addTask(task);
+		int positionIndex = taskList.getPositionIndexFromTask(task);
+		std::cout << "PI IS : " << positionIndex;
+		positionIndexes.push_back(positionIndex);
 		taskListStates->addNewState(taskList);
 	
 	}

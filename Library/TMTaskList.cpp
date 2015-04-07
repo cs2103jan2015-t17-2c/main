@@ -339,7 +339,7 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 
 
 	//BASIC FUNCTIONS//
-	std::string TMTaskList::addTask (TMTask task) {
+	std::string TMTaskList::addTask (TMTask &task) {
 		TaskType type = task.getTaskType();
 		std::string outcome;
 		switch (type) {
@@ -385,7 +385,7 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 	}
 
 	
-	std::string TMTaskList::updateTask(int positionIndex, TMTask alteredTask) {
+	std::string TMTaskList::updateTask(int positionIndex, TMTask &alteredTask) {
 		
 		if (isValidPositionIndex(positionIndex)) {
 			removeTask(positionIndex);
