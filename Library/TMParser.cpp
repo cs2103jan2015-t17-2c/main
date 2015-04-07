@@ -343,7 +343,7 @@ TMTask TMParser::parseTimedTaskInfo(){
             } else {
                 editDateOrTimeInInvertedCommas(nextWord, index, true, true);
             }
-        } else if (unitString == TOKEN_TO){
+        } else if (unitString == TOKEN_TO||unitString == TOKEN_DASH){
             if(index + 1 == lengthOfTokenizedUserEntry){
                 break;
             }
