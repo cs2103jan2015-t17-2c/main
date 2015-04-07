@@ -453,8 +453,21 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 					
 					
 					 exe->executeMain(unmanaged);
-					 statusDisplay->Text = gcnew String(exe->returnResultOfExecution().c_str());
+					 
+					std::vector<int> indexes = exe->getPositionIndexes();
 					
+					if (indexes.size() != 0) {
+						std::vector<int>::iterator iter;
+						std::ostringstream oss;
+						for (iter = indexes.begin(); iter != indexes.end(); ++iter) {
+							oss << *iter << " ";
+						}
+
+						std::string totalStatus = exe->returnResultOfExecution() + oss.str();
+						statusDisplay->Text = gcnew String(totalStatus.c_str());
+					} else {
+						statusDisplay->Text = gcnew String(exe->returnResultOfExecution().c_str());
+					}
 					
 					 TMDisplay display = exe->getCurrentDisplay();
 					

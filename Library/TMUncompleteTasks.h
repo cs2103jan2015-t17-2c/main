@@ -32,7 +32,10 @@ public:
 		
 			//Re-add tasks to taskList
 			for (taskIter = reAddTasks.begin(); taskIter != reAddTasks.end(); ++taskIter) {
-				oss << taskList.addTask(*taskIter) << std::endl;
+				TMTask task = *taskIter;
+				oss << taskList.addTask(task) << std::endl;
+				int positionIndex = taskList.getPositionIndexFromTask(task);
+				positionIndexes.push_back(positionIndex);
 			}
 		} else {
 			oss << WARNING_REPEATED_INDEXES_SPECIFIED << std::endl;
