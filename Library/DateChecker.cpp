@@ -277,3 +277,23 @@ bool DateChecker::isNextDay(int index, std::vector<std::string> tokenizedUserEnt
         return false;
     }
 }
+
+bool DateChecker::isTomorrow(std::string token) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    token = formatConverter->returnLowerCase(token);
+    if(token == DAY_TOMORROW||token == DAY_SHORTCUT_TOMORROW) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool DateChecker::isToday(std::string token) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    token = formatConverter->returnLowerCase(token);
+    if(token == DAY_TODAY||token == DAY_SHORTCUT_TODAY) {
+        return true;
+    } else {
+        return false;
+    }
+}

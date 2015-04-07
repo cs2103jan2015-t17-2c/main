@@ -21,6 +21,8 @@ public:
     std::string extractNumericDate(int, std::queue<int>&, std::vector<std::string>);
     std::string extractDelimitedDate(int, std::queue<int>&, std::vector<std::string>, char);
 
+    std::string extractToday(int, std::queue<int>&, std::vector<std::string>);
+    std::string extractTomorrow(int, std::queue<int>&, std::vector<std::string>);
     std::string extractNextDay(int, std::queue<int>&, std::vector<std::string>);
     std::string getDateFromNextDay(int, std::vector<std::string>);
     std::string extractDay(int, std::queue<int>&, std::vector<std::string>);

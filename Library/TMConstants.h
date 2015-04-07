@@ -33,7 +33,9 @@ static const std::string CMD_SHORTCUT_QUIT = "q";
 
 static const std::string DAY_YESTERDAY = "yesterday";
 static const std::string DAY_TODAY = "today";
+static const std::string DAY_SHORTCUT_TODAY = "tdy";
 static const std::string DAY_TOMORROW = "tomorrow";
+static const std::string DAY_SHORTCUT_TOMORROW = "tmr";
 static const std::string DAY_MONDAY = "monday";
 static const std::string DAY_TUESDAY = "tuesday";
 static const std::string DAY_WEDNESDAY = "wednesday";
@@ -57,6 +59,7 @@ static const std::string TOKEN_NEXT = "next";
 static const std::string TOKEN_AT = "at";
 static const std::string TOKEN_FROM = "from";
 static const std::string TOKEN_TO = "to";
+static const std::string TOKEN_DASH = "-";
 
 static const char DELIMITER_SLASH = '/';
 static const char DELIMITER_FULLSTOP = '.';

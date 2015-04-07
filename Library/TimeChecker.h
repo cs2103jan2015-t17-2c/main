@@ -22,5 +22,6 @@ public:
     bool isTimeWithoutPeriod(std::string);
 
     bool isPositiveInteger(std::string);
+    bool isInteger(std::string);
 };
 #endif
