@@ -176,8 +176,8 @@ namespace TMGUI {
 	private: System::Windows::Forms::ColumnHeader^  confirmation;
 	private: System::Windows::Forms::Label^  label4;
 	private: System::Windows::Forms::Timer^  timer1;
-	private: System::Windows::Forms::ColumnHeader^  isClash;
-	private: System::Windows::Forms::ColumnHeader^  isDone;
+
+
 	private: System::Windows::Forms::Label^  DisplayState;
 	private: System::Windows::Forms::Label^  todayIs;
 	private: System::Windows::Forms::Label^  nowShowing;
@@ -214,8 +214,6 @@ namespace TMGUI {
 			this->endDate = (gcnew System::Windows::Forms::ColumnHeader());
 			this->endTime = (gcnew System::Windows::Forms::ColumnHeader());
 			this->confirmation = (gcnew System::Windows::Forms::ColumnHeader());
-			this->isClash = (gcnew System::Windows::Forms::ColumnHeader());
-			this->isDone = (gcnew System::Windows::Forms::ColumnHeader());
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->DisplayState = (gcnew System::Windows::Forms::Label());
@@ -270,8 +268,8 @@ namespace TMGUI {
 			// defaultView
 			// 
 			this->defaultView->BackColor = System::Drawing::SystemColors::HighlightText;
-			this->defaultView->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(9) {this->taskID, this->taskDescription, 
-				this->startDate, this->startTime, this->endDate, this->endTime, this->confirmation, this->isClash, this->isDone});
+			this->defaultView->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(7) {this->taskID, this->taskDescription, 
+				this->startDate, this->startTime, this->endDate, this->endTime, this->confirmation});
 			this->defaultView->Font = (gcnew System::Drawing::Font(L"Corbel", 10.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->defaultView->FullRowSelect = true;
@@ -323,18 +321,6 @@ namespace TMGUI {
 			this->confirmation->Text = L"Confirmed";
 			this->confirmation->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->confirmation->Width = 80;
-			// 
-			// isClash
-			// 
-			this->isClash->Text = L"Clashes";
-			this->isClash->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
-			this->isClash->Width = 70;
-			// 
-			// isDone
-			// 
-			this->isDone->Text = L"Completed";
-			this->isDone->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
-			this->isDone->Width = 80;
 			// 
 			// label4
 			// 
