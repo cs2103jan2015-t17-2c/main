@@ -45,7 +45,44 @@ namespace TMGUI {
 	public:
 		void SplashStart(){
 			Application::Run(gcnew TMSplash);
-	}
+		}
+
+		std::vector<TMTask> initiateDefaultTasks(TMTaskList taskList){
+			
+			std::vector<TMTask> dated = taskList.getDated();
+			std::vector<TMTask> undated = taskList.getUndated();
+			std::vector<TMTask> defaultTasks;
+
+			defaultTasks.reserve( dated.size() + undated.size());
+			defaultTasks.insert( defaultTasks.end(), dated.begin(), dated.end() );
+			defaultTasks.insert( defaultTasks.end(), undated.begin(), undated.end() );
+
+			return defaultTasks;
+		}
+
+		std::vector<TMTask> initiateAllTasks(TMTaskList taskList){
+			
+			std::vector<TMTask> archived = taskList.getArchived();
+			std::vector<TMTask> defaultTasks = initiateDefaultTasks(taskList);
+			std::vector<TMTask> allTasks;
+
+			allTasks.reserve( defaultTasks.size() + archived.size());
+			allTasks.insert( allTasks.end(), defaultTasks.begin(), defaultTasks.end() );
+			allTasks.insert( allTasks.end(), archived.begin(), archived.end() );
+					
+			return defaultTasks;
+		}
+		
+		TMTaskList initiateTaskList(){
+			TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
+			TMTaskList taskList = taskListStates->getCurrentTaskList();
+
+			return taskList;
+		}
+
+		void clearListView(){
+			defaultView->Items->Clear();
+		}
 
 		void displayTasks(std::vector<TMTask> taskList, int index, int taskPosition){
 				ListViewItem^ defaultEntry;
@@ -400,96 +437,77 @@ namespace TMGUI {
 		}
 #pragma endregion
 	
-	private: System::Void userInput_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
 
-				 
-
-				 if(e->KeyChar == (char)13){
-				
-					if (userInput->Text == "quit" || userInput->Text =="exit" || userInput->Text =="q" || userInput->Text =="close"){
-						TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
-						TMTaskList taskList = taskListStates->getCurrentTaskList();
-						taskList.leaveReferenceUponExit();
-						Application :: Exit();
-					}
-					else{
-					
-
-					statusDisplay->Text = "";
-					String ^ str = userInput->Text;
-					std::string unmanaged = msclr::interop::marshal_as<std::string>(str);
-					
-					TMExecutor* exe = TMExecutor::getInstance();
-					String ^ displayString;
-					
-					exe->executeMain(unmanaged);
-					statusDisplay->Text = gcnew String(exe->returnResultOfExecution().c_str());
-					
-					
-					TMDisplay display = exe->getCurrentDisplay();
-					
-					
-					TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
-					TMTaskList taskList = taskListStates->getCurrentTaskList();
-					
-					
-					std::vector<TMTask> dated = taskList.getDated();
-					std::vector<TMTask> undated = taskList.getUndated();
-					std::vector<TMTask> archived = taskList.getArchived();
-					std::vector<TMTask> defaultTasks;
-					std::vector<TMTask> allTasks;
-
-					defaultTasks.reserve( dated.size() + undated.size());
-					defaultTasks.insert( defaultTasks.end(), dated.begin(), dated.end() );
-					defaultTasks.insert( defaultTasks.end(), undated.begin(), undated.end() );
-
-					allTasks.reserve( dated.size() + undated.size() + archived.size());
-					allTasks.insert( allTasks.end(), dated.begin(), dated.end() );
-					allTasks.insert( allTasks.end(), undated.begin(), undated.end() );
-					allTasks.insert( allTasks.end(), archived.begin(), archived.end() );
-					
-
-					
+private: System::Void userInput_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
 			
-					int defaultCountStart = 0;
-					int defaultCountEnd = defaultTasks.size();
+			 if(e->KeyChar == (char)13){
+				 if (userInput->Text == "quit" || userInput->Text =="exit" || userInput->Text =="q" || userInput->Text =="close"){
+					TMTaskList taskList = initiateTaskList();
+					taskList.leaveReferenceUponExit();
+					Application :: Exit();
+				 }
+				 else{
+					 statusDisplay->Text = "";
+					 String ^ str = userInput->Text;
+					 std::string unmanaged = msclr::interop::marshal_as<std::string>(str);
 					
-					int undatedCountStart = dated.size();
-					int undatedCountEnd = dated.size() + undated.size();
+					 TMExecutor* exe = TMExecutor::getInstance();
+					
+					
+					 exe->executeMain(unmanaged);
+					 statusDisplay->Text = gcnew String(exe->returnResultOfExecution().c_str());
+					
+					
+					 TMDisplay display = exe->getCurrentDisplay();
+					
+					 TMTaskList taskList = initiateTaskList();
+					
+					 std::vector<TMTask> dated = taskList.getDated();
+					 std::vector<TMTask> undated = taskList.getUndated();
+					 std::vector<TMTask> archived = taskList.getArchived();
 
-					int archivedCountStart = dated.size() + undated.size();
-					int archivedCountEnd = dated.size() + undated.size() + archived.size();
+					 std::vector<TMTask> defaultTasks = initiateDefaultTasks(taskList);
+					 std::vector<TMTask> allTasks = initiateAllTasks(taskList);
+			
+					 int defaultCountStart = 0;
+					 int defaultCountEnd = defaultTasks.size();
+					
+					 int undatedCountStart = dated.size();
+					 int undatedCountEnd = dated.size() + undated.size();
 
-					std::vector<TMTask>::iterator iter;
+					 int archivedCountStart = dated.size() + undated.size();
+					 int archivedCountEnd = dated.size() + undated.size() + archived.size();
+
+					 std::vector<TMTask>::iterator iter;
 	
-					switch (display) {
-					case Default:
-					DisplayState->Text = "Default display";
-					defaultView->Items->Clear();
+					 switch (display) {
+					 case Default:
+						 DisplayState->Text = "Default display";
+						 clearListView();
 
-					for(int i = defaultCountStart; i != defaultCountEnd ; i++){
-						int defaultTaskPosition = i - defaultCountStart;
-						int defaultIndex = i + 1;
-						displayTasks(defaultTasks,defaultIndex,defaultTaskPosition);
-					}
-						break;
+						 for(int i = defaultCountStart; i != defaultCountEnd ; i++){
+							 int defaultTaskPosition = i - defaultCountStart;
+							 int defaultIndex = i + 1;
+							 displayTasks(defaultTasks,defaultIndex,defaultTaskPosition);
+						 }
+						 break;
 
-					case  DeadlineTasks:
-						DisplayState->Text = "Deadlined Tasks";
-						defaultView->Items->Clear();
-						for (int l = 0; l != dated.size(); l++){
-							if(dated[l].getTaskType() == TaskType ::WithEndDateTime){
-								int deadlinedTaskPosition = l;
-								int deadlinedIndex = l+1;
-								displayTasks(dated,deadlinedIndex,deadlinedTaskPosition);
-							}
-						}
-						exe->setCurrentDisplay(Default);
-						break;
+					 case  DeadlineTasks:
+						 DisplayState->Text = "Deadlined Tasks";
+						 clearListView();
+						 for (int l = 0; l != dated.size(); l++){
+							 if(dated[l].getTaskType() == TaskType ::WithEndDateTime){
+								 int deadlinedTaskPosition = l;
+								 int deadlinedIndex = l+1;
+								 displayTasks(dated,deadlinedIndex,deadlinedTaskPosition);
+							 }
+						 }
+						 exe->setCurrentDisplay(Default);
+						 break;
 					
 					case UndatedTasks:
 						DisplayState->Text = "Undated Tasks";
-						defaultView->Items->Clear();
+						clearListView();
 						
 						for(int j = undatedCountStart; j != undatedCountEnd ; j++){
 							int undatedTaskPosition = j - undatedCountStart;
@@ -500,20 +518,20 @@ namespace TMGUI {
 					
 					case ArchivedTasks:
 						DisplayState->Text = "Archived Tasks";
-						defaultView->Items->Clear();
+						clearListView();
 						
 						for(int k = archivedCountStart; k != archivedCountEnd ; k++){
 							int archivedTaskPosition = k - archivedCountStart;
 							int archivedIndex = k + 1;
 							displayTasks(archived,archivedIndex,archivedTaskPosition);
 						}
+						exe->setCurrentDisplay(Default);
 						break;
 
 					
 					case SearchResults:
 						DisplayState->Text = "Search results";
-						ListViewItem^ searchResult;
-						defaultView->Items->Clear();
+						clearListView();
 						
 						std::vector<int> indexes = exe->getPositionIndexes();
 						std::vector<int>::iterator iter;
@@ -528,10 +546,9 @@ namespace TMGUI {
 						break;
 					}
 					userInput->Clear();
-				 }
-				 
-			 }		 
-}
+				 } 
+				}		 
+			}
 			
 			 
 			 
@@ -566,17 +583,11 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 		 }
 
 private: System::Void TMGUserInterface_Load(System::Object^  sender, System::EventArgs^  e) {
-			defaultView->Items->Clear();
+			clearListView();
 
-			TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
-			TMTaskList taskList = taskListStates->getCurrentTaskList();
-			std::vector<TMTask> dated = taskList.getDated();
-			std::vector<TMTask> undated = taskList.getUndated();
-			std::vector<TMTask> defaultTasks;
+			TMTaskList taskList = initiateTaskList();
 
-			defaultTasks.reserve( dated.size() + undated.size());
-			defaultTasks.insert( defaultTasks.end(), dated.begin(), dated.end() );
-			defaultTasks.insert( defaultTasks.end(), undated.begin(), undated.end() );
+			std::vector<TMTask> defaultTasks = initiateDefaultTasks (taskList);
 
 			int defaultCountStart = 0;
 			int defaultCountEnd = defaultTasks.size();
