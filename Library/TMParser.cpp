@@ -250,6 +250,8 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
         }
     }
 
+    configureEndTimeWithoutPeriods(timeToMeet);
+
     if(dateToMeet == ""){
         dateToMeet = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
         if(timeToMeet < currentTime()){
@@ -753,6 +755,9 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
                 }
             } else {
                 //all attributes found
+                if(timeChecker->isTimeWithoutPeriod(startTime) && timeChecker->isTimeWithoutPeriod(endTime)) {
+                    configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
+                }
             }
         }
     }
