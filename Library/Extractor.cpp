@@ -50,9 +50,11 @@ std::string Extractor::extractDelimitedDate(int index, std::queue<int>& indexOfD
     int positionOfNextKey = stringDate.find_first_of(key);
     day = stringDate.substr(0,positionOfNextKey);
     int lengthOfDay = day.length();
+
     if(lengthOfDay == 1){
         day = "0" + day;
     }
+
     stringDate = stringDate.substr(positionOfNextKey + 1); 
     positionOfNextKey = stringDate.find_first_of(key);
     
@@ -61,16 +63,10 @@ std::string Extractor::extractDelimitedDate(int index, std::queue<int>& indexOfD
         year = stringDate.substr(positionOfNextKey + 1);
     } else {
         month = stringDate;
-        std::string dateToday = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
-        year = dateToday.substr(4);
     }
 
     if(dateChecker->isMonth(month)) {
         month = formatConverter->monthFromWrittenToNumeric(month);
-    }
-
-    if(month.length() == 1) {
-        month = "0" + month;
     }
 
     if(year.length() == 2) {

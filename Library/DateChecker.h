@@ -21,9 +21,13 @@ public:
     //DDMMYY DDMMYYYY
     bool isNumericDate(std::string);
     
+    //check if date has passed
     bool isOneDelimitedDate(std::string);
     char returnDelimiter(std::string);
     bool isDelimitedDate(std::string, char);
+
+    //DDMMYYYY
+    bool isUnoccurredDate(std::string);
 
     bool isMonth(std::string);
     bool isNumericMonth(std::string);
