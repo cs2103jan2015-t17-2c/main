@@ -87,6 +87,10 @@ bool TaskChecker::isTimedTask(std::vector<std::string> tokenizedUserEntry) {
             } else if(dateChecker->isNextDay(index + 1, tokenizedUserEntry)){
                 //check for day after next, then check for time
                 return true;
+            } else if(dateChecker->isTomorrow(stringAfterToken)) {
+                return true;
+            } else if(dateChecker->isToday(stringAfterToken)) {
+                return true;
             }
         }
         
@@ -100,7 +104,11 @@ bool TaskChecker::isTimedTask(std::vector<std::string> tokenizedUserEntry) {
             } else if(dateChecker->isNextDay(index + 1, tokenizedUserEntry)) {
                 //check for day after next, then check for time
                 return true;
-            } 
+            } else if(dateChecker->isTomorrow(stringAfterToken)) {
+                return true;
+            } else if(dateChecker->isToday(stringAfterToken)) {
+                return true;
+            }
         }
         
         if(dateChecker->isNextDay(index, tokenizedUserEntry)){

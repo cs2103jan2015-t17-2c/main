@@ -71,6 +71,11 @@ bool TimeChecker::isAM(std::string token){
     if(token.length() < 3) {
         return false;
     }
+    std::string partOfTokenBeforeLastTwoCharacters = token.substr(0, token.length()-2);
+
+    if(!isPositiveInteger(partOfTokenBeforeLastTwoCharacters)) {
+        return false;
+    }
 
     std::string lastTwoCharacters = token.substr(token.length()-2,2);
     FormatConverter *formatConverter = FormatConverter::getInstance();
@@ -84,6 +89,11 @@ bool TimeChecker::isAM(std::string token){
 
 bool TimeChecker::isPM(std::string token){
     if(token.length() < 3) {
+        return false;
+    }
+    std::string partOfTokenBeforeLastTwoCharacters = token.substr(0, token.length()-2);
+
+    if(!isPositiveInteger(partOfTokenBeforeLastTwoCharacters)) {
         return false;
     }
 
@@ -145,6 +155,10 @@ bool TimeChecker::is24HTime(std::string timeToken) {
 
 bool TimeChecker::isTimeWithoutPeriod(std::string token) {
     if(token.length() < 1 || token.length() > 2) {
+        return false;
+    }
+
+    if(!isPositiveInteger(token)) {
         return false;
     }
 
