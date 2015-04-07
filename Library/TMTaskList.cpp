@@ -568,7 +568,7 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 		iter = linesFromFile.begin() + 2;	//Skips first two irrelevant lines in the text file.
 		while (!isFoundInLine(UNDATED_HEADER, *iter)) {
 			TMTask task = converter->convertStringToTMTask(*iter);
-			_dated.push_back(task);
+			addTask(task);
 			iter++;
 		}
 
@@ -576,7 +576,7 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 		iter = iter + 2;
 		while (!isFoundInLine(ARCHIVED_HEADER, *iter)) {
 			TMTask task = converter->convertStringToTMTask(*iter);
-			_undated.push_back(task);
+			addTask(task);
 			iter++;
 		}
 
