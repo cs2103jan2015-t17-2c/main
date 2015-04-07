@@ -28,7 +28,7 @@ bool TaskChecker::isDeadlinedTask(std::vector<std::string> tokenizedUserEntry) {
         
         unitString = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
         
-        if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY){
+        if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY) {
             stringAfterBefore = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
 
             if(dateChecker->isNumericDate(stringAfterBefore)||dateChecker->isDay(stringAfterBefore)||dateChecker->isOneDelimitedDate(stringAfterBefore)) {
@@ -37,7 +37,12 @@ bool TaskChecker::isDeadlinedTask(std::vector<std::string> tokenizedUserEntry) {
                 return true;
             } else if (dateChecker->isNextDay(index + 1, tokenizedUserEntry)){ 
                 return true;
+            } else if (dateChecker->isTomorrow(stringAfterBefore)) {
+                return true;
+            } else if (dateChecker->isToday(stringAfterBefore)) {
+                return true;
             }
+
         }
     }
 
@@ -101,6 +106,14 @@ bool TaskChecker::isTimedTask(std::vector<std::string> tokenizedUserEntry) {
         if(dateChecker->isNextDay(index, tokenizedUserEntry)){
             return true;
         }
+
+        if(dateChecker->isToday(unitString)) {
+            return true;
+        }
+
+        if(dateChecker->isTomorrow(unitString)) {
+            return true;
+        }
     }
 
     return false;
@@ -123,8 +136,10 @@ bool TaskChecker::isMultipleTimingTask(std::vector<std::string> tokenizedUserEnt
         unitString = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
 
         if(!oneTimingIsFound){
-            if(dateChecker->isNumericDate(unitString)||dateChecker->isDay(unitString)||dateChecker->isOneDelimitedDate(unitString)||
-                timeChecker->is12HTime(unitString)||timeChecker->is24HTime(unitString)||timeChecker->isTimeWithoutPeriod(unitString)){
+            if(dateChecker->isNumericDate(unitString)||dateChecker->isDay(unitString)||
+                dateChecker->isOneDelimitedDate(unitString)||timeChecker->is12HTime(unitString)||
+                timeChecker->is24HTime(unitString)||timeChecker->isTimeWithoutPeriod(unitString)||
+                dateChecker->isTomorrow(unitString)||dateChecker->isToday(unitString)){
                     oneTimingIsFound = true;
             } else if (dateChecker->isNextDay(index, tokenizedUserEntry)){
                 oneTimingIsFound = true;   
@@ -138,7 +153,8 @@ bool TaskChecker::isMultipleTimingTask(std::vector<std::string> tokenizedUserEnt
                 stringAfterAnd = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
                 if(dateChecker->isNumericDate(stringAfterAnd)||dateChecker->isDay(stringAfterAnd)||
                     dateChecker->isOneDelimitedDate(stringAfterAnd)||timeChecker->is12HTime(stringAfterAnd)||
-                    timeChecker->is24HTime(stringAfterAnd)||timeChecker->isTimeWithoutPeriod(stringAfterAnd)){
+                    timeChecker->is24HTime(stringAfterAnd)||timeChecker->isTimeWithoutPeriod(stringAfterAnd)||
+                    dateChecker->isTomorrow(stringAfterAnd)||dateChecker->isToday(stringAfterAnd)){
                     moreThanOneTimingIsFound = true;
 
                 } else if (dateChecker->isNextDay(index + 1, tokenizedUserEntry)){
