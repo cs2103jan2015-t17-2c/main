@@ -172,6 +172,30 @@ bool DateChecker::isDelimitedDate(std::string token, char key) {
     return true;    
 }
 
+bool DateChecker::isSpacedDate(int index, std::vector<std::string> tokenizedUserEntry) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    std::string firstToken = tokenizedUserEntry[index];
+    int vectorSize = tokenizedUserEntry.size();
+
+    if(!isPositiveInteger(firstToken)) {
+        return false;
+    }
+
+    if(index + 1 == vectorSize) {
+        return false;
+    }
+
+    std::string secondToken = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
+    
+    if(!isMonth(secondToken)) {
+        return false;
+    }
+
+    std::string possibleDate = firstToken + DELIMITER_DASH + secondToken;
+
+    return isDelimitedDate(possibleDate,DELIMITER_DASH); 
+}
+
 bool DateChecker::isUnoccurredDate(std::string date) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
     date = formatConverter->dateFromNumericToBoostFormat(date);

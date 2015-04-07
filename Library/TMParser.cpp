@@ -181,7 +181,9 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                 break;
             }
             nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
-            if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)) {
+            if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
+                dateChecker->isOneDelimitedDate(nextWord)||
+                dateChecker->isSpacedDate(index + 1, _tokenizedUserEntry)) {
                 //e.g. before 01012016 (DDMMYYYY)
                 indexOfDatesAndTimes.push(index);
                 dateToMeet = extractor->extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
@@ -226,7 +228,9 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                 break;
             }
             nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
-            if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)) {
+            if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
+                dateChecker->isOneDelimitedDate(nextWord)||
+                dateChecker->isSpacedDate(index + 1, _tokenizedUserEntry)) {
                 indexOfDatesAndTimes.push(index);
                 dateToMeet = extractor->extractDayOrNumericDateOrDelimitedDate(index + 1,indexOfDatesAndTimes, _tokenizedUserEntry);
                 index = indexOfDatesAndTimes.back();
@@ -342,9 +346,12 @@ TMTask TMParser::parseTimedTaskInfo(){
                 break;
             }
             nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
-            if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)){
-                startDate = extractor->extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
-                configureQueuesAndIndexAfterToken(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
+            if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
+                dateChecker->isOneDelimitedDate(nextWord)||
+                dateChecker->isSpacedDate(index + 1, _tokenizedUserEntry)){
+                    startDate = extractor->extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
+                    configureQueuesAndIndexAfterToken(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
+                    index = mainIndexOfDatesAndTimes.back();
             } else {
                 editDateOrTimeInInvertedCommas(nextWord, index + 1, true, false);
             }
@@ -358,9 +365,11 @@ TMTask TMParser::parseTimedTaskInfo(){
                 dateChecker->isNextDay(index + 1, _tokenizedUserEntry)||
                 timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)||
                 timeChecker->isTimeWithoutPeriod(nextWord)||
-                dateChecker->isToday(nextWord)||dateChecker->isTomorrow(nextWord)) {
+                dateChecker->isToday(nextWord)||dateChecker->isTomorrow(nextWord)||
+                dateChecker->isSpacedDate(index + 1, _tokenizedUserEntry)) {
                     extractor->extractDateAndOrTime(index + 1, indexOfDatesAndTimes, startDate, startTime, _tokenizedUserEntry);
                     configureQueuesAndIndexAfterToken(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
+                    index = mainIndexOfDatesAndTimes.back();
             } else {
                 editDateOrTimeInInvertedCommas(nextWord, index + 1, true, true);
             }
@@ -374,9 +383,11 @@ TMTask TMParser::parseTimedTaskInfo(){
                 dateChecker->isNextDay(index + 1, _tokenizedUserEntry)||
                 timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)||
                 timeChecker->isTimeWithoutPeriod(nextWord)||
-                dateChecker->isToday(nextWord)||dateChecker->isTomorrow(nextWord)) {
+                dateChecker->isToday(nextWord)||dateChecker->isTomorrow(nextWord)||
+                dateChecker->isSpacedDate(index + 1, _tokenizedUserEntry)) {
                     extractor->extractDateAndOrTime(index + 1, indexOfDatesAndTimes, endDate, endTime, _tokenizedUserEntry);
                     configureQueuesAndIndexAfterToken(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
+                    index = mainIndexOfDatesAndTimes.back();
             } else {
                 editDateOrTimeInInvertedCommas(nextWord, index + 1, true, true);
             }
@@ -668,14 +679,16 @@ void TMParser::editDateOrTimeInInvertedCommas(std::string nextWord, int index, b
                 timeChecker->isTimeWithoutPeriod(nextWord)||dateChecker->isNumericDate(nextWord)||
                 dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)||
                 isNextDayInInvertedCommas(nextWord)||
-                dateChecker->isToday(nextWord)||dateChecker->isTomorrow(nextWord)){
-                _tokenizedUserEntry[index] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
+                dateChecker->isToday(nextWord)||dateChecker->isTomorrow(nextWord)||
+                isSpacedDateInInvertedCommas(nextWord)){
+                    _tokenizedUserEntry[index] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
             }
         } else if(checkDate) {
             if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
                dateChecker->isOneDelimitedDate(nextWord)||isNextDayInInvertedCommas(nextWord)||
-               dateChecker->isToday(nextWord)||dateChecker->isTomorrow(nextWord)){
-                _tokenizedUserEntry[index] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
+               dateChecker->isToday(nextWord)||dateChecker->isTomorrow(nextWord)||
+               isSpacedDateInInvertedCommas(nextWord)){
+                    _tokenizedUserEntry[index] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
             }
         
         } else if(checkTime) {
@@ -709,6 +722,19 @@ bool TMParser::isNextDayInInvertedCommas(std::string nextWord) {
     } else {
         return false;
     }
+}
+
+bool TMParser::isSpacedDateInInvertedCommas(std::string nextWord) {
+    DateChecker *dateChecker = DateChecker::getInstance();
+    std::vector<std::string> tokenizedNextWord;
+    std::istringstream iss(nextWord);
+    std::string token;
+
+    while(iss >> token){
+        tokenizedNextWord.push_back(token);
+    }
+
+    return dateChecker->isSpacedDate(0, tokenizedNextWord);
 }
 
 void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& startTime, std::string& endDate, std::string& endTime, TaskType& taskType){
@@ -905,18 +931,18 @@ void TMParser::configureStartDayMonthEndDayMonth(std::string& startDate, std::st
 
     startDate = stringStartDate;
 
-    stringStartDate = formatConverter->dateFromNumericToBoostFormat(stringStartDate);
-    stringEndDate = formatConverter->dateFromNumericToBoostFormat(stringEndDate);
-    boost::gregorian::date boostStartDate = boost::gregorian::from_uk_string(stringStartDate);
-    boost::gregorian::date boostEndDate = boost::gregorian::from_uk_string(stringEndDate);
+    std::string delimitedStartDate = formatConverter->dateFromNumericToBoostFormat(stringStartDate);
+    std::string delimitedEndDate = formatConverter->dateFromNumericToBoostFormat(stringEndDate);
+    boost::gregorian::date boostStartDate = boost::gregorian::from_uk_string(delimitedStartDate);
+    boost::gregorian::date boostEndDate = boost::gregorian::from_uk_string(delimitedEndDate);
 
     while(boostEndDate < boostStartDate) {
         stringEndDate = addNYearsFromDate(stringEndDate, 1);
-        stringEndDate = formatConverter->dateFromNumericToBoostFormat(stringEndDate);
-        boostEndDate = boost::gregorian::from_uk_string(stringEndDate);
+        delimitedEndDate = formatConverter->dateFromNumericToBoostFormat(stringEndDate);
+        boostEndDate = boost::gregorian::from_uk_string(delimitedEndDate);
     }
 
-    endDate = formatConverter->dateFromBoostToDDMMYYYY(boostEndDate);
+    endDate = stringEndDate;
 
     return;
 }

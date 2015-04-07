@@ -20,6 +20,7 @@ public:
     std::string extractDayOrNumericDateOrDelimitedDate(int, std::queue<int>&, std::vector<std::string>);
     std::string extractNumericDate(int, std::queue<int>&, std::vector<std::string>);
     std::string extractDelimitedDate(int, std::queue<int>&, std::vector<std::string>, char);
+    std::string extractSpacedDate(int, std::queue<int>&, std::vector<std::string>);
 
     std::string extractToday(int, std::queue<int>&, std::vector<std::string>);
     std::string extractTomorrow(int, std::queue<int>&, std::vector<std::string>);

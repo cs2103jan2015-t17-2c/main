@@ -66,6 +66,7 @@ public:
 
     //inverted commas must be removed
     bool isNextDayInInvertedCommas(std::string);
+    bool isSpacedDateInInvertedCommas(std::string);
 
     void configureAllDatesAndTimes(std::string&, std::string&, std::string&, std::string&, TaskType&);
     //if on same day full time specified but start time more than end time ERROR
