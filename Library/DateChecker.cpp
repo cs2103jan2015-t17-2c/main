@@ -165,6 +165,16 @@ bool DateChecker::isDelimitedDate(std::string token, char key) {
     return true;    
 }
 
+bool DateChecker::isUnoccurredDate(std::string date) {
+    boost::gregorian::date boostDate = boost::gregorian::from_uk_string(date);
+
+    if(boostDate > currentDate()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 bool DateChecker::isMonth(std::string token) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
     token = formatConverter->returnLowerCase(token);

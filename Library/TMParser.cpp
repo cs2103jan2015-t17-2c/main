@@ -176,7 +176,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
 
         unitString = formatConverter->returnLowerCase(_tokenizedUserEntry[index]);
 
-        if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY){
+        if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY) {
             if(index + 1 == lengthOfTokenizedUserEntry){
                 break;
             }
@@ -763,6 +763,23 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
     }
 }
 
+//preconditions date is only 4 digits in length
+void TMParser::configureDayMonth(std::string& stringDate) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    DateChecker *dateChecker = DateChecker::getInstance();
+
+    std::string stringCurrentDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
+    std::string stringCurrentYear = stringCurrentDate.substr(4);
+    stringDate = stringDate + stringCurrentYear;
+
+    if(dateChecker->isUnoccurredDate(stringDate)) {
+        return;
+    } else {
+
+        return;
+    }
+}
+
 void TMParser::configureStartTimeEndTimeWithoutPeriods(std::string& stringStartTime, std::string& stringEndTime) {
     int startTime = std::stoi(stringStartTime);
     int endTime = std::stoi(stringEndTime);
@@ -997,6 +1014,37 @@ std::string TMParser::addNDaysFromDate(std::string date, int n){
     boost::gregorian::date initialBoostDate = boost::gregorian::from_uk_string(date);
     boost::gregorian::date_duration dateDuration(n);
     boost::gregorian::date finalBoostDate = initialBoostDate + dateDuration;
+    return formatConverter->dateFromBoostToDDMMYYYY(finalBoostDate);
+}
+
+//preconditions ddmmyyyy
+//postconditions ddmmyyyy
+std::string TMParser::addNYearsFromDate(std::string date, int n) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    date = formatConverter->dateFromNumericToBoostFormat(date);
+    boost::gregorian::date initialBoostDate = boost::gregorian::from_uk_string(date);
+    boost::gregorian::date finalBoostDate;
+
+    std::string ddmm = date.substr(0,4);
+    boost::gregorian::year_iterator year(initialBoostDate);
+
+    for(int i = 0; i < n; i++) {
+            ++year;
+        }
+    
+    finalBoostDate = *year;
+
+    if(ddmm == "2802") {
+        if(boost::gregorian::gregorian_calendar::is_leap_year(finalBoostDate.year())) {
+            boost::gregorian::date_duration oneDay(1);
+            finalBoostDate = finalBoostDate - oneDay;
+        }
+    } else if(ddmm == "2902") {
+        while(!boost::gregorian::gregorian_calendar::is_leap_year(finalBoostDate.year())) {
+            ++year;
+        }
+    }
+
     return formatConverter->dateFromBoostToDDMMYYYY(finalBoostDate);
 }
 

@@ -69,6 +69,9 @@ public:
     void configureAllDatesAndTimes(std::string&, std::string&, std::string&, std::string&, TaskType&);
     //if on same day full time specified but start time more than end time ERROR
     //if full date specified for both and start date more than end date ERROR
+
+    void configureDayMonth(std::string&);
+    void configureStartDayMonthEndDayMonth(std::string&, std::string&);
     
     void configureStartTimeEndTimeWithoutPeriods(std::string&, std::string&);
     void configureStartTimeWithoutPeriods(std::string&);
@@ -93,6 +96,8 @@ public:
 
     std::string substractNDaysFromDate(std::string,int);
     std::string addNDaysFromDate(std::string,int);
+
+    std::string addNYearsFromDate(std::string, int);
 
     void addErrorMessage(std::string);
     std::string getErrorMessage();
