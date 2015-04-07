@@ -60,9 +60,14 @@ namespace TMGUI {
 				defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskTime().getStartTime()).c_str() )));
 				}
 				
+				if(taskList[taskPosition].getTaskType() == TaskType ::WithStartDateTime){
+					defaultEntry->SubItems->Add("");
+					defaultEntry->SubItems->Add(""); 
+				} else{
 				defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskTime().getEndDate()).c_str() )));
 				defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskTime().getEndTime()).c_str() )));
-				
+				}
+
 				if(taskList[taskPosition].getTaskType() == TaskType ::WithEndDateTime){
 					defaultEntry->ForeColor = Color :: Red;
 				}
