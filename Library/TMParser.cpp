@@ -251,8 +251,8 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
     }
 
     if(dateToMeet == ""){
-        dateToMeet = formatConverter->dateFromBoostToDDMMYYYY(currentDate);
-        if(timeToMeet < currentTime){
+        dateToMeet = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
+        if(timeToMeet < currentTime()){
             //OR EQUALS?
             dateToMeet = addNDaysFromDate(dateToMeet,1);
         }
@@ -672,8 +672,8 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
             if(timeChecker->isTimeWithoutPeriod(startTime)) {
                 configureStartTimeWithoutPeriods(startTime);
             }
-            startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate);
-            if(startTime <= currentTime){
+            startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
+            if(startTime <= currentTime()){
                 startDate = addNDaysFromDate(startDate,1);
              }
         } else {
@@ -690,16 +690,16 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
             if(timeChecker->isTimeWithoutPeriod(endTime)) {
                 configureEndTimeWithoutPeriods(endTime);
             }
-            endDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate);
-            if(endTime <= currentTime){
+            endDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
+            if(endTime <= currentTime()){
                 endDate = addNDaysFromDate(endDate,1);
              }
         } else {
         //endTime and endDate are found
         }
         //no startDateTime, assumed to be current date and atime
-        startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate);
-        startTime = currentTime;
+        startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
+        startTime = currentTime();
 
     } else if((startDate != ""||startTime != "") && (endDate != ""||endTime != "")){
         taskType = TaskType::WithPeriod;
@@ -723,7 +723,7 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
                 if(timeChecker->isTimeWithoutPeriod(startTime) && timeChecker->isTimeWithoutPeriod(endTime)) {
                     configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
                 }
-                startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate);
+                startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
                 if(endTime >= startTime){
                     endDate = startDate;
                 } else { 

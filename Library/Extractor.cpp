@@ -61,7 +61,7 @@ std::string Extractor::extractDelimitedDate(int index, std::queue<int>& indexOfD
         year = stringDate.substr(positionOfNextKey + 1);
     } else {
         month = stringDate;
-        std::string dateToday = formatConverter->dateFromBoostToDDMMYYYY(currentDate);
+        std::string dateToday = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
         year = dateToday.substr(4);
     }
 
@@ -99,7 +99,7 @@ std::string Extractor::getDateFromNextDay(int index, std::vector<std::string> to
     boost::gregorian::greg_weekday day(dayOfWeek(stringDay));
     boost::gregorian::first_day_of_the_week_after fdaf(day);
     boost::gregorian::first_day_of_the_week_after firstSundayAfterToday(boost::gregorian::Sunday);
-    boost::gregorian::date dateTM = firstSundayAfterToday.get_date(currentDate);
+    boost::gregorian::date dateTM = firstSundayAfterToday.get_date(currentDate());
     dateTM = fdaf.get_date(dateTM);
     std::string tempDate = boost::gregorian::to_iso_string(dateTM);
 
@@ -113,7 +113,7 @@ std::string Extractor::extractDay(int index, std::queue<int>& indexOfDatesAndTim
     std::string day = formatConverter->returnLowerCase(tokenizedUserEntry[index]); 
     int dayInInteger = dayOfWeek(day);
     boost::gregorian::first_day_of_the_week_after fdaf(dayInInteger);
-    boost::gregorian::date dateInBoost = fdaf.get_date(currentDate);
+    boost::gregorian::date dateInBoost = fdaf.get_date(currentDate());
     std::string startDate = formatConverter->dateFromBoostToDDMMYYYY(dateInBoost);
     indexOfDatesAndTimes.push(index);
 

@@ -152,7 +152,7 @@ bool DateChecker::isDelimitedDate(std::string token, char key) {
         }
 
         FormatConverter *formatConverter = FormatConverter::getInstance();
-        std::string dateToday = formatConverter->dateFromBoostToDDMMYYYY(currentDate);
+        std::string dateToday = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
         year = dateToday.substr(4,4);
     }
 
