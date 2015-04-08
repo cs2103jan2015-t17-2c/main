@@ -1,17 +1,5 @@
 #include "TMTaskList.h"
 
-const std::string ADD_SDT_SUCCESS = "Successfully added a task with start date and time!";
-const std::string ADD_EDT_SUCCESS = "Successfully added a task with end date and time!";
-const std::string ADD_PERIOD_SUCCESS = "Successfully added a period task!";
-const std::string ADD_UNDATED_SUCCESS = "Successfully added an undated task!";
-const std::string ADD_INVALID = "Task you have specified has invalid component(s). Please specify a valid task.";
-const std::string CLASH_WARNING = "Task added has clashes with tasks on hand.\nInvolved tasks have been highlighted in blue.";
-const std::string UPDATE_SUCCESS = "Task successfully edited.";
-const std::string UPDATE_TIME_SUCCESS = "Task time successfully changed.";
-const std::string DELETE_SUCCESS = "Task successfully removed from database!";
-const std::string ARCHIVE_SUCCESS = "Task is successfully completed and archived.";
-const std::string ARCHIVE_FAILURE = "Cannot archive an already archived task.";
-const std::string INVALID_INDEX = "Invalid index specified to be archived.";
 const std::string DATED_TASK_DISPLAY_FORMAT = "<Task Type> <Task Description> <Start Date> <Start Time> <End Date> <End Time> <Completion> <Clash> <Confirmation> <Unconfirmed Batch Number>";
 const std::string UNDATED_TASK_DISPLAY_FORMAT = "<Task Type> <Task Description> <Completion>";
 const std::string DATED_HEADER = "Number of dated tasks: ";
@@ -339,7 +327,7 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 
 
 	//BASIC FUNCTIONS//
-	std::string TMTaskList::addTask (TMTask &task) {
+	void TMTaskList::addTask (TMTask &task) {
 		TaskType type = task.getTaskType();
 		std::string outcome;
 		switch (type) {
@@ -347,56 +335,42 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 		case WithStartDateTime:
 			_dated.push_back(task);
 			chronoSort();
-			return ADD_SDT_SUCCESS;
 			break;
 
 		case WithEndDateTime:
 			_dated.push_back(task);
 			chronoSort();
-			return ADD_EDT_SUCCESS;
 			break;
 		
 		case WithPeriod:
 			if (int(_dated.size()) != 0 && hasClash(task)) {
 				setClashes(task, _dated.begin());
 				task.setAsClashed();
-				outcome = CLASH_WARNING;
-			} else {
-				outcome = ADD_PERIOD_SUCCESS;
-			}
-
+			} 
 			_dated.push_back(task);
 			chronoSort();
-			return outcome;
 			break;
 
 		case Undated: 
 			_undated.push_back(task);
 			alphaSort();
-			return ADD_UNDATED_SUCCESS;
 			break;
 
 		case Invalid:
-			return ADD_INVALID;
 			break;
 		}
 
-		return ADD_INVALID;
+		return;
 	}
 
 	
-	std::string TMTaskList::updateTask(int positionIndex, TMTask &alteredTask) {
-		
-		if (isValidPositionIndex(positionIndex)) {
-			removeTask(positionIndex);
-			addTask(alteredTask);
-			return UPDATE_SUCCESS;
-		} else {
-			return INVALID_INDEX;
-		}
+	void  TMTaskList::updateTask(int positionIndex, TMTask &alteredTask) {
+		removeTask(positionIndex);
+		addTask(alteredTask);
+		return;
 	}
 
-	std::string TMTaskList::removeTask(int positionIndex) {	
+	void  TMTaskList::removeTask(int positionIndex) {	
 		
 		if (isInDated(positionIndex)) {
 			TMTask deleteTask = getTaskFromPositionIndex(positionIndex);
@@ -404,35 +378,28 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 			if (deleteTask.getTaskType() == TaskType::WithPeriod) {
 				updateClashes(deleteTask);
 			}
-			return DELETE_SUCCESS;
+			return;
 
 		} else if (isInUndated(positionIndex)) {
 			int floatingTaskNumber = positionIndex - _dated.size();
 			_undated.erase(_undated.begin() + floatingTaskNumber - 1);
-			return DELETE_SUCCESS;
+			return;
 
 		} else if (isInArchived(positionIndex)) {
 			int archivedTaskNumber = positionIndex - _dated.size() - _undated.size();
 			_archived.erase(_archived.begin() + archivedTaskNumber - 1);
-			return DELETE_SUCCESS;
+			return;
 		}
 
-		return INVALID_INDEX;
+		return;
 	}
-
-	std::string TMTaskList::archiveOneTask(int positionIndex) {
+	
+	void  TMTaskList::archiveOneTask(int positionIndex) {
 		TMTask &task = getTaskFromPositionIndex(positionIndex);
 		task.setAsCompleted();
 		_archived.push_back(task);
-		
-		if (isInDated(positionIndex) || isInUndated(positionIndex)) {
-			std::string str = removeTask(positionIndex);
-			return ARCHIVE_SUCCESS;
-		} else if (isInArchived(positionIndex)) {
-			return ARCHIVE_FAILURE;
-		}
-
-		return INVALID_INDEX;
+		removeTask(positionIndex);
+		return;
 	}
 
 	void TMTaskList::chronoSort() {

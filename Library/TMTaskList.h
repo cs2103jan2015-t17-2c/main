@@ -112,15 +112,15 @@ public:
 
 
 	//BASIC FUNCTIONS//
-	std::string addTask(TMTask &task);
+	void addTask(TMTask &task);
 	
 	//Removes the outdated task from taskList and adds alteredTask
-	std::string updateTask(int positionIndex, TMTask &alteredTask);
+	void updateTask(int positionIndex, TMTask &alteredTask);
 	
-	std::string removeTask(int positionIndex);
+	void removeTask(int positionIndex);
 	
 	//Carried out when the task is marked as completed by the user
-	std::string archiveOneTask(int positionIndex);
+	void archiveOneTask(int positionIndex);
 	
 	//Sorts tasks in tasklist in chronological order according to their start dates
 	//Precondition: _dated vector not empty
