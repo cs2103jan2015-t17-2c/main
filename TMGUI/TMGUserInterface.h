@@ -49,6 +49,30 @@ namespace TMGUI {
 			Application::Run(gcnew TMSplash);
 		}
 
+		void processRealTime(){
+			 TMParser* inputParser = TMParser :: getInstance();
+			 String ^ str = userInput->Text;
+			 std::string unmanaged = msclr::interop::marshal_as<std::string>(str);
+
+			 inputParser->initialize(unmanaged);
+					
+			 std::string command = inputParser->extractCommand();
+			 TMParser :: CommandTypes commandType = inputParser->determineCommandType(command);
+			 TMTask task = inputParser->parseTaskInfo();
+				if(commandType == TMParser :: CommandTypes :: Add){
+					displayResultRealTime(task);
+				}
+		}
+
+		void displayResultRealTime(TMTask task){
+			statusDisplay->Text = 
+			"Task Description: " + gcnew String(task.getTaskDescription().c_str()) + "\n"+
+			"Start Date: " + gcnew String(task.getTaskTime().getStartDate().c_str()) + "\t\t\t" + 
+			"Start Time: " + gcnew String(task.getTaskTime().getStartTime().c_str()) + "\n"+
+			"End Date: " + gcnew String(task.getTaskTime().getEndDate().c_str()) + "\t\t\t" + 
+			"End Time: " + gcnew String(task.getTaskTime().getEndTime().c_str());
+		}
+
 		std::vector<TMTask> initiateDefaultTasks(TMTaskList taskList){
 			
 			std::vector<TMTask> dated = taskList.getDated();
@@ -598,23 +622,8 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			 
 			 label4->Text = time.ToString(format);	
 
-			 /*TMParser* inputParser = TMParser :: getInstance();
-			 String ^ str = userInput->Text;
-			 std::string unmanaged = msclr::interop::marshal_as<std::string>(str);
-
-			 inputParser->initialize(unmanaged);
-					
-			 std::string command = inputParser->extractCommand();
-					TMParser :: CommandTypes commandType = inputParser->determineCommandType(command);
-					TMTask task = inputParser->parseTaskInfo();
-					if(commandType == TMParser :: CommandTypes :: Add){
-						statusDisplay->Text = 
-							"Task Description: " + gcnew String(task.getTaskDescription().c_str()) + "\n"+
-							"Start Date: " + gcnew String(task.getTaskTime().getStartDate().c_str()) + "\t\t\t" + 
-							"Start Time: " + gcnew String(task.getTaskTime().getStartTime().c_str()) + "\n"+
-							"End Date: " + gcnew String(task.getTaskTime().getEndDate().c_str()) + "\t\t\t" + 
-							"End Time: " + gcnew String(task.getTaskTime().getEndTime().c_str());
-					}*/
+			 processRealTime();
+			
 		 }
 
 private: System::Void TMGUserInterface_Load(System::Object^  sender, System::EventArgs^  e) {
