@@ -50,8 +50,10 @@ namespace TMGUI {
 		}
 
 		void processRealTime(){
+			
 			 TMParser* inputParser = TMParser :: getInstance();
 			 String ^ str = userInput->Text;
+			 
 			 std::string unmanaged = msclr::interop::marshal_as<std::string>(str);
 
 			 inputParser->initialize(unmanaged);
@@ -60,17 +62,34 @@ namespace TMGUI {
 			 TMParser :: CommandTypes commandType = inputParser->determineCommandType(command);
 			 TMTask task = inputParser->parseTaskInfo();
 				if(commandType == TMParser :: CommandTypes :: Add){
+					//statusDisplay->Text = "Adding the following task";
 					displayResultRealTime(task);
 				}
+
 		}
 
 		void displayResultRealTime(TMTask task){
-			statusDisplay->Text = 
+			
+			statusDisplay->Text=
 			"Task Description: " + gcnew String(task.getTaskDescription().c_str()) + "\n"+
 			"Start Date: " + gcnew String(task.getTaskTime().getStartDate().c_str()) + "\t\t\t" + 
 			"Start Time: " + gcnew String(task.getTaskTime().getStartTime().c_str()) + "\n"+
 			"End Date: " + gcnew String(task.getTaskTime().getEndDate().c_str()) + "\t\t\t" + 
 			"End Time: " + gcnew String(task.getTaskTime().getEndTime().c_str());
+		
+			if (task.getTaskType() == TaskType :: WithEndDateTime){
+				statusDisplay->Text = 
+				"Task Description: " + gcnew String(task.getTaskDescription().c_str()) + "\n"+
+				"Due Date: " + gcnew String(task.getTaskTime().getEndDate().c_str()) + "\t\t\t" + 
+				"Due Time: " + gcnew String(task.getTaskTime().getEndTime().c_str());
+			}
+			
+			if(task.getTaskType() == TaskType ::WithStartDateTime){
+				statusDisplay->Text = 
+				"Task Description: " + gcnew String(task.getTaskDescription().c_str()) + "\n"+
+				"Start Date: " + gcnew String(task.getTaskTime().getStartDate().c_str()) + "\t\t\t" + 
+				"Start Time: " + gcnew String(task.getTaskTime().getStartTime().c_str());
+			}
 		}
 
 		std::vector<TMTask> initiateDefaultTasks(TMTaskList taskList){
@@ -596,6 +615,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 	
 	private: System::Void userInput_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 
+				
 				 /*if (userInput->Text == "a") {
 					
 					 statusDisplay->Text = "add <task description> {{<time markers> <time/time period>} {<date markers> <date/date period>}/{day}}";
