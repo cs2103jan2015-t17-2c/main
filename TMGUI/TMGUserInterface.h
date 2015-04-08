@@ -49,6 +49,53 @@ namespace TMGUI {
 			Application::Run(gcnew TMSplash);
 		}
 
+		void processRealTime(){
+			
+			 TMParser* inputParser = TMParser :: getInstance();
+			 String ^ str = userInput->Text;
+			 
+			 std::string unmanaged = msclr::interop::marshal_as<std::string>(str);
+
+			 inputParser->initialize(unmanaged);
+					
+			 std::string command = inputParser->extractCommand();
+			 TMParser :: CommandTypes commandType = inputParser->determineCommandType(command);
+			 TMTask task = inputParser->parseTaskInfo();
+				if(commandType == TMParser :: CommandTypes :: Add){
+					//statusDisplay->Text = "Adding the following task";
+					displayResultRealTime(task);
+				}
+
+		}
+
+		void displayResultRealTime(TMTask task){
+			
+			statusDisplay->Text=
+			"Task Description: " + gcnew String(task.getTaskDescription().c_str()) + "\n"+
+			"Start Date: " + gcnew String(task.getTaskTime().getStartDate().c_str()) + "\t\t\t" + 
+			"Start Time: " + gcnew String(task.getTaskTime().getStartTime().c_str()) + "\n"+
+			"End Date: " + gcnew String(task.getTaskTime().getEndDate().c_str()) + "\t\t\t" + 
+			"End Time: " + gcnew String(task.getTaskTime().getEndTime().c_str());
+		
+			if (task.getTaskType() == TaskType :: WithEndDateTime){
+				statusDisplay->Text = 
+				"Task Description: " + gcnew String(task.getTaskDescription().c_str()) + "\n"+
+				"Due Date: " + gcnew String(task.getTaskTime().getEndDate().c_str()) + "\t\t\t" + 
+				"Due Time: " + gcnew String(task.getTaskTime().getEndTime().c_str());
+			}
+			
+			if(task.getTaskType() == TaskType ::WithStartDateTime){
+				statusDisplay->Text = 
+				"Task Description: " + gcnew String(task.getTaskDescription().c_str()) + "\n"+
+				"Start Date: " + gcnew String(task.getTaskTime().getStartDate().c_str()) + "\t\t\t" + 
+				"Start Time: " + gcnew String(task.getTaskTime().getStartTime().c_str());
+			}
+
+			if(task.getTaskType() == TaskType :: Invalid){
+				statusDisplay->Text = "Invalid time, please re-enter task time.";
+			}
+		}
+
 		std::vector<TMTask> initiateDefaultTasks(TMTaskList taskList){
 			
 			std::vector<TMTask> dated = taskList.getDated();
@@ -87,8 +134,11 @@ namespace TMGUI {
 		}
 
 		void displayTasks(std::vector<TMTask> taskList, int index, int taskPosition){
-				ListViewItem^ defaultEntry;
-		
+			
+			TMExecutor* exe = TMExecutor::getInstance();
+			std::vector<int> indexes = exe->getPositionIndexes();	
+
+			ListViewItem^ defaultEntry;
 				defaultEntry = gcnew ListViewItem(Convert::ToString(index));
 				defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskDescription()).c_str() )));
 				if(taskList[taskPosition].getTaskType() == TaskType ::WithEndDateTime){
@@ -146,6 +196,13 @@ namespace TMGUI {
 						defaultEntry->SubItems->Add("!");
 						defaultEntry->Font = gcnew System::Drawing::Font ("Corbel",11,FontStyle :: Bold);
 					
+					}
+				}
+				
+				std::vector<int>::iterator iter;
+				for (iter = indexes.begin(); iter != indexes.end(); ++iter){
+					if(index == (*iter)){
+						defaultEntry -> BackColor = Color :: Yellow;
 					}
 				}
 
@@ -454,20 +511,9 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 					
 					 exe->executeMain(unmanaged);
 					 
-					std::vector<int> indexes = exe->getPositionIndexes();
-					
-					if (indexes.size() != 0) {
-						std::vector<int>::iterator iter;
-						std::ostringstream oss;
-						for (iter = indexes.begin(); iter != indexes.end(); ++iter) {
-							oss << *iter << " ";
-						}
-
-						std::string totalStatus = exe->returnResultOfExecution() + oss.str();
-						statusDisplay->Text = gcnew String(totalStatus.c_str());
-					} else {
-						statusDisplay->Text = gcnew String(exe->returnResultOfExecution().c_str());
-					}
+				
+					statusDisplay->Text = gcnew String(exe->returnResultOfExecution().c_str());
+				
 					
 					 TMDisplay display = exe->getCurrentDisplay();
 					
@@ -558,7 +604,12 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 					}
 					userInput->Clear();
 				 } 
-				}		 
+				}		
+				else{
+					//statusDisplay->Text = "";
+					
+			 }
+
 			}
 			
 			 
@@ -567,8 +618,10 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 	
 	private: System::Void userInput_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 
-				 if (userInput->Text == "a") {
-					statusDisplay->Text = "add <task description> {{<time markers> <time/time period>} {<date markers> <date/date period>}/{day}}";
+				
+				 /*if (userInput->Text == "a") {
+					
+					 statusDisplay->Text = "add <task description> {{<time markers> <time/time period>} {<date markers> <date/date period>}/{day}}";
 				 }
 
 				 if (userInput->Text == "d") {
@@ -581,7 +634,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 					 
 				if (userInput->Text == "s") {
 					statusDisplay->Text = "search <keyword(s)>";
-				}
+				}*/
 			 }
 
 
@@ -591,6 +644,9 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			 String^ format = "f";
 			 
 			 label4->Text = time.ToString(format);	
+
+			 processRealTime();
+			
 		 }
 
 private: System::Void TMGUserInterface_Load(System::Object^  sender, System::EventArgs^  e) {
@@ -616,17 +672,16 @@ private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows
 					defaultView->Focus();
 					SendKeys :: SendWait ("{PGDN}");
 					userInput->Focus();
-			 }
-
-			 if(e->KeyCode == Keys:: Up){
+			 } else if(e->KeyCode == Keys:: Up){
 					defaultView->Focus();
 					SendKeys :: SendWait ("{PGUP}");
 					userInput->Focus();
-			 }
+			 } else if(e->KeyCode == Keys::F1){
+					ShellExecuteA(NULL,"open","..\\readme.pdf",NULL,NULL,0);
+			 } 
+
+
 			 
-			 if(e->KeyCode == Keys::F1){
-				 ShellExecuteA(NULL,"open","..\\readme.pdf",NULL,NULL,0);
-			 }
 
 		 }
 

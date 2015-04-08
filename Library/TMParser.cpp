@@ -176,16 +176,18 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
 
         unitString = formatConverter->returnLowerCase(_tokenizedUserEntry[index]);
 
-        if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY) {
+        if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY||unitString == TOKEN_SHORTCUT_BEFORE) {
             if(index + 1 == lengthOfTokenizedUserEntry){
                 break;
             }
             nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
-            if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)) {
+            if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
+                dateChecker->isOneDelimitedDate(nextWord)||
+                dateChecker->isSpacedDate(index + 1, _tokenizedUserEntry)) {
                 //e.g. before 01012016 (DDMMYYYY)
                 indexOfDatesAndTimes.push(index);
                 dateToMeet = extractor->extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
-                if(unitString == TOKEN_BEFORE) {
+                if(unitString == TOKEN_BEFORE||unitString == TOKEN_SHORTCUT_BEFORE) {
                     dateToMeet = substractNDaysFromDate(dateToMeet,1);
                 }
                 timeToMeet = "2359";
@@ -194,7 +196,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                 //e.g. before next monday
                 indexOfDatesAndTimes.push(index);
                 dateToMeet = extractor->extractNextDay(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
-                if(unitString == TOKEN_BEFORE) {
+                if(unitString == TOKEN_BEFORE||unitString == TOKEN_SHORTCUT_BEFORE) {
                     dateToMeet = substractNDaysFromDate(dateToMeet,1);
                 }
                 timeToMeet = "2359";
@@ -213,7 +215,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
             } else if (dateChecker->isTomorrow(nextWord)) {
                 indexOfDatesAndTimes.push(index);
                 dateToMeet = extractor->extractTomorrow(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
-                if(unitString == TOKEN_BEFORE) {
+                if(unitString == TOKEN_BEFORE||unitString == TOKEN_SHORTCUT_BEFORE) {
                     dateToMeet = substractNDaysFromDate(dateToMeet,1);
                 }
                 timeToMeet = "2359";
@@ -226,7 +228,9 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
                 break;
             }
             nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
-            if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)) {
+            if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
+                dateChecker->isOneDelimitedDate(nextWord)||
+                dateChecker->isSpacedDate(index + 1, _tokenizedUserEntry)) {
                 indexOfDatesAndTimes.push(index);
                 dateToMeet = extractor->extractDayOrNumericDateOrDelimitedDate(index + 1,indexOfDatesAndTimes, _tokenizedUserEntry);
                 index = indexOfDatesAndTimes.back();
@@ -325,7 +329,7 @@ TMTask TMParser::parseTimedTaskInfo(){
 
         unitString = formatConverter->returnLowerCase(_tokenizedUserEntry[index]);
 
-        if(unitString == TOKEN_AT) {
+        if(unitString == TOKEN_AT||unitString == TOKEN_SHORTCUT_AT) {
             if(index + 1 == lengthOfTokenizedUserEntry){
                 break;
             }
@@ -342,13 +346,16 @@ TMTask TMParser::parseTimedTaskInfo(){
                 break;
             }
             nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
-            if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)){
-                startDate = extractor->extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
-                configureQueuesAndIndexAfterToken(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
+            if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
+                dateChecker->isOneDelimitedDate(nextWord)||
+                dateChecker->isSpacedDate(index + 1, _tokenizedUserEntry)){
+                    startDate = extractor->extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
+                    configureQueuesAndIndexAfterToken(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
+                    index = mainIndexOfDatesAndTimes.back();
             } else {
                 editDateOrTimeInInvertedCommas(nextWord, index + 1, true, false);
             }
-        } else if(unitString == TOKEN_FROM){
+        } else if(unitString == TOKEN_FROM||unitString == TOKEN_SHORTCUT_FROM){
             if(index + 1 == lengthOfTokenizedUserEntry){
                 break;
             }
@@ -358,13 +365,15 @@ TMTask TMParser::parseTimedTaskInfo(){
                 dateChecker->isNextDay(index + 1, _tokenizedUserEntry)||
                 timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)||
                 timeChecker->isTimeWithoutPeriod(nextWord)||
-                dateChecker->isToday(nextWord)||dateChecker->isTomorrow(nextWord)) {
+                dateChecker->isToday(nextWord)||dateChecker->isTomorrow(nextWord)||
+                dateChecker->isSpacedDate(index + 1, _tokenizedUserEntry)) {
                     extractor->extractDateAndOrTime(index + 1, indexOfDatesAndTimes, startDate, startTime, _tokenizedUserEntry);
                     configureQueuesAndIndexAfterToken(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
+                    index = mainIndexOfDatesAndTimes.back();
             } else {
                 editDateOrTimeInInvertedCommas(nextWord, index + 1, true, true);
             }
-        } else if (unitString == TOKEN_TO||unitString == TOKEN_DASH){
+        } else if (unitString == TOKEN_TO||unitString == TOKEN_SHORTCUT_TO||unitString == TOKEN_DASH){
             if(index + 1 == lengthOfTokenizedUserEntry){
                 break;
             }
@@ -374,9 +383,11 @@ TMTask TMParser::parseTimedTaskInfo(){
                 dateChecker->isNextDay(index + 1, _tokenizedUserEntry)||
                 timeChecker->is12HTime(nextWord)||timeChecker->is24HTime(nextWord)||
                 timeChecker->isTimeWithoutPeriod(nextWord)||
-                dateChecker->isToday(nextWord)||dateChecker->isTomorrow(nextWord)) {
+                dateChecker->isToday(nextWord)||dateChecker->isTomorrow(nextWord)||
+                dateChecker->isSpacedDate(index + 1, _tokenizedUserEntry)) {
                     extractor->extractDateAndOrTime(index + 1, indexOfDatesAndTimes, endDate, endTime, _tokenizedUserEntry);
                     configureQueuesAndIndexAfterToken(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index);
+                    index = mainIndexOfDatesAndTimes.back();
             } else {
                 editDateOrTimeInInvertedCommas(nextWord, index + 1, true, true);
             }
@@ -447,7 +458,7 @@ TMTask TMParser::parseUndatedTaskInfo() {
 
         unitString = formatConverter->returnLowerCase(_tokenizedUserEntry[index]);
 
-        if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY) {
+        if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY||unitString == TOKEN_SHORTCUT_BEFORE) {
             if(index + 1 == lengthOfVector){
                 break;
             }
@@ -459,18 +470,19 @@ TMTask TMParser::parseUndatedTaskInfo() {
             }
             nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
             editDateOrTimeInInvertedCommas(nextWord, index + 1, true, false);
-        } else if(unitString == TOKEN_AT){
+        } else if(unitString == TOKEN_AT||unitString == TOKEN_SHORTCUT_AT){
             if(index + 1 == lengthOfVector){
                 break;
             }
             nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
             editDateOrTimeInInvertedCommas(nextWord, index, false, true);
-        } else if(unitString == TOKEN_FROM||unitString == TOKEN_TO){
-            if(index + 1 == lengthOfVector){
+        } else if(unitString == TOKEN_FROM||unitString == TOKEN_SHORTCUT_FROM||
+            unitString == TOKEN_TO||unitString == TOKEN_SHORTCUT_TO){
+                if(index + 1 == lengthOfVector){
                 break;
-            }
-            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
-            editDateOrTimeInInvertedCommas(nextWord, index + 1, true, true);
+                }
+                nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
+                editDateOrTimeInInvertedCommas(nextWord, index + 1, true, true);
             //index = index + 1;?
         } else {
             editDateOrTimeInInvertedCommas(unitString, index, true, false);
@@ -535,7 +547,9 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
                     }
 
                     if(indexOfLastExtracted + 1 != lengthOfTokenizedUserEntry){
-                        if(_tokenizedUserEntry[indexOfLastExtracted + 1] == "-"){
+                        if(_tokenizedUserEntry[indexOfLastExtracted + 1] == TOKEN_DASH||
+                            _tokenizedUserEntry[indexOfLastExtracted + 1] == TOKEN_SHORTCUT_TO||
+                            _tokenizedUserEntry[indexOfLastExtracted + 1] == TOKEN_TO){
                             if(indexOfLastExtracted + 2 != lengthOfTokenizedUserEntry){
                                 extractor->extractDateAndOrTime(indexOfLastExtracted + 2, indexOfDatesAndTimes, endDate, endTime, _tokenizedUserEntry);
                                 if((endDate != "")||(endTime != "")){
@@ -572,7 +586,9 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo(){
                 }
 
                 if(indexOfLastExtracted + 1 != lengthOfTokenizedUserEntry){
-                    if(_tokenizedUserEntry[indexOfLastExtracted + 1] == "-"){
+                    if(_tokenizedUserEntry[indexOfLastExtracted + 1] == TOKEN_DASH||
+                       _tokenizedUserEntry[indexOfLastExtracted + 1] == TOKEN_SHORTCUT_TO||
+                       _tokenizedUserEntry[indexOfLastExtracted + 1] == TOKEN_TO) {
                         if(indexOfLastExtracted + 2 != lengthOfTokenizedUserEntry){
                             extractor->extractDateAndOrTime(indexOfLastExtracted + 2, indexOfDatesAndTimes, endDate, endTime, _tokenizedUserEntry);
                             if((endDate != "")||(endTime != "")){
@@ -663,14 +679,16 @@ void TMParser::editDateOrTimeInInvertedCommas(std::string nextWord, int index, b
                 timeChecker->isTimeWithoutPeriod(nextWord)||dateChecker->isNumericDate(nextWord)||
                 dateChecker->isDay(nextWord)||dateChecker->isOneDelimitedDate(nextWord)||
                 isNextDayInInvertedCommas(nextWord)||
-                dateChecker->isToday(nextWord)||dateChecker->isTomorrow(nextWord)){
-                _tokenizedUserEntry[index] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
+                dateChecker->isToday(nextWord)||dateChecker->isTomorrow(nextWord)||
+                isSpacedDateInInvertedCommas(nextWord)){
+                    _tokenizedUserEntry[index] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
             }
         } else if(checkDate) {
             if(dateChecker->isNumericDate(nextWord)||dateChecker->isDay(nextWord)||
                dateChecker->isOneDelimitedDate(nextWord)||isNextDayInInvertedCommas(nextWord)||
-               dateChecker->isToday(nextWord)||dateChecker->isTomorrow(nextWord)){
-                _tokenizedUserEntry[index] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
+               dateChecker->isToday(nextWord)||dateChecker->isTomorrow(nextWord)||
+               isSpacedDateInInvertedCommas(nextWord)){
+                    _tokenizedUserEntry[index] = nextWordOriginal.substr(1,nextWordOriginal.length()-2);
             }
         
         } else if(checkTime) {
@@ -693,7 +711,7 @@ bool TMParser::isNextDayInInvertedCommas(std::string nextWord) {
 
     std::string firstPart = nextWord.substr(0,4);
 
-    if(firstPart != TOKEN_NEXT) {
+    if(!(firstPart == TOKEN_NEXT||firstPart == TOKEN_SHORTCUT_NEXT)) {
         return false;
     }
 
@@ -704,6 +722,19 @@ bool TMParser::isNextDayInInvertedCommas(std::string nextWord) {
     } else {
         return false;
     }
+}
+
+bool TMParser::isSpacedDateInInvertedCommas(std::string nextWord) {
+    DateChecker *dateChecker = DateChecker::getInstance();
+    std::vector<std::string> tokenizedNextWord;
+    std::istringstream iss(nextWord);
+    std::string token;
+
+    while(iss >> token){
+        tokenizedNextWord.push_back(token);
+    }
+
+    return dateChecker->isSpacedDate(0, tokenizedNextWord);
 }
 
 void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& startTime, std::string& endDate, std::string& endTime, TaskType& taskType){
@@ -764,37 +795,103 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
             //else there is no endTime but there's endDate then endTime will be 2359
             if(endDate == ""){
                 //if endTime = 0000 plus 1 more day
+                //IF TODAY'S DATE MUST ADD ONE YEAR
+                //CONFIGUREDAYMONTH DOESN'T DO THAT NOW
+                //DONE
                 configureDayMonth(startDate);
+                if(startDate == formatConverter->dateFromBoostToDDMMYYYY(currentDate())) {
+                    startDate = addNYearsFromDate(startDate,1);
+                }
+
                 if(timeChecker->isTimeWithoutPeriod(endTime)) {
                     configureEndTimeWithoutPeriods(endTime);
                 }
+
                 endDate = startDate;
+
                 if(endTime == "0000") {
                     endDate = addNDaysFromDate(endDate, 1);
                 }
-            } else if(endTime == ""){
+
+            } else if(endTime == "") {
+
                 if(startDate.length() == 4 && endDate.length() == 4) {
                     configureStartDayMonthEndDayMonth(startDate, endDate);
+                } else if(startDate.length() == 4 && endDate.length() == 8) {
+                    //IF 4 8 LET STARTDATE TAKE THE YEAR OF 8 AND IF >= MINUS 1 YEAR
+                    startDate = startDate + endDate.substr(4);
+                } else if(startDate.length() == 8 && endDate.length() == 4) {
+                    //IF 8 4 LET ENDDATE TAKE THE YEAR OF 8 AND IF <= PLUS 1 YEAR
+                    endDate = endDate + startDate.substr(4);
+                    //INTRODUCE CHECKER!
                 }
-                //need to consider 4 8, 8 4
+
                 endTime = "2359";
+
             } else {
+                //startDate endDate endTime
                 if(startDate.length() == 4 && endDate.length() == 4) {
+                    //startDate not occured i.e. from tomorrow onwards
+                    //endDate more than or equal to startDate
+                    //if startDate == endDate and endTime == 0000 add 1 more YEAR
                     configureStartDayMonthEndDayMonth(startDate, endDate);
+                } else if (startDate.length() == 4 && endDate.length() == 8) {
+                    startDate = startDate + endDate.substr(4);
+                    //if startDate not less than endDate, startDate - 1 year
+                    //OR if startDate == endDate && endTime == 0000 startDate - 1 year
+                } else if (startDate.length() == 8 && endDate.length() == 4) {
+                    endDate = endDate + startDate.substr(4);
+                    //if endDate not more than startDate endDate + 1 year
+                    //OR if endDate == startDate endDate == 0000, endDate + 1 year
                 }
-                //need to consider 4 8, 8 4
+                
+                //MAY NEED TO REMOVE
                 configureEndTimeWithoutPeriods(endTime);
-                //same start and end date end time 0000 then add one more day to next day
+                
             }
         } else if(startDate == "") {
             //startTime only
             //no endDate got endTime then should be today till today/tomorrow
             //got endDate no endTime
             if(endDate == "") {
-                //WHAT ABOUT FOR TIME WITH PERIOD TIME WITHOUT PERIOD
+
                 if(timeChecker->isTimeWithoutPeriod(startTime) && timeChecker->isTimeWithoutPeriod(endTime)) {
                     configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
+                    //IF STARTTIME HAS PASSED <= CURRENTTIME ADD ONE DAY TO STARTDATE AND ENDDATE
+                } else if (timeChecker->isTimeWithoutPeriod(startTime) && endTime.length() == 4) {
+
+                    std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(startTime + "am");
+                    std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(startTime + "pm");
+
+                    if(endTime == "0000") {
+                        startTime = timeInPM;
+                    } else if (timeInPM < endTime) {
+                        startTime = timeInPM;
+                    } else if (timeInAM < endTime) {
+                        startTime = timeInAM;
+                    } else {
+                        startTime = timeInPM;
+                    }
+                } else if (startTime.length() == 4 && timeChecker->isTimeWithoutPeriod(endTime)) {
+
+                    std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(endTime + "am");
+                    std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(endTime + "pm");
+
+                    if(startTime == "0000") {
+                        if(timeInAM != "0000") {
+                            endTime = timeInAM; 
+                        } else {
+                            endTime = timeInPM;
+                        }
+                    } else if (timeInAM > startTime) {
+                        endTime = timeInAM;
+                    } else if (timeInPM > startTime) {
+                        endTime = timeInPM;
+                    } else {
+                        endTime = timeInAM;
+                    }
                 }
+
                 startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
 
                 //if time passed then start date is tomorrow's date
@@ -809,6 +906,9 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
                 }
 
             } else if (endTime == "") {
+                //startTime endDate
+                //today or tomorrow if time has passed
+                //endDate may be 4 or 8
                 if(timeChecker->isTimeWithoutPeriod(startTime)) {
                     configureStartTimeWithoutPeriods(startTime);
                 }
@@ -818,27 +918,70 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
                    startDate = addNDaysFromDate(startDate, 1);
                 }
 
-                configureStartDayMonthEndDayMonth(startDate.substr(0,4),endDate);
+                if(endDate.length() == 4) {
+                    configureStartDayMonthEndDayMonth(startDate.substr(0,4),endDate);
+                }
                 endTime = "2359";
             } else {
                 //startTime endDate endTime
                 //startDate = endDate or one day earlier
                 if(timeChecker->isTimeWithoutPeriod(startTime) && timeChecker->isTimeWithoutPeriod(endTime)) {
                     configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
+                } else if (timeChecker->isTimeWithoutPeriod(startTime) && endTime.length() == 4) {
+
+                    std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(startTime + "am");
+                    std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(startTime + "pm");
+
+                    if(endTime == "0000") {
+                        startTime = timeInPM;
+                    } else if (timeInPM < endTime) {
+                        startTime = timeInPM;
+                    } else if (timeInAM < endTime) {
+                        startTime = timeInAM;
+                    } else {
+                        startTime = timeInPM;
+                    }
+                } else if (startTime.length() == 4 && timeChecker->isTimeWithoutPeriod(endTime)) {
+
+                    std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(endTime + "am");
+                    std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(endTime + "pm");
+
+                    if(startTime == "0000") {
+                        if(timeInAM != "0000") {
+                            endTime = timeInAM; 
+                        } else {
+                            endTime = timeInPM;
+                        }
+                    } else if (timeInAM > startTime) {
+                        endTime = timeInAM;
+                    } else if (timeInPM > startTime) {
+                        endTime = timeInPM;
+                    } else {
+                        endTime = timeInAM;
+                    }
                 }
+
                 startDate = endDate;
+
                 if(startTime >= endTime){
-                    
+
                     startDate = substractNDaysFromDate(startDate,1);
                 }
             }
         } else {
             //startTime and startDate are found
             if(endTime == ""){
-                configureStartDayMonthEndDayMonth(startDate, endDate);
+                //startDate startTime endDate 2359
+                //4 8
+                //8 4
+                if(startDate.length() == 4 && endDate.length() == 4) {
+                    configureStartDayMonthEndDayMonth(startDate, endDate);
+                }
                 endTime = "2359";
             } else if (endDate == ""){
-                //start Date startTime endTime
+                //startDate startTime endTime
+                //if today's date find next year's date > currentDate
+                //configure TIME!
                 configureDayMonth(startDate);
                 if(timeChecker->isTimeWithoutPeriod(endTime) && timeChecker->isTimeWithoutPeriod(startTime)) {
                     configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
@@ -900,18 +1043,18 @@ void TMParser::configureStartDayMonthEndDayMonth(std::string& startDate, std::st
 
     startDate = stringStartDate;
 
-    stringStartDate = formatConverter->dateFromNumericToBoostFormat(stringStartDate);
-    stringEndDate = formatConverter->dateFromNumericToBoostFormat(stringEndDate);
-    boost::gregorian::date boostStartDate = boost::gregorian::from_uk_string(stringStartDate);
-    boost::gregorian::date boostEndDate = boost::gregorian::from_uk_string(stringEndDate);
+    std::string delimitedStartDate = formatConverter->dateFromNumericToBoostFormat(stringStartDate);
+    std::string delimitedEndDate = formatConverter->dateFromNumericToBoostFormat(stringEndDate);
+    boost::gregorian::date boostStartDate = boost::gregorian::from_uk_string(delimitedStartDate);
+    boost::gregorian::date boostEndDate = boost::gregorian::from_uk_string(delimitedEndDate);
 
     while(boostEndDate < boostStartDate) {
         stringEndDate = addNYearsFromDate(stringEndDate, 1);
-        stringEndDate = formatConverter->dateFromNumericToBoostFormat(stringEndDate);
-        boostEndDate = boost::gregorian::from_uk_string(stringEndDate);
+        delimitedEndDate = formatConverter->dateFromNumericToBoostFormat(stringEndDate);
+        boostEndDate = boost::gregorian::from_uk_string(delimitedEndDate);
     }
 
-    endDate = formatConverter->dateFromBoostToDDMMYYYY(boostEndDate);
+    endDate = stringEndDate;
 
     return;
 }

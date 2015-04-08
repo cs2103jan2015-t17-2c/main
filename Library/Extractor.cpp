@@ -25,8 +25,8 @@ std::string Extractor::extractDayOrNumericDateOrDelimitedDate(int index, std::qu
     } else if(dateChecker->isOneDelimitedDate(stringAfterToken)) {
         char delimiter = dateChecker->returnDelimiter(stringAfterToken);
         startDate = extractDelimitedDate(index,indexOfDatesAndTimes,tokenizedUserEntry,delimiter);
-    } else {
-        //found on but cannot find following date or day
+    } else if(dateChecker->isSpacedDate(index, tokenizedUserEntry)){
+        startDate = extractSpacedDate(index, indexOfDatesAndTimes, tokenizedUserEntry);
     }
 
     return startDate;
@@ -75,6 +75,26 @@ std::string Extractor::extractDelimitedDate(int index, std::queue<int>& indexOfD
 
     indexOfDatesAndTimes.push(index);
     return day + month + year;
+}
+
+//Preconditions: isSpacedDate true
+std::string Extractor::extractSpacedDate(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    DateChecker *dateChecker = DateChecker::getInstance();
+    std::string day = tokenizedUserEntry[index];
+    std::string month = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
+
+    if(day.length() == 1){
+        day = "0" + day;
+    }
+
+
+    month = formatConverter->monthFromWrittenToNumeric(month);
+
+    indexOfDatesAndTimes.push(index);
+    indexOfDatesAndTimes.push(index + 1);
+
+    return day + month;
 }
 
 std::string Extractor::extractToday(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry) {
@@ -164,14 +184,19 @@ void Extractor::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAnd
 
     int lengthOfTokenizedUserEntry = tokenizedUserEntry.size();
 
-    if(dateChecker->isDay(stringAfterToken)||dateChecker->isNumericDate(stringAfterToken)||dateChecker->isOneDelimitedDate(stringAfterToken)) {
+    if(dateChecker->isDay(stringAfterToken)||dateChecker->isNumericDate(stringAfterToken)||
+        dateChecker->isOneDelimitedDate(stringAfterToken)||
+        dateChecker->isSpacedDate(index, tokenizedUserEntry)) {
         extractedDate = extractDayOrNumericDateOrDelimitedDate(index, indexOfDatesAndTimes, tokenizedUserEntry);
         
+        index = indexOfDatesAndTimes.back();
+
         if(index + 1 != lengthOfTokenizedUserEntry) {
             std::string stringAfterDate = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
             
-            if(timeChecker->is12HTime(stringAfterDate)||timeChecker->is24HTime(stringAfterDate)||timeChecker->isTimeWithoutPeriod(stringAfterDate)) {
-                extractedTime = extractTime(index + 1, indexOfDatesAndTimes, tokenizedUserEntry);
+            if(timeChecker->is12HTime(stringAfterDate)||timeChecker->is24HTime(stringAfterDate)||
+                timeChecker->isTimeWithoutPeriod(stringAfterDate)) {
+                    extractedTime = extractTime(index + 1, indexOfDatesAndTimes, tokenizedUserEntry);
             }
         }
     } else if(dateChecker->isNextDay(index, tokenizedUserEntry)) {
@@ -191,8 +216,10 @@ void Extractor::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAnd
         if(index + 1 != lengthOfTokenizedUserEntry){
 
             std::string stringAfterTime = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
-            if(dateChecker->isNumericDate(stringAfterTime)||dateChecker->isDay(stringAfterTime)||dateChecker->isOneDelimitedDate(stringAfterTime)){
-                extractedDate = extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, tokenizedUserEntry);
+            if(dateChecker->isNumericDate(stringAfterTime)||dateChecker->isDay(stringAfterTime)||
+                dateChecker->isOneDelimitedDate(stringAfterTime)||
+                dateChecker->isSpacedDate(index + 1, tokenizedUserEntry)){
+                    extractedDate = extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, tokenizedUserEntry);
             } else if(dateChecker->isNextDay(index + 1, tokenizedUserEntry)){
                 extractedDate = extractNextDay(index + 1, indexOfDatesAndTimes, tokenizedUserEntry);
             }
