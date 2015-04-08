@@ -134,8 +134,11 @@ namespace TMGUI {
 		}
 
 		void displayTasks(std::vector<TMTask> taskList, int index, int taskPosition){
-				ListViewItem^ defaultEntry;
-		
+			
+			TMExecutor* exe = TMExecutor::getInstance();
+			std::vector<int> indexes = exe->getPositionIndexes();	
+
+			ListViewItem^ defaultEntry;
 				defaultEntry = gcnew ListViewItem(Convert::ToString(index));
 				defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskDescription()).c_str() )));
 				if(taskList[taskPosition].getTaskType() == TaskType ::WithEndDateTime){
@@ -193,6 +196,13 @@ namespace TMGUI {
 						defaultEntry->SubItems->Add("!");
 						defaultEntry->Font = gcnew System::Drawing::Font ("Corbel",11,FontStyle :: Bold);
 					
+					}
+				}
+				
+				std::vector<int>::iterator iter;
+				for (iter = indexes.begin(); iter != indexes.end(); ++iter){
+					if(index == (*iter)){
+						defaultEntry -> BackColor = Color :: Yellow;
 					}
 				}
 
@@ -501,20 +511,9 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 					
 					 exe->executeMain(unmanaged);
 					 
-					std::vector<int> indexes = exe->getPositionIndexes();
-					
-					if (indexes.size() != 0) {
-						std::vector<int>::iterator iter;
-						std::ostringstream oss;
-						for (iter = indexes.begin(); iter != indexes.end(); ++iter) {
-							oss << *iter << " ";
-						}
-
-						std::string totalStatus = exe->returnResultOfExecution() + oss.str();
-						statusDisplay->Text = gcnew String(totalStatus.c_str());
-					} else {
-						statusDisplay->Text = gcnew String(exe->returnResultOfExecution().c_str());
-					}
+				
+					statusDisplay->Text = gcnew String(exe->returnResultOfExecution().c_str());
+				
 					
 					 TMDisplay display = exe->getCurrentDisplay();
 					
