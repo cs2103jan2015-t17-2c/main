@@ -90,6 +90,10 @@ namespace TMGUI {
 				"Start Date: " + gcnew String(task.getTaskTime().getStartDate().c_str()) + "\t\t\t" + 
 				"Start Time: " + gcnew String(task.getTaskTime().getStartTime().c_str());
 			}
+
+			if(task.getTaskType() == TaskType :: Invalid){
+				statusDisplay->Text = "Invalid time, please re-enter task time.";
+			}
 		}
 
 		std::vector<TMTask> initiateDefaultTasks(TMTaskList taskList){
