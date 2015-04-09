@@ -785,287 +785,282 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
 
     } else if((startDate != ""||startTime != "") && (endDate != ""||endTime != "")) {
         taskType = TaskType::WithPeriod;
-        //startDate only
-        if(startTime == ""){
+        
+        if(startTime == "" && endDate == "") {
+            //startDate endTime
+            //startTime = 0000 endDate = startDate
+
             startTime = "0000";
+            
+            configureDayMonth(startDate);
 
-            //if no endDate but there's endTime then endDate will be startDate
-            // add 1 more day to end date if end time 0000
+            //if today's date add 1 more year
+            if(startDate == formatConverter->dateFromBoostToDDMMYYYY(currentDate())) {
+                startDate = addNYearsFromDate(startDate,1);
+             }
 
-            //else there is no endTime but there's endDate then endTime will be 2359
-            if(endDate == ""){
-                //if endTime = 0000 plus 1 more day
-                //IF TODAY'S DATE MUST ADD ONE YEAR
-                //CONFIGUREDAYMONTH DOESN'T DO THAT NOW
-                //DONE
-                configureDayMonth(startDate);
-                if(startDate == formatConverter->dateFromBoostToDDMMYYYY(currentDate())) {
-                    startDate = addNYearsFromDate(startDate,1);
-                }
+             if(timeChecker->isTimeWithoutPeriod(endTime)) {
+                configureEndTimeWithoutPeriods(endTime);
+             }
 
-                if(timeChecker->isTimeWithoutPeriod(endTime)) {
-                    configureEndTimeWithoutPeriods(endTime);
-                }
+             endDate = startDate;
 
-                endDate = startDate;
+             //if endTime = 0000 plus 1 more day
+             if(endTime == "0000") {
+                endDate = addNDaysFromDate(endDate, 1);
+             }
+        
+        } else if(startTime == "" && endTime == "") {
+            //startDate endDate
+            
+            startTime = "0000";
+            endTime = "2359";
 
-                if(endTime == "0000") {
-                    endDate = addNDaysFromDate(endDate, 1);
-                }
-
-            } else if(endTime == "") {
-
-                if(startDate.length() == 4 && endDate.length() == 4) {
-                    configureStartDayMonthEndDayMonth(startDate, endDate);
-                } else if(startDate.length() == 4 && endDate.length() == 8) {
-                    //IF 4 8 LET STARTDATE TAKE THE YEAR OF 8 AND IF >= MINUS 1 YEAR
-                    startDate = startDate + endDate.substr(4);
-                } else if(startDate.length() == 8 && endDate.length() == 4) {
+            if(startDate.length() == 4 && endDate.length() == 4) {
+                configureStartDayMonthEndDayMonth(startDate, endDate);
+            } else if(startDate.length() == 4 && endDate.length() == 8) {
+                //IF 4 8 LET STARTDATE TAKE THE YEAR OF 8 AND IF >= MINUS 1 YEAR
+                startDate = startDate + endDate.substr(4);
+            } else if(startDate.length() == 8 && endDate.length() == 4) {
                     //IF 8 4 LET ENDDATE TAKE THE YEAR OF 8 AND IF <= PLUS 1 YEAR
                     endDate = endDate + startDate.substr(4);
                     //INTRODUCE CHECKER!
-                }
-
-                endTime = "2359";
-
-            } else {
-                //startDate endDate endTime
-                if(startDate.length() == 4 && endDate.length() == 4) {
-                    //startDate not occured i.e. from tomorrow onwards
-                    //endDate more than or equal to startDate
-                    //if startDate == endDate and endTime == 0000 add 1 more YEAR
-                    configureStartDayMonthEndDayMonth(startDate, endDate);
-                } else if (startDate.length() == 4 && endDate.length() == 8) {
-                    startDate = startDate + endDate.substr(4);
-                    //if startDate not less than endDate, startDate - 1 year
-                    //OR if startDate == endDate && endTime == 0000 startDate - 1 year
-                } else if (startDate.length() == 8 && endDate.length() == 4) {
-                    endDate = endDate + startDate.substr(4);
-                    //if endDate not more than startDate endDate + 1 year
-                    //OR if endDate == startDate endDate == 0000, endDate + 1 year
-                }
-                
-                //MAY NEED TO REMOVE
-                configureEndTimeWithoutPeriods(endTime);
-                
             }
-        } else if(startDate == "") {
+
+        } else if (startTime == "" && !(endTime == ""||endDate == "")) {
+            //startDate endDate endTime
+            if(startDate.length() == 4 && endDate.length() == 4) {
+                //startDate not occured i.e. from tomorrow onwards
+                //endDate more than or equal to startDate
+                //if startDate == endDate and endTime == 0000 add 1 more YEAR
+                configureStartDayMonthEndDayMonth(startDate, endDate);
+            } else if (startDate.length() == 4 && endDate.length() == 8) {
+                startDate = startDate + endDate.substr(4);
+                //if startDate not less than endDate, startDate - 1 year
+                //OR if startDate == endDate && endTime == 0000 startDate - 1 year
+            } else if (startDate.length() == 8 && endDate.length() == 4) {
+                endDate = endDate + startDate.substr(4);
+                //if endDate not more than startDate endDate + 1 year
+                //OR if endDate == startDate endDate == 0000, endDate + 1 year
+            }
+                
+            //MAY NEED TO REMOVE
+            configureEndTimeWithoutPeriods(endTime);
+               
+        } else if(startDate == "" && endDate == "") {
             //startTime only
             //no endDate got endTime then should be today till today/tomorrow
             //got endDate no endTime
-            if(endDate == "") {
+            if(timeChecker->isTimeWithoutPeriod(startTime) && timeChecker->isTimeWithoutPeriod(endTime)) {
+                configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
+                //IF STARTTIME HAS PASSED <= CURRENTTIME ADD ONE DAY TO STARTDATE AND ENDDATE
+            } else if (timeChecker->isTimeWithoutPeriod(startTime) && endTime.length() == 4) {
+                std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(startTime + "am");
+                std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(startTime + "pm");
+                
+                if(endTime == "0000") {
+                    startTime = timeInPM;
+                } else if (timeInPM < endTime) {
+                    startTime = timeInPM;
+                } else if (timeInAM < endTime) {
+                    startTime = timeInAM;
+                } else {
+                    startTime = timeInPM;
+                }
+            } else if (startTime.length() == 4 && timeChecker->isTimeWithoutPeriod(endTime)) {
+                std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(endTime + "am");
+                std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(endTime + "pm");
 
-                if(timeChecker->isTimeWithoutPeriod(startTime) && timeChecker->isTimeWithoutPeriod(endTime)) {
-                    configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
-                    //IF STARTTIME HAS PASSED <= CURRENTTIME ADD ONE DAY TO STARTDATE AND ENDDATE
-                } else if (timeChecker->isTimeWithoutPeriod(startTime) && endTime.length() == 4) {
-
-                    std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(startTime + "am");
-                    std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(startTime + "pm");
-
-                    if(endTime == "0000") {
-                        startTime = timeInPM;
-                    } else if (timeInPM < endTime) {
-                        startTime = timeInPM;
-                    } else if (timeInAM < endTime) {
-                        startTime = timeInAM;
+                if(startTime == "0000") {
+                    if(timeInAM != "0000") {
+                        endTime = timeInAM; 
                     } else {
-                        startTime = timeInPM;
-                    }
-                } else if (startTime.length() == 4 && timeChecker->isTimeWithoutPeriod(endTime)) {
-
-                    std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(endTime + "am");
-                    std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(endTime + "pm");
-
-                    if(startTime == "0000") {
-                        if(timeInAM != "0000") {
-                            endTime = timeInAM; 
-                        } else {
-                            endTime = timeInPM;
-                        }
-                    } else if (timeInAM > startTime) {
-                        endTime = timeInAM;
-                    } else if (timeInPM > startTime) {
-                        endTime = timeInPM;
-                    } else {
-                        endTime = timeInAM;
-                    }
-                }
-
-                startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
-
-                //if time passed then start date is tomorrow's date
-                if(startTime <= currentTime()) {
-                    startDate = addNDaysFromDate(startDate, 1);
-                }
-
-                if(endTime > startTime){
-                    endDate = startDate;
-                } else { 
-                    endDate = addNDaysFromDate(startDate,1);
-                }
-
-            } else if (endTime == "") {
-                //startTime endDate
-                //today or tomorrow if time has passed
-                //endDate may be 4 or 8
-                if(timeChecker->isTimeWithoutPeriod(startTime)) {
-                    configureStartTimeWithoutPeriods(startTime);
-                }
-                startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
-                //if start time has passed
-                if(startTime <= currentTime()) {
-                   startDate = addNDaysFromDate(startDate, 1);
-                }
-
-                if(endDate.length() == 4) {
-                    configureStartDayMonthEndDayMonth(startDate.substr(0,4),endDate);
-                }
-                endTime = "2359";
-            } else {
-                //startTime endDate endTime
-                //startDate = endDate or one day earlier
-                if(timeChecker->isTimeWithoutPeriod(startTime) && timeChecker->isTimeWithoutPeriod(endTime)) {
-                    configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
-                } else if (timeChecker->isTimeWithoutPeriod(startTime) && endTime.length() == 4) {
-
-                    std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(startTime + "am");
-                    std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(startTime + "pm");
-
-                    if(endTime == "0000") {
-                        startTime = timeInPM;
-                    } else if (timeInPM < endTime) {
-                        startTime = timeInPM;
-                    } else if (timeInAM < endTime) {
-                        startTime = timeInAM;
-                    } else {
-                        startTime = timeInPM;
-                    }
-                } else if (startTime.length() == 4 && timeChecker->isTimeWithoutPeriod(endTime)) {
-
-                    std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(endTime + "am");
-                    std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(endTime + "pm");
-
-                    if(startTime == "0000") {
-                        if(timeInAM != "0000") {
-                            endTime = timeInAM; 
-                        } else {
-                            endTime = timeInPM;
-                        }
-                    } else if (timeInAM > startTime) {
-                        endTime = timeInAM;
-                    } else if (timeInPM > startTime) {
-                        endTime = timeInPM;
-                    } else if (timeInPM <= startTime && timeInAM <= startTime && endTime != "12") {
-                        endTime = timeInAM;
-                    } else if (timeInPM <= startTime && timeInAM <= startTime && endTime == "12") {
                         endTime = timeInPM;
                     }
-                }
-
-                startDate = endDate;
-
-                if(startTime >= endTime){
-
-                    startDate = substractNDaysFromDate(startDate,1);
+                } else if (timeInAM > startTime) {
+                    endTime = timeInAM;
+                } else if (timeInPM > startTime) {
+                    endTime = timeInPM;
+                } else {
+                    endTime = timeInAM;
                 }
             }
-        } else {
-            //startTime and startDate are found
-            if(endTime == ""){
-                //startDate startTime endDate 2359
-                //4 8
-                //8 4
-                if(timeChecker->isTimeWithoutPeriod(startTime)) {
-                    configureStartTimeWithoutPeriods(startTime);
-                }
+            
+            startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
 
-                if(startDate.length() == 4 && endDate.length() == 4) {
-                    configureStartDayMonthEndDayMonth(startDate, endDate);
-                } else if (startDate.length() == 4 && endDate.length() == 8) {
-                    startDate = startDate + endDate.substr(4);
-                    //if startDate not less than endDate, startDate - 1 year
-                    //OR if startDate == endDate && endTime == 0000 startDate - 1 year
-                    std::string delimitedStartDate = formatConverter->dateFromNumericToBoostFormat(startDate);
-                    std::string delimitedEndDate = formatConverter->dateFromNumericToBoostFormat(endDate);
-                    boost::gregorian::date boostStartDate = boost::gregorian::from_uk_string(delimitedStartDate);
-                    boost::gregorian::date boostEndDate = boost::gregorian::from_uk_string(delimitedEndDate);
+            //if time passed then start date is tomorrow's date
+            if(startTime <= currentTime()) {
+                startDate = addNDaysFromDate(startDate, 1);
+            }
 
-                    if(boostEndDate <= boostStartDate) {
-                        startDate = subtractNYearsFromDate(startDate, 1);
-                    } else if(boostStartDate == boostEndDate && endTime == "0000") {
-                        startDate = subtractNYearsFromDate(startDate, 1);
-                    }
-
-                } else if (startDate.length() == 8 && endDate.length() == 4) {
-                    endDate = endDate + startDate.substr(4);
-                    //if endDate not more than startDate endDate + 1 year
-                    //OR if endDate == startDate endDate == 0000, endDate + 1 year
-                    std::string delimitedStartDate = formatConverter->dateFromNumericToBoostFormat(startDate);
-                    std::string delimitedEndDate = formatConverter->dateFromNumericToBoostFormat(endDate);
-                    boost::gregorian::date boostStartDate = boost::gregorian::from_uk_string(delimitedStartDate);
-                    boost::gregorian::date boostEndDate = boost::gregorian::from_uk_string(delimitedEndDate);
-
-                    if(boostEndDate <= boostStartDate) {
-                        endDate = addNYearsFromDate(endDate, 1);
-                    } else if(boostStartDate == boostEndDate && endTime == "0000") {
-                        endDate = addNYearsFromDate(endDate, 1);
-                    }
-                }
-
-                endTime = "2359";
-            } else if (endDate == ""){
-                //startDate startTime endTime
-                //if today's date find next year's date > currentDate
-                //configure TIME!
-                configureDayMonth(startDate);
-
-                if(timeChecker->isTimeWithoutPeriod(endTime) && timeChecker->isTimeWithoutPeriod(startTime)) {
-                    configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
-                } else if (timeChecker->isTimeWithoutPeriod(startTime) && endTime.length() == 4) {
-
-                    std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(startTime + "am");
-                    std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(startTime + "pm");
-
-                    if(endTime == "0000") {
-                        startTime = timeInPM;
-                    } else if (timeInPM < endTime) {
-                        startTime = timeInPM;
-                    } else if (timeInAM < endTime) {
-                        startTime = timeInAM;
-                    } else {
-                        startTime = timeInPM;
-                    }
-                } else if (startTime.length() == 4 && timeChecker->isTimeWithoutPeriod(endTime)) {
-
-                    std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(endTime + "am");
-                    std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(endTime + "pm");
-
-                    if(startTime == "0000") {
-                        if(timeInAM != "0000") {
-                            endTime = timeInAM; 
-                        } else {
-                            endTime = timeInPM;
-                        }
-                    } else if (timeInAM > startTime) {
-                        endTime = timeInAM;
-                    } else if (timeInPM > startTime) {
-                        endTime = timeInPM;
-                    } else {
-                        endTime = timeInAM;
-                    }
-                }
-
+            if(endTime > startTime){
                 endDate = startDate;
-                if(endTime <= startTime){
-                    endDate = addNDaysFromDate(endDate,1);
+            } else { 
+                endDate = addNDaysFromDate(startDate,1);
+            }
+        
+        } else if (startDate == "" && endTime == "") {
+            //startTime endDate
+            //today or tomorrow if time has passed
+            //endDate may be 4 or 8
+            if(timeChecker->isTimeWithoutPeriod(startTime)) {
+                configureStartTimeWithoutPeriods(startTime);
+            }
+            
+            startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
+            //if start time has passed
+            
+            if(startTime <= currentTime()) {
+                startDate = addNDaysFromDate(startDate, 1);
+            }
+
+            if(endDate.length() == 4) {
+                configureStartDayMonthEndDayMonth(startDate.substr(0,4),endDate);
+            }
+                endTime = "2359";
+        } else if (startDate == "" && !(endDate == ""||endTime == "")){
+            //startTime endDate endTime
+            //startDate = endDate or one day earlier
+            if(timeChecker->isTimeWithoutPeriod(startTime) && timeChecker->isTimeWithoutPeriod(endTime)) {
+                configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
+            } else if (timeChecker->isTimeWithoutPeriod(startTime) && endTime.length() == 4) {
+
+                std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(startTime + "am");
+                std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(startTime + "pm");
+
+                if(endTime == "0000") {
+                    startTime = timeInPM;
+                } else if (timeInPM < endTime) {
+                    startTime = timeInPM;
+                } else if (timeInAM < endTime) {
+                    startTime = timeInAM;
+                } else {
+                    startTime = timeInPM;
                 }
-            } else {
-                //all attributes found
+            } else if (startTime.length() == 4 && timeChecker->isTimeWithoutPeriod(endTime)) {
+
+                std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(endTime + "am");
+                std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(endTime + "pm");
+
+                if(startTime == "0000") {
+                    if(timeInAM != "0000") {
+                        endTime = timeInAM; 
+                    } else {
+                        endTime = timeInPM;
+                    }
+                } else if (timeInAM > startTime) {
+                    endTime = timeInAM;
+                } else if (timeInPM > startTime) {
+                    endTime = timeInPM;
+                } else if (timeInPM <= startTime && timeInAM <= startTime && endTime != "12") {
+                    endTime = timeInAM;
+                } else if (timeInPM <= startTime && timeInAM <= startTime && endTime == "12") {
+                    endTime = timeInPM;
+                }
+            }
+            
+            startDate = endDate;
+
+            if(startTime >= endTime){
+                startDate = substractNDaysFromDate(startDate,1);
+            }
+
+        } else if (!(startDate == ""||startTime == "") && endTime == "") {
+            //startTime and startDate are found
+            //startDate startTime endDate 2359
+            //4 8
+            //8 4
+            if(timeChecker->isTimeWithoutPeriod(startTime)) {
+                configureStartTimeWithoutPeriods(startTime);
+            }
+
+            if(startDate.length() == 4 && endDate.length() == 4) {
                 configureStartDayMonthEndDayMonth(startDate, endDate);
-                if(timeChecker->isTimeWithoutPeriod(startTime) && timeChecker->isTimeWithoutPeriod(endTime)) {
-                    configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
+            } else if (startDate.length() == 4 && endDate.length() == 8) {
+                startDate = startDate + endDate.substr(4);
+                //if startDate not less than endDate, startDate - 1 year
+                //OR if startDate == endDate && endTime == 0000 startDate - 1 year
+                std::string delimitedStartDate = formatConverter->dateFromNumericToBoostFormat(startDate);
+                std::string delimitedEndDate = formatConverter->dateFromNumericToBoostFormat(endDate);
+                boost::gregorian::date boostStartDate = boost::gregorian::from_uk_string(delimitedStartDate);
+                boost::gregorian::date boostEndDate = boost::gregorian::from_uk_string(delimitedEndDate);
+
+                if(boostEndDate <= boostStartDate) {
+                    startDate = subtractNYearsFromDate(startDate, 1);
+                } else if(boostStartDate == boostEndDate && endTime == "0000") {
+                    startDate = subtractNYearsFromDate(startDate, 1);
                 }
+            
+            } else if (startDate.length() == 8 && endDate.length() == 4) {
+                endDate = endDate + startDate.substr(4);
+                //if endDate not more than startDate endDate + 1 year
+                //OR if endDate == startDate endDate == 0000, endDate + 1 year
+                std::string delimitedStartDate = formatConverter->dateFromNumericToBoostFormat(startDate);
+                std::string delimitedEndDate = formatConverter->dateFromNumericToBoostFormat(endDate);
+                boost::gregorian::date boostStartDate = boost::gregorian::from_uk_string(delimitedStartDate);
+                boost::gregorian::date boostEndDate = boost::gregorian::from_uk_string(delimitedEndDate);
+
+                if(boostEndDate <= boostStartDate) {
+                    endDate = addNYearsFromDate(endDate, 1);
+                } else if(boostStartDate == boostEndDate && endTime == "0000") {
+                    endDate = addNYearsFromDate(endDate, 1);
+                
+                }
+            }
+
+            endTime = "2359";
+        
+        } else if (!(startDate == ""||startTime == "") && endDate == ""){
+            //startDate startTime endTime
+            //if today's date find next year's date > currentDate
+            //configure TIME!
+            configureDayMonth(startDate);
+
+            if(timeChecker->isTimeWithoutPeriod(endTime) && timeChecker->isTimeWithoutPeriod(startTime)) {
+                configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
+            } else if (timeChecker->isTimeWithoutPeriod(startTime) && endTime.length() == 4) {
+
+                std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(startTime + "am");
+                std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(startTime + "pm");
+
+                if(endTime == "0000") {
+                    startTime = timeInPM;
+                } else if (timeInPM < endTime) {
+                    startTime = timeInPM;
+                } else if (timeInAM < endTime) {
+                    startTime = timeInAM;
+                } else {
+                    startTime = timeInPM;
+                }
+            } else if (startTime.length() == 4 && timeChecker->isTimeWithoutPeriod(endTime)) {
+
+                std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(endTime + "am");
+                std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(endTime + "pm");
+
+                if(startTime == "0000") {
+                    if(timeInAM != "0000") {
+                        endTime = timeInAM; 
+                    } else {
+                        endTime = timeInPM;
+                    }
+                } else if (timeInAM > startTime) {
+                    endTime = timeInAM;
+                } else if (timeInPM > startTime) {
+                    endTime = timeInPM;
+                } else {
+                    endTime = timeInAM;
+                }
+            }
+
+            endDate = startDate;
+            if(endTime <= startTime){
+                endDate = addNDaysFromDate(endDate,1);
+            }
+        } else {
+            //all attributes found
+            configureStartDayMonthEndDayMonth(startDate, endDate);
+            if(timeChecker->isTimeWithoutPeriod(startTime) && timeChecker->isTimeWithoutPeriod(endTime)) {
+                configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
             }
         }
     }
@@ -1084,14 +1079,13 @@ void TMParser::configureDayMonth(std::string& stringDate) {
     std::string stringCurrentDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
     std::string stringCurrentYear = stringCurrentDate.substr(4);
     stringDate = stringDate + stringCurrentYear;
+    std::string ddmm = stringDate.substr(0,4);
 
-    if(dateChecker->isUnoccurredDate(stringDate)) {
-        return;
-    } else {
-        //for 29 FEB!!!
+    if(!dateChecker->isUnoccurredDate(stringDate)) {
         stringDate = addNYearsFromDate(stringDate, 1);
-        return;
     }
+
+    return;
 }
 
 //preconditions date is only 4 digits in length
@@ -1252,22 +1246,6 @@ bool TMParser::isPositiveInteger(std::string token) {
         return false;
     }
 }
-/*
-bool TMParser::isPeriod(std::string token) {
-    if(token == PERIOD_HOUR||
-       token == PERIOD_HOURS||
-       token == PERIOD_DAY||
-       token == PERIOD_DAYS||
-       token == PERIOD_WEEK||
-       token == PERIOD_WEEKS||
-       token == PERIOD_MONTH||
-       token == PERIOD_MONTHS||
-       token == PERIOD_YEAR||
-       token == PERIOD_YEARS) {
-           return true; } else {
-               return false;}
-}
-*/
 
 int TMParser::numberOfWords(std::string remainingEntry) {
     int count = 0;
@@ -1368,6 +1346,7 @@ std::string TMParser::addNDaysFromDate(std::string date, int n){
 
 //preconditions ddmmyyyy
 //postconditions ddmmyyyy
+//if 29 feb it will find the first leap year if not this year
 std::string TMParser::addNYearsFromDate(std::string date, int n) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
     date = formatConverter->dateFromNumericToBoostFormat(date);
@@ -1381,17 +1360,19 @@ std::string TMParser::addNYearsFromDate(std::string date, int n) {
             ++year;
         }
 
+    finalBoostDate = *year;
+
     if(ddmm == "2802") {
         if(boost::gregorian::gregorian_calendar::is_leap_year(finalBoostDate.year())) {
             boost::gregorian::date_duration oneDay(1);
-            finalBoostDate = *year - oneDay;
+            finalBoostDate = finalBoostDate - oneDay;
         }
     } else if(ddmm == "2902") {
         while(!boost::gregorian::gregorian_calendar::is_leap_year(finalBoostDate.year())) {
             ++year;
+            finalBoostDate = *year;
         }
 
-        finalBoostDate = *year;
     }
 
     return formatConverter->dateFromBoostToDDMMYYYY(finalBoostDate);

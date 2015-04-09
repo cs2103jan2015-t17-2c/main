@@ -93,8 +93,6 @@ public:
     bool isValidInfo(std::string, std::string, std::string, std::string);
 
     bool isPositiveInteger(std::string);
-    //bool isPeriod(std::string);
-    //to test for date in other forms. define another function to convert 
 
     int numberOfWords(std::string);
 
