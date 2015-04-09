@@ -168,15 +168,14 @@ std::string FormatConverter::monthFromWrittenToNumeric(std::string month){
         return "11";
     } else if (month == "dec"||month == "december") {
         return "12";
-    } else {
-        return "-1";
     }
 }
 
 TMTask FormatConverter::convertStringToTMTask(std::string listEntry){
-    std::string taskDescription;
-
-    int unconfirmedBatchNumber;
+    
+	std::string stringTaskType;
+	std::string taskDescription;
+    std::string token;
 
     std::string startDay;
     std::string startMonth;
@@ -189,54 +188,94 @@ TMTask FormatConverter::convertStringToTMTask(std::string listEntry){
     std::string endTime;
 
     bool isCompleted;
+	bool isClashed;
     bool isConfirmed;
-    bool isClashed;
+	int unconfirmedBatchNumber;
 
-    std::string stringTaskType;
     TaskType taskType;
-
+    std::cout << "IN FUNCTION" << std::endl;
+    std::cout << listEntry << std::endl;
     std::istringstream iss(listEntry);
 
-    iss >> taskDescription;
+	iss >> stringTaskType;
+	taskType = convertStringToTaskType(stringTaskType);
+    std::cout << stringTaskType << std::endl;
+    
+	if (taskType != TaskType::Undated) {
 
-    iss >> unconfirmedBatchNumber;
+        iss >> token;
+       std::cout << token << std::endl;
+        while(token != "||") {  
+            std::cout << token << std::endl;
+            taskDescription = taskDescription + token + " ";
+            iss >> token;
+        }
 
-    iss >> startDay;
-    iss >> startMonth;
-    iss >> startYear;
-    iss >> startTime;
+        if(taskDescription != "") {
+            taskDescription.erase(taskDescription.end()-1);
+        }
 
-    iss >> endDay;
-    iss >> endMonth;
-    iss >> endYear;
-    iss >> endTime;
+		iss >> startDay;
+		iss >> startMonth;
+		iss >> startYear;
+		iss >> startTime;
 
-    iss >> isCompleted;
-    iss >> isConfirmed;
-    iss >> isClashed;
+		iss >> endDay;
+		iss >> endMonth;
+		iss >> endYear;
+		iss >> endTime;
 
-    iss >> stringTaskType;
-    taskType = convertStringToTaskType(stringTaskType);
+		iss >> isCompleted;
+		iss >> isClashed;
+		iss >> isConfirmed;
+		iss >> unconfirmedBatchNumber;
 
-    std::string startDate = startDay + "-" + startMonth + "-" + startYear;
-    std::string endDate = endDay + "-" + endMonth + "-" + endYear;
+		std::string startDate = startDay + "-" + startMonth + "-" + startYear;
+		std::string endDate = endDay + "-" + endMonth + "-" + endYear;
 
-    TMTaskTime taskTime(startDate, startTime, endDate, endTime);
-    TMTask task(taskDescription, taskTime, taskType);
+		TMTaskTime taskTime(startDate, startTime, endDate, endTime);
+		TMTask task(taskDescription, taskTime, taskType);
 
-    if(isCompleted){
-        task.setAsCompleted();
-    }
+		if(isCompleted){
+			task.setAsCompleted();
+		}
 
-    if(!isConfirmed){
-        task.setAsUnconfirmed();
-    }
+		if(!isConfirmed){
+			task.setAsUnconfirmed();
+		}
 
-    if(isClashed){
-        task.setAsClashed();
-    }
+		if(isClashed){
+			task.setAsClashed();
+		}
 
-    return task;
+		task.setUnconfirmedBatchNumber(unconfirmedBatchNumber);
+        std::cout << "reached end\n";
+		return task;
+	} else {
+		iss >> token;
+
+        while(token != "||"){
+		    std::cout << token << std::endl;
+            taskDescription = taskDescription + token + " ";
+            iss >> token;
+        }
+
+        if(taskDescription != "") {
+            taskDescription.erase(taskDescription.end()-1);
+        }
+
+		iss >> isCompleted;
+
+		TMTaskTime taskTime;
+		TMTask task(taskDescription, taskTime, taskType);
+		
+		if(isCompleted){
+			task.setAsCompleted();
+		}
+        std::cout << "reached end\n";
+		
+		return task;
+	}
 }
 
 //precondition: the string must be one of the 5 types in the exact same format

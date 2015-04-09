@@ -11,7 +11,7 @@ private:
 
 public:
     static TimeChecker* getInstance();
-    //12pm 1230pm 130am
+    //1pm 12pm 1230pm 130am
     bool is12HTime(std::string);
     bool isAM(std::string);
     bool isPM(std::string);
@@ -19,6 +19,9 @@ public:
     //0800 
     bool is24HTime(std::string);
 
+    bool isTimeWithoutPeriod(std::string);
+
     bool isPositiveInteger(std::string);
+    bool isInteger(std::string);
 };
 #endif

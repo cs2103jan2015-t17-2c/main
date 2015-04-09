@@ -17,7 +17,7 @@ TMTaskListStates* TMTaskListStates::getInstance() {
 
 TMTaskListStates::TMTaskListStates() {
 	TMTaskList taskList;
-	//taskList.loadFromFile();
+	taskList.determineLoadOrCreateFile();
 	addNewState(taskList);
 }
 

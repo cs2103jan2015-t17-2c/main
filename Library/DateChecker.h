@@ -21,13 +21,20 @@ public:
     //DDMMYY DDMMYYYY
     bool isNumericDate(std::string);
     
+    //check if date has passed
     bool isOneDelimitedDate(std::string);
     char returnDelimiter(std::string);
     bool isDelimitedDate(std::string, char);
+    bool isSpacedDate(int, std::vector<std::string>);
+
+    //DDMMYYYY
+    bool isUnoccurredDate(std::string);
 
     bool isMonth(std::string);
     bool isNumericMonth(std::string);
     bool isDay(std::string);
     bool isNextDay(int, std::vector<std::string>);
+    bool isTomorrow(std::string);
+    bool isToday(std::string);
 };
 #endif DATECHECKER_H

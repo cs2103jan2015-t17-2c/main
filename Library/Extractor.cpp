@@ -15,18 +15,18 @@ Extractor* Extractor::getInstance() {
 std::string Extractor::extractDayOrNumericDateOrDelimitedDate(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry){
     FormatConverter *formatConverter = FormatConverter::getInstance();
     DateChecker *dateChecker = DateChecker::getInstance();
-    std::string stringAfterOn = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
+    std::string stringAfterToken = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
     std::string startDate = "";
 
-    if(dateChecker->isNumericDate(stringAfterOn)){
+    if(dateChecker->isNumericDate(stringAfterToken)){
         startDate = extractNumericDate(index,indexOfDatesAndTimes, tokenizedUserEntry);
-    } else if(dateChecker->isDay(stringAfterOn)){
+    } else if(dateChecker->isDay(stringAfterToken)){
         startDate = extractDay(index,indexOfDatesAndTimes, tokenizedUserEntry);
-    } else if(dateChecker->isOneDelimitedDate(stringAfterOn)) {
-        char delimiter = dateChecker->returnDelimiter(stringAfterOn);
+    } else if(dateChecker->isOneDelimitedDate(stringAfterToken)) {
+        char delimiter = dateChecker->returnDelimiter(stringAfterToken);
         startDate = extractDelimitedDate(index,indexOfDatesAndTimes,tokenizedUserEntry,delimiter);
-    } else {
-        //found on but cannot find following date or day
+    } else if(dateChecker->isSpacedDate(index, tokenizedUserEntry)){
+        startDate = extractSpacedDate(index, indexOfDatesAndTimes, tokenizedUserEntry);
     }
 
     return startDate;
@@ -50,9 +50,11 @@ std::string Extractor::extractDelimitedDate(int index, std::queue<int>& indexOfD
     int positionOfNextKey = stringDate.find_first_of(key);
     day = stringDate.substr(0,positionOfNextKey);
     int lengthOfDay = day.length();
+
     if(lengthOfDay == 1){
         day = "0" + day;
     }
+
     stringDate = stringDate.substr(positionOfNextKey + 1); 
     positionOfNextKey = stringDate.find_first_of(key);
     
@@ -61,16 +63,10 @@ std::string Extractor::extractDelimitedDate(int index, std::queue<int>& indexOfD
         year = stringDate.substr(positionOfNextKey + 1);
     } else {
         month = stringDate;
-        std::string dateToday = formatConverter->dateFromBoostToDDMMYYYY(currentDate);
-        year = dateToday.substr(4);
     }
 
     if(dateChecker->isMonth(month)) {
         month = formatConverter->monthFromWrittenToNumeric(month);
-    }
-
-    if(month.length() == 1) {
-        month = "0" + month;
     }
 
     if(year.length() == 2) {
@@ -79,6 +75,41 @@ std::string Extractor::extractDelimitedDate(int index, std::queue<int>& indexOfD
 
     indexOfDatesAndTimes.push(index);
     return day + month + year;
+}
+
+//Preconditions: isSpacedDate true
+std::string Extractor::extractSpacedDate(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    DateChecker *dateChecker = DateChecker::getInstance();
+    std::string day = tokenizedUserEntry[index];
+    std::string month = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
+
+    if(day.length() == 1){
+        day = "0" + day;
+    }
+
+
+    month = formatConverter->monthFromWrittenToNumeric(month);
+
+    indexOfDatesAndTimes.push(index);
+    indexOfDatesAndTimes.push(index + 1);
+
+    return day + month;
+}
+
+std::string Extractor::extractToday(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    indexOfDatesAndTimes.push(index);
+    return formatConverter->dateFromBoostToDDMMYYYY(currentDate());
+}
+
+std::string Extractor::extractTomorrow(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    indexOfDatesAndTimes.push(index);
+    boost::gregorian::date today = currentDate();
+    boost::gregorian::date_duration oneDay(1);
+    boost::gregorian::date tomorrow = today + oneDay;
+    return formatConverter->dateFromBoostToDDMMYYYY(tomorrow);
 }
 
 //preconditions: isNextDay is true. used for deadline. comes after "before".
@@ -99,7 +130,7 @@ std::string Extractor::getDateFromNextDay(int index, std::vector<std::string> to
     boost::gregorian::greg_weekday day(dayOfWeek(stringDay));
     boost::gregorian::first_day_of_the_week_after fdaf(day);
     boost::gregorian::first_day_of_the_week_after firstSundayAfterToday(boost::gregorian::Sunday);
-    boost::gregorian::date dateTM = firstSundayAfterToday.get_date(currentDate);
+    boost::gregorian::date dateTM = firstSundayAfterToday.get_date(currentDate());
     dateTM = fdaf.get_date(dateTM);
     std::string tempDate = boost::gregorian::to_iso_string(dateTM);
 
@@ -113,7 +144,7 @@ std::string Extractor::extractDay(int index, std::queue<int>& indexOfDatesAndTim
     std::string day = formatConverter->returnLowerCase(tokenizedUserEntry[index]); 
     int dayInInteger = dayOfWeek(day);
     boost::gregorian::first_day_of_the_week_after fdaf(dayInInteger);
-    boost::gregorian::date dateInBoost = fdaf.get_date(currentDate);
+    boost::gregorian::date dateInBoost = fdaf.get_date(currentDate());
     std::string startDate = formatConverter->dateFromBoostToDDMMYYYY(dateInBoost);
     indexOfDatesAndTimes.push(index);
 
@@ -136,6 +167,9 @@ std::string Extractor::extractTime(int index, std::queue<int>& indexOfDatesAndTi
     } else if (timeChecker->is24HTime(stringAfterAt)){
         time = formatConverter->timeFrom24HourToHHMM(stringAfterAt);
         indexOfDatesAndTimes.push(index);
+    } else if (timeChecker->isTimeWithoutPeriod(stringAfterAt)) {
+        time = stringAfterAt;
+        indexOfDatesAndTimes.push(index);
     }
 
     return time;
@@ -147,47 +181,70 @@ void Extractor::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAnd
     TimeChecker *timeChecker = TimeChecker::getInstance();
     DateChecker *dateChecker = DateChecker::getInstance();
     std::string stringAfterToken = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
-    std::string date = "";
-    std::string time = "";
+
     int lengthOfTokenizedUserEntry = tokenizedUserEntry.size();
 
-    if(dateChecker->isDay(stringAfterToken)||dateChecker->isNumericDate(stringAfterToken)||dateChecker->isOneDelimitedDate(stringAfterToken)) {
-        date = extractDayOrNumericDateOrDelimitedDate(index, indexOfDatesAndTimes, tokenizedUserEntry);
+    if(dateChecker->isDay(stringAfterToken)||dateChecker->isNumericDate(stringAfterToken)||
+        dateChecker->isOneDelimitedDate(stringAfterToken)||
+        dateChecker->isSpacedDate(index, tokenizedUserEntry)) {
+        extractedDate = extractDayOrNumericDateOrDelimitedDate(index, indexOfDatesAndTimes, tokenizedUserEntry);
         
+        index = indexOfDatesAndTimes.back();
+
         if(index + 1 != lengthOfTokenizedUserEntry) {
             std::string stringAfterDate = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
             
-            if(timeChecker->is12HTime(stringAfterDate)||timeChecker->is24HTime(stringAfterDate)) {
-                time = extractTime(index + 1, indexOfDatesAndTimes, tokenizedUserEntry);
+            if(timeChecker->is12HTime(stringAfterDate)||timeChecker->is24HTime(stringAfterDate)||
+                timeChecker->isTimeWithoutPeriod(stringAfterDate)) {
+                    extractedTime = extractTime(index + 1, indexOfDatesAndTimes, tokenizedUserEntry);
             }
         }
     } else if(dateChecker->isNextDay(index, tokenizedUserEntry)) {
-        date = extractNextDay(index, indexOfDatesAndTimes, tokenizedUserEntry);
+        extractedDate = extractNextDay(index, indexOfDatesAndTimes, tokenizedUserEntry);
 
         if(index + 2 != lengthOfTokenizedUserEntry){
             std::string stringAfterNextDay = formatConverter->returnLowerCase(tokenizedUserEntry[index + 2]);
 
-            if(timeChecker->is12HTime(stringAfterNextDay)||timeChecker->is24HTime(stringAfterNextDay)) {
-                time = extractTime(index + 2, indexOfDatesAndTimes, tokenizedUserEntry);
+            if(timeChecker->is12HTime(stringAfterNextDay)||timeChecker->is24HTime(stringAfterNextDay)||timeChecker->isTimeWithoutPeriod(stringAfterNextDay)) {
+                extractedTime = extractTime(index + 2, indexOfDatesAndTimes, tokenizedUserEntry);
             }
 
         }
-    } else if(timeChecker->is12HTime(stringAfterToken)||timeChecker->is24HTime(stringAfterToken)){
-        time = extractTime(index, indexOfDatesAndTimes, tokenizedUserEntry);
+    } else if(timeChecker->is12HTime(stringAfterToken)||timeChecker->is24HTime(stringAfterToken)||timeChecker->isTimeWithoutPeriod(stringAfterToken)){
+        extractedTime = extractTime(index, indexOfDatesAndTimes, tokenizedUserEntry);
 
         if(index + 1 != lengthOfTokenizedUserEntry){
 
             std::string stringAfterTime = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
-            if(dateChecker->isNumericDate(stringAfterTime)||dateChecker->isDay(stringAfterTime)||dateChecker->isOneDelimitedDate(stringAfterTime)){
-                date = extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, tokenizedUserEntry);
+            if(dateChecker->isNumericDate(stringAfterTime)||dateChecker->isDay(stringAfterTime)||
+                dateChecker->isOneDelimitedDate(stringAfterTime)||
+                dateChecker->isSpacedDate(index + 1, tokenizedUserEntry)){
+                    extractedDate = extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, tokenizedUserEntry);
             } else if(dateChecker->isNextDay(index + 1, tokenizedUserEntry)){
-                date = extractNextDay(index + 1, indexOfDatesAndTimes, tokenizedUserEntry);
+                extractedDate = extractNextDay(index + 1, indexOfDatesAndTimes, tokenizedUserEntry);
             }
         }
-    } 
+    } else if(dateChecker->isToday(stringAfterToken)) {
+        extractedDate = extractToday(index, indexOfDatesAndTimes, tokenizedUserEntry);
 
-    extractedDate = date;
-    extractedTime = time;
+        if(index + 1 != lengthOfTokenizedUserEntry) {
+            std::string stringAfterDate = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
+            
+            if(timeChecker->is12HTime(stringAfterDate)||timeChecker->is24HTime(stringAfterDate)||timeChecker->isTimeWithoutPeriod(stringAfterDate)) {
+                extractedTime = extractTime(index + 1, indexOfDatesAndTimes, tokenizedUserEntry);
+            }
+        }
+    } else if(dateChecker->isTomorrow(stringAfterToken)) {
+        extractedDate = extractTomorrow(index, indexOfDatesAndTimes, tokenizedUserEntry);
+
+        if(index + 1 != lengthOfTokenizedUserEntry) {
+            std::string stringAfterDate = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
+            
+            if(timeChecker->is12HTime(stringAfterDate)||timeChecker->is24HTime(stringAfterDate)||timeChecker->isTimeWithoutPeriod(stringAfterDate)) {
+                extractedTime = extractTime(index + 1, indexOfDatesAndTimes, tokenizedUserEntry);
+            }
+        }
+    }
 
     return;
 }

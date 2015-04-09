@@ -1,33 +1,26 @@
-#include <fstream>
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <string>
-#include <iomanip>
-#include <Windows.h>
-#include <boost\date_time.hpp>
-
 #include "TMTaskList.h"
-#include "TMTask.h"
-#include "TMParser.h"
 
-const std::string ADD_SDT_SUCCESS = "Successfully added a task with start date and time!";
-const std::string ADD_EDT_SUCCESS = "Successfully added a task with end date and time!";
-const std::string ADD_PERIOD_SUCCESS = "Successfully added a period task!";
-const std::string ADD_UNDATED_SUCCESS = "Successfully added an undated task!";
-const std::string ADD_INVALID = "Task you have specified has invalid component(s). Please specify a valid task.";
-const std::string CLASH_WARNING = "Task added has clashes with tasks on hand.\nInvolved tasks have been highlighted in blue.";
-const std::string UPDATE_DESCRIPTION_SUCCESS = "Task description successfully changed.";
-const std::string UPDATE_DATE_SUCCESS = "Task date successfully changed.";
-const std::string UPDATE_TIME_SUCCESS = "Task time successfully changed.";
-const std::string UPDATE_FAILURE = "The component of that task you specified is invalid, please enter a valid component.";
-const std::string UPDATE_ARCHIVE_FAILURE = "Unable to update an archived task.";
-const std::string DELETE_SUCCESS = "Task successfully removed from database!";
-const std::string ARCHIVED_SUCCESS = "Task is successfully completed and archived.";
-const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
+const std::string DATED_TASK_DISPLAY_FORMAT = "<Task Type> <Task Description> <Start Date> <Start Time> <End Date> <End Time> <Completion> <Clash> <Confirmation> <Unconfirmed Batch Number>";
+const std::string UNDATED_TASK_DISPLAY_FORMAT = "<Task Type> <Task Description> <Completion>";
+const std::string DATED_HEADER = "Number of dated tasks: ";
+const std::string UNDATED_HEADER = "Number of undated tasks: ";
+const std::string ARCHIVED_HEADER = "Number of completed/archived tasks: ";
+const std::string LOAD_SUCCESS = "Database loaded successfully.";
+const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program where to load existing data from. Please do not delete.";
 
 	TMTaskList::TMTaskList() {
-		_fileName = "DEFAULT.txt"; //could consider using the name of the year instead
+		boost::gregorian::date dateToday =  boost::gregorian::day_clock::local_day();
+		std::locale facet(std::locale::classic(), new boost::gregorian::date_facet("%d %b %Y"));
+		std::ostringstream stream;
+		stream.imbue(facet);
+		std::string  strDateToday;
+		stream << dateToday;
+		strDateToday = stream.str();
+		std::string year, defaultFileName;
+		
+		year = strDateToday.substr(strDateToday.size()-4, 4);
+		defaultFileName = year + " Schedule.txt"; 
+		_fileName = defaultFileName; 
 		}
 
 
@@ -128,13 +121,22 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 	}
 
 	bool TMTaskList::isInUndated(int positionIndex) {
-		return (positionIndex <= int(_dated.size() + _undated.size()));
+		return (positionIndex > int(_dated.size()) && positionIndex <= int(_dated.size() + _undated.size()));
 	}
 
 	bool TMTaskList::isInArchived(int positionIndex) {
-		return (positionIndex <= int(_dated.size() + _undated.size() + _archived.size()));
+		return (positionIndex > int(_dated.size() + _undated.size()) && positionIndex <= int(_dated.size() + _undated.size() + _archived.size()));
 	}
 
+	bool TMTaskList::isUniqueBatchNum(int i) {
+		std::vector<TMTask>::iterator iter;
+		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
+			if (iter->getUnconfirmedBatchNumber() == i) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	void TMTaskList::setClashes(TMTask task, std::vector<TMTask>::iterator beginFrom) { //REVISIT CODE AND CHECK FOR BOUNDARY VALUES
 		_clashes.clear();
@@ -153,6 +155,30 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 					_clashes.push_back(registeredTask);
 			}
 			
+		}
+
+	}
+
+	void  TMTaskList::updateClashes(TMTask deleteTask) {
+		setClashes(deleteTask, _dated.begin());
+		std::vector<TMTask>::iterator iter;
+		int i = 0;
+		for (iter = _dated.begin(); iter != _dated.end() && i < int(_clashes.size()); ++iter) {
+			if (areEquivalent(*iter, _clashes[i])) {
+				iter->setAsUnclashed();
+			}
+			++i;
+		}
+	
+
+		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
+			TMTask &focusTask = *iter;
+			if (iter+1 != _dated.end()) {
+				setClashes(focusTask, iter+1);
+				if (int(_clashes.size()) != 0) {
+					iter->setAsClashed();
+				}
+			}
 		}
 
 	}
@@ -179,7 +205,6 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 									return earliestTaskIter;
 	}
 
-	
 	std::vector<TMTask>::iterator TMTaskList::findSmallestAlphaTaskIter(std::vector<TMTask>::iterator unsortedStart) {
 									TMTask smallestAlphaTask = *unsortedStart;
 									std::vector<TMTask>::iterator smallestAlphaTaskIter;
@@ -202,25 +227,6 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 		return aCopy;
 	}
 
-	int TMTaskList::getUniqueBatchNum() {
-		std::vector<TMTask>::iterator iter;
-		int i;
-		for (i = 1; !isUniqueBatchNum(i); ++i) {
-			}
-
-		return i;
-	}
-
-	bool TMTaskList::isUniqueBatchNum(int i) {
-		std::vector<TMTask>::iterator iter;
-		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
-			if (iter->getUnconfirmedBatchNumber() == i) {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	std::vector<int> TMTaskList::searchUnconfirmedBatchNum(int i) {
 		std::vector<TMTask>::iterator iter;
 		std::vector<int> results;
@@ -230,34 +236,10 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 				results.push_back(getPositionIndexFromTask(*iter));
 			}
 		}
-		std::cout << "SIZE OF SEARCH: " << results.size() << std::endl;
 		return results;
 	}
 
-	void  TMTaskList::updateClashes(TMTask deleteTask) {
-		setClashes(deleteTask, _dated.begin());
-		std::vector<TMTask>::iterator iter;
-		int i = 0;
-		for (iter = _dated.begin(); iter != _dated.end() && i < _clashes.size(); ++iter) {
-			if (areEquivalent(*iter, _clashes[i])) {
-				iter->setAsUnclashed();
-			}
-			++i;
-		}
 	
-
-		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
-			TMTask &focusTask = *iter;
-			if (iter+1 != _dated.end()) {
-				setClashes(focusTask, iter+1);
-				if (int(_clashes.size()) != 0) {
-					iter->setAsClashed();
-				}
-			}
-		}
-
-	}
-
 
 
 	//GETTER FUNCTIONS//
@@ -292,6 +274,9 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 	TMTask TMTaskList::getTaskFromPositionIndex(int positionIndex) {
 		assert(isValidPositionIndex(positionIndex));
 
+		TMTaskTime taskTime;
+		TMTask invalidTask("No such task", taskTime, TaskType::Invalid);
+
 		if (isInDated(positionIndex)) {
 			return _dated[positionIndex - 1];
 		}
@@ -303,6 +288,8 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 		if (isInArchived(positionIndex)) {
 			return _archived[positionIndex - int(_dated.size()) - int(_undated.size()) - 1];
 		}
+		
+		return invalidTask;
 	}
 
 	int TMTaskList::getDatedSize() {
@@ -329,11 +316,18 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 		return _archived;
 	}
 
+	int TMTaskList::generateUniqueBatchNum() {
+		std::vector<TMTask>::iterator iter;
+		int i;
+		for (i = 1; !isUniqueBatchNum(i); ++i) {
+			}
 
+		return i;
+	}
 
 
 	//BASIC FUNCTIONS//
-	std::string TMTaskList::addTask (TMTask task) {
+	void TMTaskList::addTask (TMTask &task) {
 		TaskType type = task.getTaskType();
 		std::string outcome;
 		switch (type) {
@@ -341,207 +335,42 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 		case WithStartDateTime:
 			_dated.push_back(task);
 			chronoSort();
-			return ADD_SDT_SUCCESS;
 			break;
 
 		case WithEndDateTime:
 			_dated.push_back(task);
 			chronoSort();
-			return ADD_EDT_SUCCESS;
 			break;
 		
 		case WithPeriod:
 			if (int(_dated.size()) != 0 && hasClash(task)) {
 				setClashes(task, _dated.begin());
 				task.setAsClashed();
-				outcome = CLASH_WARNING;
-			} else {
-				outcome = ADD_PERIOD_SUCCESS;
-			}
-
+			} 
 			_dated.push_back(task);
 			chronoSort();
-			return outcome;
 			break;
 
 		case Undated: 
 			_undated.push_back(task);
 			alphaSort();
-			return ADD_UNDATED_SUCCESS;
 			break;
 
 		case Invalid:
-			return ADD_INVALID;
 			break;
 		}
+
+		return;
 	}
 
-	//NEED TO USE ASSERT TO DETERMINE VALID POSITION INDEX
-	std::string TMTaskList::updateTask(int positionIndex, EditableTaskComponent component, std::string changeTo) {
-		assert(isValidPositionIndex(positionIndex));
-		if (isInDated(positionIndex)) {
-			TMTask task = _dated[positionIndex-1];
-			TaskType type = task.getTaskType();
-			switch (type) {
-			
-			case WithStartDateTime:
-				switch (component) {
-				case EditableTaskComponent::Description:
-					removeTask(positionIndex);
-					task.setTaskDescription(changeTo);
-					addTask(task);
-					return UPDATE_DESCRIPTION_SUCCESS;
-					break;
-
-				case EditableTaskComponent::StartDate:
-					removeTask(positionIndex);
-					task.getTaskTime().setStartDate(changeTo);
-					addTask(task);
-					return UPDATE_DATE_SUCCESS;
-					break;
-
-				case EditableTaskComponent::StartTime:
-					removeTask(positionIndex);
-					task.getTaskTime().setStartTime(changeTo);
-					addTask(task);
-					return UPDATE_TIME_SUCCESS;
-					break;
-
-				case EditableTaskComponent::EndDate:
-					return UPDATE_FAILURE;
-					break;
-
-				case EditableTaskComponent::EndTime:
-					return UPDATE_FAILURE;
-					break;
-
-				case EditableTaskComponent::InvalidComponent:
-					return UPDATE_FAILURE;
-				}
-				break;
-				
-			case WithEndDateTime:
-				switch (component) {
-				case EditableTaskComponent::Description:
-					removeTask(positionIndex);
-					task.setTaskDescription(changeTo);
-					addTask(task);
-					return UPDATE_DESCRIPTION_SUCCESS;
-					break;
-
-				case EditableTaskComponent::StartDate:
-					return UPDATE_FAILURE;
-					break;
-
-				case EditableTaskComponent::StartTime:
-					return UPDATE_FAILURE;
-					break;
-
-				case EditableTaskComponent::EndDate:
-					removeTask(positionIndex);
-					task.getTaskTime().setEndDate(changeTo);
-					addTask(task);
-					return UPDATE_DATE_SUCCESS;
-					break;
-
-				case EditableTaskComponent::EndTime:
-					removeTask(positionIndex);
-					task.getTaskTime().setEndTime(changeTo);
-					addTask(task);
-					return UPDATE_TIME_SUCCESS;
-					break;
-
-				case EditableTaskComponent::InvalidComponent:
-					return UPDATE_FAILURE;
-				}
-				break;
-
-			case WithPeriod:
-				switch (component) {
-				case EditableTaskComponent::Description:
-					removeTask(positionIndex);
-					task.setTaskDescription(changeTo);
-					addTask(task);
-					return UPDATE_DESCRIPTION_SUCCESS;
-					break;
-
-				case EditableTaskComponent::StartDate:
-					removeTask(positionIndex);
-					task.getTaskTime().setStartDate(changeTo);
-					task.setAsUnclashed();
-					addTask(task);
-					return UPDATE_DATE_SUCCESS;
-					break;
-
-				case EditableTaskComponent::StartTime:
-					removeTask(positionIndex);
-					task.getTaskTime().setStartTime(changeTo);
-					task.setAsUnclashed();
-					addTask(task);
-					return UPDATE_TIME_SUCCESS;
-					break;
-
-				case EditableTaskComponent::EndDate:
-					removeTask(positionIndex);
-					task.getTaskTime().setEndDate(changeTo);
-					task.setAsUnclashed();
-					addTask(task);
-					return UPDATE_DATE_SUCCESS;
-					break;
-
-				case EditableTaskComponent::EndTime:
-					removeTask(positionIndex);
-					task.getTaskTime().setEndTime(changeTo);
-					task.setAsUnclashed();
-					addTask(task);
-					return UPDATE_TIME_SUCCESS;
-					break;
-			
-				case EditableTaskComponent::InvalidComponent:
-					return UPDATE_FAILURE;
-				}
-				break;
-			}
-			
-
-		} else if (isInUndated(positionIndex)) {
-			TMTask task = _undated[positionIndex-_dated.size()-1];
-			switch (component) {
-				case EditableTaskComponent::Description:
-					removeTask(positionIndex);
-					task.setTaskDescription(changeTo);
-					addTask(task);
-					return UPDATE_DESCRIPTION_SUCCESS;
-					break;
-
-				case EditableTaskComponent::StartDate:
-					return UPDATE_FAILURE;
-					break;
-
-				case EditableTaskComponent::StartTime:
-					return UPDATE_FAILURE;
-					break;
-
-				case EditableTaskComponent::EndDate:
-					return UPDATE_FAILURE;
-					break;
-
-				case EditableTaskComponent::EndTime:
-					return UPDATE_FAILURE;
-					break;
-			
-				case EditableTaskComponent::InvalidComponent:
-					return UPDATE_FAILURE;
-			}
-		} else if (isInUndated(positionIndex)) {
-			return UPDATE_ARCHIVE_FAILURE;
-		}
-
+	
+	void  TMTaskList::updateTask(int positionIndex, TMTask &alteredTask) {
+		removeTask(positionIndex);
+		addTask(alteredTask);
+		return;
 	}
 
-	//NEED TO USE ASSERT TO DETERMINE VALID POSITION INDEX
-	std::string TMTaskList::removeTask(int positionIndex) {	
-		assert(isValidPositionIndex(positionIndex));
+	void  TMTaskList::removeTask(int positionIndex) {	
 		
 		if (isInDated(positionIndex)) {
 			TMTask deleteTask = getTaskFromPositionIndex(positionIndex);
@@ -549,33 +378,28 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 			if (deleteTask.getTaskType() == TaskType::WithPeriod) {
 				updateClashes(deleteTask);
 			}
-			return DELETE_SUCCESS;
+			return;
 
 		} else if (isInUndated(positionIndex)) {
 			int floatingTaskNumber = positionIndex - _dated.size();
 			_undated.erase(_undated.begin() + floatingTaskNumber - 1);
-			return DELETE_SUCCESS;
+			return;
 
 		} else if (isInArchived(positionIndex)) {
 			int archivedTaskNumber = positionIndex - _dated.size() - _undated.size();
 			_archived.erase(_archived.begin() + archivedTaskNumber - 1);
-			return DELETE_SUCCESS;
+			return;
 		}
-	}
 
-	//NEED TO USE ASSERT TO DETERMINE VALID POSITION INDEX
-	std::string TMTaskList::archiveOneTask(int positionIndex) {
-		assert(isValidPositionIndex(positionIndex));
+		return;
+	}
+	
+	void  TMTaskList::archiveOneTask(int positionIndex) {
 		TMTask &task = getTaskFromPositionIndex(positionIndex);
 		task.setAsCompleted();
 		_archived.push_back(task);
-		
-		if (isInDated(positionIndex) || isInUndated(positionIndex)) {
-			std::string str = removeTask(positionIndex);
-			return ARCHIVED_SUCCESS;
-		} else if (isInArchived(positionIndex)) {
-			return ARCHIVED_FAILURE;
-		}
+		removeTask(positionIndex);
+		return;
 	}
 
 	void TMTaskList::chronoSort() {
@@ -584,7 +408,6 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 			std::iter_swap(iter, findEarliestTaskIter(iter));
 		}
 	}
-
 
 	void TMTaskList::alphaSort() {
 		std::vector<TMTask>::iterator iter;
@@ -623,28 +446,6 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 		return searchResults;
 	}
 
-	std::vector<int> TMTaskList::dateSearch(std::string date) {
-		std::vector<int> searchResults;
-		std::vector<TMTask>::iterator iter;
-		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
-			if (iter->getTaskTime().getStartDate() == date || iter->getTaskTime().getEndDate() == date) {
-				searchResults.push_back(getPositionIndexFromTask(*iter));
-			} 
-		}
-
-		for (iter = _archived.begin(); iter != _archived.end(); ++iter) {
-			TMTask task = *iter;
-			TaskType type = task.getTaskType();
-			if (type != TaskType::Undated) {
-				if (iter->getTaskTime().getStartDate() == date || iter->getTaskTime().getEndDate() == date) {
-					searchResults.push_back(getPositionIndexFromTask(*iter));
-				} 
-			}
-		}
-
-		return searchResults;
-	}
-	
 
 
 	//EXPORT AND IMPORT FUNCTIONS
@@ -657,110 +458,105 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 			std::string fileDirectory = _directoryName + "\\" + _fileName;
 			outFile.open(fileDirectory);
 		}
+	
 
-		outFile << "Number of dated tasks: "  << _dated.size() << "\n";
+		outFile << DATED_HEADER  << _dated.size() << "\n";
+		outFile << DATED_TASK_DISPLAY_FORMAT << "\n";
 		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
-			outFile << iter->getTaskDescription() << 
-				" " << iter->getUnconfirmedBatchNumber() <<
-				" " << iter->getTaskTime().getStartDate() << 
-				" " << iter->getTaskTime().getStartTime() << 
-				" " << iter->getTaskTime().getEndDate() <<
-				" " << iter->getTaskTime().getEndTime() << 
-				" " << iter->isCompleted() << 
-				" " << iter->isConfirmed() << 
-				" " << iter->isClashed() << "\n";
+			outFile << iter->getTaskTypeAsString() <<
+			" "	<< iter->getTaskDescription() << " ||" 
+			" " << iter->getTaskTime().getStartDate() << 
+			" " << iter->getTaskTime().getStartTime() << 
+			" " << iter->getTaskTime().getEndDate() <<
+			" " << iter->getTaskTime().getEndTime() << 
+			" " << iter->isCompleted() << 
+			" " << iter->isClashed() << 
+			" " << iter->isConfirmed() << 
+			" " << iter->getUnconfirmedBatchNumber() << "\n";
 		}
 
-		//outFile << '\n';
+		//outFile << "\n";
 	
-		outFile << "Number of undated tasks: " << _undated.size() << "\n";
+		outFile << UNDATED_HEADER << _undated.size() << "\n";
+		outFile << UNDATED_TASK_DISPLAY_FORMAT << "\n";
 		for (iter = _undated.begin(); iter != _undated.end(); ++iter) {
-			outFile << iter->getTaskDescription() << 
-				" " << iter->getUnconfirmedBatchNumber() << 
-				" " << iter->isCompleted() << 
-				" " << iter->isConfirmed() << "\n";
+			outFile << iter->getTaskTypeAsString() << 
+				" "	<< iter->getTaskDescription() << " ||" 
+				" " << iter->isCompleted() << "\n";
 		}
 
 		//outFile << "\n";
 
-		outFile << "Number of completed/archived tasks: " << _archived.size() << "\n";
+		outFile << ARCHIVED_HEADER << _archived.size() << "\n";
 		for (iter = _archived.begin(); iter != _archived.end(); iter++) {
 			
 			if (iter->getTaskType() != TaskType::Undated) {
-				outFile << iter->getTaskDescription() << 
-				" " << iter->getUnconfirmedBatchNumber() <<
+				outFile << iter->getTaskTypeAsString() <<
+				" "	<< iter->getTaskDescription() << " ||" 
 				" " << iter->getTaskTime().getStartDate() << 
 				" " << iter->getTaskTime().getStartTime() << 
 				" " << iter->getTaskTime().getEndDate() <<
 				" " << iter->getTaskTime().getEndTime() << 
 				" " << iter->isCompleted() << 
+				" " << iter->isClashed() << 
 				" " << iter->isConfirmed() << 
-				" " << iter->isClashed() << "\n";
-			}else {
-				outFile << iter->getTaskDescription() << 
-				" " << iter->getUnconfirmedBatchNumber() << 
-				" " << iter->isCompleted() << 
-				" " << iter->isConfirmed() << "\n";
+				" " << iter->getUnconfirmedBatchNumber() << "\n";
+			} else {
+				outFile << iter->getTaskTypeAsString() << 
+				" "	<< iter->getTaskDescription() << " ||" 
+				" " << iter->isCompleted() << "\n";
 			}
 		}
 
 		outFile.close();
 	}
 
-	void TMTaskList::loadFromFile() {
+	std::string TMTaskList::loadFromFile(std::string pathName) {
 
-		std::string fileDirectory = _directoryName + _fileName;
-		std::ifstream directoryReference("REFERENCE.txt");
-		getline(directoryReference, fileDirectory);
-
-		std::ifstream contentReference(fileDirectory);
+		std::ifstream contentReference(pathName);
 		std::vector<std::string> linesFromFile;
 		std::string line;
-		std::string M1 = "Number of timed and deadline:";
-		std::string M2 = "Number of undated tasks:";
-		std::string M3 = "Number of completed tasks:";
+
 
 		while (getline(contentReference, line)) {
 			if (line != "\n") {
 				linesFromFile.push_back(line);
 			}
 		}
-
-		directoryReference.close();
+		
 		contentReference.close();
 
 		std::vector<std::string>::iterator iter;
+		FormatConverter* converter = FormatConverter::getInstance();
 
-		//std::search(searchLine.begin(), searchLine.end(), keyword.begin(), keyword.end()) != searchLine.end()
+		
 
-	
-		TMParser *parser = TMParser::getInstance(); 
-
-		//Assumes first line in saved text file is as unmodified by user.
-		//Loop stops when M2 is detected
-		//Timed and deadline tasks
-		for (iter = linesFromFile.erase(linesFromFile.begin()); std::search(iter->begin(), iter->end(), M2.begin(), M2.end()) == iter->end();iter = linesFromFile.erase(iter)) {
-			parser->initialize(*iter);
-			TMTask task = parser->parseTaskInfo();
-			_dated.push_back(task);
+		//Dated tasks
+		iter = linesFromFile.begin() + 2;	//Skips first two irrelevant lines in the text file.
+		while (!isFoundInLine(UNDATED_HEADER, *iter)) {
+			TMTask task = converter->convertStringToTMTask(*iter);
+			addTask(task);
+			iter++;
 		}
 
-		//Floating tasks
-		for (iter =linesFromFile.erase(linesFromFile.begin()); std::search(iter->begin(), iter->end(), M3.begin(), M3.end()) == iter->end(); iter = linesFromFile.erase(iter)) {
-			parser->initialize(*iter);
-			TMTask task = parser->parseTaskInfo();
-			_undated.push_back(task);
+		//Undated tasks
+		iter = iter + 2;
+		while (!isFoundInLine(ARCHIVED_HEADER, *iter)) {
+			TMTask task = converter->convertStringToTMTask(*iter);
+			addTask(task);
+			iter++;
 		}
+
 
 		//Completed tasks
-		for (iter = linesFromFile.erase(linesFromFile.begin()); iter != linesFromFile.end(); iter = linesFromFile.erase(iter)) {
-			parser->initialize(*iter);
-			TMTask task = parser->parseTaskInfo();
-			task.setAsCompleted();
+		iter++;
+		while (iter != linesFromFile.end()) {
+			TMTask task = converter->convertStringToTMTask(*iter);
 			_archived.push_back(task);
+			iter++;
 		}
 
-		std::cout << "Successfully loaded from file" << std::endl;
+		return LOAD_SUCCESS;
 	} 
 
 	void TMTaskList::setFileDirectory(std::string directory) {
@@ -773,10 +569,24 @@ const std::string ARCHIVED_FAILURE = "Cannot archive an already archived task.";
 
 	void TMTaskList::leaveReferenceUponExit() {
 		std::ofstream outFile;
-		outFile.open("REFERENCE.txt");
+		outFile.open("TimeMaster.txt");
 		outFile << _directoryName + _fileName << '\n';
-		outFile << "THIS FILE IS FOR REFERENCE TO LOAD FROM FILE. DO NOT DELETE" << '\n';
+		outFile << USER_INFO_TIMEMASTER_FILE << '\n';
 		outFile.close();
 		}
 
+	bool TMTaskList::isFoundInLine(std::string text, std::string line) {
+		bool result = (std::search(line.begin(), line.end(), text.begin(), text.end()) != line.end());
+		std::cout << "RESULT: " << result << std::endl;
+		return std::search(line.begin(), line.end(), text.begin(), text.end()) != line.end();
+	}
 
+	void TMTaskList::determineLoadOrCreateFile() {
+		std::string pathName;
+		std::ifstream directoryReference("TimeMaster.txt");
+		getline(directoryReference, pathName);
+		if ((pathName) != "") {
+			loadFromFile(pathName);
+		}
+		return;
+	}

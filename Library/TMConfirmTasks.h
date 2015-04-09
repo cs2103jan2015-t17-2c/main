@@ -17,7 +17,29 @@ public:
 		std::vector<int> batchNumbers;
 		std::vector<TMTask> toBeAdded;
 		std::vector<TMTask>::iterator taskIter;
-		std::ostringstream oss;
+		std::ostringstream ossValid, ossInvalid;
+
+		if (!noRepeatedIndexes(confirmedTasksIndexes)) {
+			outcome = WARNING_REPEATED_INDEXES_SPECIFIED;
+			return;
+		}
+
+		for (intIter = confirmedTasksIndexes.begin(); intIter != confirmedTasksIndexes.end(); ) {
+			
+			if (!taskList.isValidPositionIndex(*intIter)) {
+				ossInvalid << *intIter << " ";
+				intIter = confirmedTasksIndexes.erase(intIter);
+			} else {
+				TMTask task = taskList.getTaskFromPositionIndex(*intIter);
+				if (task.isConfirmed()) {
+					ossInvalid << *intIter << " ";
+					intIter = confirmedTasksIndexes.erase(intIter);
+				} else {
+					++intIter;
+				}
+			}
+		}
+
 
 		//Creating new confirmed tasks and storing the batch numbers of confirmed tasks into a vector
 		for (intIter = confirmedTasksIndexes.begin(); intIter != confirmedTasksIndexes.end(); ++intIter) {
@@ -35,17 +57,29 @@ public:
 			std::vector<int> results;
 			results = taskList.searchUnconfirmedBatchNum(*intIter);
 			for (resultsIter = results.begin(); resultsIter != results.end(); ++resultsIter) {
-				oss << taskList.removeTask(*resultsIter) << std::endl;
+				taskList.removeTask(*resultsIter);
 				updatePositionIndexes(results, *resultsIter);
 			}
 		}
 
 		//Adding confirmed tasks
 		for (taskIter = toBeAdded.begin(); taskIter != toBeAdded.end(); ++taskIter) {
-			taskList.addTask(*taskIter);
+			TMTask task = *taskIter;
+			taskList.addTask(task);
+			int positionIndex = taskList.getPositionIndexFromTask(task);
+			positionIndexes.push_back(positionIndex);
 		}
 
-		outcome = oss.str();
+		ossValid << "Tasks ";
+		for (intIter = positionIndexes.begin(); intIter != positionIndexes.end(); ++intIter) {
+			ossValid << *intIter << " ";
+		}
+		ossValid << " is/are confirmed." << std::endl;
+		if (ossInvalid.str().size() != 0) {
+			ossInvalid << " is/are invalid position indexe(s)."; 
+		}
+
+		outcome = ossValid.str() + ossInvalid.str();
 		taskListStates->addNewState(taskList);
 	}
 

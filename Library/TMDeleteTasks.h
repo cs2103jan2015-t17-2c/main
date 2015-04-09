@@ -15,18 +15,35 @@ public:
 		
 		std::vector<int> deleteIndexes = parser->parseTaskPositionNo();
 		std::vector <int>::iterator intIter;
-		std::ostringstream oss;
+		std::ostringstream ossValid, ossInvalid;
+		int numDeleted = 0;
 		
-		if (noRepeatedIndexes(deleteIndexes)) {
-			for (intIter = deleteIndexes.begin(); intIter != deleteIndexes.end(); ++intIter) {
-				oss << taskList.removeTask(*intIter) << std::endl;
-				updatePositionIndexes(deleteIndexes, *intIter);
-			}
-		} else {
-			oss << WARNING_REPEATED_INDEXES_SPECIFIED << std::endl;
+		if (!noRepeatedIndexes(deleteIndexes)) {
+			outcome = WARNING_REPEATED_INDEXES_SPECIFIED;
+			return;
 		}
 
-		outcome = oss.str();
+		for (intIter = deleteIndexes.begin(); intIter != deleteIndexes.end(); ) {
+			if (!taskList.isValidPositionIndex(*intIter)) {
+				ossInvalid << *intIter << " ";
+				intIter = deleteIndexes.erase(intIter);
+			} else {
+				++intIter;
+			}
+		}
+		
+
+		for (intIter = deleteIndexes.begin(); intIter != deleteIndexes.end(); ++intIter) {
+			taskList.removeTask(*intIter);
+			numDeleted++;
+			updatePositionIndexes(deleteIndexes, *intIter);
+		}
+		
+		ossValid << numDeleted << " tasks successfully deleted." << std::endl;
+		if (ossInvalid.str().size() != 0) {
+			ossInvalid << " is/are invalid position indexe(s).";
+		}
+		outcome = ossValid.str() + ossInvalid.str();
 		taskListStates->addNewState(taskList);
 		
 	}

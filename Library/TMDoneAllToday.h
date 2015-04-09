@@ -32,11 +32,14 @@ public:
 		}
 
 		std::vector<int>::iterator iter;
+		int numArchived = 0;
 		for (iter = completeIndexes.begin(); iter != completeIndexes.end(); ++iter) {
-			oss << taskList.archiveOneTask(*iter) << std::endl;
+			taskList.archiveOneTask(*iter);
+			numArchived++;
 			updatePositionIndexes(completeIndexes, *iter);
 		}
 
+		oss << numArchived << " tasks successfully marked as completed and archived.";
 		outcome = oss.str();
 		taskListStates->addNewState(taskList);		
 	}

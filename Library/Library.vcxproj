@@ -68,6 +68,7 @@
   <ItemGroup>
     <ClInclude Include="CurrentDateAndTime.h" />
     <ClInclude Include="DateChecker.h" />
+    <ClInclude Include="ErrorMessageReport.h" />
     <ClInclude Include="Extractor.h" />
     <ClInclude Include="FormatConverter.h" />
     <ClInclude Include="TaskChecker.h" />
@@ -98,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DateChecker.cpp" />
+    <ClCompile Include="ErrorMessageReport.cpp" />
     <ClCompile Include="Extractor.cpp" />
     <ClCompile Include="FormatConverter.cpp" />
     <ClCompile Include="TaskChecker.cpp" />

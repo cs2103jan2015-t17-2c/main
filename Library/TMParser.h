@@ -17,7 +17,7 @@
 #include "FormatConverter.h"
 #include "Extractor.h"
 #include "CurrentDateAndTime.h"
-//#include <boost/assign/list_of.hpp>
+#include "ErrorMessageReport.h"
 
 //user input date must be ddmmyyyy
 //time input if in 12hour format must be followed immediately by pm and am
@@ -42,6 +42,7 @@ public:
 
     std::vector<std::string> getTokenizedUserEntry(std::string);
     std::string extractCommand();
+
     //use only after command has been extracted
     std::string extractTokenAfterCommand();
 	std::vector<std::string> returnTokens();
@@ -57,10 +58,35 @@ public:
 
     //to block task with multiple timings >= 2
     std::vector<TMTask> parseMultipleTimingTaskInfo();
-	EditableTaskComponent parseEditableTaskComponent();
-	std::string parseDescription();
+    //used for timedtask
+    void configureQueuesAndIndex(std::queue<int>&, std::queue<int>&, int&);
+    void configureQueuesAndIndexAfterToken(std::queue<int>&, std::queue<int>&, int&);
+
+    void editDateOrTimeInInvertedCommas(std::string, int, bool, bool);
+
+    //inverted commas must be removed
+    bool isNextDayInInvertedCommas(std::string);
+    bool isSpacedDateInInvertedCommas(std::string);
 
     void configureAllDatesAndTimes(std::string&, std::string&, std::string&, std::string&, TaskType&);
+    //if on same day full time specified but start time more than end time ERROR
+    //if full date specified for both and start date more than end date ERROR
+
+    //checks if ddmm has passed for the current year
+    //adds one more year if not 29 FEB!
+    void configureDayMonth(std::string&);
+
+    //checks if start ddmm has passed for current year
+    //adds one more year if passed else
+    //compares end ddmm with start ddmm adds years till they are valid
+    void configureStartDayMonthEndDayMonth(std::string&, std::string&);
+    
+    //if time 8 to 10 configure
+    //returns time of the day
+    //need to check if start time has passed after using if so add one more day
+    void configureStartTimeEndTimeWithoutPeriods(std::string&, std::string&);
+    void configureStartTimeWithoutPeriods(std::string&);
+    void configureEndTimeWithoutPeriods(std::string&);
 
     //checks if startDate is not later than endDate and 
     //if startDate == endDate, startTime is no later than endTime
@@ -79,8 +105,11 @@ public:
     std::string parseSearchKey();
     std::string parseDirectory();
 
+    //postcondition: return ddmmyyyy
     std::string substractNDaysFromDate(std::string,int);
     std::string addNDaysFromDate(std::string,int);
+    std::string addNYearsFromDate(std::string, int);
+    std::string subtractNYearsFromDate(std::string, int);
 
     void addErrorMessage(std::string);
     std::string getErrorMessage();

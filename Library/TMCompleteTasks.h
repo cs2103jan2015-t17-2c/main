@@ -14,18 +14,35 @@ public:
 
 		std::vector<int> completeIndexes = parser->parseTaskPositionNo();
 		std::vector<int>::iterator intIter;
-		std::ostringstream oss;
-		
-		if (noRepeatedIndexes(completeIndexes)) {
-			for (intIter = completeIndexes.begin(); intIter != completeIndexes.end(); ++intIter) {
-				oss << taskList.archiveOneTask(*intIter) << std::endl;
-				updatePositionIndexes(completeIndexes, *intIter);
-			}
-		} else {
-			oss << WARNING_REPEATED_INDEXES_SPECIFIED << std::endl;
+		std::ostringstream ossValid, ossInvalid;
+		int numArchived = 0;
+
+		if (!noRepeatedIndexes(completeIndexes)) {
+			outcome = WARNING_REPEATED_INDEXES_SPECIFIED;
+			return;
 		}
 
-		outcome = oss.str();
+		for (intIter = completeIndexes.begin(); intIter != completeIndexes.end(); ) {
+			if (!taskList.isValidPositionIndex(*intIter) || taskList.isInArchived(*intIter)) {
+				ossInvalid << *intIter << " ";
+				intIter = completeIndexes.erase(intIter);
+			} else {
+				++intIter;
+			}
+		}
+
+		for (intIter = completeIndexes.begin(); intIter != completeIndexes.end(); ++intIter) {
+			taskList.archiveOneTask(*intIter);
+			updatePositionIndexes(completeIndexes, *intIter);
+			numArchived++;
+
+		}
+		
+		ossValid << numArchived << " tasks(s) successfully marked as completed and archived." << std::endl;
+		if (ossInvalid.str().size() != 0) {
+			ossInvalid << " is/are invalid position indexe(s).";
+		}
+		outcome = ossValid.str() + ossInvalid.str();
 		taskListStates->addNewState(taskList);
 	}
 };

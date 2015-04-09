@@ -17,28 +17,50 @@ public:
 		std::vector<TMTask> reAddTasks;
 		std::vector<TMTask>::iterator taskIter;
 		
-		std::ostringstream oss;
+		std::ostringstream ossValid, ossInvalid;
 
-		if (noRepeatedIndexes(uncompleteIndexes)) {
-			for (intIter = uncompleteIndexes.begin(); intIter != uncompleteIndexes.end(); ++intIter) {
+		if (!noRepeatedIndexes(uncompleteIndexes)) {
+			outcome = WARNING_REPEATED_INDEXES_SPECIFIED;
+			return;
+		}
+			
+		for (intIter = uncompleteIndexes.begin(); intIter != uncompleteIndexes.end(); ) {
+			
+			if (!taskList.isValidPositionIndex(*intIter)) {
+				ossInvalid << *intIter << " ";
+				intIter = uncompleteIndexes.erase(intIter);
+			} else {
 				TMTask task = taskList.getTaskFromPositionIndex(*intIter);
-			
-				oss << taskList.removeTask(*intIter) << std::endl;
-				updatePositionIndexes(uncompleteIndexes, *intIter);
-			
-				task.setAsIncompleted();
-				reAddTasks.push_back(task);
+				if (!task.isCompleted()) {
+					ossInvalid << *intIter << " ";
+					intIter = uncompleteIndexes.erase(intIter);
+				} else {
+					++intIter;
+				}
 			}
-		
-			//Re-add tasks to taskList
-			for (taskIter = reAddTasks.begin(); taskIter != reAddTasks.end(); ++taskIter) {
-				oss << taskList.addTask(*taskIter) << std::endl;
-			}
-		} else {
-			oss << WARNING_REPEATED_INDEXES_SPECIFIED << std::endl;
 		}
 
-		outcome = oss.str();
+		for (intIter = uncompleteIndexes.begin(); intIter != uncompleteIndexes.end(); ++intIter) {
+			TMTask task = taskList.getTaskFromPositionIndex(*intIter);
+			taskList.removeTask(*intIter);
+			updatePositionIndexes(uncompleteIndexes, *intIter);			
+			task.setAsIncompleted();
+			reAddTasks.push_back(task);
+		}
+		
+			//Re-add tasks to taskList
+		for (taskIter = reAddTasks.begin(); taskIter != reAddTasks.end(); ++taskIter) {
+			TMTask task = *taskIter;
+			taskList.addTask(task);
+			int positionIndex = taskList.getPositionIndexFromTask(task);
+			positionIndexes.push_back(positionIndex);
+		}
+
+		ossValid << reAddTasks.size() << " tasks successfully marked as uncomplete." << std::endl;
+		if (ossInvalid.str().size() != 0) {
+			ossInvalid << " is/are invalid position indexe(s).";
+		}
+		outcome = ossValid.str() + ossInvalid.str();
 		taskListStates->addNewState(taskList);
 	}
 };

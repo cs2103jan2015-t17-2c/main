@@ -3,7 +3,7 @@
 
 #include <boost\date_time.hpp>
 
-static std::string giveCurrentTime(){
+static std::string currentTime(){
     boost::posix_time::ptime currentDateAndTime(boost::posix_time::second_clock::local_time());
     std::ostringstream os;
     boost::posix_time::time_facet* facet(new boost::posix_time::time_facet("%H%M"));
@@ -12,7 +12,8 @@ static std::string giveCurrentTime(){
     return os.str();
 }
 
-static boost::gregorian::date currentDate = boost::gregorian::day_clock::local_day();
-static std::string currentTime = giveCurrentTime();
+static boost::gregorian::date currentDate() {
+    return boost::gregorian::day_clock::local_day();
+}
 
 #endif

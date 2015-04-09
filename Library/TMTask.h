@@ -8,14 +8,11 @@ enum TaskType {
     WithStartDateTime, WithEndDateTime, WithPeriod, Undated, Invalid
 };
 
-enum EditableTaskComponent {
-		Description, StartDate, StartTime, EndDate, EndTime, InvalidComponent
-};
-
 class TMTask{
 private:
     std::string _taskDescription;
-    //-1 if not unconfirmed else 1,2,...
+    
+	//0 for confirmed tasks, else batch number would be a positive integer
     int _unconfirmedBatchNumber;
     TMTaskTime _taskTime;
     bool _isCompleted;
