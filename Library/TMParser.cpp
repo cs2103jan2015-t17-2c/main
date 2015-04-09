@@ -959,7 +959,7 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
                     } else if (timeInPM <= startTime && timeInAM <= startTime && endTime != "12") {
                         endTime = timeInAM;
                     } else if (timeInPM <= startTime && timeInAM <= startTime && endTime == "12") {
-                        endTime = timeInPM
+                        endTime = timeInPM;
                     }
                 }
 
