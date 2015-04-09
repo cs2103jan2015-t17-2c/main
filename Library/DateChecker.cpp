@@ -201,7 +201,7 @@ bool DateChecker::isUnoccurredDate(std::string date) {
     date = formatConverter->dateFromNumericToBoostFormat(date);
     boost::gregorian::date boostDate = boost::gregorian::from_uk_string(date);
 
-    if(boostDate > currentDate()) {
+    if(boostDate >= currentDate()) {
         return true;
     } else {
         return false;

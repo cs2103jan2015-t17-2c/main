@@ -17,37 +17,27 @@ public:
 		TMTaskList taskList = taskListStates->getCurrentTaskList();
 		std::ostringstream oss;
 		int i = taskList.generateUniqueBatchNum();
-
-		if (taskChecker->isMultipleTimingTask(parser->returnTokens())) {
-			std::vector<TMTask> tasks = parser->parseMultipleTimingTaskInfo();
-			std::vector<TMTask>::iterator iter;
+        
+        std::vector<TMTask> tasks = parser->parseMultipleTimingTaskInfo();
+		std::vector<TMTask>::iterator iter;
 		
-			for (iter = tasks.begin(); iter != tasks.end(); ++iter) {
-				TMTask task = *iter;
-				task.setAsUnconfirmed();
-				task.setUnconfirmedBatchNumber(i);
-				taskList.addTask(task);
-				int positionIndex = taskList.getPositionIndexFromTask(task);
-				positionIndexes.push_back(positionIndex);
-			}
-			std::vector<int>::iterator intIter;
-			oss << "Tasks ";
-			for (intIter = positionIndexes.begin(); intIter != positionIndexes.end(); ++intIter) {
-			oss << *intIter << " ";
-			}
-			oss << " have been blocked." << std::endl;
-
-		} else {
-			TMTask task = parser->parseTaskInfo();
+		for (iter = tasks.begin(); iter != tasks.end(); ++iter) {
+			TMTask task = *iter;
 			task.setAsUnconfirmed();
 			task.setUnconfirmedBatchNumber(i);
 			taskList.addTask(task);
 			int positionIndex = taskList.getPositionIndexFromTask(task);
 			positionIndexes.push_back(positionIndex);
-			oss << "Task " << positionIndex << " has been blocked." << std::endl;
-			
 		}
 		
+        std::vector<int>::iterator intIter;
+		oss << "Tasks ";
+		for (intIter = positionIndexes.begin(); intIter != positionIndexes.end(); ++intIter) {
+			oss << *intIter << " ";
+		}
+		
+        oss << " have been blocked." << std::endl;
+
 		outcome = oss.str();
 		taskListStates->addNewState(taskList);
 	}
