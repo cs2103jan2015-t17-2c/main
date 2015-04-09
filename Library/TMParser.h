@@ -109,6 +109,7 @@ public:
     std::string substractNDaysFromDate(std::string,int);
     std::string addNDaysFromDate(std::string,int);
     std::string addNYearsFromDate(std::string, int);
+    std::string subtractNYearsFromDate(std::string, int);
 
     void addErrorMessage(std::string);
     std::string getErrorMessage();
