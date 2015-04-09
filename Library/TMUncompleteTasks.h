@@ -24,13 +24,19 @@ public:
 			return;
 		}
 			
-		for (intIter = uncompleteIndexes.begin(); intIter != uncompleteIndexes.end(); ++intIter) {
-			TMTask task = taskList.getTaskFromPositionIndex(*intIter);
-			if (!taskList.isValidPositionIndex(*intIter) || !task.isCompleted()) {
+		for (intIter = uncompleteIndexes.begin(); intIter != uncompleteIndexes.end(); ) {
+			
+			if (!taskList.isValidPositionIndex(*intIter)) {
 				ossInvalid << *intIter << " ";
 				intIter = uncompleteIndexes.erase(intIter);
 			} else {
-				++intIter;
+				TMTask task = taskList.getTaskFromPositionIndex(*intIter);
+				if (!task.isCompleted()) {
+					ossInvalid << *intIter << " ";
+					intIter = uncompleteIndexes.erase(intIter);
+				} else {
+					++intIter;
+				}
 			}
 		}
 

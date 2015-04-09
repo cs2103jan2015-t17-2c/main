@@ -25,12 +25,18 @@ public:
 		}
 
 		for (intIter = confirmedTasksIndexes.begin(); intIter != confirmedTasksIndexes.end(); ) {
-			TMTask task = taskList.getTaskFromPositionIndex(*intIter);
-			if (!taskList.isValidPositionIndex(*intIter) || task.isConfirmed()) {
+			
+			if (!taskList.isValidPositionIndex(*intIter)) {
 				ossInvalid << *intIter << " ";
 				intIter = confirmedTasksIndexes.erase(intIter);
 			} else {
-				++intIter;
+				TMTask task = taskList.getTaskFromPositionIndex(*intIter);
+				if (task.isConfirmed()) {
+					ossInvalid << *intIter << " ";
+					intIter = confirmedTasksIndexes.erase(intIter);
+				} else {
+					++intIter;
+				}
 			}
 		}
 

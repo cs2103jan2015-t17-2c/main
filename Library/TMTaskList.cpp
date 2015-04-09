@@ -121,11 +121,11 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 	}
 
 	bool TMTaskList::isInUndated(int positionIndex) {
-		return (positionIndex <= int(_dated.size() + _undated.size()));
+		return (positionIndex > int(_dated.size()) && positionIndex <= int(_dated.size() + _undated.size()));
 	}
 
 	bool TMTaskList::isInArchived(int positionIndex) {
-		return (positionIndex <= int(_dated.size() + _undated.size() + _archived.size()));
+		return (positionIndex > int(_dated.size() + _undated.size()) && positionIndex <= int(_dated.size() + _undated.size() + _archived.size()));
 	}
 
 	bool TMTaskList::isUniqueBatchNum(int i) {

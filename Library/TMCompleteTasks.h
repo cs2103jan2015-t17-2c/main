@@ -32,8 +32,10 @@ public:
 		}
 
 		for (intIter = completeIndexes.begin(); intIter != completeIndexes.end(); ++intIter) {
-			numArchived++;
+			taskList.archiveOneTask(*intIter);
 			updatePositionIndexes(completeIndexes, *intIter);
+			numArchived++;
+
 		}
 		
 		ossValid << numArchived << " tasks(s) successfully marked as completed and archived." << std::endl;
