@@ -60,41 +60,17 @@ namespace TMGUI {
 					
 			 std::string command = inputParser->extractCommand();
 			 TMParser :: CommandTypes commandType = inputParser->determineCommandType(command);
-			 
+			 TMTask task = inputParser->parseTaskInfo();
 				if(commandType == TMParser :: CommandTypes :: Add){
-					TMTask task = inputParser->parseTaskInfo();
-					statusDisplay -> Text = "Adding the following task \n" + printResultRealTime(task);
-				}
-
-				if(commandType == TMParser :: CommandTypes :: Delete){
-					std::vector<int> tasksID = inputParser->parseTaskPositionNo();
-					std::vector<int>::iterator iter;
-					std::string idNumbers;
-					for (iter = tasksID.begin(); iter != tasksID.end(); ++iter){
-						idNumbers = idNumbers + std :: to_string (*iter) + " ";
-					} 
-
-					statusDisplay->Text = "Task ID(s): " + gcnew String(idNumbers.c_str());
-
-				}
-
-				if(commandType == TMParser :: CommandTypes :: Edit){
-					std :: string taskID;
-					taskID = inputParser->extractTokenAfterCommand();
-					statusDisplay -> Text = "Task ID: ";
-					if(taskID != "") {
-						TMTask newTask = inputParser->parseTaskInfo();
-						statusDisplay -> Text = "Task ID: " + gcnew String(taskID.c_str()) + "\n" + printResultRealTime(newTask);
-					}
-
-
+					//statusDisplay->Text = "Adding the following task";
+					displayResultRealTime(task);
 				}
 
 		}
 
-		String^ printResultRealTime(TMTask task){
+		void displayResultRealTime(TMTask task){
 			
-			String^ taskDetails=
+			statusDisplay->Text=
 			"Task Description: " + gcnew String(task.getTaskDescription().c_str()) + "\n"+
 			"Start Date: " + gcnew String(task.getTaskTime().getStartDate().c_str()) + "\t\t\t" + 
 			"Start Time: " + gcnew String(task.getTaskTime().getStartTime().c_str()) + "\n"+
@@ -102,24 +78,22 @@ namespace TMGUI {
 			"End Time: " + gcnew String(task.getTaskTime().getEndTime().c_str());
 		
 			if (task.getTaskType() == TaskType :: WithEndDateTime){
-				taskDetails = 
+				statusDisplay->Text = 
 				"Task Description: " + gcnew String(task.getTaskDescription().c_str()) + "\n"+
 				"Due Date: " + gcnew String(task.getTaskTime().getEndDate().c_str()) + "\t\t\t" + 
 				"Due Time: " + gcnew String(task.getTaskTime().getEndTime().c_str());
 			}
 			
 			if(task.getTaskType() == TaskType ::WithStartDateTime){
-				taskDetails = 
+				statusDisplay->Text = 
 				"Task Description: " + gcnew String(task.getTaskDescription().c_str()) + "\n"+
 				"Start Date: " + gcnew String(task.getTaskTime().getStartDate().c_str()) + "\t\t\t" + 
 				"Start Time: " + gcnew String(task.getTaskTime().getStartTime().c_str());
 			}
 
 			if(task.getTaskType() == TaskType :: Invalid){
-				taskDetails = "Invalid time, please re-enter task time.";
+				statusDisplay->Text = "Invalid time, please re-enter task time.";
 			}
-
-			return taskDetails;
 		}
 
 		std::vector<TMTask> initiateDefaultTasks(TMTaskList taskList){
@@ -671,7 +645,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			 
 			 label4->Text = time.ToString(format);	
 
-			 processRealTime();
+			 //processRealTime();
 			
 		 }
 
