@@ -18,6 +18,5 @@ public:
 
     bool isDeadlinedTask(std::vector<std::string>);
     bool isTimedTask(std::vector<std::string>);
-    bool isMultipleTimingTask(std::vector<std::string>);
 };
 #endif TASKCHECKER_H
