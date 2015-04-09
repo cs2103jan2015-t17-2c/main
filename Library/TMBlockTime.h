@@ -26,17 +26,26 @@ public:
 				TMTask task = *iter;
 				task.setAsUnconfirmed();
 				task.setUnconfirmedBatchNumber(i);
-				oss << taskList.addTask(task) << std::endl;
+				taskList.addTask(task);
 				int positionIndex = taskList.getPositionIndexFromTask(task);
 				positionIndexes.push_back(positionIndex);
 			}
+			std::vector<int>::iterator intIter;
+			oss << "Tasks ";
+			for (intIter = positionIndexes.begin(); intIter != positionIndexes.end(); ++intIter) {
+			oss << *intIter << " ";
+			}
+			oss << " have been blocked." << std::endl;
+
 		} else {
 			TMTask task = parser->parseTaskInfo();
 			task.setAsUnconfirmed();
 			task.setUnconfirmedBatchNumber(i);
-			oss << taskList.addTask(task) << std::endl;
+			taskList.addTask(task);
 			int positionIndex = taskList.getPositionIndexFromTask(task);
 			positionIndexes.push_back(positionIndex);
+			oss << "Task " << positionIndex << " has been blocked." << std::endl;
+			
 		}
 		
 		outcome = oss.str();
