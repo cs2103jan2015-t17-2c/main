@@ -956,8 +956,10 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
                         endTime = timeInAM;
                     } else if (timeInPM > startTime) {
                         endTime = timeInPM;
-                    } else {
+                    } else if (timeInPM <= startTime && timeInAM <= startTime && endTime != "12") {
                         endTime = timeInAM;
+                    } else if (timeInPM <= startTime && timeInAM <= startTime && endTime == "12") {
+                        endTime = timeInPM
                     }
                 }
 
@@ -974,18 +976,86 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
                 //startDate startTime endDate 2359
                 //4 8
                 //8 4
+                if(timeChecker->isTimeWithoutPeriod(startTime)) {
+                    configureStartTimeWithoutPeriods(startTime);
+                }
+
                 if(startDate.length() == 4 && endDate.length() == 4) {
                     configureStartDayMonthEndDayMonth(startDate, endDate);
+                } else if (startDate.length() == 4 && endDate.length() == 8) {
+                    startDate = startDate + endDate.substr(4);
+                    //if startDate not less than endDate, startDate - 1 year
+                    //OR if startDate == endDate && endTime == 0000 startDate - 1 year
+                    std::string delimitedStartDate = formatConverter->dateFromNumericToBoostFormat(startDate);
+                    std::string delimitedEndDate = formatConverter->dateFromNumericToBoostFormat(endDate);
+                    boost::gregorian::date boostStartDate = boost::gregorian::from_uk_string(delimitedStartDate);
+                    boost::gregorian::date boostEndDate = boost::gregorian::from_uk_string(delimitedEndDate);
+
+                    if(boostEndDate <= boostStartDate) {
+                        startDate = subtractNYearsFromDate(startDate, 1);
+                    } else if(boostStartDate == boostEndDate && endTime == "0000") {
+                        startDate = subtractNYearsFromDate(startDate, 1);
+                    }
+
+                } else if (startDate.length() == 8 && endDate.length() == 4) {
+                    endDate = endDate + startDate.substr(4);
+                    //if endDate not more than startDate endDate + 1 year
+                    //OR if endDate == startDate endDate == 0000, endDate + 1 year
+                    std::string delimitedStartDate = formatConverter->dateFromNumericToBoostFormat(startDate);
+                    std::string delimitedEndDate = formatConverter->dateFromNumericToBoostFormat(endDate);
+                    boost::gregorian::date boostStartDate = boost::gregorian::from_uk_string(delimitedStartDate);
+                    boost::gregorian::date boostEndDate = boost::gregorian::from_uk_string(delimitedEndDate);
+
+                    if(boostEndDate <= boostStartDate) {
+                        endDate = addNYearsFromDate(endDate, 1);
+                    } else if(boostStartDate == boostEndDate && endTime == "0000") {
+                        endDate = addNYearsFromDate(endDate, 1);
+                    }
                 }
+
                 endTime = "2359";
             } else if (endDate == ""){
                 //startDate startTime endTime
                 //if today's date find next year's date > currentDate
                 //configure TIME!
                 configureDayMonth(startDate);
+
                 if(timeChecker->isTimeWithoutPeriod(endTime) && timeChecker->isTimeWithoutPeriod(startTime)) {
                     configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
+                } else if (timeChecker->isTimeWithoutPeriod(startTime) && endTime.length() == 4) {
+
+                    std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(startTime + "am");
+                    std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(startTime + "pm");
+
+                    if(endTime == "0000") {
+                        startTime = timeInPM;
+                    } else if (timeInPM < endTime) {
+                        startTime = timeInPM;
+                    } else if (timeInAM < endTime) {
+                        startTime = timeInAM;
+                    } else {
+                        startTime = timeInPM;
+                    }
+                } else if (startTime.length() == 4 && timeChecker->isTimeWithoutPeriod(endTime)) {
+
+                    std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(endTime + "am");
+                    std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(endTime + "pm");
+
+                    if(startTime == "0000") {
+                        if(timeInAM != "0000") {
+                            endTime = timeInAM; 
+                        } else {
+                            endTime = timeInPM;
+                        }
+                    } else if (timeInAM > startTime) {
+                        endTime = timeInAM;
+                    } else if (timeInPM > startTime) {
+                        endTime = timeInPM;
+                    } else {
+                        endTime = timeInAM;
+                    }
                 }
+
                 endDate = startDate;
                 if(endTime <= startTime){
                     endDate = addNDaysFromDate(endDate,1);
@@ -1310,18 +1380,47 @@ std::string TMParser::addNYearsFromDate(std::string date, int n) {
     for(int i = 0; i < n; i++) {
             ++year;
         }
-    
-    finalBoostDate = *year;
 
     if(ddmm == "2802") {
         if(boost::gregorian::gregorian_calendar::is_leap_year(finalBoostDate.year())) {
             boost::gregorian::date_duration oneDay(1);
-            finalBoostDate = finalBoostDate - oneDay;
+            finalBoostDate = *year - oneDay;
         }
     } else if(ddmm == "2902") {
         while(!boost::gregorian::gregorian_calendar::is_leap_year(finalBoostDate.year())) {
             ++year;
         }
+
+        finalBoostDate = *year;
+    }
+
+    return formatConverter->dateFromBoostToDDMMYYYY(finalBoostDate);
+}
+
+std::string TMParser::subtractNYearsFromDate(std::string date, int n) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    date = formatConverter->dateFromNumericToBoostFormat(date);
+    boost::gregorian::date initialBoostDate = boost::gregorian::from_uk_string(date);
+    boost::gregorian::date finalBoostDate;
+
+    std::string ddmm = date.substr(0,4);
+    boost::gregorian::year_iterator year(initialBoostDate);
+
+    for(int i = 0; i < n; i++) {
+            --year;
+        }
+
+    if(ddmm == "2802") {
+        if(boost::gregorian::gregorian_calendar::is_leap_year(finalBoostDate.year())) {
+            boost::gregorian::date_duration oneDay(1);
+            finalBoostDate = *year - oneDay;
+        }
+    } else if(ddmm == "2902") {
+        while(!boost::gregorian::gregorian_calendar::is_leap_year(finalBoostDate.year())) {
+            --year;
+        }
+
+        finalBoostDate = *year;
     }
 
     return formatConverter->dateFromBoostToDDMMYYYY(finalBoostDate);
