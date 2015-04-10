@@ -187,9 +187,7 @@ namespace TMGUI {
 					defaultEntry->ForeColor = Color :: Red;
 				}
 
-				if(taskList[taskPosition].getTaskType() == TaskType ::Undated){
-					defaultEntry->ForeColor = Color :: DarkGoldenrod;
-				}
+				
 
 				std::string confirmationStatus;
 						
@@ -631,10 +629,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 					userInput->Clear();
 				 } 
 				}		
-				else{
-					//statusDisplay->Text = "";
-					
-			 }
+				
 
 			}
 			
