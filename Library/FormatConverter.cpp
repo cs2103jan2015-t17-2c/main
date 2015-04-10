@@ -26,17 +26,17 @@ std::string FormatConverter::returnLowerCase(std::string word) {
 
 //check if it's ddmmyy or ddmmyyyy format first using isNumericDate
 std::string FormatConverter::dateFromNumericToBoostFormat(std::string stringDate) {
-    std::string dd = "";
-    std::string mm = "";
-    std::string yyyy = "";
+    std::string dd;
+    std::string mm;
+    std::string yyyy;
     int lengthOfStringDate = stringDate.length();
     
-    if(lengthOfStringDate == 6){
+    if(lengthOfStringDate == DATE_DDMMYY_LENGTH){
         //DDMMYY
         dd = stringDate.substr(0,2);
         mm = stringDate.substr(2,2);
-        yyyy = "20" + stringDate.substr(4,2);
-    } else if(lengthOfStringDate == 8) {
+        yyyy = currentDateInString().substr(4,2) + stringDate.substr(4,2);
+    } else if(lengthOfStringDate == DATE_DDMMYYYY_LENGTH) {
         //DDMMYYYY
         dd = stringDate.substr(0,2);
         mm = stringDate.substr(2,2);
@@ -61,15 +61,27 @@ std::string FormatConverter::dateFromBoostToStandardFormat(const boost::gregoria
     return os.str();
 }
 
-//incomplete
+std::string FormatConverter::dateFromBoostToDelimitedDDMMYYYY(const boost::gregorian::date& date){
+    std::ostringstream os;
+    boost::gregorian::date_facet* facet(new boost::gregorian::date_facet("%d %m %Y"));
+    os.imbue(std::locale(std::cout.getloc(), facet));
+    os << date;
+    return os.str();
+}
+
+std::string FormatConverter::dateFromBoostToDDMMYYYY(const boost::gregorian::date& date){
+    std::ostringstream os;
+    boost::gregorian::date_facet* facet(new boost::gregorian::date_facet("%d%m%Y"));
+    os.imbue(std::locale(std::cout.getloc(),facet));
+    os << date;
+    return os.str();
+}
+
+//preconditions check if is 24H
 std::string FormatConverter::timeFrom24HourToHHMM(std::string time){
     std::string HHMM;
 
-    //what about 1 digit time?
-    //if am or pm is not specified, will be treated as 24hour time
-    if(time.length() == 2){
-        HHMM = time + "00";
-    } else if (time.length() == 4){
+    if (time.length() == 4){
         HHMM = time;
     } else {
         HHMM = time.erase(2,1);
@@ -78,6 +90,7 @@ std::string FormatConverter::timeFrom24HourToHHMM(std::string time){
     return HHMM;
 }
 
+//preconditions check if 12H AM
 std::string FormatConverter::timeFrom12HourAMToHHMM(std::string time) {
     std::string HHMM;
     int intTime;
@@ -105,6 +118,7 @@ std::string FormatConverter::timeFrom12HourAMToHHMM(std::string time) {
     return HHMM;
 }
 
+//preconditions check if 12H PM
 std::string FormatConverter::timeFrom12HourPMToHHMM(std::string time) {
     std::string HHMM;
     int intTime;
@@ -124,22 +138,6 @@ std::string FormatConverter::timeFrom12HourPMToHHMM(std::string time) {
     }
 
     return HHMM;
-}
-
-std::string FormatConverter::dateFromBoostToDelimitedDDMMYYYY(const boost::gregorian::date& date){
-    std::ostringstream os;
-    boost::gregorian::date_facet* facet(new boost::gregorian::date_facet("%d %m %Y"));
-    os.imbue(std::locale(std::cout.getloc(), facet));
-    os << date;
-    return os.str();
-}
-
-std::string FormatConverter::dateFromBoostToDDMMYYYY(const boost::gregorian::date& date){
-    std::ostringstream os;
-    boost::gregorian::date_facet* facet(new boost::gregorian::date_facet("%d%m%Y"));
-    os.imbue(std::locale(std::cout.getloc(),facet));
-    os << date;
-    return os.str();
 }
 
 std::string FormatConverter::monthFromWrittenToNumeric(std::string month){

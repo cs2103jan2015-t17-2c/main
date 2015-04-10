@@ -66,19 +66,19 @@ namespace TMGUI {
 					statusDisplay -> Text = "Adding the following task \n" + printResultRealTime(task);
 				}
 
-				if(commandType == TMParser :: CommandTypes :: Delete){
+				else if(commandType == TMParser :: CommandTypes :: Delete || commandType == TMParser :: CommandTypes :: Complete || commandType == TMParser :: CommandTypes :: Incomplete){
 					std::vector<int> tasksID = inputParser->parseTaskPositionNo();
 					std::vector<int>::iterator iter;
 					std::string idNumbers;
 					for (iter = tasksID.begin(); iter != tasksID.end(); ++iter){
-						idNumbers = idNumbers + std :: to_string (*iter) + " ";
+						idNumbers = idNumbers + std :: to_string (*iter) + ", ";
 					} 
 
-					statusDisplay->Text = "Task ID(s): " + gcnew String(idNumbers.c_str());
+					statusDisplay->Text = "Task ID(s) to be processed: " + gcnew String(idNumbers.c_str());
 
 				}
 
-				if(commandType == TMParser :: CommandTypes :: Edit){
+				else if(commandType == TMParser :: CommandTypes :: Edit){
 					std :: string taskID;
 					taskID = inputParser->extractTokenAfterCommand();
 					statusDisplay -> Text = "Task ID: ";
@@ -86,6 +86,8 @@ namespace TMGUI {
 						TMTask newTask = inputParser->parseTaskInfo();
 						statusDisplay -> Text = "Task ID: " + gcnew String(taskID.c_str()) + "\n" + printResultRealTime(newTask);
 					}
+					
+					
 
 
 				}
@@ -187,9 +189,7 @@ namespace TMGUI {
 					defaultEntry->ForeColor = Color :: Red;
 				}
 
-				if(taskList[taskPosition].getTaskType() == TaskType ::Undated){
-					defaultEntry->ForeColor = Color :: DarkGoldenrod;
-				}
+				
 
 				std::string confirmationStatus;
 						
@@ -291,6 +291,7 @@ private: System::Windows::Forms::ColumnHeader^  hasPassed;
 		void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(TMGUserInterface::typeid));
 			this->userInput = (gcnew System::Windows::Forms::TextBox());
 			this->welcomeMessage = (gcnew System::Windows::Forms::Label());
 			this->statusDisplay = (gcnew System::Windows::Forms::RichTextBox());
@@ -504,6 +505,7 @@ private: System::Windows::Forms::ColumnHeader^  hasPassed;
 			this->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
+			this->Icon = (cli::safe_cast<System::Drawing::Icon^  >(resources->GetObject(L"$this.Icon")));
 			this->Margin = System::Windows::Forms::Padding(2);
 			this->MaximizeBox = false;
 			this->MinimizeBox = false;
@@ -629,10 +631,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 					userInput->Clear();
 				 } 
 				}		
-				else{
-					//statusDisplay->Text = "";
-					
-			 }
+				
 
 			}
 			
@@ -641,24 +640,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 	
 	
 	private: System::Void userInput_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-
 				
-				 /*if (userInput->Text == "a") {
-					
-					 statusDisplay->Text = "add <task description> {{<time markers> <time/time period>} {<date markers> <date/date period>}/{day}}";
-				 }
-
-				 if (userInput->Text == "d") {
-					statusDisplay->Text = "delete <ID>";
-				 }
-				 
-				 if (userInput->Text == "e") {
-					statusDisplay->Text = "edit <task number> <task component> <new task description or timing or completion status or confirmation status>";
-				 }
-					 
-				if (userInput->Text == "s") {
-					statusDisplay->Text = "search <keyword(s)>";
-				}*/
 			 }
 
 
@@ -669,12 +651,14 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			 
 			 label4->Text = time.ToString(format);	
 
-			 processRealTime();
+			 //processRealTime();
 			
 		 }
 
 private: System::Void TMGUserInterface_Load(System::Object^  sender, System::EventArgs^  e) {
 			clearListView();
+			//statusDisplay->Text = "Commands : (A)dd | (D)elete | (E)dit | (C)omplete | (I)ncomplete | (U)ndo | (R)edo \nDisplays: viewd (Default) | viewdd (Deadlined tasks) | viewa (Archived tasks) | viewu (Undated tasks)";
+
 
 			TMTaskList taskList = initiateTaskList();
 

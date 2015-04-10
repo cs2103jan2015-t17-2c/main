@@ -7,7 +7,6 @@ TMDateTime::TMDateTime(){
 }
 
 TMDateTime::TMDateTime(std::string date, std::string time){
-    //need to try catch and throw
     if(date == ""){
         _date = boost::gregorian::date(boost::gregorian::not_a_date_time);
     } else {

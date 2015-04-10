@@ -59,6 +59,7 @@ namespace TMGUI {
 		void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(TMSplash::typeid));
 			this->progressBar = (gcnew System::Windows::Forms::ProgressBar());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->title = (gcnew System::Windows::Forms::Label());
@@ -108,11 +109,11 @@ namespace TMGUI {
 			this->initials->AutoSize = true;
 			this->initials->Font = (gcnew System::Drawing::Font(L"Corbel", 7.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->initials->Location = System::Drawing::Point(309, 606);
+			this->initials->Location = System::Drawing::Point(304, 607);
 			this->initials->Name = L"initials";
-			this->initials->Size = System::Drawing::Size(227, 26);
+			this->initials->Size = System::Drawing::Size(245, 26);
 			this->initials->TabIndex = 3;
-			this->initials->Text = L"© GANWENXLTKM 2015";
+			this->initials->Text = L"© GA|NWE|NXL|TKM 2015";
 			// 
 			// slogan
 			// 
@@ -137,6 +138,7 @@ namespace TMGUI {
 			this->Controls->Add(this->title);
 			this->Controls->Add(this->progressBar);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::None;
+			this->Icon = (cli::safe_cast<System::Drawing::Icon^  >(resources->GetObject(L"$this.Icon")));
 			this->Name = L"TMSplash";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"TMSplash";

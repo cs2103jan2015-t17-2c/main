@@ -1,7 +1,13 @@
-Number of dated tasks: 2
+<<<<<<< HEAD
+Number of dated tasks: 3
 <Task Type> <Task Description> <Start Date> <Start Time> <End Date> <End Time> <Completion> <Clash> <Confirmation> <Unconfirmed Batch Number>
-WithPeriod  || 10 Apr 2015 2100 11 Apr 2015 1200 0 1 0 1
-WithPeriod  || 10 Apr 2015 2200 11 Apr 2015 1200 0 1 0 1
+WithPeriod  || 11 Apr 2015 09:00 11 Apr 2015 17:00 0 1 1 0
+WithStartDateTime  || 11 Apr 2015 13:00 11 Apr 2015 13:00 0 0 0 1
+WithPeriod  || 11 Apr 2015 15:00 11 Apr 2015 17:00 0 1 0 1
+=======
+Number of dated tasks: 0
+<Task Type> <Task Description> <Start Date> <Start Time> <End Date> <End Time> <Completion> <Clash> <Confirmation> <Unconfirmed Batch Number>
+>>>>>>> eab13fd6302b4d49be705b8b9a958f7bdf52a784
 Number of undated tasks: 0
 <Task Type> <Task Description> <Completion>
 Number of completed/archived tasks: 0

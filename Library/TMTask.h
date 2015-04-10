@@ -34,6 +34,7 @@ public:
     std::string getTaskTypeAsString();
 
     void setTaskDescription(std::string);
+    void setUnconfirmedBatchNumber(int);
 
     //Preconditions: TMTaskTime must be created prior to setting
     void setTaskTime(TMTaskTime);
@@ -44,7 +45,6 @@ public:
     void setAsClashed();
     void setAsUnclashed();
     void setTaskType(TaskType);
-	void setUnconfirmedBatchNumber(int);
 };
 #endif
 

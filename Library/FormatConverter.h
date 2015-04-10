@@ -25,12 +25,8 @@ public:
 
     std::string monthFromWrittenToNumeric(std::string);
 
-    //incomplete
-    //preconditions check if is 24H
     std::string timeFrom24HourToHHMM(std::string);
-    //preconditions check if 12H AM
     std::string timeFrom12HourAMToHHMM(std::string);
-    //preconditions check if 12H PM
     std::string timeFrom12HourPMToHHMM(std::string);
 
     TMTask convertStringToTMTask(std::string);

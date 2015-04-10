@@ -14,27 +14,24 @@ private:
 
 public:
     static DateChecker* getInstance();
-
-    bool isValidDate(std::string);
-    bool isPositiveInteger(std::string);
-
-    //DDMMYY DDMMYYYY
-    bool isNumericDate(std::string);
     
-    //check if date has passed
+    //Preconditions: Time format DDMMYY DDMMYYYY
+    bool isNumericDate(std::string);
     bool isOneDelimitedDate(std::string);
-    char returnDelimiter(std::string);
     bool isDelimitedDate(std::string, char);
+    char returnDelimiter(std::string);
     bool isSpacedDate(int, std::vector<std::string>);
 
-    //DDMMYYYY
+    bool isValidDate(std::string);
     bool isUnoccurredDate(std::string);
 
-    bool isMonth(std::string);
-    bool isNumericMonth(std::string);
+    bool isToday(std::string);
+    bool isTomorrow(std::string);
     bool isDay(std::string);
     bool isNextDay(int, std::vector<std::string>);
-    bool isTomorrow(std::string);
-    bool isToday(std::string);
+    bool isMonth(std::string);
+    bool isNumericMonth(std::string);
+
+    bool isPositiveInteger(std::string);
 };
 #endif DATECHECKER_H

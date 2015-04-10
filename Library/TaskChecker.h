@@ -18,5 +18,12 @@ public:
 
     bool isDeadlinedTask(std::vector<std::string>);
     bool isTimedTask(std::vector<std::string>);
+
+    bool isWordBefore(std::string);
+    bool isWordBy(std::string);
+    bool isWordAt(std::string);
+    bool isWordOn(std::string);
+    bool isWordFrom(std::string);
+    bool isWordTo(std::string); 
 };
 #endif TASKCHECKER_H

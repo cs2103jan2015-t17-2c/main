@@ -82,6 +82,7 @@ std::string TMParser::extractCommand() {
     return command;
 }
 
+//use only after command has been extracted
 std::string TMParser::extractTokenAfterCommand() {
     ErrorMessageReport *errorMessageReport = ErrorMessageReport::getInstance(); 
     if(_tokenizedUserEntry.size() == 0){
@@ -286,7 +287,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
     }
 
     if(dateToMeet == "") {
-        dateToMeet = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
+        dateToMeet = currentDateInString();
         if(timeToMeet <= currentTime()){
             //OR EQUALS?
             dateToMeet = addNDaysFromDate(dateToMeet,1);
@@ -294,6 +295,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
     }
 
     dateToMeet = formatConverter->dateFromNumericToBoostFormat(dateToMeet);
+    timeToMeet = timeToMeet.substr(0,2) + ":" + timeToMeet.substr(2,2);
 
     if(dateChecker->isValidDate(dateToMeet)){
         TMTaskTime taskTime(dateToMeet, timeToMeet, dateToMeet, timeToMeet);
@@ -476,7 +478,9 @@ TMTask TMParser::parseTimedTaskInfo(){
     
     startDate = formatConverter->dateFromNumericToBoostFormat(startDate);
     endDate = formatConverter->dateFromNumericToBoostFormat(endDate);
-    
+    startTime = startTime.substr(0,2) + ":" + startTime.substr(2,2);
+    endTime = endTime.substr(0,2) + ":" + endTime.substr(2,2);
+
     if(dateChecker->isValidDate(startDate) && dateChecker->isValidDate(endDate) && isValidInfo(startDate,startTime,endDate,endTime)){
         TMTaskTime taskTime(startDate,startTime,endDate,endTime);
         TMTask task(taskDescription,taskTime,taskType);
@@ -543,7 +547,7 @@ TMTask TMParser::parseUndatedTaskInfo() {
             editDateOrTimeInInvertedCommas(unitString, index, true, false);
         }
     }
-
+    
     for(int i = 0; i < lengthOfVector; i++){
         std::string token = _tokenizedUserEntry[i];
         
@@ -722,6 +726,8 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo() {
 
         startDate = formatConverter->dateFromNumericToBoostFormat(startDate);
         endDate = formatConverter->dateFromNumericToBoostFormat(endDate);
+        startTime = startTime.substr(0,2) + ":" + startTime.substr(2,2);
+        endTime = endTime.substr(0,2) + ":" + endTime.substr(2,2);
 
         if(dateChecker->isValidDate(startDate) && dateChecker->isValidDate(endDate) && isValidInfo(startDate, startTime, endDate, endTime)){
             TMTaskTime taskTime(startDate, startTime, endDate, endTime);
@@ -875,7 +881,7 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
             startTime = "0000";
             
         } else if(startDate == ""){
-            startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
+            startDate = currentDateInString();
             if(startTime <= currentTime()){
                 startDate = addNDaysFromDate(startDate,1);
              }
@@ -895,7 +901,7 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
         if(endTime == ""){
             endTime = "0000";
         } else if(endDate == ""){
-            endDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
+            endDate = currentDateInString();
             if(endTime <= currentTime()){
                 endDate = addNDaysFromDate(endDate,1);
              }
@@ -903,7 +909,7 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
         //endTime and endDate are found
         }
         //no startDateTime, assumed to be current date and atime
-        startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
+        startDate = currentDateInString();
         startTime = currentTime();
 
     } else if((startDate != ""||startTime != "") && (endDate != ""||endTime != "")) {
@@ -918,7 +924,7 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
             configureDayMonth(startDate);
 
             //if today's date add 1 more year
-            if(startDate == formatConverter->dateFromBoostToDDMMYYYY(currentDate())) {
+            if(startDate == currentDateInString()) {
                 startDate = addNYearsFromDate(startDate,1);
              }
 
@@ -941,10 +947,10 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
 
             if(startDate.length() == 4 && endDate.length() == 4) {
                 configureStartDayMonthEndDayMonth(startDate, endDate);
-            } else if(startDate.length() == 4 && endDate.length() == 8) {
+            } else if(startDate.length() == DATE_DDMMYY_LENGTH && endDate.length() == DATE_DDMMYYYY_LENGTH) {
                 //IF 4 8 LET STARTDATE TAKE THE YEAR OF 8 AND IF >= MINUS 1 YEAR
                 startDate = startDate + endDate.substr(4);
-            } else if(startDate.length() == 8 && endDate.length() == 4) {
+            } else if(startDate.length() == DATE_DDMMYYYY_LENGTH && endDate.length() == DATE_DDMMYY_LENGTH) {
                     //IF 8 4 LET ENDDATE TAKE THE YEAR OF 8 AND IF <= PLUS 1 YEAR
                     endDate = endDate + startDate.substr(4);
                     //INTRODUCE CHECKER!
@@ -957,11 +963,11 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
                 //endDate more than or equal to startDate
                 //if startDate == endDate and endTime == 0000 add 1 more YEAR
                 configureStartDayMonthEndDayMonth(startDate, endDate);
-            } else if (startDate.length() == 4 && endDate.length() == 8) {
+            } else if (startDate.length() == DATE_DDMMYY_LENGTH && endDate.length() == DATE_DDMMYYYY_LENGTH) {
                 startDate = startDate + endDate.substr(4);
                 //if startDate not less than endDate, startDate - 1 year
                 //OR if startDate == endDate && endTime == 0000 startDate - 1 year
-            } else if (startDate.length() == 8 && endDate.length() == 4) {
+            } else if (startDate.length() == DATE_DDMMYYYY_LENGTH && endDate.length() == DATE_DDMMYY_LENGTH) {
                 endDate = endDate + startDate.substr(4);
                 //if endDate not more than startDate endDate + 1 year
                 //OR if endDate == startDate endDate == 0000, endDate + 1 year
@@ -1009,7 +1015,7 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
                 }
             }
             
-            startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
+            startDate = currentDateInString();
 
             //if time passed then start date is tomorrow's date
             if(startTime <= currentTime()) {
@@ -1030,7 +1036,7 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
                 configureStartTimeWithoutPeriods(startTime);
             }
             
-            startDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
+            startDate = currentDateInString();
             //if start time has passed
             
             if(startTime <= currentTime()) {
@@ -1430,7 +1436,7 @@ void TMParser::configureDayMonth(std::string& stringDate) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
     DateChecker *dateChecker = DateChecker::getInstance();
 
-    std::string stringCurrentDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
+    std::string stringCurrentDate = currentDateInString();
     std::string stringCurrentYear = stringCurrentDate.substr(4);
     stringDate = stringDate + stringCurrentYear;
     std::string ddmm = stringDate.substr(0,4);
@@ -1447,7 +1453,7 @@ void TMParser::configureStartDayMonthEndDayMonth(std::string& startDate, std::st
     FormatConverter *formatConverter = FormatConverter::getInstance();
     DateChecker *dateChecker = DateChecker::getInstance();
 
-    std::string stringCurrentDate = formatConverter->dateFromBoostToDDMMYYYY(currentDate());
+    std::string stringCurrentDate = currentDateInString();
     std::string stringCurrentYear = stringCurrentDate.substr(4);
 
     std::string stringStartDate = startDate + stringCurrentYear;
@@ -1657,6 +1663,7 @@ bool TMParser::isUniqueIndex(int index, std::vector<int> vectorTaskPositionNumbe
     iter = std::find(vectorTaskPositionNumber.begin(), vectorTaskPositionNumber.end(), index);
     return (iter == vectorTaskPositionNumber.end());
 }
+
 //precondition: command extracted
 std::string TMParser::parseSearchKey() {
     std::string searchKey;
@@ -1679,22 +1686,22 @@ std::string TMParser::parseDirectory() {
 }
 
 //preconditions ddmmyyyy
-std::string TMParser::substractNDaysFromDate(std::string date, int n){
-    FormatConverter *formatConverter = FormatConverter::getInstance();
-    date = formatConverter->dateFromNumericToBoostFormat(date);
-    boost::gregorian::date initialBoostDate = boost::gregorian::from_uk_string(date);
-    boost::gregorian::date_duration dateDuration(n);
-    boost::gregorian::date finalBoostDate = initialBoostDate - dateDuration;
-    return formatConverter->dateFromBoostToDDMMYYYY(finalBoostDate);
-}
-
-//preconditions ddmmyyyy
 std::string TMParser::addNDaysFromDate(std::string date, int n){
     FormatConverter *formatConverter = FormatConverter::getInstance();
     date = formatConverter->dateFromNumericToBoostFormat(date);
     boost::gregorian::date initialBoostDate = boost::gregorian::from_uk_string(date);
     boost::gregorian::date_duration dateDuration(n);
     boost::gregorian::date finalBoostDate = initialBoostDate + dateDuration;
+    return formatConverter->dateFromBoostToDDMMYYYY(finalBoostDate);
+}
+
+//preconditions ddmmyyyy
+std::string TMParser::substractNDaysFromDate(std::string date, int n){
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    date = formatConverter->dateFromNumericToBoostFormat(date);
+    boost::gregorian::date initialBoostDate = boost::gregorian::from_uk_string(date);
+    boost::gregorian::date_duration dateDuration(n);
+    boost::gregorian::date finalBoostDate = initialBoostDate - dateDuration;
     return formatConverter->dateFromBoostToDDMMYYYY(finalBoostDate);
 }
 

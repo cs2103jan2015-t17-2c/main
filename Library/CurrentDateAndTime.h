@@ -16,4 +16,9 @@ static boost::gregorian::date currentDate() {
     return boost::gregorian::day_clock::local_day();
 }
 
+static std::string currentDateInString() {
+    std::string stringDate = boost::gregorian::to_iso_string(currentDate());
+    return stringDate.substr(6,2) + stringDate.substr(4,2) + stringDate.substr(0,4);
+}
+
 #endif
