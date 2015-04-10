@@ -29,7 +29,12 @@ static const std::string CMD_SHORTCUT_SEARCH = "se";
 static const std::string CMD_SHORTCUT_EDIT= "e";
 static const std::string CMD_SHORTCUT_STORE = "st";
 static const std::string CMD_SHORTCUT_DONEALL = "da";
+static const std::string CMD_SHORTCUT_BLOCK = "b";
 static const std::string CMD_SHORTCUT_QUIT = "q";
+
+static const std::string ERROR_INDEX_OF_TASK_NOT_SPECIFIED = "Index of task not specified\n";
+static const std::string ERROR_MISSING_NEW_TASK_INFO = "Missing new task information\n";
+static const std::string ERROR_INDEX_SPECIFIED_NOT_POSITIVE_INT = "Index of task must be a positive integer\n";
 
 static const std::string DAY_YESTERDAY = "yesterday";
 static const std::string DAY_TODAY = "today";
@@ -116,43 +121,43 @@ static const char DELIMITER_SLASH = '/';
 static const char DELIMITER_FULLSTOP = '.';
 static const char DELIMITER_DASH = '-';
 
-const int DATE_DDMM_LENGTH = 4;
-const int DATE_DDMMYY_LENGTH = 6;
-const int DATE_DDMMYYYY_LENGTH = 8;
+static const int DATE_DDMM_LENGTH = 4;
+static const int DATE_DDMMYY_LENGTH = 6;
+static const int DATE_DDMMYYYY_LENGTH = 8;
 
-const int DAY_D_LENGTH = 1;
-const int DAY_DD_LENGTH = 2;
+static const int DAY_D_LENGTH = 1;
+static const int DAY_DD_LENGTH = 2;
 
 static const std::string DATE_NUMERIC_DDMM_29_FEB = "2902";
 
-const int YEAR_YY_LENGTH = 2;
-const int YEAR_YYYY_LENGTH = 4;
+static const int YEAR_YY_LENGTH = 2;
+static const int YEAR_YYYY_LENGTH = 4;
 
-const int TIME_WITH_PERIOD_LENGTH_3 = 3;
-const int TIME_WITH_PERIOD_LENGTH_4 = 4;
-const int TIME_WITH_PERIOD_LENGTH_5 = 5;
-const int TIME_WITH_PERIOD_LENGTH_6 = 6;
+static const int TIME_WITH_PERIOD_LENGTH_3 = 3;
+static const int TIME_WITH_PERIOD_LENGTH_4 = 4;
+static const int TIME_WITH_PERIOD_LENGTH_5 = 5;
+static const int TIME_WITH_PERIOD_LENGTH_6 = 6;
 
 static const std::string TIME_PERIOD_AM = "am";
 static const std::string TIME_PERIOD_PM = "pm";
 
-const int ONE_O_CLOCK = 1;
-const int NINE_O_CLOCK = 9;
-const int TEN_O_CLOCK = 10;
-const int TWELVE_O_CLOCK = 12;
+static const int ONE_O_CLOCK = 1;
+static const int NINE_O_CLOCK = 9;
+static const int TEN_O_CLOCK = 10;
+static const int TWELVE_O_CLOCK = 12;
 
-const int TIME_WITHOUT_PERIOD_LENGTH_1 = 1;
-const int TIME_WITHOUT_PERIOD_LENGTH_2 = 2;
+static const int TIME_WITHOUT_PERIOD_LENGTH_1 = 1;
+static const int TIME_WITHOUT_PERIOD_LENGTH_2 = 2;
 
-const int TIME_HHMM_LENGTH = 4;
-const int TIME_HH_COLON_MM_LENGTH = 5;
+static const int TIME_HHMM_LENGTH = 4;
+static const int TIME_HH_COLON_MM_LENGTH = 5;
 
 const char CHAR_COLON = ':';
 
-const int ZERO_HOURS = 0;
-const int TWENTY_THREE_HOURS = 23;
+static const int ZERO_HOURS = 0;
+static const int TWENTY_THREE_HOURS = 23;
 
-const int ZERO_MINUTE = 0;
-const int FIFTY_NINE_MINUTES = 59;
+static const int ZERO_MINUTE = 0;
+static const int FIFTY_NINE_MINUTES = 59;
 
 #endif

@@ -1,6 +1,7 @@
-Number of dated tasks: 2
+Number of dated tasks: 3
 <Task Type> <Task Description> <Start Date> <Start Time> <End Date> <End Time> <Completion> <Clash> <Confirmation> <Unconfirmed Batch Number>
-WithPeriod  || 11 Apr 2015 13:00 11 Apr 2015 14:00 0 0 1 0
+WithPeriod  || 11 Apr 2015 13:00 11 Apr 2015 14:00 0 1 1 0
+WithPeriod  || 11 Apr 2015 13:00 11 Apr 2015 21:00 0 1 1 0
 WithPeriod  || 19 Mar 2016 12:14 04 Apr 2016 12:15 0 0 1 0
 Number of undated tasks: 0
 <Task Type> <Task Description> <Completion>

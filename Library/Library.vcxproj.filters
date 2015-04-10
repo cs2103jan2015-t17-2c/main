@@ -153,9 +153,6 @@
     <ClInclude Include="CurrentDateAndTime.h">
       <Filter>Header Files\CurrentDateAndTime</Filter>
     </ClInclude>
-    <ClInclude Include="ErrorMessageReport.h">
-      <Filter>Header Files\TMMemory</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TMParser.cpp">
@@ -193,9 +190,6 @@
     </ClCompile>
     <ClCompile Include="Extractor.cpp">
       <Filter>Source Files\TMExtractor</Filter>
-    </ClCompile>
-    <ClCompile Include="ErrorMessageReport.cpp">
-      <Filter>Source Files\TMMemory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

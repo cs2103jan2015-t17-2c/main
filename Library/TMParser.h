@@ -17,7 +17,6 @@
 #include "FormatConverter.h"
 #include "Extractor.h"
 #include "CurrentDateAndTime.h"
-#include "ErrorMessageReport.h"
 
 //user input date must be ddmmyyyy
 //time input if in 12hour format must be followed immediately by pm and am
@@ -46,7 +45,20 @@ public:
 	std::vector<std::string> returnTokens();
 
     CommandTypes determineCommandType(std::string);
-    
+    bool isCommandAdd(std::string);
+    bool isCommandDelete(std::string);
+    bool isCommandUndo(std::string);
+    bool isCommandRedo(std::string);
+    bool isCommandComplete(std::string);
+    bool isCommandIncomplete(std::string);
+    bool isCommandSearch(std::string);
+    bool isCommandEdit(std::string);
+    bool isCommandStore(std::string);
+    bool isCommandDoneAll(std::string);
+    bool isCommandBlock(std::string);
+    bool isCommandConfirm(std::string);
+    bool isCommandQuit(std::string);
+
     //parse relevant info into the respective tasks
     //commmand must be extracted first
     TMTask parseTaskInfo();
@@ -56,6 +68,8 @@ public:
 
     //to block task with multiple timings >= 2
     std::vector<TMTask> parseMultipleTimingTaskInfo();
+
+    void configureTaskDescription(std::string&, std::queue<int>&);
 
     //used for timedtask
     void configureQueuesAndIndex(std::queue<int>&, std::queue<int>&, int&);
