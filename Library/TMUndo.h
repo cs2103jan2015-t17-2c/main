@@ -9,7 +9,11 @@ class TMUndo: public TMCommand {
 public:
 	void execute() {
 		TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
-		outcome = taskListStates->reverseCurrentState();
+		if (taskListStates->regressCurrentState()) {
+			outcome = UNDO_SUCCESS;
+		} else {
+			outcome = UNDO_FAILURE;
+		} 
 	}
 };
 

@@ -39,7 +39,7 @@ public:
 			updatePositionIndexes(completeIndexes, *iter);
 		}
 
-		oss << numArchived << " tasks successfully marked as completed and archived.";
+		oss << numArchived << ARCHIVE_SUCCESS;
 		outcome = oss.str();
 		taskListStates->addNewState(taskList);		
 	}

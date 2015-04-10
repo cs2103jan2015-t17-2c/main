@@ -4,7 +4,6 @@
 #include "TMCommand.h"
 #include "TaskChecker.h"
 
-const std::string BATCH_NUMBER_INFO = "The batch number for this batch of unconfirmed task(s) is: ";
 
 class TMBlockTime : public TMCommand {
 	
@@ -15,30 +14,40 @@ public:
 		TMParser *parser = TMParser::getInstance();
         TaskChecker *taskChecker = TaskChecker::getInstance();
 		TMTaskList taskList = taskListStates->getCurrentTaskList();
-		std::ostringstream oss;
+		std::ostringstream ossValid, ossInvalid;
 		int i = taskList.generateUniqueBatchNum();
         
         std::vector<TMTask> tasks = parser->parseMultipleTimingTaskInfo();
 		std::vector<TMTask>::iterator iter;
-		
+		int numInvalid = 0;
+
 		for (iter = tasks.begin(); iter != tasks.end(); ++iter) {
 			TMTask task = *iter;
-			task.setAsUnconfirmed();
-			task.setUnconfirmedBatchNumber(i);
-			taskList.addTask(task);
-			int positionIndex = taskList.getPositionIndexFromTask(task);
-			positionIndexes.push_back(positionIndex);
+			if (task.getTaskType() != TaskType::Invalid) {
+				task.setAsUnconfirmed();
+				task.setUnconfirmedBatchNumber(i);
+				taskList.addTask(task);
+				int positionIndex = taskList.getPositionIndexFromTask(task);
+				positionIndexes.push_back(positionIndex);
+			} else {
+				numInvalid++;
+			}
 		}
 		
-        std::vector<int>::iterator intIter;
-		oss << "Tasks ";
-		for (intIter = positionIndexes.begin(); intIter != positionIndexes.end(); ++intIter) {
-			oss << *intIter << " ";
+		if (positionIndexes.size() != 0) {
+			std::vector<int>::iterator intIter;
+			ossValid << STATUS_DISPLAY_INDEXES;
+			for (intIter = positionIndexes.begin(); intIter != positionIndexes.end(); ++intIter) {
+				ossValid << *intIter << " ";
+			}
+			ossValid << BLOCK_SUCCESS << std::endl;
 		}
-		
-        oss << " have been blocked." << std::endl;
 
-		outcome = oss.str();
+		if (numInvalid != 0) {
+			ossInvalid << BLOCK_FAILURE << numInvalid;
+		}
+
+		outcome = ossValid.str() + ossInvalid.str();
 		taskListStates->addNewState(taskList);
 	}
 

@@ -18,6 +18,11 @@ static const std::string CMD_CONFIRM = "confirm";
 static const std::string CMD_QUIT = "quit";
 static const std::string CMD_EXIT = "exit";
 static const std::string CMD_CLOSE = "close";
+static const std::string CMD_VIEW_DEFAULT = "viewd";
+static const std::string CMD_VIEW_DEADLINE = "viewdd";
+static const std::string CMD_VIEW_UNDATED = "viewu";
+static const std::string CMD_VIEW_ARCHIVED = "viewa";
+static const std::string CMD_VIEW_SEARCH = "views";
 
 static const std::string CMD_SHORTCUT_ADD = "a";
 static const std::string CMD_SHORTCUT_DELETE = "d";
@@ -30,6 +35,11 @@ static const std::string CMD_SHORTCUT_EDIT= "e";
 static const std::string CMD_SHORTCUT_STORE = "st";
 static const std::string CMD_SHORTCUT_DONEALL = "da";
 static const std::string CMD_SHORTCUT_QUIT = "q";
+static const std::string CMD_SHORTCUT_VIEW_DEFAULT = "vd";
+static const std::string CMD_SHORTCUT_VIEW_DEADLINE = "vdd";
+static const std::string CMD_SHORTCUT_VIEW_UNDATED = "vu";
+static const std::string CMD_SHORTCUT_VIEW_ARCHIVED = "va";
+static const std::string CMD_SHORTCUT_VIEW_SEARCH = "vs";
 
 static const std::string DAY_YESTERDAY = "yesterday";
 static const std::string DAY_TODAY = "today";
@@ -82,4 +92,41 @@ const std::string PERIOD_MONTHS = "months";
 const std::string PERIOD_YEAR = "year";
 const std::string PERIOD_YEARS = "years";
 */
+
+static const std::string STATUS_DISPLAY_INDEXES = "Tasks ";
+static const std::string STATUS_DISPLAY_INVALID_INDEXES = " is/are invalid position indexe(s).";
+static const std::string STATUS_DISPLAY_NEW_INDEX = "New task ";
+static const std::string ADD_SDT_SUCCESS = " (with start date and time) successfully added.";
+static const std::string ADD_EDT_SUCCESS = " (with end date and time/deadline) successfully added.";
+static const std::string ADD_PERIOD_SUCCESS = " (with period) successfully added.";
+static const std::string ADD_UNDATED_SUCCESS = " (undated) successfully added.";
+static const std::string ADD_INVALID = "The task you have specified has invalid component(s). Please specify a valid task.";
+static const std::string CLASH_WARNING = " has clash(es) with tasks on hand.\nTasks involved have been highlighted in blue.";
+static const std::string BLOCK_SUCCESS = " have been blocked.";
+static const std::string BLOCK_FAILURE = "Number of tasks with invalid timings: ";
+static const std::string ARCHIVE_SUCCESS = " tasks(s) successfully marked as completed and archived.";
+static const std::string CONFIRM_SUCCESS = " is/are confirmed.";
+static const std::string DELETE_SUCCESS = " tasks successfully deleted.";
+static const std::string EDIT_SUCCESS = "Successfully edited task.";
+static const std::string INVALID_COMMAND_PROMPT = "The command you have entered is invalid, please enter a valid one.";
+static const std::string CURRENT_DIRECTORY_NAME = "Current file directory is now at: ";
+static const std::string CURRENT_FILE_NAME = "File name: ";
+static const std::string INVAILD_DIRECTORY_SPECIFIED = "The directory you have specified is invalid";
+static const std::string SEARCH_CONCLUSION_KEYWORD_PART1 = "Number of tasks containing the keyword <";
+static const std::string SEARCH_CONCLUSION_KEYWORD_PART2 = "> is: ";
+static const std::string UNCOMPLETE_SUCCESS =" tasks successfully marked as uncomplete.";
+static const std::string UNDO_SUCCESS = "Undo last action successfully.";
+static const std::string UNDO_FAILURE = "Initial state of the system is reached. Unable to undo.";
+static const std::string REDO_SUCCESS = "Redo successfully.";
+static const std::string REDO_FAILURE = "Latest state of the system is reached. Unable to redo.";
+static const std::string WARNING_REPEATED_INDEXES_SPECIFIED = "Please do not specify an index more than once.";
+
+static const std::string DATED_TASK_DISPLAY_FORMAT = "<Task Type> <Task Description> <Start Date> <Start Time> <End Date> <End Time> <Completion> <Clash> <Confirmation> <Unconfirmed Batch Number>";
+static const std::string UNDATED_TASK_DISPLAY_FORMAT = "<Task Type> <Task Description> <Completion>";
+static const std::string DATED_HEADER = "Number of dated tasks: ";
+static const std::string UNDATED_HEADER = "Number of undated tasks: ";
+static const std::string ARCHIVED_HEADER = "Number of completed/archived tasks: ";
+static const std::string LOAD_SUCCESS = "Database loaded successfully.";
+static const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program where to load existing data from. Please do not delete.";
+
 #endif

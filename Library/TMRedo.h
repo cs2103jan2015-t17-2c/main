@@ -8,7 +8,11 @@ class TMRedo: public TMCommand {
 public:
 	void execute() {
 		TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
-		outcome = taskListStates->progressCurrentState();
+		if (taskListStates->progressCurrentState()) {
+			outcome = REDO_SUCCESS;
+		} else {
+			outcome = REDO_FAILURE;
+		} 
 	}
 };
 

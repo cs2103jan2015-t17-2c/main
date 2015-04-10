@@ -27,6 +27,7 @@ void TMExecutor::executeMain(std::string userInput) {
 	
 		if (isDisplayChange(command)) {
 			_currentDisplay = determineDisplayType(command);
+			_resultOfExecution = "";
 		} else {
 			TMParser::CommandTypes type = parser->determineCommandType(command);
 			TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(type);
@@ -42,11 +43,10 @@ void TMExecutor::executeMain(std::string userInput) {
 		TMCommand* commandObjPtr = cmdCreator.createNewCommandObj(TMParser::CommandTypes::Invalid);
 		commandObjPtr->execute();
 		_resultOfExecution = commandObjPtr->outcome;
-		}
+	}
 
 	taskList = taskListStates->getCurrentTaskList();
 	taskList.writeToFile();
-	taskList.leaveReferenceUponExit();
 
 	return;
 }
@@ -68,19 +68,19 @@ std::vector<int> TMExecutor::getPositionIndexes() {
 }
 
 bool TMExecutor::isDisplayChange(std::string userInput) {
-	return (userInput.find("view") != std::string::npos);
+	return (userInput.find("v") != std::string::npos);
 }
 
 TMDisplay TMExecutor::determineDisplayType(std::string userInput) {
-	if (userInput == "viewd") {
+	if (userInput == CMD_VIEW_DEFAULT || userInput == CMD_SHORTCUT_VIEW_DEFAULT) {
 		return Default;
-	}else if (userInput == "viewdd") {
+	}else if (userInput == CMD_VIEW_DEADLINE || userInput == CMD_SHORTCUT_VIEW_DEADLINE) {
 		return DeadlineTasks;
-	}else if (userInput == "viewu") {
+	}else if (userInput == CMD_VIEW_UNDATED || userInput == CMD_SHORTCUT_VIEW_UNDATED) {
 		return UndatedTasks;
-	}else if (userInput == "viewa") {
+	}else if (userInput == CMD_VIEW_ARCHIVED || userInput == CMD_SHORTCUT_VIEW_ARCHIVED) {
 		return ArchivedTasks;
-	}else if (userInput == "views") {
+	}else if (userInput == CMD_VIEW_SEARCH || userInput == CMD_SHORTCUT_VIEW_SEARCH) {
 		return SearchResults;
 	}
 }

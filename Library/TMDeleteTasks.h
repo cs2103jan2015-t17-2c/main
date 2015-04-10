@@ -18,7 +18,7 @@ public:
 		std::ostringstream ossValid, ossInvalid;
 		int numDeleted = 0;
 		
-		if (!noRepeatedIndexes(deleteIndexes)) {
+		if (hasRepeatedIndexes(deleteIndexes)) {
 			outcome = WARNING_REPEATED_INDEXES_SPECIFIED;
 			return;
 		}
@@ -39,11 +39,11 @@ public:
 			updatePositionIndexes(deleteIndexes, *intIter);
 		}
 		
-		ossValid << numDeleted << " tasks successfully deleted." << std::endl;
+		ossValid << numDeleted << DELETE_SUCCESS << std::endl;
 		if (ossInvalid.str().size() != 0) {
-			ossInvalid << " is/are invalid position indexe(s).";
+			ossInvalid << STATUS_DISPLAY_INVALID_INDEXES;
 		}
-		outcome = ossValid.str() + ossInvalid.str();
+		outcome = ossValid.str() + '\n' + ossInvalid.str();
 		taskListStates->addNewState(taskList);
 		
 	}

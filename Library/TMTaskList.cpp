@@ -1,26 +1,9 @@
 #include "TMTaskList.h"
 
-const std::string DATED_TASK_DISPLAY_FORMAT = "<Task Type> <Task Description> <Start Date> <Start Time> <End Date> <End Time> <Completion> <Clash> <Confirmation> <Unconfirmed Batch Number>";
-const std::string UNDATED_TASK_DISPLAY_FORMAT = "<Task Type> <Task Description> <Completion>";
-const std::string DATED_HEADER = "Number of dated tasks: ";
-const std::string UNDATED_HEADER = "Number of undated tasks: ";
-const std::string ARCHIVED_HEADER = "Number of completed/archived tasks: ";
-const std::string LOAD_SUCCESS = "Database loaded successfully.";
-const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program where to load existing data from. Please do not delete.";
+
 
 	TMTaskList::TMTaskList() {
-		boost::gregorian::date dateToday =  boost::gregorian::day_clock::local_day();
-		std::locale facet(std::locale::classic(), new boost::gregorian::date_facet("%d %b %Y"));
-		std::ostringstream stream;
-		stream.imbue(facet);
-		std::string  strDateToday;
-		stream << dateToday;
-		strDateToday = stream.str();
-		std::string year, defaultFileName;
 		
-		year = strDateToday.substr(strDateToday.size()-4, 4);
-		defaultFileName = year + " Schedule.txt"; 
-		_fileName = defaultFileName; 
 		}
 
 
@@ -449,17 +432,83 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 
 
 	//EXPORT AND IMPORT FUNCTIONS
+	
+	bool TMTaskList::isFoundInLine(std::string text, std::string line) {
+		bool result = (std::search(line.begin(), line.end(), text.begin(), text.end()) != line.end());
+		std::cout << "RESULT: " << result << std::endl;
+		return std::search(line.begin(), line.end(), text.begin(), text.end()) != line.end();
+	}
+	
+	bool TMTaskList::isValidDirectory(const char* directory) {
+		DWORD attributes = GetFileAttributesA(directory);
+		if (attributes == INVALID_FILE_ATTRIBUTES) {
+			return false;
+		}
+		
+		return (attributes & FILE_ATTRIBUTE_DIRECTORY);
+	}
+
+	void TMTaskList::loadOrCreateFile() {
+		std::string directoryName;
+		std::ifstream directoryReference("TimeMaster.txt");
+		getline(directoryReference, directoryName);
+		if (directoryName != "" && isValidDirectory(directoryName.c_str())) {
+			setDirectoryName(directoryName);
+			setDefaultFileName();
+			loadFromFile();
+			
+		} else {
+			setDirectoryName(getExePath());
+			setDefaultFileName();
+			createFile();
+		}
+		return;
+	}
+
+	void TMTaskList::setDirectoryName(std::string directory) {
+		_directoryName = directory;
+	}
+
+	void TMTaskList::setDefaultFileName() {
+		boost::gregorian::date dateToday =  boost::gregorian::day_clock::local_day();
+		std::locale facet(std::locale::classic(), new boost::gregorian::date_facet("%d %b %Y"));
+		std::ostringstream stream;
+		stream.imbue(facet);
+		std::string  strDateToday;
+		stream << dateToday;
+		strDateToday = stream.str();
+		std::string year, defaultFileName;
+		
+		year = strDateToday.substr(strDateToday.size()-4, 4);
+		defaultFileName = "TM " + year + " Schedule.txt"; 
+		_fileName = defaultFileName; 
+	}
+
+	std::string TMTaskList::getDirectoryName() {
+		return _directoryName;
+	}
+
+	std::string TMTaskList::getFileName() {
+		return _fileName;
+	}
+
+	std::string TMTaskList::getExeFileName() {
+		char buffer[MAX_PATH];
+		GetModuleFileName( NULL, buffer, MAX_PATH );
+		return std::string(buffer);
+	}
+
+	std::string TMTaskList::getExePath() {
+		std::string exeDirectoryAndFileName = getExeFileName();
+		return exeDirectoryAndFileName.substr(0, exeDirectoryAndFileName.find_last_of( "\\/" ));
+	}
+
 	void TMTaskList::writeToFile() {
 		std::ofstream outFile;
 		std::vector<TMTask>::iterator iter;
-		if (_directoryName == "") {
-			outFile.open(_fileName);
-		} else {
-			std::string fileDirectory = _directoryName + "\\" + _fileName;
-			outFile.open(fileDirectory);
-		}
+		std::string fileDirectory = _directoryName + "\\" + _fileName;
+		outFile.open(fileDirectory);
 	
-
 		outFile << DATED_HEADER  << _dated.size() << "\n";
 		outFile << DATED_TASK_DISPLAY_FORMAT << "\n";
 		for (iter = _dated.begin(); iter != _dated.end(); ++iter) {
@@ -511,8 +560,15 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 		outFile.close();
 	}
 
-	std::string TMTaskList::loadFromFile(std::string pathName) {
+	void TMTaskList::createFile() {
+		std::string pathName = _directoryName + "\\" + _fileName;
+		std::ofstream outFile;
+		outFile.open(pathName);
+		outFile.close();
+	}
 
+	void TMTaskList::loadFromFile() {
+		std::string pathName = _directoryName + "\\" + _fileName;
 		std::ifstream contentReference(pathName);
 		std::vector<std::string> linesFromFile;
 		std::string line;
@@ -556,37 +612,16 @@ const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program whe
 			iter++;
 		}
 
-		return LOAD_SUCCESS;
+		return;
 	} 
-
-	void TMTaskList::setFileDirectory(std::string directory) {
-		_directoryName = directory;
-	}
-
-	std::string TMTaskList::getFileDirectory() {
-		return _directoryName;
-	}
 
 	void TMTaskList::leaveReferenceUponExit() {
 		std::ofstream outFile;
 		outFile.open("TimeMaster.txt");
-		outFile << _directoryName + _fileName << '\n';
+		outFile << _directoryName << '\n';
 		outFile << USER_INFO_TIMEMASTER_FILE << '\n';
 		outFile.close();
 		}
 
-	bool TMTaskList::isFoundInLine(std::string text, std::string line) {
-		bool result = (std::search(line.begin(), line.end(), text.begin(), text.end()) != line.end());
-		std::cout << "RESULT: " << result << std::endl;
-		return std::search(line.begin(), line.end(), text.begin(), text.end()) != line.end();
-	}
 
-	void TMTaskList::determineLoadOrCreateFile() {
-		std::string pathName;
-		std::ifstream directoryReference("TimeMaster.txt");
-		getline(directoryReference, pathName);
-		if ((pathName) != "") {
-			loadFromFile(pathName);
-		}
-		return;
-	}
+	

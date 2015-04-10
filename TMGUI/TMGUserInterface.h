@@ -527,7 +527,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 					taskList.leaveReferenceUponExit();
 					Application :: Exit();
 				 }
-				 else{
+				 else {
 					 statusDisplay->Text = "";
 					 String ^ str = userInput->Text;
 					 std::string unmanaged = msclr::interop::marshal_as<std::string>(str);
@@ -585,7 +585,6 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 								 displayTasks(dated,deadlinedIndex,deadlinedTaskPosition);
 							 }
 						 }
-						 exe->setCurrentDisplay(Default);
 						 break;
 					
 					case UndatedTasks:
@@ -608,7 +607,6 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 							int archivedIndex = k + 1;
 							displayTasks(archived,archivedIndex,archivedTaskPosition);
 						}
-						exe->setCurrentDisplay(Default);
 						break;
 
 					
