@@ -13,7 +13,7 @@ TMDateTime::TMDateTime(std::string date, std::string time){
         _date = boost::gregorian::from_uk_string(date);
     }
 
-    _time = time.substr(0,2) + ":" + time.substr(2,2);
+    _time = time;
 }
 
 std::string TMDateTime::getDate(){

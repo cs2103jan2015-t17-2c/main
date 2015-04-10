@@ -26,17 +26,17 @@ std::string FormatConverter::returnLowerCase(std::string word) {
 
 //check if it's ddmmyy or ddmmyyyy format first using isNumericDate
 std::string FormatConverter::dateFromNumericToBoostFormat(std::string stringDate) {
-    std::string dd = "";
-    std::string mm = "";
-    std::string yyyy = "";
+    std::string dd;
+    std::string mm;
+    std::string yyyy;
     int lengthOfStringDate = stringDate.length();
     
-    if(lengthOfStringDate == 6){
+    if(lengthOfStringDate == DATE_DDMMYY_LENGTH){
         //DDMMYY
         dd = stringDate.substr(0,2);
         mm = stringDate.substr(2,2);
-        yyyy = "20" + stringDate.substr(4,2);
-    } else if(lengthOfStringDate == 8) {
+        yyyy = currentDateInString().substr(4,2) + stringDate.substr(4,2);
+    } else if(lengthOfStringDate == DATE_DDMMYYYY_LENGTH) {
         //DDMMYYYY
         dd = stringDate.substr(0,2);
         mm = stringDate.substr(2,2);

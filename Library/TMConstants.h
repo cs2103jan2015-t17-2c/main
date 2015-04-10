@@ -52,6 +52,52 @@ static const std::string DAY_FRI = "fri";
 static const std::string DAY_SAT = "sat";
 static const std::string DAY_SUN = "sun";
 
+static const std::string MONTH_JAN = "jan";
+static const std::string MONTH_JANUARY = "january";
+static const std::string MONTH_FEB = "feb";
+static const std::string MONTH_FEBRUARY = "february";
+static const std::string MONTH_MAR = "mar";
+static const std::string MONTH_MARCH = "march";
+static const std::string MONTH_APR = "apr";
+static const std::string MONTH_APRIL = "april";
+static const std::string MONTH_MAY = "may";
+static const std::string MONTH_JUN = "jun";
+static const std::string MONTH_JUNE = "june";
+static const std::string MONTH_JUL = "jul";
+static const std::string MONTH_JULY = "july";
+static const std::string MONTH_AUG = "aug";
+static const std::string MONTH_AUGUST = "august";
+static const std::string MONTH_SEP = "sep";
+static const std::string MONTH_SEPTEMBER = "september";
+static const std::string MONTH_OCT = "oct";
+static const std::string MONTH_OCTOBER = "october";
+static const std::string MONTH_NOV = "nov";
+static const std::string MONTH_NOVEMBER = "november";
+static const std::string MONTH_DEC = "dec";
+static const std::string MONTH_DECEMBER = "december";
+
+static const std::string MONTH_NUMERIC_JAN_M = "1";
+static const std::string MONTH_NUMERIC_JAN_MM = "01";
+static const std::string MONTH_NUMERIC_FEB_M = "2";
+static const std::string MONTH_NUMERIC_FEB_MM = "02";
+static const std::string MONTH_NUMERIC_MAR_M = "3";
+static const std::string MONTH_NUMERIC_MAR_MM = "03";
+static const std::string MONTH_NUMERIC_APR_M = "4";
+static const std::string MONTH_NUMERIC_APR_MM = "04";
+static const std::string MONTH_NUMERIC_MAY_M = "5";
+static const std::string MONTH_NUMERIC_MAY_MM = "05";
+static const std::string MONTH_NUMERIC_JUN_M = "6";
+static const std::string MONTH_NUMERIC_JUN_MM = "06";
+static const std::string MONTH_NUMERIC_JUL_M = "7";
+static const std::string MONTH_NUMERIC_JUL_MM = "07";
+static const std::string MONTH_NUMERIC_AUG_M = "8";
+static const std::string MONTH_NUMERIC_AUG_MM = "08";
+static const std::string MONTH_NUMERIC_SEP_M = "9";
+static const std::string MONTH_NUMERIC_SEP_MM = "09";
+static const std::string MONTH_NUMERIC_OCT_MM = "10";
+static const std::string MONTH_NUMERIC_NOV_MM = "11";
+static const std::string MONTH_NUMERIC_DEC_MM = "12";
+
 static const std::string TOKEN_BEFORE = "before";
 static const std::string TOKEN_SHORTCUT_BEFORE = "bfr";
 static const std::string TOKEN_BY = "by";
@@ -69,5 +115,44 @@ static const std::string TOKEN_DASH = "-";
 static const char DELIMITER_SLASH = '/';
 static const char DELIMITER_FULLSTOP = '.';
 static const char DELIMITER_DASH = '-';
+
+const int DATE_DDMM_LENGTH = 4;
+const int DATE_DDMMYY_LENGTH = 6;
+const int DATE_DDMMYYYY_LENGTH = 8;
+
+const int DAY_D_LENGTH = 1;
+const int DAY_DD_LENGTH = 2;
+
+static const std::string DATE_NUMERIC_DDMM_29_FEB = "2902";
+
+const int YEAR_YY_LENGTH = 2;
+const int YEAR_YYYY_LENGTH = 4;
+
+const int TIME_WITH_PERIOD_LENGTH_3 = 3;
+const int TIME_WITH_PERIOD_LENGTH_4 = 4;
+const int TIME_WITH_PERIOD_LENGTH_5 = 5;
+const int TIME_WITH_PERIOD_LENGTH_6 = 6;
+
+static const std::string TIME_PERIOD_AM = "am";
+static const std::string TIME_PERIOD_PM = "pm";
+
+const int ONE_O_CLOCK = 1;
+const int NINE_O_CLOCK = 9;
+const int TEN_O_CLOCK = 10;
+const int TWELVE_O_CLOCK = 12;
+
+const int TIME_WITHOUT_PERIOD_LENGTH_1 = 1;
+const int TIME_WITHOUT_PERIOD_LENGTH_2 = 2;
+
+const int TIME_HHMM_LENGTH = 4;
+const int TIME_HH_COLON_MM_LENGTH = 5;
+
+const char CHAR_COLON = ':';
+
+const int ZERO_HOURS = 0;
+const int TWENTY_THREE_HOURS = 23;
+
+const int ZERO_MINUTE = 0;
+const int FIFTY_NINE_MINUTES = 59;
 
 #endif

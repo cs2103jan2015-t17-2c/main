@@ -126,7 +126,7 @@ std::string Extractor::extractDay(int index, std::queue<int>& indexOfDatesAndTim
 std::string Extractor::extractToday(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
     indexOfDatesAndTimes.push(index);
-    return formatConverter->dateFromBoostToDDMMYYYY(currentDate());
+    return currentDateInString();
 }
 
 std::string Extractor::extractTomorrow(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry) {

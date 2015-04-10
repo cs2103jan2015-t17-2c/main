@@ -28,10 +28,10 @@ bool TaskChecker::isDeadlinedTask(std::vector<std::string> tokenizedUserEntry) {
         
         unitString = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
         
-        if(unitString == TOKEN_BEFORE||unitString == TOKEN_BY||unitString == TOKEN_SHORTCUT_BEFORE) {
+        if (isWordBefore(unitString)||isWordBy(unitString)) {
             stringAfterBefore = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
 
-            if(dateChecker->isNumericDate(stringAfterBefore)||
+            if (dateChecker->isNumericDate(stringAfterBefore)||
                 dateChecker->isDay(stringAfterBefore)||
                 dateChecker->isOneDelimitedDate(stringAfterBefore)||
                 dateChecker->isSpacedDate(index + 1, tokenizedUserEntry)) {
@@ -59,50 +59,41 @@ bool TaskChecker::isTimedTask(std::vector<std::string> tokenizedUserEntry) {
     std::string stringAfterToken;
     int lengthOfTokenizedUserEntry = tokenizedUserEntry.size();
     
-    for(int index = 0; index < lengthOfTokenizedUserEntry; index++){
-        //check if current iter is at the last string
-        if(index + 1 == lengthOfTokenizedUserEntry){
-            break;
-        }
+    for(int index = 0; index < lengthOfTokenizedUserEntry; index++) {
         
         unitString = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
-        stringAfterToken = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
         
-        if(unitString == TOKEN_AT||unitString == TOKEN_SHORTCUT_AT){
-            if(timeChecker->is12HTime(stringAfterToken)||timeChecker->is24HTime(stringAfterToken)
-                ||timeChecker->isTimeWithoutPeriod(stringAfterToken)){
+        if(isWordAt(unitString)){
+            if(index + 1 == lengthOfTokenizedUserEntry){
+                break;
+            }
+
+            stringAfterToken = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
+
+            if (timeChecker->is12HTime(stringAfterToken)||
+                timeChecker->is24HTime(stringAfterToken)||
+                timeChecker->isTimeWithoutPeriod(stringAfterToken)){
                     return true;
             }
-        }
-        
-        if(unitString == TOKEN_ON){
-            if(dateChecker->isNumericDate(stringAfterToken)||dateChecker->isDay(stringAfterToken)
-                ||dateChecker->isOneDelimitedDate(stringAfterToken)
-                ||dateChecker->isSpacedDate(index + 1,tokenizedUserEntry)){
-                    return true;
+        } else if (isWordOn(unitString)) {
+            if(index + 1 == lengthOfTokenizedUserEntry){
+                break;
             }
-        }
-        
-        if(unitString == TOKEN_FROM||unitString == TOKEN_SHORTCUT_FROM){
-            if(dateChecker->isNumericDate(stringAfterToken)||
+
+            stringAfterToken = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
+
+            if (dateChecker->isNumericDate(stringAfterToken)||
                 dateChecker->isDay(stringAfterToken)||
                 dateChecker->isOneDelimitedDate(stringAfterToken)||
-                dateChecker->isSpacedDate(index + 1, tokenizedUserEntry)){
-                //check for time after date
-                return true;
-            } else if(timeChecker->is12HTime(stringAfterToken)||timeChecker->is24HTime(stringAfterToken)||timeChecker->isTimeWithoutPeriod(stringAfterToken)){
-                return true;
-            } else if(dateChecker->isNextDay(index + 1, tokenizedUserEntry)){
-                //check for day after next, then check for time
-                return true;
-            } else if(dateChecker->isTomorrow(stringAfterToken)) {
-                return true;
-            } else if(dateChecker->isToday(stringAfterToken)) {
-                return true;
+                dateChecker->isSpacedDate(index + 1,tokenizedUserEntry)){
+                    return true;
             }
-        }
-        
-        if(unitString == TOKEN_TO||unitString == TOKEN_SHORTCUT_TO){
+        } else if (isWordFrom(unitString)||isWordTo(unitString)) {
+            if(index + 1 == lengthOfTokenizedUserEntry){
+                break;
+            }
+            
+            stringAfterToken = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
 
             if(dateChecker->isNumericDate(stringAfterToken)||
                 dateChecker->isDay(stringAfterToken)||
@@ -110,7 +101,10 @@ bool TaskChecker::isTimedTask(std::vector<std::string> tokenizedUserEntry) {
                 dateChecker->isSpacedDate(index + 1, tokenizedUserEntry)) {
                 //check for time after date
                 return true;
-            } else if(timeChecker->is12HTime(stringAfterToken)||timeChecker->is24HTime(stringAfterToken)||timeChecker->isTimeWithoutPeriod(stringAfterToken)){
+            } else if(timeChecker->is12HTime(stringAfterToken)||
+                timeChecker->is24HTime(stringAfterToken)||
+                timeChecker->isTimeWithoutPeriod(stringAfterToken)) {
+
                 return true;
             } else if(dateChecker->isNextDay(index + 1, tokenizedUserEntry)) {
                 //check for day after next, then check for time
@@ -120,20 +114,75 @@ bool TaskChecker::isTimedTask(std::vector<std::string> tokenizedUserEntry) {
             } else if(dateChecker->isToday(stringAfterToken)) {
                 return true;
             }
-        }
-        
-        if(dateChecker->isNextDay(index, tokenizedUserEntry)){
-            return true;
-        }
 
-        if(dateChecker->isToday(unitString)) {
+        } else if (dateChecker->isNextDay(index, tokenizedUserEntry)) {
             return true;
-        }
-
-        if(dateChecker->isTomorrow(unitString)) {
+        } else if (dateChecker->isToday(unitString)) {
+            return true;
+        } else if (dateChecker->isTomorrow(unitString)) {
             return true;
         }
     }
 
     return false;
+}
+
+//Preconditions: token must be in lowercase
+bool TaskChecker::isWordBefore(std::string token) {
+    if (token == TOKEN_BEFORE) {
+        return true;
+    } else if (token == TOKEN_BY) {
+        return true;
+    } else if (token == TOKEN_SHORTCUT_BEFORE) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//Preconditions: token must be in lowercase
+bool TaskChecker::isWordBy(std::string token) {
+    if (token == TOKEN_BY) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool TaskChecker::isWordAt (std::string token) {
+    if (token == TOKEN_AT) {
+        return true;
+    } else if (token == TOKEN_SHORTCUT_AT) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool TaskChecker::isWordOn (std::string token) {
+    if (token == TOKEN_ON) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool TaskChecker::isWordFrom (std::string token) {
+    if (token == TOKEN_FROM) {
+        return true;
+    } else if (token == TOKEN_SHORTCUT_FROM) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool TaskChecker::isWordTo (std::string token) {
+    if (token == TOKEN_TO) {
+        return true;
+    } else if (token == TOKEN_SHORTCUT_TO) {
+        return true;
+    } else {
+        return false;
+    }
 }
