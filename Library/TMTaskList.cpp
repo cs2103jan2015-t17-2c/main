@@ -452,14 +452,14 @@
 		std::string directoryName;
 		std::ifstream directoryReference("TimeMaster.txt");
 		getline(directoryReference, directoryName);
-		if (directoryName != "" && isValidDirectory(directoryName.c_str())) {
+		setDefaultFileName();
+		std::string pathName = directoryName + "\\" + _fileName;
+		if (directoryName != "" && isValidDirectory(pathName.c_str())) {
 			setDirectoryName(directoryName);
-			setDefaultFileName();
 			loadFromFile();
 			
 		} else {
 			setDirectoryName(getExePath());
-			setDefaultFileName();
 			createFile();
 		}
 		return;

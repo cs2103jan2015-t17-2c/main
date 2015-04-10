@@ -1,3 +1,0 @@
-Number of dated tasks: 0
-Number of undated tasks: 0
-Number of completed/archived tasks: 0
