@@ -13,44 +13,18 @@ DateChecker* DateChecker::getInstance() {
 	return theOne;
 }
 
-//Preconditions: dd mm yyyy
-bool DateChecker::isValidDate(std::string date) {
-    boost::gregorian::date boostDate;
-    try {
-        boostDate = boost::gregorian::from_uk_string(date);
-    }
-    catch (const std::out_of_range& oor) {
-        std::cerr << "Out of Range error: " << oor.what() << '\n';
-        return false;
-    }
-
-    return true;
-}
-
-bool DateChecker::isPositiveInteger(std::string token) {
-    for(std::string::iterator it = token.begin(); it < token.end(); it++) {
-        if(!isdigit(*it)) {
-            return false;
-        }
-    }
-
-    int integer = std::stoi(token);
-
-    if(integer > 0) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
+//DDMMYYYY DDMMYYYY
 bool DateChecker::isNumericDate(std::string token) {
-    //DDMMYYYY DDMMYYYY
     int lengthOfToken = token.size();
+
     if(lengthOfToken == 8||lengthOfToken == 6) {
+        
         if(!isPositiveInteger(token)){
             return false;
         }
+
         FormatConverter *formatConverter = FormatConverter::getInstance();
+
         if(!isValidDate(formatConverter->dateFromNumericToBoostFormat(token))){
             return false;
         }
@@ -85,17 +59,6 @@ bool DateChecker::isOneDelimitedDate(std::string token){
         return true;
     } else {
         return false;
-    }
-}
-
-//preconditions check isOneDelimitedDate first
-char DateChecker::returnDelimiter(std::string token) {
-     if(isDelimitedDate(token, DELIMITER_DASH)) {
-        return DELIMITER_DASH;
-    } else if(isDelimitedDate(token, DELIMITER_FULLSTOP)) {
-        return DELIMITER_FULLSTOP;
-    } else {
-        return DELIMITER_SLASH;
     }
 }
 
@@ -172,6 +135,17 @@ bool DateChecker::isDelimitedDate(std::string token, char key) {
     return true;    
 }
 
+//preconditions check isOneDelimitedDate first
+char DateChecker::returnDelimiter(std::string token) {
+     if(isDelimitedDate(token, DELIMITER_DASH)) {
+        return DELIMITER_DASH;
+    } else if(isDelimitedDate(token, DELIMITER_FULLSTOP)) {
+        return DELIMITER_FULLSTOP;
+    } else {
+        return DELIMITER_SLASH;
+    }
+}
+
 bool DateChecker::isSpacedDate(int index, std::vector<std::string> tokenizedUserEntry) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
     std::string firstToken = tokenizedUserEntry[index];
@@ -196,6 +170,20 @@ bool DateChecker::isSpacedDate(int index, std::vector<std::string> tokenizedUser
     return isDelimitedDate(possibleDate,DELIMITER_DASH); 
 }
 
+//Preconditions: dd mm yyyy
+bool DateChecker::isValidDate(std::string date) {
+    boost::gregorian::date boostDate;
+    try {
+        boostDate = boost::gregorian::from_uk_string(date);
+    }
+    catch (const std::out_of_range& oor) {
+        std::cerr << "Out of Range error: " << oor.what() << '\n';
+        return false;
+    }
+
+    return true;
+}
+
 bool DateChecker::isUnoccurredDate(std::string date) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
     date = formatConverter->dateFromNumericToBoostFormat(date);
@@ -208,9 +196,81 @@ bool DateChecker::isUnoccurredDate(std::string date) {
     }
 }
 
+bool DateChecker::isToday(std::string token) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    token = formatConverter->returnLowerCase(token);
+
+    if(token == DAY_TODAY||token == DAY_SHORTCUT_TODAY) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool DateChecker::isTomorrow(std::string token) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    token = formatConverter->returnLowerCase(token);
+
+    if(token == DAY_TOMORROW||token == DAY_SHORTCUT_TOMORROW) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool DateChecker::isDay(std::string token) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    token = formatConverter->returnLowerCase(token);
+
+    if(token == DAY_MON||
+       token == DAY_MONDAY||
+       token == DAY_TUE||
+       token == DAY_TUESDAY||
+       token == DAY_WED||
+       token == DAY_WEDNESDAY||
+       token == DAY_THU||
+       token == DAY_THURSDAY||
+       token == DAY_FRI||
+       token == DAY_FRIDAY||
+       token == DAY_SAT||
+       token == DAY_SATURDAY||
+       token == DAY_SUN||
+       token == DAY_SUNDAY) {
+           return true;
+    } else {
+        return false;
+    }
+}
+
+bool DateChecker::isNextDay(int index, std::vector<std::string> tokenizedUserEntry) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    std::string firstWord = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
+
+    if(firstWord == TOKEN_NEXT||firstWord == TOKEN_SHORTCUT_NEXT) {
+        int lengthOfTokenizedUserEntry = tokenizedUserEntry.size();
+
+        if(index + 1 != lengthOfTokenizedUserEntry) {
+            std::string secondWord = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
+
+            if(isDay(secondWord)){
+                return true;
+            } else {
+                return false;
+            }
+
+        } else {
+            return false;
+        }
+
+    } else {
+        return false;
+    }
+}
+
 bool DateChecker::isMonth(std::string token) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
     token = formatConverter->returnLowerCase(token);
+
     if(token == "jan"||
        token == "january"||
        token == "feb"||
@@ -258,64 +318,16 @@ bool DateChecker::isNumericMonth(std::string token) {
     }
 }
 
-bool DateChecker::isDay(std::string token) {
-    FormatConverter *formatConverter = FormatConverter::getInstance();
-    token = formatConverter->returnLowerCase(token);
-    if(token == DAY_MON||
-       token == DAY_MONDAY||
-       token == DAY_TUE||
-       token == DAY_TUESDAY||
-       token == DAY_WED||
-       token == DAY_WEDNESDAY||
-       token == DAY_THU||
-       token == DAY_THURSDAY||
-       token == DAY_FRI||
-       token == DAY_FRIDAY||
-       token == DAY_SAT||
-       token == DAY_SATURDAY||
-       token == DAY_SUN||
-       token == DAY_SUNDAY) {
-           return true;
-    } else {
-        return false;
-    }
-}
-
-bool DateChecker::isNextDay(int index, std::vector<std::string> tokenizedUserEntry) {
-    FormatConverter *formatConverter = FormatConverter::getInstance();
-    std::string firstWord = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
-
-    if(firstWord == TOKEN_NEXT||firstWord == TOKEN_SHORTCUT_NEXT){
-        int lengthOfTokenizedUserEntry = tokenizedUserEntry.size();
-        if(index + 1 != lengthOfTokenizedUserEntry) {
-            std::string secondWord = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
-            if(isDay(secondWord)){
-                return true;
-            } else {
-                return false;
-            }
-        } else {
+bool DateChecker::isPositiveInteger(std::string token) {
+    for(std::string::iterator it = token.begin(); it < token.end(); it++) {
+        if(!isdigit(*it)) {
             return false;
         }
-    } else {
-        return false;
     }
-}
 
-bool DateChecker::isTomorrow(std::string token) {
-    FormatConverter *formatConverter = FormatConverter::getInstance();
-    token = formatConverter->returnLowerCase(token);
-    if(token == DAY_TOMORROW||token == DAY_SHORTCUT_TOMORROW) {
-        return true;
-    } else {
-        return false;
-    }
-}
+    int integer = std::stoi(token);
 
-bool DateChecker::isToday(std::string token) {
-    FormatConverter *formatConverter = FormatConverter::getInstance();
-    token = formatConverter->returnLowerCase(token);
-    if(token == DAY_TODAY||token == DAY_SHORTCUT_TODAY) {
+    if(integer > 0) {
         return true;
     } else {
         return false;

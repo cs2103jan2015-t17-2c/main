@@ -15,11 +15,10 @@ public:
     bool is12HTime(std::string);
     bool isAM(std::string);
     bool isPM(std::string);
+    bool isTimeWithoutPeriod(std::string);
 
     //0800 
     bool is24HTime(std::string);
-
-    bool isTimeWithoutPeriod(std::string);
 
     bool isPositiveInteger(std::string);
     bool isInteger(std::string);

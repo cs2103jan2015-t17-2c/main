@@ -82,6 +82,7 @@ std::string TMParser::extractCommand() {
     return command;
 }
 
+//use only after command has been extracted
 std::string TMParser::extractTokenAfterCommand() {
     ErrorMessageReport *errorMessageReport = ErrorMessageReport::getInstance(); 
     if(_tokenizedUserEntry.size() == 0){
@@ -1657,6 +1658,7 @@ bool TMParser::isUniqueIndex(int index, std::vector<int> vectorTaskPositionNumbe
     iter = std::find(vectorTaskPositionNumber.begin(), vectorTaskPositionNumber.end(), index);
     return (iter == vectorTaskPositionNumber.end());
 }
+
 //precondition: command extracted
 std::string TMParser::parseSearchKey() {
     std::string searchKey;
@@ -1679,22 +1681,22 @@ std::string TMParser::parseDirectory() {
 }
 
 //preconditions ddmmyyyy
-std::string TMParser::substractNDaysFromDate(std::string date, int n){
-    FormatConverter *formatConverter = FormatConverter::getInstance();
-    date = formatConverter->dateFromNumericToBoostFormat(date);
-    boost::gregorian::date initialBoostDate = boost::gregorian::from_uk_string(date);
-    boost::gregorian::date_duration dateDuration(n);
-    boost::gregorian::date finalBoostDate = initialBoostDate - dateDuration;
-    return formatConverter->dateFromBoostToDDMMYYYY(finalBoostDate);
-}
-
-//preconditions ddmmyyyy
 std::string TMParser::addNDaysFromDate(std::string date, int n){
     FormatConverter *formatConverter = FormatConverter::getInstance();
     date = formatConverter->dateFromNumericToBoostFormat(date);
     boost::gregorian::date initialBoostDate = boost::gregorian::from_uk_string(date);
     boost::gregorian::date_duration dateDuration(n);
     boost::gregorian::date finalBoostDate = initialBoostDate + dateDuration;
+    return formatConverter->dateFromBoostToDDMMYYYY(finalBoostDate);
+}
+
+//preconditions ddmmyyyy
+std::string TMParser::substractNDaysFromDate(std::string date, int n){
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    date = formatConverter->dateFromNumericToBoostFormat(date);
+    boost::gregorian::date initialBoostDate = boost::gregorian::from_uk_string(date);
+    boost::gregorian::date_duration dateDuration(n);
+    boost::gregorian::date finalBoostDate = initialBoostDate - dateDuration;
     return formatConverter->dateFromBoostToDDMMYYYY(finalBoostDate);
 }
 

@@ -42,8 +42,6 @@ public:
 
     std::vector<std::string> getTokenizedUserEntry(std::string);
     std::string extractCommand();
-
-    //use only after command has been extracted
     std::string extractTokenAfterCommand();
 	std::vector<std::string> returnTokens();
 
@@ -58,6 +56,7 @@ public:
 
     //to block task with multiple timings >= 2
     std::vector<TMTask> parseMultipleTimingTaskInfo();
+
     //used for timedtask
     void configureQueuesAndIndex(std::queue<int>&, std::queue<int>&, int&);
     void configureQueuesAndIndexAfterToken(std::queue<int>&, std::queue<int>&, int&);
@@ -104,11 +103,13 @@ public:
     std::string parseDirectory();
 
     //postcondition: return ddmmyyyy
-    std::string substractNDaysFromDate(std::string,int);
     std::string addNDaysFromDate(std::string,int);
+    std::string substractNDaysFromDate(std::string,int);
+    
     std::string addNYearsFromDate(std::string, int);
     std::string subtractNYearsFromDate(std::string, int);
 
+    //SHOULD I REMOVE ERROR MESSAGE FROM STORAGE AND JUST PUT IT IN PARSER?
     void addErrorMessage(std::string);
     std::string getErrorMessage();
 

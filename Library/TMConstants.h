@@ -70,16 +70,4 @@ static const char DELIMITER_SLASH = '/';
 static const char DELIMITER_FULLSTOP = '.';
 static const char DELIMITER_DASH = '-';
 
-/* in 3 hours, etc. for deadlined task
-const std::string PERIOD_HOUR = "hour";
-const std::string PERIOD_HOURS = "hours";
-const std::string PERIOD_DAY = "day";
-const std::string PERIOD_DAYS = "days";
-const std::string PERIOD_WEEK = "week";
-const std::string PERIOD_WEEKS = "weeks";
-const std::string PERIOD_MONTH = "month";
-const std::string PERIOD_MONTHS = "months";
-const std::string PERIOD_YEAR = "year";
-const std::string PERIOD_YEARS = "years";
-*/
 #endif

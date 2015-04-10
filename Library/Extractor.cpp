@@ -205,18 +205,12 @@ std::string Extractor::extractSpacedDate(int index, std::queue<int>& indexOfDate
 
 //preconditions: isNextDay is true. used for deadline. comes after "before".
 std::string Extractor::extractNextDay(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry){
-    std::string date = getDateFromNextDay(index, tokenizedUserEntry);
-    indexOfDatesAndTimes.push(index);
-    indexOfDatesAndTimes.push(index + 1);
-
-    return date;
-}
-
-//preconditions only used after token before
-std::string Extractor::getDateFromNextDay(int index, std::vector<std::string> tokenizedUserEntry){
     FormatConverter *formatConverter = FormatConverter::getInstance();
     std::string stringDay = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
     std::string date;
+
+    indexOfDatesAndTimes.push(index);
+    indexOfDatesAndTimes.push(index + 1);
 
     boost::gregorian::greg_weekday day(dayOfWeek(stringDay));
     boost::gregorian::first_day_of_the_week_after fdaf(day);

@@ -7,14 +7,13 @@ TMDateTime::TMDateTime(){
 }
 
 TMDateTime::TMDateTime(std::string date, std::string time){
-    //need to try catch and throw
     if(date == ""){
         _date = boost::gregorian::date(boost::gregorian::not_a_date_time);
     } else {
         _date = boost::gregorian::from_uk_string(date);
     }
 
-    _time = time;
+    _time = time.substr(0,2) + ":" + time.substr(2,2);
 }
 
 std::string TMDateTime::getDate(){
