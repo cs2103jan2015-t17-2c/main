@@ -295,7 +295,6 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
     }
 
     dateToMeet = formatConverter->dateFromNumericToBoostFormat(dateToMeet);
-    timeToMeet = timeToMeet.substr(0,2) + ":" + timeToMeet.substr(2,2);
 
     if(dateChecker->isValidDate(dateToMeet)){
         TMTaskTime taskTime(dateToMeet, timeToMeet, dateToMeet, timeToMeet);
@@ -478,8 +477,6 @@ TMTask TMParser::parseTimedTaskInfo(){
     
     startDate = formatConverter->dateFromNumericToBoostFormat(startDate);
     endDate = formatConverter->dateFromNumericToBoostFormat(endDate);
-    startTime = startTime.substr(0,2) + ":" + startTime.substr(2,2);
-    endTime = endTime.substr(0,2) + ":" + endTime.substr(2,2);
 
     if(dateChecker->isValidDate(startDate) && dateChecker->isValidDate(endDate) && isValidInfo(startDate,startTime,endDate,endTime)){
         TMTaskTime taskTime(startDate,startTime,endDate,endTime);
@@ -726,8 +723,6 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo() {
 
         startDate = formatConverter->dateFromNumericToBoostFormat(startDate);
         endDate = formatConverter->dateFromNumericToBoostFormat(endDate);
-        startTime = startTime.substr(0,2) + ":" + startTime.substr(2,2);
-        endTime = endTime.substr(0,2) + ":" + endTime.substr(2,2);
 
         if(dateChecker->isValidDate(startDate) && dateChecker->isValidDate(endDate) && isValidInfo(startDate, startTime, endDate, endTime)){
             TMTaskTime taskTime(startDate, startTime, endDate, endTime);

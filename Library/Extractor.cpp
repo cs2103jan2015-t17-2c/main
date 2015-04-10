@@ -113,7 +113,7 @@ std::string Extractor::extractDayOrNumericDateOrDelimitedDate(int index, std::qu
 
 std::string Extractor::extractDay(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry){
     FormatConverter *formatConverter = FormatConverter::getInstance();
-    std::string day = formatConverter->returnLowerCase(tokenizedUserEntry[index]); 
+    std::string day = tokenizedUserEntry[index]; 
     int dayInInteger = dayOfWeek(day);
     boost::gregorian::first_day_of_the_week_after fdaf(dayInInteger);
     boost::gregorian::date dateInBoost = fdaf.get_date(currentDate());
@@ -176,14 +176,16 @@ std::string Extractor::extractDelimitedDate(int index, std::queue<int>& indexOfD
     }
 
     if(year.length() == 2) {
-        year = "20" + year;
+        year = currentDateInString().substr(0,2) + year;
     }
 
     indexOfDatesAndTimes.push(index);
     return day + month + year;
 }
 
-//Preconditions: isSpacedDate true
+//Precondition: isSpacedDate true
+//Postcondition: returns date in ddmm format which will be configured at the end
+//               of each parse task function
 std::string Extractor::extractSpacedDate(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
     DateChecker *dateChecker = DateChecker::getInstance();
@@ -194,7 +196,6 @@ std::string Extractor::extractSpacedDate(int index, std::queue<int>& indexOfDate
         day = "0" + day;
     }
 
-
     month = formatConverter->monthFromWrittenToNumeric(month);
 
     indexOfDatesAndTimes.push(index);
@@ -203,10 +204,10 @@ std::string Extractor::extractSpacedDate(int index, std::queue<int>& indexOfDate
     return day + month;
 }
 
-//preconditions: isNextDay is true. used for deadline. comes after "before".
+//Precondition: isNextDay is true
+//Postcondition: returns date of next weekday
 std::string Extractor::extractNextDay(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry){
-    FormatConverter *formatConverter = FormatConverter::getInstance();
-    std::string stringDay = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
+    std::string stringDay = tokenizedUserEntry[index + 1];
     std::string date;
 
     indexOfDatesAndTimes.push(index);
@@ -224,11 +225,15 @@ std::string Extractor::extractNextDay(int index, std::queue<int>& indexOfDatesAn
     return date;
 }
 
+//Precondition: check if token is time
+//Postcondition: pushes index of keyword "at" into indexOfDatesAndTimes
+//Postcondition: returns extracted time in HH:MM format except for time without am or pm
+//               time without am or pm will be configured at the end
 std::string Extractor::extractTime(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry){
     FormatConverter *formatConverter = FormatConverter::getInstance();
     TimeChecker *timeChecker = TimeChecker::getInstance();
     std::string stringAfterAt = formatConverter->returnLowerCase(tokenizedUserEntry[index]);      
-    std::string time = "";
+    std::string time;
 
     if(timeChecker->is12HTime(stringAfterAt)) {
         if(timeChecker->isAM(stringAfterAt)){
@@ -248,7 +253,12 @@ std::string Extractor::extractTime(int index, std::queue<int>& indexOfDatesAndTi
     return time;
 }
 
+//Precondition: string must be a weekday and in lowercase
+//Postcondition: returns integer tagged to each boost day
 int Extractor::dayOfWeek(std::string day) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    day = formatConverter->returnLowerCase(day);
+
     if(day == DAY_SUN||day == DAY_SUNDAY) {
         return 0;
     } else if (day == DAY_MON||day == DAY_MONDAY) {
@@ -264,7 +274,6 @@ int Extractor::dayOfWeek(std::string day) {
     } else if (day == DAY_SAT||day == DAY_SATURDAY) {
         return 6;
     } else {
-        //invalid day!
         return -1;
     }
 }

@@ -24,35 +24,41 @@ std::string FormatConverter::returnLowerCase(std::string word) {
     return word;
 }
 
-//check if it's ddmmyy or ddmmyyyy format first using isNumericDate
+//preconditions: isNumericDate is used to check if the token is valid
+//postconditions: returns a string dd-mm-yyyy
 std::string FormatConverter::dateFromNumericToBoostFormat(std::string stringDate) {
     std::string dd;
     std::string mm;
     std::string yyyy;
     int lengthOfStringDate = stringDate.length();
     
+    //DDMMYY
     if(lengthOfStringDate == DATE_DDMMYY_LENGTH){
-        //DDMMYY
         dd = stringDate.substr(0,2);
         mm = stringDate.substr(2,2);
         yyyy = currentDateInString().substr(4,2) + stringDate.substr(4,2);
+
+    //DDMMYYYY
     } else if(lengthOfStringDate == DATE_DDMMYYYY_LENGTH) {
-        //DDMMYYYY
+        
         dd = stringDate.substr(0,2);
         mm = stringDate.substr(2,2);
         yyyy = stringDate.substr(4,4);
     } 
 
     return dd + "-" + mm + "-" + yyyy;
-
 }
 
+//preconditions: valid date format ddmmyy ddmmyyyy
+//postconditions: returns string e.g. 01 Jan 2015
 std::string FormatConverter::dateFromNumericToStandardFormat(std::string stringDate){
     std::string dateInBoostFormat = dateFromNumericToBoostFormat(stringDate);
     boost::gregorian::date boostDate = boost::gregorian::from_uk_string(dateInBoostFormat);
     return dateFromBoostToStandardFormat(boostDate);
 }
 
+//precondition: boost date must be valid
+//postcondition: returns string e.g. 01 Jan 2015
 std::string FormatConverter::dateFromBoostToStandardFormat(const boost::gregorian::date& date) {
     std::ostringstream os;
     boost::gregorian::date_facet* facet(new boost::gregorian::date_facet("%d %b %Y"));
@@ -61,6 +67,8 @@ std::string FormatConverter::dateFromBoostToStandardFormat(const boost::gregoria
     return os.str();
 }
 
+//precondition: boost date must be valid
+//postcondition: returns string date with spaces in between i.e. dd mm yyyy
 std::string FormatConverter::dateFromBoostToDelimitedDDMMYYYY(const boost::gregorian::date& date){
     std::ostringstream os;
     boost::gregorian::date_facet* facet(new boost::gregorian::date_facet("%d %m %Y"));
@@ -69,6 +77,8 @@ std::string FormatConverter::dateFromBoostToDelimitedDDMMYYYY(const boost::grego
     return os.str();
 }
 
+//precondition: boost date must be valid
+//postcondition: returns string date ddmmyyyy
 std::string FormatConverter::dateFromBoostToDDMMYYYY(const boost::gregorian::date& date){
     std::ostringstream os;
     boost::gregorian::date_facet* facet(new boost::gregorian::date_facet("%d%m%Y"));
@@ -77,14 +87,15 @@ std::string FormatConverter::dateFromBoostToDDMMYYYY(const boost::gregorian::dat
     return os.str();
 }
 
-//preconditions check if is 24H
+//precondition: check if is 24HTime
+//postcondition: 
 std::string FormatConverter::timeFrom24HourToHHMM(std::string time){
     std::string HHMM;
 
     if (time.length() == 4){
-        HHMM = time;
+        HHMM = time.substr(0,2) + ":" + time.substr(2,2);
     } else {
-        HHMM = time.erase(2,1);
+        HHMM = time;
     }
 
     return HHMM;
@@ -96,22 +107,22 @@ std::string FormatConverter::timeFrom12HourAMToHHMM(std::string time) {
     int intTime;
     
     if(time.length() == 3) {
-        HHMM = "0" + time.substr(0,1) + "00";
+        HHMM = "0" + time.substr(0,1) + ":" + "00";
     } else if(time.length() == 4) {
         intTime = (std::stoi(time.substr(0,2)))%12;
         if(intTime == 0){
-            HHMM = "0000";
+            HHMM = "00:00";
         } else {
-            HHMM = time.substr(0,2) + "00";
+            HHMM = time.substr(0,2) + ":" + "00";
         }
     } else if(time.length() == 5){
-        HHMM = "0" + time.substr(0,3);
+        HHMM = "0" + time.substr(0,1) + ":" + time.substr(1,2);
     } else {
         std::string hour = time.substr(0,2);
         if(hour == "12"){
-            HHMM = "00" + time.substr(2,2);
+            HHMM = "00:" + time.substr(2,2);
         } else {
-            HHMM = time.substr(0,4);
+            HHMM = time.substr(0,2) + ":" + time.substr(2,2);
         }
     }
 
@@ -125,16 +136,18 @@ std::string FormatConverter::timeFrom12HourPMToHHMM(std::string time) {
     
     if(time.length() == 3) {
         intTime = 12 + std::stoi(time.substr(0,1));
-        HHMM = std::to_string(intTime) + "00";
+        HHMM = std::to_string(intTime) + ":00";
     } else if(time.length() == 4){
         intTime = (std::stoi(time.substr(0,2)))%12 + 12;
-        HHMM = std::to_string(intTime) + "00";
+        HHMM = std::to_string(intTime) + ":00";
     } else if(time.length() == 5){
         intTime = 1200 + std::stoi(time.substr(0,3));
         HHMM = std::to_string(intTime);
+        HHMM = HHMM.substr(0,2) + ":" + HHMM.substr(2,2);
     } else {
         int intTime = 1200 + (std::stoi(time.substr(0,4)))%1200;
         HHMM = std::to_string(intTime);
+        HHMM = HHMM.substr(0,2) + ":" + HHMM.substr(2,2);
     }
 
     return HHMM;
