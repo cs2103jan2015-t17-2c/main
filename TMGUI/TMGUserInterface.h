@@ -44,6 +44,29 @@ namespace TMGUI {
 		}
 
 	public:
+		static String^ DISPLAY_DEFAULT = "Default display";
+		static String^ DISPLAY_DEADLINED = "Deadlined Tasks";
+		static String^ DISPLAY_UNDATED = "Undated Tasks";
+		static String^ DISPLAY_ARCHIVED = "Archived Tasks";
+		static String^ DISPLAY_SEARCH_RESULTS = "Search Results";
+		static String^ MESSAGE_ADD = "Adding the following task ";
+		static String^ MESSAGE_PROCESSING_IDS = "Task ID(s) to be processed: ";
+		static String^ MESSAGE_TASK_ID = "Task ID: ";
+		static String^ MESSAGE_CONFIRMED = "Yes";
+		static String^ MESSAGE_UNCONFIRMED = "No";
+		static String^ DISPLAY_TASK_DESCRIPTION = "Task Description: ";
+		static String^ DISPLAY_START_DATE = "Start Date: ";
+		static String^ DISPLAY_START_TIME = "Start Time: ";
+		static String^ DISPLAY_END_DATE = "End Date: ";
+		static String^ DISPLAY_END_TIME = "End Time: ";
+		static String^ DISPLAY_DUE_DATE = "Due Date: ";
+		static String^ DISPLAY_DUE_TIME = "Due Time: ";
+		static String^ DISPLAY_INVALID = "Invalid time, please re-enter task time.";
+		static String^ ICON_PASSED_DEADLINE = "!";
+		static String^ DISPLAY_BLANK = "";
+		
+		
+
 		void SplashStart(){
 			Application::Run(gcnew TMSplash);
 		}
@@ -62,7 +85,7 @@ namespace TMGUI {
 			 
 				if(commandType == TMParser :: CommandTypes :: Add){
 					TMTask task = inputParser->parseTaskInfo();
-					statusDisplay -> Text = "Adding the following task \n" + printResultRealTime(task);
+					statusDisplay -> Text = MESSAGE_ADD + "\n" + printResultRealTime(task);
 				}
 
 				else if(commandType == TMParser :: CommandTypes :: Delete || commandType == TMParser :: CommandTypes :: Complete || commandType == TMParser :: CommandTypes :: Incomplete){
@@ -73,16 +96,16 @@ namespace TMGUI {
 						idNumbers = idNumbers + std :: to_string (*iter) + ", ";
 					} 
 
-					statusDisplay->Text = "Task ID(s) to be processed: " + gcnew String(idNumbers.c_str());
+					statusDisplay->Text = MESSAGE_PROCESSING_IDS + gcnew String(idNumbers.c_str());
 				}
 
 				else if(commandType == TMParser :: CommandTypes :: Edit){
 					std :: string taskID;
 					taskID = inputParser->extractTokenAfterCommand();
-					statusDisplay -> Text = "Task ID: ";
+					statusDisplay -> Text = MESSAGE_TASK_ID;
 					if(taskID != "") {
 						TMTask newTask = inputParser->parseTaskInfo();
-						statusDisplay -> Text = "Task ID: " + gcnew String(taskID.c_str()) + "\n" + printResultRealTime(newTask);
+						statusDisplay -> Text = MESSAGE_TASK_ID + gcnew String(taskID.c_str()) + "\n" + printResultRealTime(newTask);
 					}
 				}
 		}
@@ -96,28 +119,28 @@ namespace TMGUI {
 		String^ printResultRealTime(TMTask task){
 			
 			String^ taskDetails=
-			"Task Description: " + gcnew String(task.getTaskDescription().c_str()) + "\n"+
-			"Start Date: " + gcnew String(task.getTaskTime().getStartDate().c_str()) + "\t\t\t" + 
-			"Start Time: " + gcnew String(task.getTaskTime().getStartTime().c_str()) + "\n"+
-			"End Date: " + gcnew String(task.getTaskTime().getEndDate().c_str()) + "\t\t\t" + 
-			"End Time: " + gcnew String(task.getTaskTime().getEndTime().c_str());
+			DISPLAY_TASK_DESCRIPTION + gcnew String(task.getTaskDescription().c_str()) + "\n"+
+			DISPLAY_START_DATE + gcnew String(task.getTaskTime().getStartDate().c_str()) + "\t\t\t" + 
+			DISPLAY_START_TIME + gcnew String(task.getTaskTime().getStartTime().c_str()) + "\n"+
+			DISPLAY_END_DATE + gcnew String(task.getTaskTime().getEndDate().c_str()) + "\t\t\t" + 
+			DISPLAY_END_TIME + gcnew String(task.getTaskTime().getEndTime().c_str());
 		
 			if (task.getTaskType() == TaskType :: WithEndDateTime){
 				taskDetails = 
-				"Task Description: " + gcnew String(task.getTaskDescription().c_str()) + "\n"+
-				"Due Date: " + gcnew String(task.getTaskTime().getEndDate().c_str()) + "\t\t\t" + 
-				"Due Time: " + gcnew String(task.getTaskTime().getEndTime().c_str());
+				DISPLAY_TASK_DESCRIPTION + gcnew String(task.getTaskDescription().c_str()) + "\n"+
+				DISPLAY_DUE_DATE + gcnew String(task.getTaskTime().getEndDate().c_str()) + "\t\t\t" + 
+				DISPLAY_DUE_TIME + gcnew String(task.getTaskTime().getEndTime().c_str());
 			}
 			
 			if(task.getTaskType() == TaskType ::WithStartDateTime){
 				taskDetails = 
-				"Task Description: " + gcnew String(task.getTaskDescription().c_str()) + "\n"+
-				"Start Date: " + gcnew String(task.getTaskTime().getStartDate().c_str()) + "\t\t\t" + 
-				"Start Time: " + gcnew String(task.getTaskTime().getStartTime().c_str());
+				DISPLAY_TASK_DESCRIPTION + gcnew String(task.getTaskDescription().c_str()) + "\n"+
+				DISPLAY_START_DATE + gcnew String(task.getTaskTime().getStartDate().c_str()) + "\t\t\t" + 
+				DISPLAY_START_TIME + gcnew String(task.getTaskTime().getStartTime().c_str());
 			}
 
 			if(task.getTaskType() == TaskType :: Invalid){
-				taskDetails = "Invalid time, please re-enter task time.";
+				taskDetails = DISPLAY_INVALID;
 			}
 
 			return taskDetails;
@@ -170,16 +193,16 @@ namespace TMGUI {
 			defaultEntry = gcnew ListViewItem(Convert::ToString(index));
 			defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskDescription()).c_str() )));
 			if(taskList[taskPosition].getTaskType() == TaskType ::WithEndDateTime){
-				defaultEntry->SubItems->Add("");
-				defaultEntry->SubItems->Add(""); 
+				defaultEntry->SubItems->Add(DISPLAY_BLANK);
+				defaultEntry->SubItems->Add(DISPLAY_BLANK); 
 			} else{
 				defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskTime().getStartDate()).c_str() )));
 				defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskTime().getStartTime()).c_str() )));
 			}
 				
 			if(taskList[taskPosition].getTaskType() == TaskType ::WithStartDateTime){
-				defaultEntry->SubItems->Add("");
-				defaultEntry->SubItems->Add(""); 
+				defaultEntry->SubItems->Add(DISPLAY_BLANK);
+				defaultEntry->SubItems->Add(DISPLAY_BLANK); 
 			} else{
 				defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskTime().getEndDate()).c_str() )));
 				defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskTime().getEndTime()).c_str() )));
@@ -192,14 +215,12 @@ namespace TMGUI {
 			std::string confirmationStatus;
 						
 			if (taskList[taskPosition].isConfirmed()) {
-				confirmationStatus = "Yes";
+				defaultEntry->SubItems->Add(MESSAGE_CONFIRMED);
 			} else {
-				confirmationStatus = "No";
+				defaultEntry->SubItems->Add(MESSAGE_UNCONFIRMED);
 				defaultEntry->ForeColor = Color :: Gray;
 			}
 				
-			defaultEntry->SubItems->Add(gcnew String(( (confirmationStatus.c_str()) )));
-
 			if (taskList[taskPosition].isClashed()) {
 				defaultEntry->ForeColor = Color :: Blue;
 			} 
@@ -212,13 +233,13 @@ namespace TMGUI {
 			std::string timeNow = currentTime();
 			
 			if (taskList[taskPosition].getTaskTime().getEndBoostDate() < dateToday){
-				defaultEntry->SubItems->Add("!");
+				defaultEntry->SubItems->Add(ICON_PASSED_DEADLINE);
 				defaultEntry->Font = gcnew System::Drawing::Font ("Corbel",11,FontStyle :: Bold);
 			}
 
 			if (taskList[taskPosition].getTaskTime().getEndBoostDate() == dateToday){
 				if(taskList[taskPosition].getTaskTime().getEndTime() < timeNow){
-					defaultEntry->SubItems->Add("!");
+					defaultEntry->SubItems->Add(ICON_PASSED_DEADLINE);
 					defaultEntry->Font = gcnew System::Drawing::Font ("Corbel",11,FontStyle :: Bold);
 				}
 			}
@@ -557,7 +578,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 	
 					 switch (display) {
 					 case Default:
-						 DisplayState->Text = "Default display";
+						 DisplayState->Text = DISPLAY_DEFAULT;
 						 clearListView();
 
 						 for(int i = defaultCountStart; i != defaultCountEnd ; i++){
@@ -568,7 +589,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 						 break;
 
 					 case  DeadlineTasks:
-						 DisplayState->Text = "Deadlined Tasks";
+						 DisplayState->Text = DISPLAY_DEADLINED;
 						 clearListView();
 						 for (int l = 0; l != dated.size(); l++){
 							 if(dated[l].getTaskType() == TaskType ::WithEndDateTime){
@@ -580,7 +601,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 						 break;
 					
 					case UndatedTasks:
-						DisplayState->Text = "Undated Tasks";
+						DisplayState->Text = DISPLAY_UNDATED;
 						clearListView();
 						
 						for(int j = undatedCountStart; j != undatedCountEnd ; j++){
@@ -591,7 +612,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 						break;
 					
 					case ArchivedTasks:
-						DisplayState->Text = "Archived Tasks";
+						DisplayState->Text = DISPLAY_ARCHIVED;
 						clearListView();
 						
 						for(int k = archivedCountStart; k != archivedCountEnd ; k++){
@@ -602,7 +623,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 						break;
 
 					case SearchResults:
-						DisplayState->Text = "Search results";
+						DisplayState->Text = DISPLAY_SEARCH_RESULTS;
 						clearListView();
 						
 						std::vector<int> indexes = exe->getPositionIndexes();
