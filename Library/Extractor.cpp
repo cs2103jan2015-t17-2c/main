@@ -179,7 +179,7 @@ std::string Extractor::extractDelimitedDate(int index, std::queue<int>& indexOfD
     }
 
     if(year.length() == 2) {
-        year = currentDateInString().substr(0,2) + year;
+        year = currentDateInString().substr(4,2) + year;
     }
 
     indexOfDatesAndTimes.push(index);

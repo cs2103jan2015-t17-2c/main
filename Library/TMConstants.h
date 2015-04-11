@@ -37,6 +37,7 @@ static const std::string ERROR_MISSING_NEW_TASK_INFO = "Missing new task informa
 static const std::string ERROR_INDEX_SPECIFIED_NOT_POSITIVE_INT = "Index of task must be a positive integer\n";
 static const std::string ERROR_STARTTIME_LATER_THAN_ENDTIME = "Start time is later than end time\n";
 static const std::string ERROR_STARTDATE_LATER_THAN_ENDDATE = "Error: end date is later than start date\n";
+static const std::string ERROR_UNABLE_TO_FIND_APPROPRIATE_TIME = "Unable to find an appropriate start or end time\n";
 
 static const std::string DAY_YESTERDAY = "yesterday";
 static const std::string DAY_TODAY = "today";
@@ -152,6 +153,7 @@ static const int ONE_O_CLOCK = 1;
 static const int EIGHT_O_CLOCK = 8;
 static const int NINE_O_CLOCK = 9;
 static const int TEN_O_CLOCK = 10;
+static const int ELEVEN_O_CLOCK = 11;
 static const int TWELVE_O_CLOCK = 12;
 
 static const int TIME_WITHOUT_PERIOD_LENGTH_1 = 1;
