@@ -513,6 +513,7 @@ private: System::Windows::Forms::ColumnHeader^  hasPassed;
 			this->Padding = System::Windows::Forms::Padding(0, 0, 30, 30);
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"TimeMaster";
+			this->Deactivate += gcnew System::EventHandler(this, &TMGUserInterface::TMGUserInterface_Deactivate);
 			this->Load += gcnew System::EventHandler(this, &TMGUserInterface::TMGUserInterface_Load);
 			this->ResumeLayout(false);
 			this->PerformLayout();
@@ -676,11 +677,11 @@ private: System::Void TMGUserInterface_Load(System::Object^  sender, System::Eve
 
 private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 			
-			 if(e->KeyCode == Keys:: Down){
+			 if(e->KeyCode == Keys:: PageDown){
 					defaultView->Focus();
 					SendKeys :: SendWait ("{PGDN}");
 					userInput->Focus();
-			 } else if(e->KeyCode == Keys:: Up){
+			 } else if(e->KeyCode == Keys:: PageUp){
 					defaultView->Focus();
 					SendKeys :: SendWait ("{PGUP}");
 					userInput->Focus();
@@ -694,5 +695,9 @@ private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows
 		 }
 
 
+private: System::Void TMGUserInterface_Deactivate(System::Object^  sender, System::EventArgs^  e) {
+			 TMTaskList taskList = initiateTaskList();
+			 taskList.leaveReferenceUponExit();
+		 }
 };
 }
