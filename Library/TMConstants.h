@@ -35,6 +35,8 @@ static const std::string CMD_SHORTCUT_QUIT = "q";
 static const std::string ERROR_INDEX_OF_TASK_NOT_SPECIFIED = "Index of task not specified\n";
 static const std::string ERROR_MISSING_NEW_TASK_INFO = "Missing new task information\n";
 static const std::string ERROR_INDEX_SPECIFIED_NOT_POSITIVE_INT = "Index of task must be a positive integer\n";
+static const std::string ERROR_STARTTIME_LATER_THAN_ENDTIME = "Start time is later than end time\n";
+static const std::string ERROR_STARTDATE_LATER_THAN_ENDDATE = "Error: end date is later than start date\n";
 
 static const std::string DAY_YESTERDAY = "yesterday";
 static const std::string DAY_TODAY = "today";
@@ -116,6 +118,7 @@ static const std::string TOKEN_SHORTCUT_FROM = "fr";
 static const std::string TOKEN_TO = "to";
 static const std::string TOKEN_SHORTCUT_TO = "2";
 static const std::string TOKEN_DASH = "-";
+static const std::string TOKEN_AND = "and";
 
 static const char DELIMITER_SLASH = '/';
 static const char DELIMITER_FULLSTOP = '.';
@@ -128,6 +131,7 @@ static const int DATE_DDMMYYYY_LENGTH = 8;
 static const int DAY_D_LENGTH = 1;
 static const int DAY_DD_LENGTH = 2;
 
+static const std::string DATE_NUMERIC_DDMM_28_FEB = "2802";
 static const std::string DATE_NUMERIC_DDMM_29_FEB = "2902";
 
 static const int YEAR_YY_LENGTH = 2;
@@ -141,7 +145,11 @@ static const int TIME_WITH_PERIOD_LENGTH_6 = 6;
 static const std::string TIME_PERIOD_AM = "am";
 static const std::string TIME_PERIOD_PM = "pm";
 
+static const std::string TIME_00_COLON_00 = "00:00";
+static const std::string TIME_23_COLON_59 = "23:59";
+
 static const int ONE_O_CLOCK = 1;
+static const int EIGHT_O_CLOCK = 8;
 static const int NINE_O_CLOCK = 9;
 static const int TEN_O_CLOCK = 10;
 static const int TWELVE_O_CLOCK = 12;
@@ -159,5 +167,13 @@ static const int TWENTY_THREE_HOURS = 23;
 
 static const int ZERO_MINUTE = 0;
 static const int FIFTY_NINE_MINUTES = 59;
+
+static const bool CHECK_DATE_YES = true;
+static const bool CHECK_DATE_NO = false;
+static const bool CHECK_TIME_YES = true;
+static const bool CHECK_TIME_NO = false;
+
+static const bool AFTER_TOKEN_YES = true;
+static const bool AFTER_TOKEN_NO = false;
 
 #endif

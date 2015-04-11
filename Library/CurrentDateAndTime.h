@@ -6,7 +6,7 @@
 static std::string currentTime(){
     boost::posix_time::ptime currentDateAndTime(boost::posix_time::second_clock::local_time());
     std::ostringstream os;
-    boost::posix_time::time_facet* facet(new boost::posix_time::time_facet("%H%M"));
+    boost::posix_time::time_facet* facet(new boost::posix_time::time_facet("%H:%M"));
     os.imbue(std::locale(std::cout.getloc(), facet));
     os << currentDateAndTime;
     return os.str();

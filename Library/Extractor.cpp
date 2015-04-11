@@ -140,9 +140,12 @@ std::string Extractor::extractTomorrow(int index, std::queue<int>& indexOfDatesA
 
 std::string Extractor::extractNumericDate(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry){
     FormatConverter *formatConverter = FormatConverter::getInstance();
-    std::string startDate = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
+    std::string date = (tokenizedUserEntry[index]);
+    if(date.length() == 6) {
+        date = date.substr(0,4) + currentDateInString().substr(4,2) + date.substr(4,2);
+    }
     indexOfDatesAndTimes.push(index);
-    return startDate;
+    return date;
 }
 
 std::string Extractor::extractDelimitedDate(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry, char key) {

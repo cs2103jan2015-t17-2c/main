@@ -192,7 +192,7 @@ bool DateChecker::isUnoccurredDate(std::string date) {
     date = formatConverter->dateFromNumericToBoostFormat(date);
     boost::gregorian::date boostDate = boost::gregorian::from_uk_string(date);
 
-    if(boostDate >= currentDate()) {
+    if(boostDate > currentDate()) {
         return true;
     } else {
         return false;
@@ -333,6 +333,36 @@ bool DateChecker::isPositiveInteger(std::string token) {
 
     if(integer > 0) {
         return true;
+    } else {
+        return false;
+    }
+}
+
+bool DateChecker::isDateOrDayOrNextDayOrTomorrowOrToday(std::string nextWord, int index, std::vector<std::string> tokenizedUserEntry) {
+    if (isDateOrDayOrNextDayOrTomorrow(nextWord, index, tokenizedUserEntry)||
+        isToday(nextWord)) {
+            return true;
+    } else {
+        return false;
+    }
+}
+
+bool DateChecker::isDateOrDayOrNextDayOrTomorrow(std::string nextWord, int index, std::vector<std::string> tokenizedUserEntry) {
+    if (isDateOrDay(nextWord, index, tokenizedUserEntry)||
+        isNextDay(index + 1, tokenizedUserEntry)||
+        isTomorrow(nextWord)) {
+            return true;
+    } else {
+        return false;
+    }
+}
+
+bool DateChecker::isDateOrDay(std::string nextWord, int index, std::vector<std::string> tokenizedUserEntry) {
+    if (isNumericDate(nextWord)||
+        isDay(nextWord)||
+        isOneDelimitedDate(nextWord)||
+        isSpacedDate(index + 1, tokenizedUserEntry)) {
+            return true;
     } else {
         return false;
     }

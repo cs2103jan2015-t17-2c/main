@@ -33,5 +33,9 @@ public:
     bool isNumericMonth(std::string);
 
     bool isPositiveInteger(std::string);
+
+    bool isDateOrDayOrNextDayOrTomorrowOrToday(std::string, int, std::vector<std::string>) ;
+    bool isDateOrDayOrNextDayOrTomorrow(std::string, int, std::vector<std::string>);
+    bool isDateOrDay(std::string, int, std::vector<std::string>);
 };
 #endif DATECHECKER_H

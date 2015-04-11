@@ -68,12 +68,12 @@ public:
 
     //to block task with multiple timings >= 2
     std::vector<TMTask> parseMultipleTimingTaskInfo();
+    void configureEndDateTime(int&, std::queue<int>&, std::queue<int>&, std::string&, std::string&);
 
     void configureTaskDescription(std::string&, std::queue<int>&);
 
     //used for timedtask
-    void configureQueuesAndIndex(std::queue<int>&, std::queue<int>&, int&);
-    void configureQueuesAndIndexAfterToken(std::queue<int>&, std::queue<int>&, int&);
+    void configureQueuesAndIndex(std::queue<int>&, std::queue<int>&, int&, bool);
 
     void editDateOrTimeInInvertedCommas(std::string, int, bool, bool);
 
@@ -91,7 +91,8 @@ public:
 
     //checks if start ddmm has passed for current year
     //adds one more year if passed else
-    //compares end ddmm with start ddmm adds years till they are valid
+    //compares end ddmm with start ddmm
+    //if end ddmm is less than or equal to start ddmm end 1 more year to enddate
     void configureStartDayMonthEndDayMonth(std::string&, std::string&);
     
     //if time 8 to 10 configure
@@ -100,6 +101,11 @@ public:
     void configureStartTimeEndTimeWithoutPeriods(std::string&, std::string&);
     void configureStartTimeWithoutPeriods(std::string&);
     void configureEndTimeWithoutPeriods(std::string&);
+
+    void configureStartDateEndDate(std::string&, std::string&);
+    
+    //precondition: ddmmyyyy format
+    bool isStartDateLessThanEndDate(std::string, std::string);
 
     //checks if startDate is not later than endDate and 
     //if startDate == endDate, startTime is no later than endTime
@@ -128,5 +134,7 @@ public:
     std::string getErrorMessage();
 
     int numberOfWordsInQuote(std::string);
+
+    bool isWordBeforeOrByOrFromOrTo(std::string);
 };
 #endif
