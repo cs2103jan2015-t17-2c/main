@@ -449,18 +449,24 @@
 	}
 
 	void TMTaskList::loadOrCreateFile() {
-		std::string directoryName;
-		std::ifstream directoryReference("TimeMaster.txt");
-		getline(directoryReference, directoryName);
 		setDefaultFileName();
-		std::string pathName = directoryName + "\\" + _fileName;
-		if (directoryName != "" && isValidDirectory(pathName.c_str())) {
-			setDirectoryName(directoryName);
-			loadFromFile();
-			
+
+		if (std::ifstream("TimeMaster.txt")) {
+			std::ifstream directoryReference("TimeMaster.txt");
+			std::string directoryName;
+			getline(directoryReference, directoryName);
+			std::string pathName = directoryName + "\\" + _fileName;
+			if (std::ifstream(pathName)) {
+				setDirectoryName(directoryName);
+				loadFromFile();
+			} else {
+				setDirectoryName(getExePath());
+				createFile();
+			}
 		} else {
 			setDirectoryName(getExePath());
 			createFile();
+			leaveReferenceUponExit();
 		}
 		return;
 	}
@@ -561,9 +567,9 @@
 	}
 
 	void TMTaskList::createFile() {
-		std::string pathName = _directoryName + "\\" + _fileName;
 		std::ofstream outFile;
-		outFile.open(pathName);
+		outFile.open(_fileName);
+		writeToFile();
 		outFile.close();
 	}
 
