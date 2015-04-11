@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <vector>
 #include <Windows.h>
+#include <algorithm>
 #include <msclr\marshal_cppstd.h>
 #include <boost\date_time.hpp>
 #include "TMExecutor.h"
@@ -663,6 +664,9 @@ private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows
 			 TMExecutor* exe = TMExecutor :: getInstance();
 			 std::vector<std::string> userEntries = exe -> getUserInput();
 
+			 String ^ entry = userInput->Text;
+			 std::string originalEntry = msclr::interop::marshal_as<std::string>(entry);
+
 			 if(e->KeyCode == Keys:: PageDown){
 				defaultView->Focus();
 				SendKeys :: SendWait ("{PGDN}");
@@ -679,8 +683,34 @@ private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows
 					 return;
 				 }
 				 else{
+					userInput -> Clear();
+					if(originalEntry == ""){
+						userInput -> Text = gcnew String (userEntries.back().c_str());
+					}	 
+					else {
+						int i = std::find(userEntries.begin(),userEntries.end(),originalEntry) - userEntries.begin();
+						if (i == 0){
+							return;
+						}
+						else{
+						userInput -> Text = gcnew String (userEntries[i-1].c_str());
+						}
+					}
+				 }
+			 }
+			 else if (e->KeyCode == Keys::Down){
 				 userInput -> Clear();
-				 userInput -> Text = gcnew String (userEntries.back().c_str());
+				 if(originalEntry == ""){
+					 userInput -> Text = gcnew String (userEntries.front().c_str());
+				 }
+				 else{
+					 int i = std::find(userEntries.begin(),userEntries.end(),originalEntry) - userEntries.begin();
+					 if (i == userEntries.size()-1){
+						 return;
+					 }
+					 else{
+					 userInput -> Text = gcnew String (userEntries[i+1].c_str());
+					 }
 				 }
 			 }
 		 }
