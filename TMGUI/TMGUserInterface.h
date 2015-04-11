@@ -65,8 +65,6 @@ namespace TMGUI {
 		static String^ ICON_PASSED_DEADLINE = "!";
 		static String^ DISPLAY_BLANK = "";
 		
-		
-
 		void SplashStart(){
 			Application::Run(gcnew TMSplash);
 		}
@@ -83,31 +81,30 @@ namespace TMGUI {
 			 std::string command = inputParser->extractCommand();
 			 TMParser :: CommandTypes commandType = inputParser->determineCommandType(command);
 			 
-				if(commandType == TMParser :: CommandTypes :: Add){
-					TMTask task = inputParser->parseTaskInfo();
-					statusDisplay -> Text = MESSAGE_ADD + "\n" + printResultRealTime(task);
-				}
+			if(commandType == TMParser :: CommandTypes :: Add){
+				TMTask task = inputParser->parseTaskInfo();
+				statusDisplay -> Text = MESSAGE_ADD + "\n" + printResultRealTime(task);
+			}
 
-				else if(commandType == TMParser :: CommandTypes :: Delete || commandType == TMParser :: CommandTypes :: Complete || commandType == TMParser :: CommandTypes :: Incomplete){
-					std::vector<int> tasksID = inputParser->parseTaskPositionNo();
-					std::vector<int>::iterator iter;
-					std::string idNumbers;
-					for (iter = tasksID.begin(); iter != tasksID.end(); ++iter){
+			else if(commandType == TMParser :: CommandTypes :: Delete || commandType == TMParser :: CommandTypes :: Complete || commandType == TMParser :: CommandTypes :: Incomplete){
+				std::vector<int> tasksID = inputParser->parseTaskPositionNo();
+				std::vector<int>::iterator iter;
+				std::string idNumbers;
+				for (iter = tasksID.begin(); iter != tasksID.end(); ++iter){
 						idNumbers = idNumbers + std :: to_string (*iter) + ", ";
-					} 
+				} 
+				statusDisplay->Text = MESSAGE_PROCESSING_IDS + gcnew String(idNumbers.c_str());
+			}
 
-					statusDisplay->Text = MESSAGE_PROCESSING_IDS + gcnew String(idNumbers.c_str());
+			else if(commandType == TMParser :: CommandTypes :: Edit){
+				std :: string taskID;
+				taskID = inputParser->extractTokenAfterCommand();
+				statusDisplay -> Text = MESSAGE_TASK_ID;
+				if(taskID != "") {
+					TMTask newTask = inputParser->parseTaskInfo();
+					statusDisplay -> Text = MESSAGE_TASK_ID + gcnew String(taskID.c_str()) + "\n" + printResultRealTime(newTask);
 				}
-
-				else if(commandType == TMParser :: CommandTypes :: Edit){
-					std :: string taskID;
-					taskID = inputParser->extractTokenAfterCommand();
-					statusDisplay -> Text = MESSAGE_TASK_ID;
-					if(taskID != "") {
-						TMTask newTask = inputParser->parseTaskInfo();
-						statusDisplay -> Text = MESSAGE_TASK_ID + gcnew String(taskID.c_str()) + "\n" + printResultRealTime(newTask);
-					}
-				}
+			}
 		}
 		
 		void saveAndQuit(){
@@ -289,8 +286,6 @@ namespace TMGUI {
 
 
 	protected: 
-
-
 
 	private:
 		/// <summary>
