@@ -6,17 +6,21 @@
 class TMTaskListStates {
 
 private: 
-	std::vector<TMTaskList> states;
-	std::vector<TMTaskList>::iterator currentState;
-	TMTaskList currentTaskList;
+	std::vector<TMTaskList> _states;
+	std::vector<TMTaskList>::iterator _currentState;
 	static TMTaskListStates *theOne;
 	TMTaskListStates();
 
 public:
 	static TMTaskListStates* getInstance();
 	void addNewState(TMTaskList taskList);
-	std::string reverseCurrentState();
-	std::string progressCurrentState();
+	
+	//Returns true if current state is able to regress and false otherwise
+	bool regressCurrentState();
+
+	//Returns true if current state is able to progress and false otherwise
+	bool progressCurrentState();
+
 	TMTaskList getCurrentTaskList();
 	
 

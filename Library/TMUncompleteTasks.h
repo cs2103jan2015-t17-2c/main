@@ -19,7 +19,7 @@ public:
 		
 		std::ostringstream ossValid, ossInvalid;
 
-		if (!noRepeatedIndexes(uncompleteIndexes)) {
+		if (hasRepeatedIndexes(uncompleteIndexes)) {
 			outcome = WARNING_REPEATED_INDEXES_SPECIFIED;
 			return;
 		}
@@ -56,11 +56,11 @@ public:
 			positionIndexes.push_back(positionIndex);
 		}
 
-		ossValid << reAddTasks.size() << " tasks successfully marked as uncomplete." << std::endl;
+		ossValid << reAddTasks.size() << UNCOMPLETE_SUCCESS << std::endl;
 		if (ossInvalid.str().size() != 0) {
-			ossInvalid << " is/are invalid position indexe(s).";
+			ossInvalid << STATUS_DISPLAY_INVALID_INDEXES;
 		}
-		outcome = ossValid.str() + ossInvalid.str();
+		outcome = ossValid.str() + '\n' + ossInvalid.str();
 		taskListStates->addNewState(taskList);
 	}
 };

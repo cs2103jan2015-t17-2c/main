@@ -19,7 +19,7 @@ public:
 		std::vector<TMTask>::iterator taskIter;
 		std::ostringstream ossValid, ossInvalid;
 
-		if (!noRepeatedIndexes(confirmedTasksIndexes)) {
+		if (hasRepeatedIndexes(confirmedTasksIndexes)) {
 			outcome = WARNING_REPEATED_INDEXES_SPECIFIED;
 			return;
 		}
@@ -70,16 +70,16 @@ public:
 			positionIndexes.push_back(positionIndex);
 		}
 
-		ossValid << "Tasks ";
+		ossValid << STATUS_DISPLAY_INDEXES;
 		for (intIter = positionIndexes.begin(); intIter != positionIndexes.end(); ++intIter) {
 			ossValid << *intIter << " ";
 		}
-		ossValid << " is/are confirmed." << std::endl;
+		ossValid << CONFIRM_SUCCESS << std::endl;
 		if (ossInvalid.str().size() != 0) {
-			ossInvalid << " is/are invalid position indexe(s)."; 
+			ossInvalid << STATUS_DISPLAY_INVALID_INDEXES; 
 		}
 
-		outcome = ossValid.str() + ossInvalid.str();
+		outcome = ossValid.str() + '\n' + ossInvalid.str();
 		taskListStates->addNewState(taskList);
 	}
 

@@ -1,11 +1,5 @@
 #include "TMTaskListStates.h"
 
-const std::string UNDO_SUCCESS = "Undo last action successfully.";
-const std::string UNDO_FAILURE = "Initial state of the system is reached. Unable to undo.";
-const std::string REDO_SUCCESS = "Redo successfully.";
-const std::string REDO_FAILURE = "Latest state of the system is reached. Unable to redo.";
-
-
 TMTaskListStates* TMTaskListStates::theOne;
 
 TMTaskListStates* TMTaskListStates::getInstance() {
@@ -17,41 +11,37 @@ TMTaskListStates* TMTaskListStates::getInstance() {
 
 TMTaskListStates::TMTaskListStates() {
 	TMTaskList taskList;
-	taskList.determineLoadOrCreateFile();
+	taskList.loadOrCreateFile();
 	addNewState(taskList);
 }
 
 void TMTaskListStates::addNewState(TMTaskList taskList) {
-	if (!states.empty() && currentState != states.end()-1) {
-		std::vector<TMTaskList>::iterator iter;
-		for (iter = currentState+1; iter != states.end(); iter = states.erase(iter)) {
-		}
+	if (!_states.empty() && _currentState != _states.end()-1) {
+		_states.erase(_currentState + 1, _states.end());
 	} 
 
-	states.push_back(taskList);
-	currentState = states.end()-1;
-	currentTaskList = *currentState;
+	_states.push_back(taskList);
+	_currentState = _states.end()-1;
 }
 
-std::string TMTaskListStates::reverseCurrentState() {
-	if (currentState != states.begin()) {
-		--currentState;
-		currentTaskList = *currentState;
-		return UNDO_SUCCESS;
+bool TMTaskListStates::regressCurrentState() {
+	if (_currentState != _states.begin()) {
+		--_currentState;
+		return true;
 	} else {
-		return UNDO_FAILURE;
+		return false;
 	}
 }
 
-std::string TMTaskListStates::progressCurrentState() {
-	if (currentState != states.end()-1) {
-		++currentState;
-		currentTaskList = *currentState;
-		return REDO_SUCCESS;
+bool TMTaskListStates::progressCurrentState() {
+	if (_currentState != _states.end()-1) {
+		++_currentState;
+		return true;
 	} else {
-		return REDO_FAILURE;
+		return false;
 	}
 }
 
 TMTaskList  TMTaskListStates::getCurrentTaskList() {
-	return currentTaskList;}
+	return *_currentState;
+}

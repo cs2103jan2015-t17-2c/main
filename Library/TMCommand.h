@@ -8,8 +8,6 @@
 #include "TMTask.h"
 #include "TMExecutor.h"
 
-const std::string WARNING_REPEATED_INDEXES_SPECIFIED = "Please do not specify an index more than once.";
-
 class TMCommand{
 	
 	public: 
@@ -20,19 +18,20 @@ class TMCommand{
 	
 	std::vector<int> positionIndexes;
 	
-	bool noRepeatedIndexes(std::vector<int> indexes) {
+	//Returns true if the user specifies repeated indexes to be manipulated.
+	bool hasRepeatedIndexes(std::vector<int> indexes) {
 		std::vector<int>::iterator iter1, iter2;
 		
 		for (iter1 = indexes.begin(); iter1 != indexes.end(); ++iter1) {
 			int checkIndex = *iter1;
 			for (iter2 = iter1 + 1; iter2 != indexes.end(); ++iter2) {
 				if (*iter2 == checkIndex) {
-					return false;
+					return true;
 				}
 			}
 		}
 
-		return true;
+		return false;
 	}
 
 	void updatePositionIndexes(std::vector<int>& indexes, int deletedIndex) {

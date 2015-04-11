@@ -6,7 +6,6 @@
 #include <Windows.h>
 #include <msclr\marshal_cppstd.h>
 #include <boost\date_time.hpp>
-
 #include "TMExecutor.h"
 #include "CurrentDateAndTime.h"
 #include "TMParser.h"
@@ -45,6 +44,27 @@ namespace TMGUI {
 		}
 
 	public:
+		static String^ DISPLAY_DEFAULT = "Default display";
+		static String^ DISPLAY_DEADLINED = "Deadlined Tasks";
+		static String^ DISPLAY_UNDATED = "Undated Tasks";
+		static String^ DISPLAY_ARCHIVED = "Archived Tasks";
+		static String^ DISPLAY_SEARCH_RESULTS = "Search Results";
+		static String^ MESSAGE_ADD = "Adding the following task ";
+		static String^ MESSAGE_PROCESSING_IDS = "Task ID(s) to be processed: ";
+		static String^ MESSAGE_TASK_ID = "Task ID: ";
+		static String^ MESSAGE_CONFIRMED = "Yes";
+		static String^ MESSAGE_UNCONFIRMED = "No";
+		static String^ DISPLAY_TASK_DESCRIPTION = "Task Description: ";
+		static String^ DISPLAY_START_DATE = "Start Date: ";
+		static String^ DISPLAY_START_TIME = "Start Time: ";
+		static String^ DISPLAY_END_DATE = "End Date: ";
+		static String^ DISPLAY_END_TIME = "End Time: ";
+		static String^ DISPLAY_DUE_DATE = "Due Date: ";
+		static String^ DISPLAY_DUE_TIME = "Due Time: ";
+		static String^ DISPLAY_INVALID = "Invalid time, please re-enter task time.";
+		static String^ ICON_PASSED_DEADLINE = "!";
+		static String^ DISPLAY_BLANK = "";
+		
 		void SplashStart(){
 			Application::Run(gcnew TMSplash);
 		}
@@ -60,42 +80,70 @@ namespace TMGUI {
 					
 			 std::string command = inputParser->extractCommand();
 			 TMParser :: CommandTypes commandType = inputParser->determineCommandType(command);
-			 TMTask task = inputParser->parseTaskInfo();
-				if(commandType == TMParser :: CommandTypes :: Add){
-					//statusDisplay->Text = "Adding the following task";
-					displayResultRealTime(task);
-				}
+			 
+			if(commandType == TMParser :: CommandTypes :: Add){
+				TMTask task = inputParser->parseTaskInfo();
+				statusDisplay -> Text = MESSAGE_ADD + "\n" + printResultRealTime(task);
+			}
 
+			else if(commandType == TMParser :: CommandTypes :: Delete || commandType == TMParser :: CommandTypes :: Complete || commandType == TMParser :: CommandTypes :: Incomplete){
+				std::vector<int> tasksID = inputParser->parseTaskPositionNo();
+				std::vector<int>::iterator iter;
+				std::string idNumbers;
+				for (iter = tasksID.begin(); iter != tasksID.end(); ++iter){
+						idNumbers = idNumbers + std :: to_string (*iter) + ", ";
+				} 
+				statusDisplay->Text = MESSAGE_PROCESSING_IDS + gcnew String(idNumbers.c_str());
+			}
+
+			else if(commandType == TMParser :: CommandTypes :: Edit){
+				std :: string taskID;
+				taskID = inputParser->extractTokenAfterCommand();
+				statusDisplay -> Text = MESSAGE_TASK_ID;
+				if(taskID != "") {
+					TMTask newTask = inputParser->parseTaskInfo();
+					statusDisplay -> Text = MESSAGE_TASK_ID + gcnew String(taskID.c_str()) + "\n" + printResultRealTime(newTask);
+				}
+			}
+		}
+		
+		void saveAndQuit(){
+			TMTaskList taskList = initiateTaskList();
+			taskList.leaveReferenceUponExit();
 		}
 
-		void displayResultRealTime(TMTask task){
+
+		String^ printResultRealTime(TMTask task){
 			
-			statusDisplay->Text=
-			"Task Description: " + gcnew String(task.getTaskDescription().c_str()) + "\n"+
-			"Start Date: " + gcnew String(task.getTaskTime().getStartDate().c_str()) + "\t\t\t" + 
-			"Start Time: " + gcnew String(task.getTaskTime().getStartTime().c_str()) + "\n"+
-			"End Date: " + gcnew String(task.getTaskTime().getEndDate().c_str()) + "\t\t\t" + 
-			"End Time: " + gcnew String(task.getTaskTime().getEndTime().c_str());
+			String^ taskDetails=
+			DISPLAY_TASK_DESCRIPTION + gcnew String(task.getTaskDescription().c_str()) + "\n"+
+			DISPLAY_START_DATE + gcnew String(task.getTaskTime().getStartDate().c_str()) + "\t\t\t" + 
+			DISPLAY_START_TIME + gcnew String(task.getTaskTime().getStartTime().c_str()) + "\n"+
+			DISPLAY_END_DATE + gcnew String(task.getTaskTime().getEndDate().c_str()) + "\t\t\t" + 
+			DISPLAY_END_TIME + gcnew String(task.getTaskTime().getEndTime().c_str());
 		
 			if (task.getTaskType() == TaskType :: WithEndDateTime){
-				statusDisplay->Text = 
-				"Task Description: " + gcnew String(task.getTaskDescription().c_str()) + "\n"+
-				"Due Date: " + gcnew String(task.getTaskTime().getEndDate().c_str()) + "\t\t\t" + 
-				"Due Time: " + gcnew String(task.getTaskTime().getEndTime().c_str());
+				taskDetails = 
+				DISPLAY_TASK_DESCRIPTION + gcnew String(task.getTaskDescription().c_str()) + "\n"+
+				DISPLAY_DUE_DATE + gcnew String(task.getTaskTime().getEndDate().c_str()) + "\t\t\t" + 
+				DISPLAY_DUE_TIME + gcnew String(task.getTaskTime().getEndTime().c_str());
 			}
 			
 			if(task.getTaskType() == TaskType ::WithStartDateTime){
-				statusDisplay->Text = 
-				"Task Description: " + gcnew String(task.getTaskDescription().c_str()) + "\n"+
-				"Start Date: " + gcnew String(task.getTaskTime().getStartDate().c_str()) + "\t\t\t" + 
-				"Start Time: " + gcnew String(task.getTaskTime().getStartTime().c_str());
+				taskDetails = 
+				DISPLAY_TASK_DESCRIPTION + gcnew String(task.getTaskDescription().c_str()) + "\n"+
+				DISPLAY_START_DATE + gcnew String(task.getTaskTime().getStartDate().c_str()) + "\t\t\t" + 
+				DISPLAY_START_TIME + gcnew String(task.getTaskTime().getStartTime().c_str());
 			}
 
 			if(task.getTaskType() == TaskType :: Invalid){
-				statusDisplay->Text = "Invalid time, please re-enter task time.";
+				taskDetails = DISPLAY_INVALID;
 			}
+
+			return taskDetails;
 		}
 
+		//defaulTasks do not include archived tasks as these will not be displayed by default
 		std::vector<TMTask> initiateDefaultTasks(TMTaskList taskList){
 			
 			std::vector<TMTask> dated = taskList.getDated();
@@ -119,7 +167,7 @@ namespace TMGUI {
 			allTasks.insert( allTasks.end(), defaultTasks.begin(), defaultTasks.end() );
 			allTasks.insert( allTasks.end(), archived.begin(), archived.end() );
 					
-			return defaultTasks;
+			return allTasks;
 		}
 		
 		TMTaskList initiateTaskList(){
@@ -139,75 +187,68 @@ namespace TMGUI {
 			std::vector<int> indexes = exe->getPositionIndexes();	
 
 			ListViewItem^ defaultEntry;
-				defaultEntry = gcnew ListViewItem(Convert::ToString(index));
-				defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskDescription()).c_str() )));
-				if(taskList[taskPosition].getTaskType() == TaskType ::WithEndDateTime){
-					defaultEntry->SubItems->Add("");
-					defaultEntry->SubItems->Add(""); 
-				} else{
+			defaultEntry = gcnew ListViewItem(Convert::ToString(index));
+			defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskDescription()).c_str() )));
+			if(taskList[taskPosition].getTaskType() == TaskType ::WithEndDateTime){
+				defaultEntry->SubItems->Add(DISPLAY_BLANK);
+				defaultEntry->SubItems->Add(DISPLAY_BLANK); 
+			} else{
 				defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskTime().getStartDate()).c_str() )));
 				defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskTime().getStartTime()).c_str() )));
-				}
+			}
 				
-				if(taskList[taskPosition].getTaskType() == TaskType ::WithStartDateTime){
-					defaultEntry->SubItems->Add("");
-					defaultEntry->SubItems->Add(""); 
-				} else{
+			if(taskList[taskPosition].getTaskType() == TaskType ::WithStartDateTime){
+				defaultEntry->SubItems->Add(DISPLAY_BLANK);
+				defaultEntry->SubItems->Add(DISPLAY_BLANK); 
+			} else{
 				defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskTime().getEndDate()).c_str() )));
 				defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskTime().getEndTime()).c_str() )));
 				}
 
-				if(taskList[taskPosition].getTaskType() == TaskType ::WithEndDateTime){
-					defaultEntry->ForeColor = Color :: Red;
-				}
+			if(taskList[taskPosition].getTaskType() == TaskType ::WithEndDateTime){
+				defaultEntry->ForeColor = Color :: Red;
+			}
 
-				if(taskList[taskPosition].getTaskType() == TaskType ::Undated){
-					defaultEntry->ForeColor = Color :: DarkGoldenrod;
-				}
-
-				std::string confirmationStatus;
+			std::string confirmationStatus;
 						
-				if (taskList[taskPosition].isConfirmed()) {
-					confirmationStatus = "Yes";
-				} else {
-					confirmationStatus = "No";
-					defaultEntry->ForeColor = Color :: Gray;
-				}
+			if (taskList[taskPosition].isConfirmed()) {
+				defaultEntry->SubItems->Add(MESSAGE_CONFIRMED);
+			} else {
+				defaultEntry->SubItems->Add(MESSAGE_UNCONFIRMED);
+				defaultEntry->ForeColor = Color :: Gray;
+			}
 				
-				defaultEntry->SubItems->Add(gcnew String(( (confirmationStatus.c_str()) )));
+			if (taskList[taskPosition].isClashed()) {
+				defaultEntry->ForeColor = Color :: Blue;
+			} 
+				
+			if (taskList[taskPosition].isCompleted()) {
+				defaultEntry->ForeColor = Color :: ForestGreen;
+			} 
+				
+			boost::gregorian::date dateToday = currentDate();
+			std::string timeNow = currentTime();
+			
+			if (taskList[taskPosition].getTaskTime().getEndBoostDate() < dateToday){
+				defaultEntry->SubItems->Add(ICON_PASSED_DEADLINE);
+				defaultEntry->Font = gcnew System::Drawing::Font ("Corbel",11,FontStyle :: Bold);
+			}
 
-				if (taskList[taskPosition].isClashed()) {
-					defaultEntry->ForeColor = Color :: Blue;
-				} 
-				
-				if (taskList[taskPosition].isCompleted()) {
-					defaultEntry->ForeColor = Color :: ForestGreen;
-				} 
-				
-				boost::gregorian::date dateToday = currentDate();
-				std::string timeNow = currentTime();
-				if (taskList[taskPosition].getTaskTime().getEndBoostDate() < dateToday){
-					defaultEntry->SubItems->Add("!");
+			if (taskList[taskPosition].getTaskTime().getEndBoostDate() == dateToday){
+				if(taskList[taskPosition].getTaskTime().getEndTime() < timeNow){
+					defaultEntry->SubItems->Add(ICON_PASSED_DEADLINE);
 					defaultEntry->Font = gcnew System::Drawing::Font ("Corbel",11,FontStyle :: Bold);
 				}
-
-				if (taskList[taskPosition].getTaskTime().getEndBoostDate() == dateToday){
-					if(taskList[taskPosition].getTaskTime().getEndTime() < timeNow){
-						defaultEntry->SubItems->Add("!");
-						defaultEntry->Font = gcnew System::Drawing::Font ("Corbel",11,FontStyle :: Bold);
-					
-					}
-				}
+			}
 				
-				std::vector<int>::iterator iter;
-				for (iter = indexes.begin(); iter != indexes.end(); ++iter){
-					if(index == (*iter)){
-						defaultEntry -> BackColor = Color :: Yellow;
-					}
+			std::vector<int>::iterator iter;
+			for (iter = indexes.begin(); iter != indexes.end(); ++iter){
+				if(index == (*iter)){
+					defaultEntry -> BackColor = Color :: Yellow;
 				}
+			}
 
-					defaultView->Items->Add(defaultEntry);
-			
+			defaultView->Items->Add(defaultEntry);
 		}
 
 	protected:
@@ -223,7 +264,6 @@ namespace TMGUI {
 		}
 
 	protected: 
-
 	private: System::Windows::Forms::TextBox^  userInput;
 	private: System::Windows::Forms::Label^  welcomeMessage;
 	private: System::Windows::Forms::RichTextBox^  statusDisplay;
@@ -235,21 +275,17 @@ namespace TMGUI {
 	private: System::Windows::Forms::ColumnHeader^  endDate;
 	private: System::Windows::Forms::ColumnHeader^  endTime;
 	private: System::Windows::Forms::ColumnHeader^  confirmation;
-	private: System::Windows::Forms::Label^  label4;
+	private: System::Windows::Forms::Label^  displayTime;
 	private: System::Windows::Forms::Timer^  timer1;
-
-
 	private: System::Windows::Forms::Label^  DisplayState;
 	private: System::Windows::Forms::Label^  todayIs;
 	private: System::Windows::Forms::Label^  nowShowing;
 	private: System::Windows::Forms::Label^  label1;
-private: System::Windows::Forms::ColumnHeader^  hasPassed;
+	private: System::Windows::Forms::ColumnHeader^  hasPassed;
 	private: System::ComponentModel::IContainer^  components;
 
 
 	protected: 
-
-
 
 	private:
 		/// <summary>
@@ -265,6 +301,7 @@ private: System::Windows::Forms::ColumnHeader^  hasPassed;
 		void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(TMGUserInterface::typeid));
 			this->userInput = (gcnew System::Windows::Forms::TextBox());
 			this->welcomeMessage = (gcnew System::Windows::Forms::Label());
 			this->statusDisplay = (gcnew System::Windows::Forms::RichTextBox());
@@ -277,7 +314,7 @@ private: System::Windows::Forms::ColumnHeader^  hasPassed;
 			this->endTime = (gcnew System::Windows::Forms::ColumnHeader());
 			this->confirmation = (gcnew System::Windows::Forms::ColumnHeader());
 			this->hasPassed = (gcnew System::Windows::Forms::ColumnHeader());
-			this->label4 = (gcnew System::Windows::Forms::Label());
+			this->displayTime = (gcnew System::Windows::Forms::Label());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->DisplayState = (gcnew System::Windows::Forms::Label());
 			this->todayIs = (gcnew System::Windows::Forms::Label());
@@ -296,7 +333,6 @@ private: System::Windows::Forms::ColumnHeader^  hasPassed;
 			this->userInput->Name = L"userInput";
 			this->userInput->Size = System::Drawing::Size(1868, 50);
 			this->userInput->TabIndex = 0;
-			this->userInput->TextChanged += gcnew System::EventHandler(this, &TMGUserInterface::userInput_TextChanged);
 			this->userInput->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &TMGUserInterface::userInput_KeyDown);
 			this->userInput->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &TMGUserInterface::userInput_KeyPress);
 			// 
@@ -391,18 +427,18 @@ private: System::Windows::Forms::ColumnHeader^  hasPassed;
 			this->hasPassed->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->hasPassed->Width = 25;
 			// 
-			// label4
+			// displayTime
 			// 
-			this->label4->AutoSize = true;
-			this->label4->Font = (gcnew System::Drawing::Font(L"Corbel", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->displayTime->AutoSize = true;
+			this->displayTime->Font = (gcnew System::Drawing::Font(L"Corbel", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label4->ForeColor = System::Drawing::SystemColors::ButtonFace;
-			this->label4->Location = System::Drawing::Point(44, 51);
-			this->label4->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
-			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(182, 39);
-			this->label4->TabIndex = 10;
-			this->label4->Text = L"currentTime";
+			this->displayTime->ForeColor = System::Drawing::SystemColors::ButtonFace;
+			this->displayTime->Location = System::Drawing::Point(44, 51);
+			this->displayTime->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
+			this->displayTime->Name = L"displayTime";
+			this->displayTime->Size = System::Drawing::Size(182, 39);
+			this->displayTime->TabIndex = 10;
+			this->displayTime->Text = L"currentTime";
 			// 
 			// timer1
 			// 
@@ -416,7 +452,7 @@ private: System::Windows::Forms::ColumnHeader^  hasPassed;
 			this->DisplayState->Font = (gcnew System::Drawing::Font(L"Corbel", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->DisplayState->ForeColor = System::Drawing::SystemColors::ButtonFace;
-			this->DisplayState->Location = System::Drawing::Point(1707, 582);
+			this->DisplayState->Location = System::Drawing::Point(283, 582);
 			this->DisplayState->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->DisplayState->Name = L"DisplayState";
 			this->DisplayState->Size = System::Drawing::Size(213, 39);
@@ -441,7 +477,7 @@ private: System::Windows::Forms::ColumnHeader^  hasPassed;
 			this->nowShowing->Font = (gcnew System::Drawing::Font(L"Corbel", 10.125F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->nowShowing->ForeColor = System::Drawing::SystemColors::ButtonFace;
-			this->nowShowing->Location = System::Drawing::Point(1476, 586);
+			this->nowShowing->Location = System::Drawing::Point(46, 586);
 			this->nowShowing->Name = L"nowShowing";
 			this->nowShowing->Size = System::Drawing::Size(214, 33);
 			this->nowShowing->TabIndex = 13;
@@ -470,7 +506,7 @@ private: System::Windows::Forms::ColumnHeader^  hasPassed;
 			this->Controls->Add(this->nowShowing);
 			this->Controls->Add(this->todayIs);
 			this->Controls->Add(this->DisplayState);
-			this->Controls->Add(this->label4);
+			this->Controls->Add(this->displayTime);
 			this->Controls->Add(this->defaultView);
 			this->Controls->Add(this->statusDisplay);
 			this->Controls->Add(this->welcomeMessage);
@@ -478,6 +514,7 @@ private: System::Windows::Forms::ColumnHeader^  hasPassed;
 			this->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
+			this->Icon = (cli::safe_cast<System::Drawing::Icon^  >(resources->GetObject(L"$this.Icon")));
 			this->Margin = System::Windows::Forms::Padding(2);
 			this->MaximizeBox = false;
 			this->MinimizeBox = false;
@@ -485,6 +522,7 @@ private: System::Windows::Forms::ColumnHeader^  hasPassed;
 			this->Padding = System::Windows::Forms::Padding(0, 0, 30, 30);
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"TimeMaster";
+			this->Deactivate += gcnew System::EventHandler(this, &TMGUserInterface::TMGUserInterface_Deactivate);
 			this->Load += gcnew System::EventHandler(this, &TMGUserInterface::TMGUserInterface_Load);
 			this->ResumeLayout(false);
 			this->PerformLayout();
@@ -497,24 +535,20 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 			
 			 if(e->KeyChar == (char)13){
 				 if (userInput->Text == "quit" || userInput->Text =="exit" || userInput->Text =="q" || userInput->Text =="close"){
-					TMTaskList taskList = initiateTaskList();
-					taskList.leaveReferenceUponExit();
-					Application :: Exit();
+					 saveAndQuit();
+					 Application :: Exit();
 				 }
-				 else{
-					 statusDisplay->Text = "";
-					 String ^ str = userInput->Text;
-					 std::string unmanaged = msclr::interop::marshal_as<std::string>(str);
+				 else {
+					 statusDisplay->Clear();
+					 String ^ entry = userInput->Text;
+					 std::string originalEntry = msclr::interop::marshal_as<std::string>(entry);
 					
 					 TMExecutor* exe = TMExecutor::getInstance();
 					
-					
-					 exe->executeMain(unmanaged);
-					 
+					 exe->executeMain(originalEntry);
+	
+					statusDisplay->Text = gcnew String(exe->getResultOfExecution().c_str());
 				
-					statusDisplay->Text = gcnew String(exe->returnResultOfExecution().c_str());
-				
-					
 					 TMDisplay display = exe->getCurrentDisplay();
 					
 					 TMTaskList taskList = initiateTaskList();
@@ -539,7 +573,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 	
 					 switch (display) {
 					 case Default:
-						 DisplayState->Text = "Default display";
+						 DisplayState->Text = DISPLAY_DEFAULT;
 						 clearListView();
 
 						 for(int i = defaultCountStart; i != defaultCountEnd ; i++){
@@ -550,7 +584,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 						 break;
 
 					 case  DeadlineTasks:
-						 DisplayState->Text = "Deadlined Tasks";
+						 DisplayState->Text = DISPLAY_DEADLINED;
 						 clearListView();
 						 for (int l = 0; l != dated.size(); l++){
 							 if(dated[l].getTaskType() == TaskType ::WithEndDateTime){
@@ -559,11 +593,10 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 								 displayTasks(dated,deadlinedIndex,deadlinedTaskPosition);
 							 }
 						 }
-						 exe->setCurrentDisplay(Default);
 						 break;
 					
 					case UndatedTasks:
-						DisplayState->Text = "Undated Tasks";
+						DisplayState->Text = DISPLAY_UNDATED;
 						clearListView();
 						
 						for(int j = undatedCountStart; j != undatedCountEnd ; j++){
@@ -574,7 +607,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 						break;
 					
 					case ArchivedTasks:
-						DisplayState->Text = "Archived Tasks";
+						DisplayState->Text = DISPLAY_ARCHIVED;
 						clearListView();
 						
 						for(int k = archivedCountStart; k != archivedCountEnd ; k++){
@@ -582,12 +615,10 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 							int archivedIndex = k + 1;
 							displayTasks(archived,archivedIndex,archivedTaskPosition);
 						}
-						exe->setCurrentDisplay(Default);
 						break;
 
-					
 					case SearchResults:
-						DisplayState->Text = "Search results";
+						DisplayState->Text = DISPLAY_SEARCH_RESULTS;
 						clearListView();
 						
 						std::vector<int> indexes = exe->getPositionIndexes();
@@ -604,46 +635,14 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 					}
 					userInput->Clear();
 				 } 
-				}		
-				else{
-					//statusDisplay->Text = "";
-					
 			 }
-
-			}
+		}
 			
-			 
-			 
-	
-	
-	private: System::Void userInput_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-
-				
-				 /*if (userInput->Text == "a") {
-					
-					 statusDisplay->Text = "add <task description> {{<time markers> <time/time period>} {<date markers> <date/date period>}/{day}}";
-				 }
-
-				 if (userInput->Text == "d") {
-					statusDisplay->Text = "delete <ID>";
-				 }
-				 
-				 if (userInput->Text == "e") {
-					statusDisplay->Text = "edit <task number> <task component> <new task description or timing or completion status or confirmation status>";
-				 }
-					 
-				if (userInput->Text == "s") {
-					statusDisplay->Text = "search <keyword(s)>";
-				}*/
-			 }
-
-
-
 private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e) {
 			 DateTime time = DateTime::Now;
 			 String^ format = "f";
 			 
-			 label4->Text = time.ToString(format);	
+			 displayTime->Text = time.ToString(format);	
 
 			 processRealTime();
 			
@@ -651,7 +650,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 
 private: System::Void TMGUserInterface_Load(System::Object^  sender, System::EventArgs^  e) {
 			clearListView();
-
+	
 			TMTaskList taskList = initiateTaskList();
 
 			std::vector<TMTask> defaultTasks = initiateDefaultTasks (taskList);
@@ -663,28 +662,27 @@ private: System::Void TMGUserInterface_Load(System::Object^  sender, System::Eve
 						int defaultTaskPosition = i - defaultCountStart;
 						int defaultIndex = i + 1;
 						displayTasks(defaultTasks,defaultIndex,defaultTaskPosition);
-					}
+			}
 		 }
 
 private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 			
-			 if(e->KeyCode == Keys:: Down){
+			 if(e->KeyCode == Keys:: PageDown){
 					defaultView->Focus();
 					SendKeys :: SendWait ("{PGDN}");
 					userInput->Focus();
-			 } else if(e->KeyCode == Keys:: Up){
+			 } else if(e->KeyCode == Keys:: PageUp){
 					defaultView->Focus();
 					SendKeys :: SendWait ("{PGUP}");
 					userInput->Focus();
 			 } else if(e->KeyCode == Keys::F1){
 					ShellExecuteA(NULL,"open","..\\readme.pdf",NULL,NULL,0);
 			 } 
-
-
-			 
-
 		 }
 
 
+private: System::Void TMGUserInterface_Deactivate(System::Object^  sender, System::EventArgs^  e) {
+			 saveAndQuit();
+		 }
 };
 }

@@ -17,7 +17,7 @@ public:
 		std::ostringstream ossValid, ossInvalid;
 		int numArchived = 0;
 
-		if (!noRepeatedIndexes(completeIndexes)) {
+		if (hasRepeatedIndexes(completeIndexes)) {
 			outcome = WARNING_REPEATED_INDEXES_SPECIFIED;
 			return;
 		}
@@ -38,11 +38,11 @@ public:
 
 		}
 		
-		ossValid << numArchived << " tasks(s) successfully marked as completed and archived." << std::endl;
+		ossValid << numArchived << ARCHIVE_SUCCESS << std::endl;
 		if (ossInvalid.str().size() != 0) {
-			ossInvalid << " is/are invalid position indexe(s).";
+			ossInvalid << STATUS_DISPLAY_INVALID_INDEXES;
 		}
-		outcome = ossValid.str() + ossInvalid.str();
+		outcome = ossValid.str() + '\n' + ossInvalid.str();
 		taskListStates->addNewState(taskList);
 	}
 };

@@ -134,13 +134,22 @@ public:
 	std::vector<int> keywordSearch(std::string keyword);
 
 	//EXPORT AND IMPORT FUNCTIONS//
-	void writeToFile();
-	std::string loadFromFile(std::string pathName);
-	void setFileDirectory(std::string directory);
-	std::string getFileDirectory();
-	void leaveReferenceUponExit();
 	bool isFoundInLine(std::string text, std::string line);
-	void determineLoadOrCreateFile();
+	bool isValidDirectory(const char* directory);
+	void loadOrCreateFile();
+	
+	void setDirectoryName(std::string directory);
+	void setDefaultFileName();
+	std::string getDirectoryName();
+	std::string getFileName();
+	std::string getExeFileName();
+	std::string getExePath();
+
+	void writeToFile();
+	void createFile();
+	void loadFromFile();
+	void leaveReferenceUponExit();
+
 };
 
 #endif

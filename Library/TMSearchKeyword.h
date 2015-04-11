@@ -3,7 +3,6 @@
 
 #include "TMCommand.h"
 
-const std::string SEARCH_CONCLUSION_KEYWORD = "Number of tasks containing the keyword <";
 
 class TMSearchKeyword: public TMCommand {
 
@@ -15,7 +14,7 @@ public:
 
 		positionIndexes = taskList.keywordSearch(parser->parseSearchKey());
 		std::ostringstream oss;
-		oss << SEARCH_CONCLUSION_KEYWORD << parser->parseSearchKey() << "> is: " << positionIndexes.size();
+		oss << SEARCH_CONCLUSION_KEYWORD_PART1 << parser->parseSearchKey() << SEARCH_CONCLUSION_KEYWORD_PART2 << positionIndexes.size();
 		outcome = oss.str();
 	}
 

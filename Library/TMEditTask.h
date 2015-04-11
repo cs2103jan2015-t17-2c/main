@@ -19,10 +19,12 @@ public:
 			taskList.updateTask(positionIndex, alteredTask);
 			int index = taskList.getPositionIndexFromTask(alteredTask);
 			positionIndexes.push_back(index);
-			outcome = "Successfully edited task.";
+			outcome = EDIT_SUCCESS;
 			taskListStates->addNewState(taskList);
 		} else {
-			outcome = "Invalid index specified.";
+			std::ostringstream oss;
+			oss << positionIndex << STATUS_DISPLAY_INVALID_INDEXES;
+			outcome = oss.str();
 		}
 
 	}
