@@ -1,20 +1,5 @@
-Number of dated tasks: 12
+Number of dated tasks: 0
 <Task Type> <Task Description> <Start Date> <Start Time> <End Date> <End Time> <Completion> <Clash> <Confirmation> <Unconfirmed Batch Number>
-WithPeriod  || 09 Mar 2010 00:00 12 Mar 2030 23:59 0 1 1 0
-WithPeriod  || 13 Apr 2015 00:00 13 Apr 2015 23:59 0 1 1 0
-WithPeriod  || 13 Apr 2015 00:00 13 Apr 2015 23:59 0 1 1 0
-WithPeriod  || 13 Apr 2015 00:00 14 Apr 2015 23:59 0 1 1 0
-WithPeriod  || 13 Apr 2015 00:00 14 Apr 2015 23:59 0 1 0 1
-WithPeriod  || 13 Apr 2015 22:00 14 Apr 2015 14:00 0 1 0 2
-WithPeriod  || 13 Apr 2015 22:00 14 Apr 2015 16:00 0 1 0 3
-WithPeriod  || 13 Apr 2015 22:00 14 Apr 2015 16:00 0 1 0 4
-WithPeriod  || 18 Apr 2015 09:00 18 Apr 2015 10:00 0 1 1 0
-WithPeriod  || 09 Mar 2016 09:00 10 Mar 2016 10:00 0 1 1 0
-WithPeriod  || 09 Mar 2016 09:00 10 Mar 2016 12:00 0 1 1 0
-WithPeriod  || 09 Mar 2016 21:00 10 Mar 2016 12:00 0 1 1 0
-Number of undated tasks: 3
+Number of undated tasks: 0
 <Task Type> <Task Description> <Completion>
-Undated from mon to tue || 0
-Undated from mon to tue || 0
-Undated mon to tue || 0
 Number of completed/archived tasks: 0

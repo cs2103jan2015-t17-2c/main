@@ -871,6 +871,7 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
             startTime = TIME_00_COLON_00;
             endTime = TIME_23_COLON_59;
             configureStartDateEndDate(startDate, endDate);
+
         } else if (startTime == "" && !(endTime == ""||endDate == "")) {
             //startDate endDate endTime
             //startTime == 00:00
@@ -884,20 +885,17 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
             //startTime endTime
             startDate = currentDateInString();
             endDate = startDate;
+            configureStartTimeEndTime(startTime, endTime);
 
-            if (timeChecker->isTimeWithoutPeriod(startTime)||
-                timeChecker->isTimeWithoutPeriod(endTime)) {
-                    configureStartTimeEndTime(startTime, endTime);
-                    if(endTime <= startTime){
-                        endDate = addNDaysFromDate(endDate, 1);
-                    }
-            }
-            
-            //if time passed then start date is tomorrow's date
+            //if time passed then start date is tomorrow's date   
             if(startTime <= currentTime()) {
                 startDate = addNDaysFromDate(startDate, 1);
                 endDate = addNDaysFromDate(endDate, 1);
-            }        
+            }  
+            
+            if(endTime <= startTime){
+                endDate = addNDaysFromDate(endDate, 1);
+            }             
         } else if (startDate == "" && endTime == "") {
             //startTime endDate
             //today or tomorrow if time has passed
@@ -1217,13 +1215,15 @@ void TMParser::configureStartTimeEndTime(std::string& startTime, std::string& en
 
 bool TMParser::isStartDateLessThanEndDate(std::string startDate, std::string endDate) {
     DateChecker *dateChecker = DateChecker::getInstance();
-    
+    boost::gregorian::date boostStartDate;
+    boost::gregorian::date boostEndDate;
+
     FormatConverter *formatConverter = FormatConverter::getInstance();
     startDate = formatConverter->dateFromNumericToBoostFormat(startDate);
     endDate = formatConverter->dateFromNumericToBoostFormat(endDate);
-    if(dateChecker->isValidDate(startDate) && dateChecker->isValidDate(endDate) {
-        boost::gregorian::date boostStartDate = boost::gregorian::from_uk_string(startDate);
-        boost::gregorian::date boostEndDate = boost::gregorian::from_uk_string(endDate);
+    if(dateChecker->isValidDate(startDate) && dateChecker->isValidDate(endDate)) {
+        boostStartDate = boost::gregorian::from_uk_string(startDate);
+        boostEndDate = boost::gregorian::from_uk_string(endDate);
     } else {
         return false;
     }
