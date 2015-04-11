@@ -541,7 +541,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 					 exe->executeMain(unmanaged);
 					 
 				
-					statusDisplay->Text = gcnew String(exe->returnResultOfExecution().c_str());
+					statusDisplay->Text = gcnew String(exe->getResultOfExecution().c_str());
 				
 					
 					 TMDisplay display = exe->getCurrentDisplay();

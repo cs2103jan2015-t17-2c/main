@@ -207,6 +207,7 @@ static const std::string REDO_SUCCESS = "Redo successfully.";
 static const std::string REDO_FAILURE = "Latest state of the system is reached. Unable to redo.";
 static const std::string WARNING_REPEATED_INDEXES_SPECIFIED = "Please do not specify an index more than once.";
 
+static const std::string DEFAULT_REFERENCE_FILENAME = "TimeMaster.txt";
 static const std::string DATED_TASK_DISPLAY_FORMAT = "<Task Type> <Task Description> <Start Date> <Start Time> <End Date> <End Time> <Completion> <Clash> <Confirmation> <Unconfirmed Batch Number>";
 static const std::string UNDATED_TASK_DISPLAY_FORMAT = "<Task Type> <Task Description> <Completion>";
 static const std::string DATED_HEADER = "Number of dated tasks: ";

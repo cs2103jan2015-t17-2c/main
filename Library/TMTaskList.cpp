@@ -451,8 +451,8 @@
 	void TMTaskList::loadOrCreateFile() {
 		setDefaultFileName();
 
-		if (std::ifstream("TimeMaster.txt")) {
-			std::ifstream directoryReference("TimeMaster.txt");
+		if (std::ifstream(DEFAULT_REFERENCE_FILENAME)) {
+			std::ifstream directoryReference(DEFAULT_REFERENCE_FILENAME);
 			std::string directoryName;
 			getline(directoryReference, directoryName);
 			std::string pathName = directoryName + "\\" + _fileName;
@@ -623,7 +623,7 @@
 
 	void TMTaskList::leaveReferenceUponExit() {
 		std::ofstream outFile;
-		outFile.open("TimeMaster.txt");
+		outFile.open(DEFAULT_REFERENCE_FILENAME);
 		outFile << _directoryName << '\n';
 		outFile << USER_INFO_TIMEMASTER_FILE << '\n';
 		outFile.close();
