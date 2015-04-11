@@ -874,123 +874,51 @@ void TMParser::configureAllDatesAndTimes(std::string& startDate, std::string& st
                 configureEndTimeWithoutPeriods(endTime);
             }   
         } else if(startDate == "" && endDate == "") {
-            //startTime only
-            //no endDate got endTime then should be today till today/tomorrow
-            //got endDate no endTime
-            if(timeChecker->isTimeWithoutPeriod(startTime) && timeChecker->isTimeWithoutPeriod(endTime)) {
-                configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
-                //IF STARTTIME HAS PASSED <= CURRENTTIME ADD ONE DAY TO STARTDATE AND ENDDATE
-            } else if (timeChecker->isTimeWithoutPeriod(startTime) && endTime.length() == 5) {
-                std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(startTime + TIME_PERIOD_AM);
-                std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(startTime + TIME_PERIOD_PM);
-                
-                if(endTime == TIME_00_COLON_00) {
-                    startTime = timeInPM;
-                } else if (timeInPM < endTime) {
-                    startTime = timeInPM;
-                } else if (timeInAM < endTime) {
-                    startTime = timeInAM;
-                } else {
-                    startTime = timeInPM;
-                }
-            } else if (startTime.length() == 5 && timeChecker->isTimeWithoutPeriod(endTime)) {
-                std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(endTime + TIME_PERIOD_AM);
-                std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(endTime + TIME_PERIOD_PM);
+            //startTime endTime
+            startDate = currentDateInString();
+            endDate = startDate;
 
-                if(startTime == TIME_00_COLON_00) {
-                    if(timeInAM != TIME_00_COLON_00) {
-                        endTime = timeInAM; 
-                    } else {
-                        endTime = timeInPM;
+            if (timeChecker->isTimeWithoutPeriod(startTime)||
+                timeChecker->isTimeWithoutPeriod(endTime)) {
+                    configureStartTimeEndTime(startTime, endTime);
+                    if(endTime <= startTime){
+                        endDate = addNDaysFromDate(endDate, 1);
                     }
-                } else if (timeInAM > startTime) {
-                    endTime = timeInAM;
-                } else if (timeInPM > startTime) {
-                    endTime = timeInPM;
-                } else {
-                    endTime = timeInAM;
-                }
             }
             
-            startDate = currentDateInString();
-
             //if time passed then start date is tomorrow's date
             if(startTime <= currentTime()) {
                 startDate = addNDaysFromDate(startDate, 1);
-            }
-
-            if(endTime > startTime){
-                endDate = startDate;
-            } else { 
-                endDate = addNDaysFromDate(startDate,1);
-            }
-        
+                endDate = addNDaysFromDate(endDate, 1);
+            }        
         } else if (startDate == "" && endTime == "") {
             //startTime endDate
             //today or tomorrow if time has passed
             //endDate may be 4 or 8
+            startDate = currentDateInString();
+            configureDayMonth(endDate);
+            endTime = TIME_23_COLON_59;
+            
             if(timeChecker->isTimeWithoutPeriod(startTime)) {
                 configureStartTimeWithoutPeriods(startTime);
             }
             
-            startDate = currentDateInString();
-            //if start time has passed
-            
             if(startTime <= currentTime()) {
                 startDate = addNDaysFromDate(startDate, 1);
             }
-
-            if(endDate.length() == 4) {
-                configureStartDayMonthEndDayMonth(startDate.substr(0,4),endDate);
-            }
-                endTime = TIME_23_COLON_59;
-        } else if (startDate == "" && !(endDate == ""||endTime == "")){
+        } else if (startDate == "" && !(endDate == ""||endTime == "")) {
             //startTime endDate endTime
             //startDate = endDate or one day earlier
-            if(timeChecker->isTimeWithoutPeriod(startTime) && timeChecker->isTimeWithoutPeriod(endTime)) {
-                configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
-            } else if (timeChecker->isTimeWithoutPeriod(startTime) && endTime.length() == 5) {
-
-                std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(startTime + TIME_PERIOD_AM);
-                std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(startTime + TIME_PERIOD_PM);
-
-                if(endTime == TIME_00_COLON_00) {
-                    startTime = timeInPM;
-                } else if (timeInPM < endTime) {
-                    startTime = timeInPM;
-                } else if (timeInAM < endTime) {
-                    startTime = timeInAM;
-                } else {
-                    startTime = timeInPM;
-                }
-            } else if (startTime.length() == 5 && timeChecker->isTimeWithoutPeriod(endTime)) {
-
-                std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(endTime + TIME_PERIOD_AM);
-                std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(endTime + TIME_PERIOD_PM);
-
-                if(startTime == TIME_00_COLON_00) {
-                    if(timeInAM != TIME_00_COLON_00) {
-                        endTime = timeInAM; 
-                    } else {
-                        endTime = timeInPM;
-                    }
-                } else if (timeInAM > startTime) {
-                    endTime = timeInAM;
-                } else if (timeInPM > startTime) {
-                    endTime = timeInPM;
-                } else if (timeInPM <= startTime && timeInAM <= startTime && endTime != "12") {
-                    endTime = timeInAM;
-                } else if (timeInPM <= startTime && timeInAM <= startTime && endTime == "12") {
-                    endTime = timeInPM;
-                }
-            }
-            
+            configureDayMonth(endDate);
             startDate = endDate;
 
-            if(startTime >= endTime){
-                startDate = substractNDaysFromDate(startDate,1);
+            if (timeChecker->isTimeWithoutPeriod(startTime)||
+                timeChecker->isTimeWithoutPeriod(endTime)) {
+                    configureStartTimeEndTime(startTime, endTime);
+                    if(startTime >= endTime){
+                        startDate = substractNDaysFromDate(startDate,1);
+                    }
             }
-
         } else if (!(startDate == ""||startTime == "") && endTime == "") {
             //startTime and startDate are found
             //startDate startTime endDate 2359
@@ -1485,6 +1413,46 @@ void TMParser::configureStartDateEndDate(std::string& startDate, std::string& en
     }
 
     return;
+}
+
+void TMParser::configureStartTimeEndTime(std::string& startTime, std::string& endTime) {
+    TimeChecker *timeChecker = TimeChecker::getInstance();
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+
+    if(timeChecker->isTimeWithoutPeriod(startTime) && timeChecker->isTimeWithoutPeriod(endTime)) {
+        configureStartTimeEndTimeWithoutPeriods(startTime, endTime);
+        //IF STARTTIME HAS PASSED <= CURRENTTIME ADD ONE DAY TO STARTDATE AND ENDDATE
+    } else if (timeChecker->isTimeWithoutPeriod(startTime) && endTime.length() == TIME_HH_COLON_MM_LENGTH) {
+        std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(startTime + TIME_PERIOD_AM);
+        std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(startTime + TIME_PERIOD_PM);
+        
+        if(endTime == TIME_00_COLON_00) {
+            startTime = timeInPM;
+        } else if (timeInPM < endTime) {
+            startTime = timeInPM;
+        } else if (timeInAM < endTime) {
+            startTime = timeInAM;
+        } else {
+            startTime = timeInPM;
+        } 
+    } else if (startTime.length() == TIME_HH_COLON_MM_LENGTH && timeChecker->isTimeWithoutPeriod(endTime)) {
+        std::string timeInAM = formatConverter->timeFrom12HourAMToHHMM(endTime + TIME_PERIOD_AM);
+        std::string timeInPM = formatConverter->timeFrom12HourPMToHHMM(endTime + TIME_PERIOD_PM);
+
+        if(startTime == TIME_00_COLON_00) {
+            if(timeInAM != TIME_00_COLON_00) {
+                endTime = timeInAM; 
+            } else {
+                endTime = timeInPM;
+            }
+        } else if (timeInAM > startTime) {
+            endTime = timeInAM;
+        } else if (timeInPM > startTime) {
+            endTime = timeInPM;
+        } else {
+            endTime = timeInAM;
+        }
+    }
 }
 
 bool TMParser::isStartDateLessThanEndDate(std::string startDate, std::string endDate) {

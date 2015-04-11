@@ -103,6 +103,7 @@ public:
     void configureEndTimeWithoutPeriods(std::string&);
 
     void configureStartDateEndDate(std::string&, std::string&);
+    void configureStartTimeEndTime(std::string&, std::string&);
     
     //precondition: ddmmyyyy format
     bool isStartDateLessThanEndDate(std::string, std::string);
