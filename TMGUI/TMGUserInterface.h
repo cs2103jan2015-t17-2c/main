@@ -62,7 +62,6 @@ namespace TMGUI {
 		static String^ DISPLAY_DUE_DATE = "Due Date: ";
 		static String^ DISPLAY_DUE_TIME = "Due Time: ";
 		static String^ DISPLAY_INVALID = "Invalid time, please re-enter task time.";
-		static String^ ICON_PASSED_DEADLINE = "!";
 		static String^ DISPLAY_BLANK = "";
 		
 		void SplashStart(){
@@ -230,13 +229,11 @@ namespace TMGUI {
 			std::string timeNow = currentTime();
 			
 			if (taskList[taskPosition].getTaskTime().getEndBoostDate() < dateToday){
-				defaultEntry->SubItems->Add(ICON_PASSED_DEADLINE);
 				defaultEntry->Font = gcnew System::Drawing::Font ("Corbel",11,FontStyle :: Bold);
 			}
 
 			if (taskList[taskPosition].getTaskTime().getEndBoostDate() == dateToday){
 				if(taskList[taskPosition].getTaskTime().getEndTime() < timeNow){
-					defaultEntry->SubItems->Add(ICON_PASSED_DEADLINE);
 					defaultEntry->Font = gcnew System::Drawing::Font ("Corbel",11,FontStyle :: Bold);
 				}
 			}
@@ -281,7 +278,7 @@ namespace TMGUI {
 	private: System::Windows::Forms::Label^  todayIs;
 	private: System::Windows::Forms::Label^  nowShowing;
 	private: System::Windows::Forms::Label^  label1;
-	private: System::Windows::Forms::ColumnHeader^  hasPassed;
+
 	private: System::ComponentModel::IContainer^  components;
 
 
@@ -313,7 +310,6 @@ namespace TMGUI {
 			this->endDate = (gcnew System::Windows::Forms::ColumnHeader());
 			this->endTime = (gcnew System::Windows::Forms::ColumnHeader());
 			this->confirmation = (gcnew System::Windows::Forms::ColumnHeader());
-			this->hasPassed = (gcnew System::Windows::Forms::ColumnHeader());
 			this->displayTime = (gcnew System::Windows::Forms::Label());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->DisplayState = (gcnew System::Windows::Forms::Label());
@@ -367,8 +363,8 @@ namespace TMGUI {
 			// defaultView
 			// 
 			this->defaultView->BackColor = System::Drawing::SystemColors::HighlightText;
-			this->defaultView->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(8) {this->taskID, this->taskDescription, 
-				this->startDate, this->startTime, this->endDate, this->endTime, this->confirmation, this->hasPassed});
+			this->defaultView->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(7) {this->taskID, this->taskDescription, 
+				this->startDate, this->startTime, this->endDate, this->endTime, this->confirmation});
 			this->defaultView->Font = (gcnew System::Drawing::Font(L"Corbel", 10.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->defaultView->FullRowSelect = true;
@@ -389,7 +385,7 @@ namespace TMGUI {
 			// 
 			this->taskDescription->Text = L"Task Description";
 			this->taskDescription->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
-			this->taskDescription->Width = 360;
+			this->taskDescription->Width = 385;
 			// 
 			// startDate
 			// 
@@ -420,12 +416,6 @@ namespace TMGUI {
 			this->confirmation->Text = L"Confirmed";
 			this->confirmation->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->confirmation->Width = 80;
-			// 
-			// hasPassed
-			// 
-			this->hasPassed->Text = L"";
-			this->hasPassed->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
-			this->hasPassed->Width = 25;
 			// 
 			// displayTime
 			// 
@@ -690,8 +680,7 @@ private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows
 				 }
 				 else{
 				 userInput -> Clear();
-				 userInput -> Text = gcnew String (userEntries[0].c_str());
-				 
+				 userInput -> Text = gcnew String (userEntries.back().c_str());
 				 }
 			 }
 		 }
