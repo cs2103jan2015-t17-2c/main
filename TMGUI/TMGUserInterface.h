@@ -547,7 +547,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 					
 					 exe->executeMain(originalEntry);
 	
-					statusDisplay->Text = gcnew String(exe->getResultOfExecution().c_str());
+					 statusDisplay->Text = gcnew String(exe->getResultOfExecution().c_str());
 				
 					 TMDisplay display = exe->getCurrentDisplay();
 					
@@ -593,6 +593,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 								 displayTasks(dated,deadlinedIndex,deadlinedTaskPosition);
 							 }
 						 }
+						 exe->setCurrentDisplay(Default);
 						 break;
 					
 					case UndatedTasks:
@@ -604,6 +605,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 							int undatedIndex = j + 1;
 							displayTasks(undated,undatedIndex,undatedTaskPosition);
 						}
+						exe->setCurrentDisplay(Default);
 						break;
 					
 					case ArchivedTasks:
@@ -615,6 +617,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 							int archivedIndex = k + 1;
 							displayTasks(archived,archivedIndex,archivedTaskPosition);
 						}
+						exe->setCurrentDisplay(Default);
 						break;
 
 					case SearchResults:
@@ -667,17 +670,30 @@ private: System::Void TMGUserInterface_Load(System::Object^  sender, System::Eve
 
 private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 			
+			 TMExecutor* exe = TMExecutor :: getInstance();
+			 std::vector<std::string> userEntries = exe -> getUserInput();
+
 			 if(e->KeyCode == Keys:: PageDown){
-					defaultView->Focus();
-					SendKeys :: SendWait ("{PGDN}");
-					userInput->Focus();
+				defaultView->Focus();
+				SendKeys :: SendWait ("{PGDN}");
+				userInput->Focus();
 			 } else if(e->KeyCode == Keys:: PageUp){
-					defaultView->Focus();
-					SendKeys :: SendWait ("{PGUP}");
-					userInput->Focus();
+				defaultView->Focus();
+				SendKeys :: SendWait ("{PGUP}");
+				userInput->Focus();
 			 } else if(e->KeyCode == Keys::F1){
-					ShellExecuteA(NULL,"open","..\\readme.pdf",NULL,NULL,0);
+				ShellExecuteA(NULL,"open","..\\readme.pdf",NULL,NULL,0);
 			 } 
+			 else if(e->KeyCode == Keys:: Up){
+				 if(userEntries.size() == 0){
+					 return;
+				 }
+				 else{
+				 userInput -> Clear();
+				 userInput -> Text = gcnew String (userEntries[0].c_str());
+				 
+				 }
+			 }
 		 }
 
 
