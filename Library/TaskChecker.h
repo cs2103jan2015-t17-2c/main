@@ -25,5 +25,7 @@ public:
     bool isWordOn(std::string);
     bool isWordFrom(std::string);
     bool isWordTo(std::string); 
+
+    bool isDateOrTime(std::string, int, std::vector<std::string>);
 };
 #endif TASKCHECKER_H

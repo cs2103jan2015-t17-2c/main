@@ -34,12 +34,20 @@ static const std::string CMD_SHORTCUT_SEARCH = "se";
 static const std::string CMD_SHORTCUT_EDIT= "e";
 static const std::string CMD_SHORTCUT_STORE = "st";
 static const std::string CMD_SHORTCUT_DONEALL = "da";
+static const std::string CMD_SHORTCUT_BLOCK = "b";
 static const std::string CMD_SHORTCUT_QUIT = "q";
 static const std::string CMD_SHORTCUT_VIEW_DEFAULT = "vd";
 static const std::string CMD_SHORTCUT_VIEW_DEADLINE = "vdd";
 static const std::string CMD_SHORTCUT_VIEW_UNDATED = "vu";
 static const std::string CMD_SHORTCUT_VIEW_ARCHIVED = "va";
 static const std::string CMD_SHORTCUT_VIEW_SEARCH = "vs";
+
+static const std::string ERROR_INDEX_OF_TASK_NOT_SPECIFIED = "Index of task not specified\n";
+static const std::string ERROR_MISSING_NEW_TASK_INFO = "Missing new task information\n";
+static const std::string ERROR_INDEX_SPECIFIED_NOT_POSITIVE_INT = "Index of task must be a positive integer\n";
+static const std::string ERROR_STARTTIME_LATER_THAN_ENDTIME = "Start time is later than end time\n";
+static const std::string ERROR_STARTDATE_LATER_THAN_ENDDATE = "Error: end date is later than start date\n";
+static const std::string ERROR_UNABLE_TO_FIND_APPROPRIATE_TIME = "Unable to find an appropriate start or end time\n";
 
 static const std::string DAY_YESTERDAY = "yesterday";
 static const std::string DAY_TODAY = "today";
@@ -121,23 +129,11 @@ static const std::string TOKEN_SHORTCUT_FROM = "fr";
 static const std::string TOKEN_TO = "to";
 static const std::string TOKEN_SHORTCUT_TO = "2";
 static const std::string TOKEN_DASH = "-";
+static const std::string TOKEN_AND = "and";
 
 static const char DELIMITER_SLASH = '/';
 static const char DELIMITER_FULLSTOP = '.';
 static const char DELIMITER_DASH = '-';
-
-/* in 3 hours, etc. for deadlined task
-const std::string PERIOD_HOUR = "hour";
-const std::string PERIOD_HOURS = "hours";
-const std::string PERIOD_DAY = "day";
-const std::string PERIOD_DAYS = "days";
-const std::string PERIOD_WEEK = "week";
-const std::string PERIOD_WEEKS = "weeks";
-const std::string PERIOD_MONTH = "month";
-const std::string PERIOD_MONTHS = "months";
-const std::string PERIOD_YEAR = "year";
-const std::string PERIOD_YEARS = "years";
-*/
 
 static const int DATE_DDMM_LENGTH = 4;
 static const int DATE_DDMMYY_LENGTH = 6;
@@ -146,6 +142,7 @@ static const int DATE_DDMMYYYY_LENGTH = 8;
 static const int DAY_D_LENGTH = 1;
 static const int DAY_DD_LENGTH = 2;
 
+static const std::string DATE_NUMERIC_DDMM_28_FEB = "2802";
 static const std::string DATE_NUMERIC_DDMM_29_FEB = "2902";
 
 static const int YEAR_YY_LENGTH = 2;
@@ -159,9 +156,14 @@ static const int TIME_WITH_PERIOD_LENGTH_6 = 6;
 static const std::string TIME_PERIOD_AM = "am";
 static const std::string TIME_PERIOD_PM = "pm";
 
+static const std::string TIME_00_COLON_00 = "00:00";
+static const std::string TIME_23_COLON_59 = "23:59";
+
 static const int ONE_O_CLOCK = 1;
+static const int EIGHT_O_CLOCK = 8;
 static const int NINE_O_CLOCK = 9;
 static const int TEN_O_CLOCK = 10;
+static const int ELEVEN_O_CLOCK = 11;
 static const int TWELVE_O_CLOCK = 12;
 
 static const int TIME_WITHOUT_PERIOD_LENGTH_1 = 1;
@@ -178,6 +180,13 @@ static const int TWENTY_THREE_HOURS = 23;
 static const int ZERO_MINUTE = 0;
 static const int FIFTY_NINE_MINUTES = 59;
 
+static const bool CHECK_DATE_YES = true;
+static const bool CHECK_DATE_NO = false;
+static const bool CHECK_TIME_YES = true;
+static const bool CHECK_TIME_NO = false;
+
+static const bool AFTER_TOKEN_YES = true;
+static const bool AFTER_TOKEN_NO = false;
 
 static const std::string STATUS_DISPLAY_INDEXES = "Tasks ";
 static const std::string STATUS_DISPLAY_INVALID_INDEXES = " is/are invalid position indexe(s).";
@@ -215,6 +224,5 @@ static const std::string UNDATED_HEADER = "Number of undated tasks: ";
 static const std::string ARCHIVED_HEADER = "Number of completed/archived tasks: ";
 static const std::string LOAD_SUCCESS = "Database loaded successfully.";
 static const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program where to load existing data from. Please do not delete.";
-
 
 #endif

@@ -12,47 +12,52 @@ TimeChecker* TimeChecker::getInstance() {
 	return theOne;
 }
 
+//returns true if is 12H or 24H time or 1 - 12
+bool TimeChecker::isTime(std::string token) {
+    return (is12HTime(token)||is24HTime(token)||isTimeWithoutPeriod(token));
+}
+
 //valid 12HTime format 2am 10am 230pm 1230am
 //check for am or pm first
-bool TimeChecker::is12HTime(std::string timeToken){
-    if (!isAM(timeToken) && !isPM(timeToken)) {
+bool TimeChecker::is12HTime(std::string token){
+    if (!isAM(token) && !isPM(token)) {
         return false;
     }
 
-    int lengthOfTimeToken = timeToken.size();
+    int lengthOftoken = token.size();
 
-    if (lengthOfTimeToken == TIME_WITH_PERIOD_LENGTH_3) {
-        int hour = std::stoi(timeToken.substr(0,1));
+    if (lengthOftoken == TIME_WITH_PERIOD_LENGTH_3) {
+        int hour = std::stoi(token.substr(0,1));
 
         if (hour < ONE_O_CLOCK || hour > NINE_O_CLOCK) {
             return false;
         }
-    } else if (lengthOfTimeToken == TIME_WITH_PERIOD_LENGTH_4) {
-        int hour = std::stoi(timeToken.substr(0,2));
+    } else if (lengthOftoken == TIME_WITH_PERIOD_LENGTH_4) {
+        int hour = std::stoi(token.substr(0,2));
 
         if(hour > TWELVE_O_CLOCK || hour < TEN_O_CLOCK) {
             return false;
         }
-    } else if (lengthOfTimeToken == TIME_WITH_PERIOD_LENGTH_5) {
-        int hour = std::stoi(timeToken.substr(0,1));
+    } else if (lengthOftoken == TIME_WITH_PERIOD_LENGTH_5) {
+        int hour = std::stoi(token.substr(0,1));
 
         if(hour < ONE_O_CLOCK || hour > NINE_O_CLOCK) {
             return false;
         }
         
-        int minute = std::stoi(timeToken.substr(1,2));
+        int minute = std::stoi(token.substr(1,2));
 
         if(minute > FIFTY_NINE_MINUTES || minute < ZERO_MINUTE) {
             return false;
         }
-    } else if (lengthOfTimeToken == TIME_WITH_PERIOD_LENGTH_6) {
-        int hour = std::stoi(timeToken.substr(0,2));
+    } else if (lengthOftoken == TIME_WITH_PERIOD_LENGTH_6) {
+        int hour = std::stoi(token.substr(0,2));
 
         if(hour > TWELVE_O_CLOCK || hour < TEN_O_CLOCK) {
             return false;
         }
         
-        int minute = std::stoi(timeToken.substr(2,2));
+        int minute = std::stoi(token.substr(2,2));
 
         if(minute > FIFTY_NINE_MINUTES || minute < ZERO_MINUTE) {
             return false;
@@ -126,39 +131,39 @@ bool TimeChecker::isTimeWithoutPeriod(std::string token) {
 }
 
 //valid time format: 1030 / 10:30 / 0030/ 00:30 / 0000/ 00:00
-bool TimeChecker::is24HTime(std::string timeToken) {
+bool TimeChecker::is24HTime(std::string token) {
     
-    unsigned int lengthOfTimeToken = timeToken.size();
+    unsigned int lengthOftoken = token.size();
     
-    if (lengthOfTimeToken == TIME_HHMM_LENGTH) {
-        if (!isInteger(timeToken)) {
+    if (lengthOftoken == TIME_HHMM_LENGTH) {
+        if (!isInteger(token)) {
             return false;
         }
         
-        int hour = std::stoi(timeToken.substr(0,2));
+        int hour = std::stoi(token.substr(0,2));
         if (hour < ZERO_HOURS || hour > TWENTY_THREE_HOURS) {
             return false;
         }
         
-        int minute = std::stoi(timeToken.substr(2,2));
+        int minute = std::stoi(token.substr(2,2));
         if(minute < ZERO_MINUTE || minute > FIFTY_NINE_MINUTES) {
             return false;
         }
-    } else if(lengthOfTimeToken == TIME_HH_COLON_MM_LENGTH) {
-        if (timeToken[2] != CHAR_COLON) {
+    } else if(lengthOftoken == TIME_HH_COLON_MM_LENGTH) {
+        if (token[2] != CHAR_COLON) {
             return false;
         }
         
-        if (!isInteger(timeToken.substr(0,2)) || !isInteger(timeToken.substr(3,2))) {
+        if (!isInteger(token.substr(0,2)) || !isInteger(token.substr(3,2))) {
             return false;
         }
         
-        int hour = std::stoi(timeToken.substr(0,2));
+        int hour = std::stoi(token.substr(0,2));
         if (hour < ZERO_HOURS || hour > TWENTY_THREE_HOURS) {
             return false;
         }
 
-        int minute = std::stoi(timeToken.substr(3,2));
+        int minute = std::stoi(token.substr(3,2));
         if (minute < ZERO_MINUTE || minute > FIFTY_NINE_MINUTES) {
             return false;
         }

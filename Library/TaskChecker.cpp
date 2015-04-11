@@ -182,6 +182,21 @@ bool TaskChecker::isWordTo (std::string token) {
         return true;
     } else if (token == TOKEN_SHORTCUT_TO) {
         return true;
+    } else if (token == TOKEN_DASH) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool TaskChecker::isDateOrTime(std::string nextWord, int index, std::vector<std::string> tokenizedUserEntry) {
+    DateChecker *dateChecker = DateChecker::getInstance();
+    TimeChecker *timeChecker = TimeChecker::getInstance();
+
+    if (dateChecker->isDateOrDayOrNextDayOrTomorrowOrToday(nextWord, index, tokenizedUserEntry)) {
+        return true;
+    } else if (timeChecker->isTime(nextWord)) {
+        return true;
     } else {
         return false;
     }

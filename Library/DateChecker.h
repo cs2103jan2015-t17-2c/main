@@ -24,6 +24,8 @@ public:
 
     bool isValidDate(std::string);
     bool isUnoccurredDate(std::string);
+    bool isCurrentlyLeapYear();
+    bool isLeapYear(std::string);
 
     bool isToday(std::string);
     bool isTomorrow(std::string);
@@ -33,5 +35,10 @@ public:
     bool isNumericMonth(std::string);
 
     bool isPositiveInteger(std::string);
+    bool isInteger(std::string token);
+
+    bool isDateOrDayOrNextDayOrTomorrowOrToday(std::string, int, std::vector<std::string>) ;
+    bool isDateOrDayOrNextDayOrTomorrow(std::string, int, std::vector<std::string>);
+    bool isDateOrDay(std::string, int, std::vector<std::string>);
 };
 #endif DATECHECKER_H
