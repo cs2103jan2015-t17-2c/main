@@ -443,7 +443,7 @@ private: System::Windows::Forms::ColumnHeader^  hasPassed;
 			this->DisplayState->Font = (gcnew System::Drawing::Font(L"Corbel", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->DisplayState->ForeColor = System::Drawing::SystemColors::ButtonFace;
-			this->DisplayState->Location = System::Drawing::Point(1707, 582);
+			this->DisplayState->Location = System::Drawing::Point(283, 582);
 			this->DisplayState->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->DisplayState->Name = L"DisplayState";
 			this->DisplayState->Size = System::Drawing::Size(213, 39);
@@ -468,7 +468,7 @@ private: System::Windows::Forms::ColumnHeader^  hasPassed;
 			this->nowShowing->Font = (gcnew System::Drawing::Font(L"Corbel", 10.125F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->nowShowing->ForeColor = System::Drawing::SystemColors::ButtonFace;
-			this->nowShowing->Location = System::Drawing::Point(1476, 586);
+			this->nowShowing->Location = System::Drawing::Point(46, 586);
 			this->nowShowing->Name = L"nowShowing";
 			this->nowShowing->Size = System::Drawing::Size(214, 33);
 			this->nowShowing->TabIndex = 13;
