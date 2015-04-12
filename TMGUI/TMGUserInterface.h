@@ -186,6 +186,101 @@ namespace TMGUI {
 			defaultView->Items->Clear();
 		}
 
+		void displayDefault(){
+			TMTaskList taskList = initiateTaskList();	
+			std::vector<TMTask> dated = taskList.getDated();
+			std::vector<TMTask> undated = taskList.getUndated();
+			std::vector<TMTask> archived = taskList.getArchived();
+			std::vector<TMTask> defaultTasks = initiateDefaultTasks(taskList);
+
+			int defaultCountStart = 0;
+			int defaultCountEnd = defaultTasks.size();
+
+			DisplayState->Text = DISPLAY_DEFAULT;
+			clearListView();
+
+			for(int i = defaultCountStart; i != defaultCountEnd ; i++){
+				int defaultTaskPosition = i - defaultCountStart;
+				int defaultIndex = i + 1;
+				displayTasks(defaultTasks,defaultIndex,defaultTaskPosition);
+			}
+		}
+
+		void displayDeadlined(){
+			TMTaskList taskList = initiateTaskList();	
+			std::vector<TMTask> dated = taskList.getDated();
+			std::vector<TMTask> undated = taskList.getUndated();
+
+			DisplayState->Text = DISPLAY_DEADLINED;
+			clearListView();
+			for (int l = 0; l != dated.size(); l++){
+				if(dated[l].getTaskType() == TaskType ::WithEndDateTime){
+					int deadlinedTaskPosition = l;
+					int deadlinedIndex = l+1;
+					displayTasks(dated,deadlinedIndex,deadlinedTaskPosition);
+				}
+			}
+		}
+
+		void displayUndated(){
+			TMTaskList taskList = initiateTaskList();	
+			std::vector<TMTask> dated = taskList.getDated();
+			std::vector<TMTask> undated = taskList.getUndated();
+
+			int undatedCountStart = dated.size();
+			int undatedCountEnd = dated.size() + undated.size();
+
+			DisplayState->Text = DISPLAY_UNDATED;
+			clearListView();
+						
+			for(int j = undatedCountStart; j != undatedCountEnd ; j++){
+				int undatedTaskPosition = j - undatedCountStart;
+				int undatedIndex = j + 1;
+				displayTasks(undated,undatedIndex,undatedTaskPosition);
+			}
+		}
+
+		void displayArchived(){
+			TMTaskList taskList = initiateTaskList();	
+			std::vector<TMTask> dated = taskList.getDated();
+			std::vector<TMTask> undated = taskList.getUndated();
+			std::vector<TMTask> archived = taskList.getArchived();
+		
+			int archivedCountStart = dated.size() + undated.size();
+			int archivedCountEnd = dated.size() + undated.size() + archived.size();
+
+			DisplayState->Text = DISPLAY_ARCHIVED;
+			clearListView();
+						
+			for(int k = archivedCountStart; k != archivedCountEnd ; k++){
+				int archivedTaskPosition = k - archivedCountStart;
+				int archivedIndex = k + 1;
+				displayTasks(archived,archivedIndex,archivedTaskPosition);
+			}
+		}
+
+		void displaySearchResult(){
+			TMTaskList taskList = initiateTaskList();	
+			std::vector<TMTask> dated = taskList.getDated();
+			std::vector<TMTask> undated = taskList.getUndated();
+			std::vector<TMTask> archived = taskList.getArchived();
+			std::vector<TMTask> allTasks = initiateAllTasks(taskList);
+			
+			DisplayState->Text = DISPLAY_SEARCH_RESULTS;
+			clearListView();
+			
+			TMExecutor* exe = TMExecutor::getInstance();
+			std::vector<int> indexes = exe->getPositionIndexes();
+			std::vector<int>::iterator iter;
+						
+			for (iter = indexes.begin(); iter != indexes.end(); ++iter) {
+				int searchedTaskPosition = *(iter) - 1;
+				int searchedIndex = *iter;
+				displayTasks(allTasks,searchedIndex,searchedTaskPosition);
+			}
+
+		}
+
 		void displayTasks(std::vector<TMTask> taskList, int index, int taskPosition){
 			
 			TMExecutor* exe = TMExecutor::getInstance();
@@ -561,88 +656,27 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 				
 					 TMDisplay display = exe->getCurrentDisplay();
 					
-					 TMTaskList taskList = initiateTaskList();
-					
-					 std::vector<TMTask> dated = taskList.getDated();
-					 std::vector<TMTask> undated = taskList.getUndated();
-					 std::vector<TMTask> archived = taskList.getArchived();
-
-					 std::vector<TMTask> defaultTasks = initiateDefaultTasks(taskList);
-					 std::vector<TMTask> allTasks = initiateAllTasks(taskList);
-			
-					 int defaultCountStart = 0;
-					 int defaultCountEnd = defaultTasks.size();
-					
-					 int undatedCountStart = dated.size();
-					 int undatedCountEnd = dated.size() + undated.size();
-
-					 int archivedCountStart = dated.size() + undated.size();
-					 int archivedCountEnd = dated.size() + undated.size() + archived.size();
-
-					 std::vector<TMTask>::iterator iter;
-	
 					 switch (display) {
 					 case Default:
-						 DisplayState->Text = DISPLAY_DEFAULT;
-						 clearListView();
-
-						 for(int i = defaultCountStart; i != defaultCountEnd ; i++){
-							 int defaultTaskPosition = i - defaultCountStart;
-							 int defaultIndex = i + 1;
-							 displayTasks(defaultTasks,defaultIndex,defaultTaskPosition);
-						 }
+						 displayDefault();
 						 break;
-
-					 case  DeadlineTasks:
-						 DisplayState->Text = DISPLAY_DEADLINED;
-						 clearListView();
-						 for (int l = 0; l != dated.size(); l++){
-							 if(dated[l].getTaskType() == TaskType ::WithEndDateTime){
-								 int deadlinedTaskPosition = l;
-								 int deadlinedIndex = l+1;
-								 displayTasks(dated,deadlinedIndex,deadlinedTaskPosition);
-							 }
-						 }
+					 case  DeadlineTasks:	
+						 displayDeadlined();
 						 exe->setCurrentDisplay(Default);
 						 break;
 					
 					case UndatedTasks:
-						DisplayState->Text = DISPLAY_UNDATED;
-						clearListView();
-						
-						for(int j = undatedCountStart; j != undatedCountEnd ; j++){
-							int undatedTaskPosition = j - undatedCountStart;
-							int undatedIndex = j + 1;
-							displayTasks(undated,undatedIndex,undatedTaskPosition);
-						}
+						displayUndated();
 						exe->setCurrentDisplay(Default);
 						break;
 					
 					case ArchivedTasks:
-						DisplayState->Text = DISPLAY_ARCHIVED;
-						clearListView();
-						
-						for(int k = archivedCountStart; k != archivedCountEnd ; k++){
-							int archivedTaskPosition = k - archivedCountStart;
-							int archivedIndex = k + 1;
-							displayTasks(archived,archivedIndex,archivedTaskPosition);
-						}
+						displayArchived();
 						exe->setCurrentDisplay(Default);
 						break;
 
 					case SearchResults:
-						DisplayState->Text = DISPLAY_SEARCH_RESULTS;
-						clearListView();
-						
-						std::vector<int> indexes = exe->getPositionIndexes();
-						std::vector<int>::iterator iter;
-						
-						for (iter = indexes.begin(); iter != indexes.end(); ++iter) {
-							int searchedTaskPosition = *(iter) - 1;
-							int searchedIndex = *iter;
-							displayTasks(allTasks,searchedIndex,searchedTaskPosition);
-						}
-
+						displaySearchResult();
 						exe->setCurrentDisplay(Default);
 						break;
 					}
@@ -663,7 +697,6 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 
 private: System::Void TMGUserInterface_Load(System::Object^  sender, System::EventArgs^  e) {
 			clearListView();
-	
 			TMTaskList taskList = initiateTaskList();
 
 			std::vector<TMTask> defaultTasks = initiateDefaultTasks (taskList);
@@ -697,7 +730,7 @@ private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows
 				SendKeys :: SendWait ("{PGUP}");
 				userInput->Focus();
 			 } else if(e->KeyCode == Keys::F1){
-				ShellExecuteA(NULL,"open","..\\readme.pdf",NULL,NULL,0);
+				ShellExecuteA(NULL,"open","..\\QuickGuide.jpg",NULL,NULL,0);
 			 } else if(e->KeyCode == Keys:: Up){
 				 if(userEntries.size() == 0){
 					 return;
