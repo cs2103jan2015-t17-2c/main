@@ -19,7 +19,7 @@ public:
 		int numDeleted = 0;
 		
 		if (hasRepeatedIndexes(deleteIndexes)) {
-			outcome = WARNING_REPEATED_INDEXES_SPECIFIED;
+			handleRepeatedIndexes();
 			return;
 		}
 
@@ -39,11 +39,15 @@ public:
 			updatePositionIndexes(deleteIndexes, *intIter);
 		}
 		
-		ossValid << numDeleted << DELETE_SUCCESS << std::endl;
-		if (ossInvalid.str().size() != 0) {
+		if (hasValidIndexes(numDeleted)) {
+			ossValid << numDeleted << DELETE_SUCCESS << '\n';
+		}
+
+		if (hasInvalidIndexes(ossInvalid.str())) {
 			ossInvalid << STATUS_DISPLAY_INVALID_INDEXES;
 		}
-		outcome = ossValid.str() + '\n' + ossInvalid.str();
+
+		outcome = ossValid.str() + ossInvalid.str();
 		taskListStates->addNewState(taskList);
 		
 	}

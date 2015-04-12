@@ -189,7 +189,7 @@ static const bool AFTER_TOKEN_YES = true;
 static const bool AFTER_TOKEN_NO = false;
 
 static const std::string STATUS_DISPLAY_INDEXES = "Tasks ";
-static const std::string STATUS_DISPLAY_INVALID_INDEXES = " is/are invalid position indexe(s).";
+static const std::string STATUS_DISPLAY_INVALID_INDEXES = " is an/are invalid position index(es).";
 static const std::string STATUS_DISPLAY_NEW_INDEX = "New task ";
 static const std::string ADD_SDT_SUCCESS = " (with start date and time) successfully added.";
 static const std::string ADD_EDT_SUCCESS = " (with end date and time/deadline) successfully added.";
@@ -215,6 +215,7 @@ static const std::string UNDO_FAILURE = "Initial state of the system is reached.
 static const std::string REDO_SUCCESS = "Redo successfully.";
 static const std::string REDO_FAILURE = "Latest state of the system is reached. Unable to redo.";
 static const std::string WARNING_REPEATED_INDEXES_SPECIFIED = "Please do not specify an index more than once.";
+static const std::string NO_INDEX_OR_DETAILS_SPECIFIED = "Please enter an index or the updated task details.";
 
 static const std::string DEFAULT_REFERENCE_FILENAME = "TimeMaster.txt";
 static const std::string DATED_TASK_DISPLAY_FORMAT = "<Task Type> <Task Description> <Start Date> <Start Time> <End Date> <End Time> <Completion> <Clash> <Confirmation> <Unconfirmed Batch Number>";
@@ -222,7 +223,6 @@ static const std::string UNDATED_TASK_DISPLAY_FORMAT = "<Task Type> <Task Descri
 static const std::string DATED_HEADER = "Number of dated tasks: ";
 static const std::string UNDATED_HEADER = "Number of undated tasks: ";
 static const std::string ARCHIVED_HEADER = "Number of completed/archived tasks: ";
-static const std::string LOAD_SUCCESS = "Database loaded successfully.";
 static const std::string USER_INFO_TIMEMASTER_FILE = "This file directs the program where to load existing data from. Please do not delete.";
 
 #endif

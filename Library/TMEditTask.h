@@ -12,19 +12,25 @@ public:
 		TMParser *parser = TMParser::getInstance(); 
 		TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
 		TMTaskList taskList = taskListStates->getCurrentTaskList();
-
-		int positionIndex = std::stoi(parser->extractTokenAfterCommand());
-		if (taskList.isValidPositionIndex(positionIndex)) {
-			TMTask alteredTask = parser->parseTaskInfo();
-			taskList.updateTask(positionIndex, alteredTask);
-			int index = taskList.getPositionIndexFromTask(alteredTask);
-			positionIndexes.push_back(index);
-			outcome = EDIT_SUCCESS;
-			taskListStates->addNewState(taskList);
+		
+		std::string strPositionIndex = parser->extractTokenAfterCommand();
+		
+		if (strPositionIndex != "") {
+			int positionIndex = std::stoi(strPositionIndex);
+			if (taskList.isValidPositionIndex(positionIndex)) {
+				TMTask alteredTask = parser->parseTaskInfo();
+				taskList.updateTask(positionIndex, alteredTask);
+				int index = taskList.getPositionIndexFromTask(alteredTask);
+				positionIndexes.push_back(index);
+				outcome = EDIT_SUCCESS;
+				taskListStates->addNewState(taskList);
+			} else {
+				std::ostringstream oss;
+				oss << positionIndex << STATUS_DISPLAY_INVALID_INDEXES;
+				outcome = oss.str();
+			}
 		} else {
-			std::ostringstream oss;
-			oss << positionIndex << STATUS_DISPLAY_INVALID_INDEXES;
-			outcome = oss.str();
+			outcome = NO_INDEX_OR_DETAILS_SPECIFIED;
 		}
 
 	}

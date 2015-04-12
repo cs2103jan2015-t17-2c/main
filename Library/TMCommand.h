@@ -2,6 +2,7 @@
 #ifndef TMCOMMAND_H
 #define TMCOMMAND_H
 
+#include <sstream>
 #include "TMParser.h"
 #include "TMTaskListStates.h"
 #include "TMTaskList.h"
@@ -34,6 +35,18 @@ class TMCommand{
 		return false;
 	}
 
+	bool hasValidIndexes() {
+		return (positionIndexes.size() != 0);
+	}
+
+	bool hasValidIndexes(int numberOfTasksManipulated) {
+		return (numberOfTasksManipulated != 0);
+	}
+
+	bool hasInvalidIndexes(std::string invalidIndexesString) {
+		return (invalidIndexesString.size() != 0);
+	}
+
 	void updatePositionIndexes(std::vector<int>& indexes, int deletedIndex) {
 		std::vector<int>::iterator iter;
 		for (iter = indexes.begin(); iter != indexes.end(); ++iter) {
@@ -43,7 +56,9 @@ class TMCommand{
 		}
 	}
 
-
+	void handleRepeatedIndexes() {
+		outcome = WARNING_REPEATED_INDEXES_SPECIFIED;
+	}
 };
 
 #endif

@@ -18,7 +18,7 @@ public:
 		int numArchived = 0;
 
 		if (hasRepeatedIndexes(completeIndexes)) {
-			outcome = WARNING_REPEATED_INDEXES_SPECIFIED;
+			handleRepeatedIndexes();
 			return;
 		}
 
@@ -38,11 +38,15 @@ public:
 
 		}
 		
-		ossValid << numArchived << ARCHIVE_SUCCESS << std::endl;
-		if (ossInvalid.str().size() != 0) {
+		if (hasValidIndexes(numArchived)) {
+			ossValid << numArchived << ARCHIVE_SUCCESS << '\n';
+		}
+
+		if (hasInvalidIndexes(ossInvalid.str())) {
 			ossInvalid << STATUS_DISPLAY_INVALID_INDEXES;
 		}
-		outcome = ossValid.str() + '\n' + ossInvalid.str();
+
+		outcome = ossValid.str() + ossInvalid.str();
 		taskListStates->addNewState(taskList);
 	}
 };
