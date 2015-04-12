@@ -84,12 +84,14 @@ bool DateChecker::isDelimitedDate(std::string token, char key) {
     if(positionOfNextKey == std::string::npos||token[0] == key||token[tokenLength-1] == key){
         return false;
     }
+
     day = token.substr(0,positionOfNextKey);
     int lengthOfDay = day.length();
 
     if(!isPositiveInteger(day)||!(lengthOfDay == DAY_D_LENGTH||lengthOfDay == DAY_DD_LENGTH)){
         return false;
     }
+
     token = token.substr(positionOfNextKey + 1); 
     positionOfNextKey = token.find_first_of(key);
     
@@ -111,10 +113,13 @@ bool DateChecker::isDelimitedDate(std::string token, char key) {
         }
     } else {
         month = token;
-        if(!isNumericMonth(month) && !isMonth(month)){
+        if(!isNumericMonth(month) && !isMonth(month)) {
             return false;
         }
-        month = formatConverter->monthFromWrittenToNumeric(month);
+
+        if(isMonth(month) {
+            month = formatConverter->monthFromWrittenToNumeric(month);
+        }
 
         //only certain years have 29 Feb
         if((day + month) == DATE_NUMERIC_DDMM_29_FEB) {
