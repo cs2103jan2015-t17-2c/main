@@ -64,7 +64,7 @@ namespace TMGUI {
 		static String^ DISPLAY_DUE_TIME = "Due Time: ";
 		static String^ DISPLAY_INVALID = "Invalid time, please re-enter task time.";
 		static String^ DISPLAY_BLANK = "";
-		static String^ DISPLAY_COMMANDS = "(A)dd - (D)elete - (E)dit - (C)omplete - (U)ndo";
+		static String^ DISPLAY_COMMANDS = "Commands : (A)dd - (D)elete - (E)dit - (C)omplete - (U)ndo";
 		
 		void SplashStart(){
 			Application::Run(gcnew TMSplash);
@@ -531,7 +531,12 @@ private: System::Void userInput_TextChanged(System::Object^  sender, System::Eve
 			 TMExecutor* exe = TMExecutor::getInstance();
 		
 			 if(userInput->Text == ""){
+				 if(exe->getResultOfExecution() == ""){
+					 statusDisplay->Text = DISPLAY_COMMANDS;
+				 }
+				 else{
 				 statusDisplay->Text = gcnew String(exe->getResultOfExecution().c_str()) + "\n" + DISPLAY_COMMANDS;
+				 }
 			 }
 		 }
 
