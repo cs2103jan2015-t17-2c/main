@@ -26,6 +26,7 @@ static const std::string CMD_VIEW_SEARCH = "views";
 
 static const std::string CMD_SHORTCUT_ADD = "a";
 static const std::string CMD_SHORTCUT_DELETE = "d";
+static const std::string CMD_SHORTCUT_DEL = "del";
 static const std::string CMD_SHORTCUT_UNDO = "u";
 static const std::string CMD_SHORTCUT_REDO = "r";
 static const std::string CMD_SHORTCUT_COMPLETE = "c";
@@ -118,6 +119,7 @@ static const std::string MONTH_NUMERIC_DEC_MM = "12";
 
 static const std::string TOKEN_BEFORE = "before";
 static const std::string TOKEN_SHORTCUT_BEFORE = "bfr";
+static const std::string TOKEN_B4 = "b4";
 static const std::string TOKEN_BY = "by";
 static const std::string TOKEN_ON = "on";
 static const std::string TOKEN_NEXT = "next";

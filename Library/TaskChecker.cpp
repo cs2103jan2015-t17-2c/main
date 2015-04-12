@@ -135,6 +135,8 @@ bool TaskChecker::isWordBefore(std::string token) {
         return true;
     } else if (token == TOKEN_SHORTCUT_BEFORE) {
         return true;
+    } else if (token == TOKEN_B4) {
+        return true;
     } else {
         return false;
     }
