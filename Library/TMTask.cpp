@@ -1,3 +1,5 @@
+//@author A0111712Y
+
 #include "TMTask.h"
 //constructor for deadlined tasks and timed tasks
 TMTask::TMTask(std::string taskDescription, TMTaskTime taskTime, TaskType taskType){

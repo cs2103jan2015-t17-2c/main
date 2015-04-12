@@ -1,3 +1,5 @@
+//@author A0111712Y
+
 #include "Extractor.h"
 
 Extractor* Extractor::theOne;
@@ -25,7 +27,7 @@ void Extractor::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAnd
         dateChecker->isToday(stringAfterToken)||
         dateChecker->isTomorrow(stringAfterToken)||
         dateChecker->isNumericDate(stringAfterToken)||
-        dateChecker->isOneDelimitedDate(stringAfterToken)||
+        dateChecker->isDelimitedDate(stringAfterToken)||
         dateChecker->isSpacedDate(index, tokenizedUserEntry)||
         dateChecker->isNextDay(index, tokenizedUserEntry)) {
 
@@ -61,7 +63,7 @@ void Extractor::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAnd
             dateChecker->isToday(stringAfterTime)||
             dateChecker->isTomorrow(stringAfterTime)||
             dateChecker->isNumericDate(stringAfterTime)||
-            dateChecker->isOneDelimitedDate(stringAfterTime)||
+            dateChecker->isDelimitedDate(stringAfterTime)||
             dateChecker->isSpacedDate(index + 1, tokenizedUserEntry)||
             dateChecker->isNextDay(index + 1, tokenizedUserEntry)) {
                 extractedDate = extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, tokenizedUserEntry);
@@ -94,7 +96,7 @@ std::string Extractor::extractDayOrNumericDateOrDelimitedDate(int index, std::qu
 
         startDate = extractNumericDate(index,indexOfDatesAndTimes, tokenizedUserEntry);
 
-    } else if(dateChecker->isOneDelimitedDate(stringAfterToken)) {
+    } else if(dateChecker->isDelimitedDate(stringAfterToken)) {
 
         char delimiter = dateChecker->returnDelimiter(stringAfterToken);
         startDate = extractDelimitedDate(index,indexOfDatesAndTimes,tokenizedUserEntry,delimiter);

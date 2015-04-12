@@ -1,3 +1,5 @@
+//@author A0111712Y
+
 #include "TMParser.h"
 #include "TMTask.h"
 
@@ -702,11 +704,12 @@ void TMParser::configureTaskDescription(std::string& taskDescription, std::queue
             mainIndexOfDatesAndTimes.pop();
         } else {
             std::string token = _tokenizedUserEntry[i];
-            taskDescription += token;
-            if(i != lengthOfTokenizedUserEntry - 1) {
-                taskDescription += " ";
-            }
+            taskDescription = taskDescription + token + " ";
         }
+    }
+
+    if (taskDescription != "") {
+        taskDescription.erase(taskDescription.end() - 1);
     }
     return;
 }
@@ -795,7 +798,7 @@ bool TMParser::isDateToBeEdited(std::string nextWord) {
 
     if (dateChecker->isNumericDate(nextWord)||
         dateChecker->isDay(nextWord)||
-        dateChecker->isOneDelimitedDate(nextWord)||
+        dateChecker->isDelimitedDate(nextWord)||
         isNextDayInInvertedCommas(nextWord)||
         dateChecker->isToday(nextWord)||
         dateChecker->isTomorrow(nextWord)||

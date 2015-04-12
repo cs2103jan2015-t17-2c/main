@@ -1,3 +1,5 @@
+//@author A0111712Y
+
 #ifndef EXTRACTOR_H
 #define EXTRACTOR_H
 

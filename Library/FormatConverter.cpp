@@ -1,3 +1,5 @@
+//@author A0111712Y
+
 #include "FormatConverter.h"
 
 FormatConverter *FormatConverter::theOne;
@@ -47,34 +49,6 @@ std::string FormatConverter::dateFromNumericToBoostFormat(std::string stringDate
     } 
 
     return dd + "-" + mm + "-" + yyyy;
-}
-
-//preconditions: valid date format ddmmyy ddmmyyyy
-//postconditions: returns string e.g. 01 Jan 2015
-std::string FormatConverter::dateFromNumericToStandardFormat(std::string stringDate){
-    std::string dateInBoostFormat = dateFromNumericToBoostFormat(stringDate);
-    boost::gregorian::date boostDate = boost::gregorian::from_uk_string(dateInBoostFormat);
-    return dateFromBoostToStandardFormat(boostDate);
-}
-
-//precondition: boost date must be valid
-//postcondition: returns string e.g. 01 Jan 2015
-std::string FormatConverter::dateFromBoostToStandardFormat(const boost::gregorian::date& date) {
-    std::ostringstream os;
-    boost::gregorian::date_facet* facet(new boost::gregorian::date_facet("%d %b %Y"));
-    os.imbue(std::locale(std::cout.getloc(), facet));
-    os << date;
-    return os.str();
-}
-
-//precondition: boost date must be valid
-//postcondition: returns string date with spaces in between i.e. dd mm yyyy
-std::string FormatConverter::dateFromBoostToDelimitedDDMMYYYY(const boost::gregorian::date& date){
-    std::ostringstream os;
-    boost::gregorian::date_facet* facet(new boost::gregorian::date_facet("%d %m %Y"));
-    os.imbue(std::locale(std::cout.getloc(), facet));
-    os << date;
-    return os.str();
 }
 
 //precondition: boost date must be valid
