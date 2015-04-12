@@ -86,11 +86,12 @@ public:
 			return newCmdPtr;
 			break;
 
-		case TMParser::CommandTypes::Invalid:
+		default:
 			newCmdPtr = new TMInvalidCommand();
 			return newCmdPtr;
 			break;
-		
+
+
 		}
 	}
 };
