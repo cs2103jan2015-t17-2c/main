@@ -151,7 +151,7 @@ bool TMParser::isCommandAdd(std::string command) {
 }
 
 bool TMParser::isCommandDelete(std::string command) {
-    if (command == CMD_DELETE||command == CMD_SHORTCUT_DELETE) {
+    if (command == CMD_DELETE||command == CMD_SHORTCUT_DELETE||command == CMD_SHORTCUT_DEL) {
         return true;
     } else {
         return false;
