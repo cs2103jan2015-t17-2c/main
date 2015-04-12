@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <vector>
 #include <Windows.h>
+#include <algorithm>
 #include <msclr\marshal_cppstd.h>
 #include <boost\date_time.hpp>
 #include "TMExecutor.h"
@@ -62,7 +63,6 @@ namespace TMGUI {
 		static String^ DISPLAY_DUE_DATE = "Due Date: ";
 		static String^ DISPLAY_DUE_TIME = "Due Time: ";
 		static String^ DISPLAY_INVALID = "Invalid time, please re-enter task time.";
-		static String^ ICON_PASSED_DEADLINE = "!";
 		static String^ DISPLAY_BLANK = "";
 		
 		void SplashStart(){
@@ -230,13 +230,11 @@ namespace TMGUI {
 			std::string timeNow = currentTime();
 			
 			if (taskList[taskPosition].getTaskTime().getEndBoostDate() < dateToday){
-				defaultEntry->SubItems->Add(ICON_PASSED_DEADLINE);
 				defaultEntry->Font = gcnew System::Drawing::Font ("Corbel",11,FontStyle :: Bold);
 			}
 
 			if (taskList[taskPosition].getTaskTime().getEndBoostDate() == dateToday){
 				if(taskList[taskPosition].getTaskTime().getEndTime() < timeNow){
-					defaultEntry->SubItems->Add(ICON_PASSED_DEADLINE);
 					defaultEntry->Font = gcnew System::Drawing::Font ("Corbel",11,FontStyle :: Bold);
 				}
 			}
@@ -281,7 +279,7 @@ namespace TMGUI {
 	private: System::Windows::Forms::Label^  todayIs;
 	private: System::Windows::Forms::Label^  nowShowing;
 	private: System::Windows::Forms::Label^  label1;
-	private: System::Windows::Forms::ColumnHeader^  hasPassed;
+
 	private: System::ComponentModel::IContainer^  components;
 
 
@@ -313,7 +311,6 @@ namespace TMGUI {
 			this->endDate = (gcnew System::Windows::Forms::ColumnHeader());
 			this->endTime = (gcnew System::Windows::Forms::ColumnHeader());
 			this->confirmation = (gcnew System::Windows::Forms::ColumnHeader());
-			this->hasPassed = (gcnew System::Windows::Forms::ColumnHeader());
 			this->displayTime = (gcnew System::Windows::Forms::Label());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->DisplayState = (gcnew System::Windows::Forms::Label());
@@ -367,8 +364,8 @@ namespace TMGUI {
 			// defaultView
 			// 
 			this->defaultView->BackColor = System::Drawing::SystemColors::HighlightText;
-			this->defaultView->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(8) {this->taskID, this->taskDescription, 
-				this->startDate, this->startTime, this->endDate, this->endTime, this->confirmation, this->hasPassed});
+			this->defaultView->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(7) {this->taskID, this->taskDescription, 
+				this->startDate, this->startTime, this->endDate, this->endTime, this->confirmation});
 			this->defaultView->Font = (gcnew System::Drawing::Font(L"Corbel", 10.875F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->defaultView->FullRowSelect = true;
@@ -389,7 +386,7 @@ namespace TMGUI {
 			// 
 			this->taskDescription->Text = L"Task Description";
 			this->taskDescription->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
-			this->taskDescription->Width = 360;
+			this->taskDescription->Width = 385;
 			// 
 			// startDate
 			// 
@@ -420,12 +417,6 @@ namespace TMGUI {
 			this->confirmation->Text = L"Confirmed";
 			this->confirmation->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->confirmation->Width = 80;
-			// 
-			// hasPassed
-			// 
-			this->hasPassed->Text = L"";
-			this->hasPassed->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
-			this->hasPassed->Width = 25;
 			// 
 			// displayTime
 			// 
@@ -547,7 +538,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 					
 					 exe->executeMain(originalEntry);
 	
-					statusDisplay->Text = gcnew String(exe->getResultOfExecution().c_str());
+					 statusDisplay->Text = gcnew String(exe->getResultOfExecution().c_str());
 				
 					 TMDisplay display = exe->getCurrentDisplay();
 					
@@ -593,6 +584,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 								 displayTasks(dated,deadlinedIndex,deadlinedTaskPosition);
 							 }
 						 }
+						 exe->setCurrentDisplay(Default);
 						 break;
 					
 					case UndatedTasks:
@@ -604,6 +596,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 							int undatedIndex = j + 1;
 							displayTasks(undated,undatedIndex,undatedTaskPosition);
 						}
+						exe->setCurrentDisplay(Default);
 						break;
 					
 					case ArchivedTasks:
@@ -615,6 +608,7 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 							int archivedIndex = k + 1;
 							displayTasks(archived,archivedIndex,archivedTaskPosition);
 						}
+						exe->setCurrentDisplay(Default);
 						break;
 
 					case SearchResults:
@@ -644,7 +638,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			 
 			 displayTime->Text = time.ToString(format);	
 
-			 processRealTime();
+			 //processRealTime();
 			
 		 }
 
@@ -667,17 +661,58 @@ private: System::Void TMGUserInterface_Load(System::Object^  sender, System::Eve
 
 private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 			
+			 TMExecutor* exe = TMExecutor :: getInstance();
+			 std::vector<std::string> userEntries = exe -> getUserInput();
+
+			 String ^ entry = userInput->Text;
+			 std::string originalEntry = msclr::interop::marshal_as<std::string>(entry);
+
 			 if(e->KeyCode == Keys:: PageDown){
-					defaultView->Focus();
-					SendKeys :: SendWait ("{PGDN}");
-					userInput->Focus();
+				defaultView->Focus();
+				SendKeys :: SendWait ("{PGDN}");
+				userInput->Focus();
 			 } else if(e->KeyCode == Keys:: PageUp){
-					defaultView->Focus();
-					SendKeys :: SendWait ("{PGUP}");
-					userInput->Focus();
+				defaultView->Focus();
+				SendKeys :: SendWait ("{PGUP}");
+				userInput->Focus();
 			 } else if(e->KeyCode == Keys::F1){
-					ShellExecuteA(NULL,"open","..\\readme.pdf",NULL,NULL,0);
+				ShellExecuteA(NULL,"open","..\\readme.pdf",NULL,NULL,0);
 			 } 
+			 else if(e->KeyCode == Keys:: Up){
+				 if(userEntries.size() == 0){
+					 return;
+				 }
+				 else{
+					userInput -> Clear();
+					if(originalEntry == ""){
+						userInput -> Text = gcnew String (userEntries.back().c_str());
+					}	 
+					else {
+						int i = std::find(userEntries.begin(),userEntries.end(),originalEntry) - userEntries.begin();
+						if (i == 0){
+							return;
+						}
+						else{
+						userInput -> Text = gcnew String (userEntries[i-1].c_str());
+						}
+					}
+				 }
+			 }
+			 else if (e->KeyCode == Keys::Down){
+				 userInput -> Clear();
+				 if(originalEntry == ""){
+					 userInput -> Text = gcnew String (userEntries.front().c_str());
+				 }
+				 else{
+					 int i = std::find(userEntries.begin(),userEntries.end(),originalEntry) - userEntries.begin();
+					 if (i == userEntries.size()-1){
+						 return;
+					 }
+					 else{
+					 userInput -> Text = gcnew String (userEntries[i+1].c_str());
+					 }
+				 }
+			 }
 		 }
 
 
