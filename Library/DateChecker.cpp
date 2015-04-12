@@ -93,7 +93,7 @@ bool DateChecker::isDelimitedDate(std::string token, char key) {
     token = token.substr(positionOfNextKey + 1); 
     positionOfNextKey = token.find_first_of(key);
     
-    if(positionOfNextKey != std::string::npos){
+    if(positionOfNextKey != std::string::npos) {
         month = token.substr(0,positionOfNextKey);
         if(!isNumericMonth(month) && !isMonth(month)){
             return false;
@@ -114,7 +114,10 @@ bool DateChecker::isDelimitedDate(std::string token, char key) {
         if(!isNumericMonth(month) && !isMonth(month)){
             return false;
         }
-        month = formatConverter->monthFromWrittenToNumeric(month);
+
+        if (isMonth(month)) {
+            month = formatConverter->monthFromWrittenToNumeric(month);
+        }
 
         //only certain years have 29 Feb
         if((day + month) == DATE_NUMERIC_DDMM_29_FEB) {

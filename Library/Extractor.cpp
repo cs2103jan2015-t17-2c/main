@@ -176,6 +176,8 @@ std::string Extractor::extractDelimitedDate(int index, std::queue<int>& indexOfD
 
     if(dateChecker->isMonth(month)) {
         month = formatConverter->monthFromWrittenToNumeric(month);
+    } else if (month.length() == 1) {
+        month = "0" + month;
     }
 
     if(year.length() == 2) {
