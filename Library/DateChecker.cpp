@@ -117,7 +117,7 @@ bool DateChecker::isDelimitedDate(std::string token, char key) {
             return false;
         }
 
-        if(isMonth(month) {
+        if(isMonth(month)) {
             month = formatConverter->monthFromWrittenToNumeric(month);
         }
 
