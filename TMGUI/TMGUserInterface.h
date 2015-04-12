@@ -64,7 +64,7 @@ namespace TMGUI {
 		static String^ DISPLAY_DUE_TIME = "Due Time: ";
 		static String^ DISPLAY_INVALID = "Invalid time, please re-enter task time.";
 		static String^ DISPLAY_BLANK = "";
-		static String^ DISPLAY_COMMANDS = "Commands : (A)dd - (D)elete - (E)dit - (C)omplete - (U)ndo";
+		static String^ DISPLAY_COMMANDS = "Commands : (A)dd - (D)elete - (E)dit - (C)omplete - (U)ndo - (Se)arch";
 		
 		void SplashStart(){
 			Application::Run(gcnew TMSplash);
