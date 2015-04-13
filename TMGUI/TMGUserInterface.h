@@ -726,7 +726,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			 
 			 displayTime->Text = time.ToString(format);	
 
-			 //processRealTime();
+			 processRealTime();
 			
 		 }
 
@@ -784,7 +784,7 @@ private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows
 				 userInput -> Clear();
 				 if(userEntries.size() == 0){
 					 return;
-				 } else{
+				 }else{
 					 if(originalEntry == ""){
 						userInput -> Text = gcnew String (userEntries.front().c_str());
 					 }else{
