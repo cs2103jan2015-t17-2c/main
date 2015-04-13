@@ -162,7 +162,7 @@ bool DateChecker::isSpacedDate(int index, std::vector<std::string> tokenizedUser
         return false;
     }
 
-    std::string secondToken = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
+    std::string secondToken = formatConverter->toLowerCase(tokenizedUserEntry[index + 1]);
     if(!isMonth(secondToken)) {
         return false;
     }
@@ -223,7 +223,7 @@ bool DateChecker::isLeapYear(std::string year) {
 //Postcondition: returns true if token matches today or its shortcut
 bool DateChecker::isToday(std::string token) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
-    token = formatConverter->returnLowerCase(token);
+    token = formatConverter->toLowerCase(token);
 
     if(token == DAY_TODAY||token == DAY_SHORTCUT_TODAY) {
         return true;
@@ -235,7 +235,7 @@ bool DateChecker::isToday(std::string token) {
 //Postcondition: returns true if token matches tomorrow or its shortcut
 bool DateChecker::isTomorrow(std::string token) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
-    token = formatConverter->returnLowerCase(token);
+    token = formatConverter->toLowerCase(token);
 
     if(token == DAY_TOMORROW||token == DAY_SHORTCUT_TOMORROW) {
         return true;
@@ -247,7 +247,7 @@ bool DateChecker::isTomorrow(std::string token) {
 //Postcondition: returns true if token matches one of the weekdays or its shortcut
 bool DateChecker::isDay(std::string token) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
-    token = formatConverter->returnLowerCase(token);
+    token = formatConverter->toLowerCase(token);
 
     if(token == DAY_MON||
        token == DAY_MONDAY||
@@ -272,13 +272,13 @@ bool DateChecker::isDay(std::string token) {
 //Postcondition: returns true if token at index == "next" and the trailing token is a weekday
 bool DateChecker::isNextDay(int index, std::vector<std::string> tokenizedUserEntry) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
-    std::string firstWord = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
+    std::string firstWord = formatConverter->toLowerCase(tokenizedUserEntry[index]);
 
     if(firstWord == TOKEN_NEXT||firstWord == TOKEN_SHORTCUT_NEXT) {
         int lengthOfTokenizedUserEntry = tokenizedUserEntry.size();
 
         if(index + 1 != lengthOfTokenizedUserEntry) {
-            std::string secondWord = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
+            std::string secondWord = formatConverter->toLowerCase(tokenizedUserEntry[index + 1]);
 
             if(isDay(secondWord)){
                 return true;
@@ -298,7 +298,7 @@ bool DateChecker::isNextDay(int index, std::vector<std::string> tokenizedUserEnt
 //Postcondition: returns true if token is a month or its shortcut
 bool DateChecker::isMonth(std::string token) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
-    token = formatConverter->returnLowerCase(token);
+    token = formatConverter->toLowerCase(token);
 
     if(token == MONTH_JAN||
        token == MONTH_JANUARY||

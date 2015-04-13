@@ -106,13 +106,9 @@ std::string TMParser::extractTokenAfterCommand() {
     return token;
 }
 
-std::vector<std::string> TMParser::returnTokens() {
-	return _tokenizedUserEntry;
-}
-
 TMParser::CommandTypes TMParser::determineCommandType(std::string command) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
-	command = formatConverter->returnLowerCase(command);
+	command = formatConverter->toLowerCase(command);
     if(isCommandAdd(command)) {
         return CommandTypes::Add;
     } else if (isCommandDelete(command)) {
@@ -282,13 +278,13 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
     Extractor *extractor = Extractor::getInstance();
 
     for(int index = 0; index < lengthOfTokenizedUserEntry; index++){
-        std::string unitString = formatConverter->returnLowerCase(_tokenizedUserEntry[index]);
+        std::string unitString = formatConverter->toLowerCase(_tokenizedUserEntry[index]);
 
         if (taskChecker->isWordBefore(unitString)||taskChecker->isWordBy(unitString)) {
             if(index + 1 == lengthOfTokenizedUserEntry){
                 break;
             }
-            std::string nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
+            std::string nextWord = formatConverter->toLowerCase(_tokenizedUserEntry[index + 1]);
             
             if (dateChecker->isDateOrDayOrNextDayOrTomorrow(nextWord, index, _tokenizedUserEntry)) {
                 indexOfDatesAndTimes.push(index);
@@ -320,7 +316,7 @@ TMTask TMParser::parseDeadlinedTaskInfo() {
             if(index + 1 == lengthOfTokenizedUserEntry){
                 break;
             }
-            std::string nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
+            std::string nextWord = formatConverter->toLowerCase(_tokenizedUserEntry[index + 1]);
             if(dateChecker->isDateOrDay(nextWord, index, _tokenizedUserEntry)) {
                 indexOfDatesAndTimes.push(index);
                 dateToMeet = extractor->extractDayOrNumericDateOrDelimitedDate(index + 1,indexOfDatesAndTimes, _tokenizedUserEntry);
@@ -401,13 +397,13 @@ TMTask TMParser::parseTimedTaskInfo() {
     
     for(int index = 0; index < lengthOfTokenizedUserEntry; index++){
 
-        unitString = formatConverter->returnLowerCase(_tokenizedUserEntry[index]);
+        unitString = formatConverter->toLowerCase(_tokenizedUserEntry[index]);
 
         if(taskChecker->isWordAt(unitString)) {
             if(index + 1 == lengthOfTokenizedUserEntry){
                 break;
             }
-            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
+            nextWord = formatConverter->toLowerCase(_tokenizedUserEntry[index + 1]);
 
             if (timeChecker->isTime(nextWord)){
                 startTime = extractor->extractTime(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
@@ -419,7 +415,7 @@ TMTask TMParser::parseTimedTaskInfo() {
             if(index + 1 == lengthOfTokenizedUserEntry){
                 break;
             }
-            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
+            nextWord = formatConverter->toLowerCase(_tokenizedUserEntry[index + 1]);
 
             if (dateChecker->isDateOrDay(nextWord, index, _tokenizedUserEntry)) {
                 startDate = extractor->extractDayOrNumericDateOrDelimitedDate(index + 1, indexOfDatesAndTimes, _tokenizedUserEntry);
@@ -433,7 +429,7 @@ TMTask TMParser::parseTimedTaskInfo() {
                 break;
             }
 
-            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
+            nextWord = formatConverter->toLowerCase(_tokenizedUserEntry[index + 1]);
             if (taskChecker->isDateOrTime(nextWord, index, _tokenizedUserEntry)) {
                 extractor->extractDateAndOrTime(index + 1, indexOfDatesAndTimes, startDate, startTime, _tokenizedUserEntry);
                 configureQueuesAndIndex(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index, AFTER_TOKEN_YES);
@@ -446,7 +442,7 @@ TMTask TMParser::parseTimedTaskInfo() {
             if(index + 1 == lengthOfTokenizedUserEntry){
                 break;
             }
-            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
+            nextWord = formatConverter->toLowerCase(_tokenizedUserEntry[index + 1]);
 
             if (taskChecker->isDateOrTime(nextWord, index, _tokenizedUserEntry)) {
                 extractor->extractDateAndOrTime(index + 1, indexOfDatesAndTimes, endDate, endTime, _tokenizedUserEntry);
@@ -507,27 +503,27 @@ TMTask TMParser::parseUndatedTaskInfo() {
 
     for(int index = 0; index < lengthOfVector; index++){
 
-        unitString = formatConverter->returnLowerCase(_tokenizedUserEntry[index]);
+        unitString = formatConverter->toLowerCase(_tokenizedUserEntry[index]);
 
         if (isWordBeforeOrByOrFromOrTo(unitString)) {
             if(index + 1 == lengthOfVector){
                 break;
             }
-            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
+            nextWord = formatConverter->toLowerCase(_tokenizedUserEntry[index + 1]);
             editDateOrTimeInInvertedCommas(nextWord, index + 1, CHECK_DATE_YES, CHECK_TIME_YES);
 
         } else if(taskChecker->isWordOn(unitString)) {
             if(index + 1 == lengthOfVector){
                 break;
             }
-            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
+            nextWord = formatConverter->toLowerCase(_tokenizedUserEntry[index + 1]);
             editDateOrTimeInInvertedCommas(nextWord, index + 1, CHECK_DATE_YES, CHECK_TIME_NO);
 
         } else if(taskChecker->isWordAt(unitString)) {
             if(index + 1 == lengthOfVector){
                 break;
             }
-            nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
+            nextWord = formatConverter->toLowerCase(_tokenizedUserEntry[index + 1]);
             editDateOrTimeInInvertedCommas(nextWord, index + 1, CHECK_DATE_NO, CHECK_TIME_YES);
 
         } else {
@@ -565,7 +561,7 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo() {
         TaskType taskType;
         std::string unitString;
 
-        unitString = formatConverter->returnLowerCase(_tokenizedUserEntry[index]);
+        unitString = formatConverter->toLowerCase(_tokenizedUserEntry[index]);
 
         if(oneTimingFound) {
             if(unitString == TOKEN_AND) {
@@ -573,7 +569,7 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo() {
                     break;
                 }
                 extractor->extractDateAndOrTime(index + 1, indexOfDatesAndTimes, startDate, startTime, _tokenizedUserEntry);
-                std::string nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
+                std::string nextWord = formatConverter->toLowerCase(_tokenizedUserEntry[index + 1]);
 
                 if(startDate != ""||startTime != "") {
                     configureQueuesAndIndex(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index, AFTER_TOKEN_YES);
@@ -586,7 +582,7 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo() {
                     break;
                 }
                 extractor->extractDateAndOrTime(index + 1, indexOfDatesAndTimes, endDate, endTime, _tokenizedUserEntry);
-                std::string nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
+                std::string nextWord = formatConverter->toLowerCase(_tokenizedUserEntry[index + 1]);
                 
                 if(endDate != ""||endTime != "") {
                     configureQueuesAndIndex(mainIndexOfDatesAndTimes, indexOfDatesAndTimes, index, AFTER_TOKEN_YES);
@@ -600,7 +596,7 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo() {
                     break;
                 }
                 extractor->extractDateAndOrTime(index + 1, indexOfDatesAndTimes, endDate, endTime, _tokenizedUserEntry);
-                std::string nextWord = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
+                std::string nextWord = formatConverter->toLowerCase(_tokenizedUserEntry[index + 1]);
 
                 if(endDate != ""||endTime != "") {
                     if(!oneTimingFound){
@@ -654,11 +650,11 @@ void TMParser::configureEndDateTime(int& index, std::queue<int>& mainIndexOfDate
 
     if(index + 1 != lengthOfTokenizedUserEntry) {
         std::string nextWord = _tokenizedUserEntry[index + 1];
-        nextWord = formatConverter->returnLowerCase(nextWord);
+        nextWord = formatConverter->toLowerCase(nextWord);
         if(taskChecker->isWordTo(nextWord)) {
             index = index + 1;
             if(index + 1 != lengthOfTokenizedUserEntry) {
-                std::string tokenAfterTo = formatConverter->returnLowerCase(_tokenizedUserEntry[index + 1]);
+                std::string tokenAfterTo = formatConverter->toLowerCase(_tokenizedUserEntry[index + 1]);
                 extractor->extractDateAndOrTime(index + 1, indexOfDatesAndTimes, endDate, endTime, _tokenizedUserEntry);
                                 
                 if(endDate != ""||endTime != "") {

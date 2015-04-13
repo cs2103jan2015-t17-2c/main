@@ -19,7 +19,7 @@ void Extractor::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAnd
     FormatConverter *formatConverter = FormatConverter::getInstance();
     TimeChecker *timeChecker = TimeChecker::getInstance();
     DateChecker *dateChecker = DateChecker::getInstance();
-    std::string stringAfterToken = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
+    std::string stringAfterToken = formatConverter->toLowerCase(tokenizedUserEntry[index]);
 
     int lengthOfTokenizedUserEntry = tokenizedUserEntry.size();
 
@@ -39,7 +39,7 @@ void Extractor::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAnd
             return;
         }
 
-        std::string stringAfterDate = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
+        std::string stringAfterDate = formatConverter->toLowerCase(tokenizedUserEntry[index + 1]);
             
         if (timeChecker->is12HTime(stringAfterDate)||
             timeChecker->is24HTime(stringAfterDate)||
@@ -57,7 +57,7 @@ void Extractor::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAnd
             return;
         }
 
-        std::string stringAfterTime = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
+        std::string stringAfterTime = formatConverter->toLowerCase(tokenizedUserEntry[index + 1]);
         
         if( dateChecker->isDay(stringAfterTime)||
             dateChecker->isToday(stringAfterTime)||
@@ -77,7 +77,7 @@ void Extractor::extractDateAndOrTime(int index, std::queue<int>& indexOfDatesAnd
 std::string Extractor::extractDayOrNumericDateOrDelimitedDate(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry){
     FormatConverter *formatConverter = FormatConverter::getInstance();
     DateChecker *dateChecker = DateChecker::getInstance();
-    std::string stringAfterToken = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
+    std::string stringAfterToken = formatConverter->toLowerCase(tokenizedUserEntry[index]);
     std::string startDate = "";
     
     if(dateChecker->isDay(stringAfterToken)){
@@ -197,7 +197,7 @@ std::string Extractor::extractSpacedDate(int index, std::queue<int>& indexOfDate
     FormatConverter *formatConverter = FormatConverter::getInstance();
     DateChecker *dateChecker = DateChecker::getInstance();
     std::string day = tokenizedUserEntry[index];
-    std::string month = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
+    std::string month = formatConverter->toLowerCase(tokenizedUserEntry[index + 1]);
 
     if(day.length() == 1){
         day = "0" + day;
@@ -239,7 +239,7 @@ std::string Extractor::extractNextDay(int index, std::queue<int>& indexOfDatesAn
 std::string Extractor::extractTime(int index, std::queue<int>& indexOfDatesAndTimes, std::vector<std::string> tokenizedUserEntry){
     FormatConverter *formatConverter = FormatConverter::getInstance();
     TimeChecker *timeChecker = TimeChecker::getInstance();
-    std::string stringAfterAt = formatConverter->returnLowerCase(tokenizedUserEntry[index]);      
+    std::string stringAfterAt = formatConverter->toLowerCase(tokenizedUserEntry[index]);      
     std::string time;
 
     if(timeChecker->is12HTime(stringAfterAt)) {
@@ -264,7 +264,7 @@ std::string Extractor::extractTime(int index, std::queue<int>& indexOfDatesAndTi
 //Postcondition: returns integer tagged to each boost day
 int Extractor::dayOfWeek(std::string day) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
-    day = formatConverter->returnLowerCase(day);
+    day = formatConverter->toLowerCase(day);
 
     if(day == DAY_SUN||day == DAY_SUNDAY) {
         return 0;

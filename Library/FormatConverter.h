@@ -17,7 +17,7 @@ private:
 public:
     static FormatConverter* getInstance();
 
-    std::string returnLowerCase(std::string);
+    std::string toLowerCase(std::string);
 
     std::string dateFromNumericToBoostFormat(std::string);
     std::string dateFromBoostToDDMMYYYY(const boost::gregorian::date&);

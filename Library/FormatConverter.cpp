@@ -14,7 +14,7 @@ FormatConverter* FormatConverter::getInstance() {
 	return theOne;
 }
 
-std::string FormatConverter::returnLowerCase(std::string word) {
+std::string FormatConverter::toLowerCase(std::string word) {
     int length = word.size();
     char character;
 
@@ -128,7 +128,7 @@ std::string FormatConverter::timeFrom12HourPMToHHMM(std::string time) {
 }
 
 std::string FormatConverter::monthFromWrittenToNumeric(std::string month){
-    month = returnLowerCase(month);
+    month = toLowerCase(month);
     if(month == "jan"||month == "january"){
         return "01";
     } else if (month == "feb"||month == "february"){
