@@ -10,7 +10,7 @@ namespace TMGUI {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// Summary for TMSplash
+	///  This class is created to produce splash screen at the startup of TimeMaster
 	/// </summary>
 	public ref class TMSplash : public System::Windows::Forms::Form
 	{
@@ -18,9 +18,6 @@ namespace TMGUI {
 		TMSplash(void)
 		{
 			InitializeComponent();
-			//
-			//TODO: Add the constructor code here
-			//
 		}
 
 	protected:

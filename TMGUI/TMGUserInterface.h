@@ -71,6 +71,22 @@ namespace TMGUI {
 			Application::Run(gcnew TMSplash);
 		}
 
+		void scrollListViewDown(){
+			defaultView->Focus();
+			SendKeys :: SendWait ("{PGDN}");
+			userInput->Focus();
+		}
+
+		void scrollListViewUp(){
+			defaultView->Focus();
+			SendKeys :: SendWait ("{PGUP}");
+			userInput->Focus();
+		}
+
+		void openHelp(){
+			ShellExecuteA(NULL,"open","..\\QuickGuide.jpg",NULL,NULL,0);
+		}
+
 		void processRealTime(){
 			
 			 TMParser* inputParser = TMParser :: getInstance();
@@ -721,21 +737,16 @@ private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows
 			
 			 TMExecutor* exe = TMExecutor :: getInstance();
 			 std::vector<std::string> userEntries = exe -> getUserInput();
-
 			 String ^ entry = userInput->Text;
 			 std::string originalEntry = msclr::interop::marshal_as<std::string>(entry);
 
 			 if(e->KeyCode == Keys:: PageDown){
-				defaultView->Focus();
-				SendKeys :: SendWait ("{PGDN}");
-				userInput->Focus();
+				scrollListViewDown();
 			 } else if(e->KeyCode == Keys:: PageUp){
-				defaultView->Focus();
-				SendKeys :: SendWait ("{PGUP}");
-				userInput->Focus();
+				scrollListViewUp();
 			 } else if(e->KeyCode == Keys::F1){
-				ShellExecuteA(NULL,"open","..\\QuickGuide.jpg",NULL,NULL,0);
-			 } else if(e->KeyCode == Keys:: Up){
+				openHelp();
+			 } else if(e->KeyCode == Keys:: Up){ //pressing up will show previous user input
 				 if(userEntries.size() == 0){
 					 return;
 				 }
@@ -754,7 +765,7 @@ private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows
 						}
 					}
 				 }
-			 } else if (e->KeyCode == Keys::Down){
+			 } else if (e->KeyCode == Keys::Down){ //pressing down will show next user input(if there is one)
 				 userInput -> Clear();
 				 if(originalEntry == ""){
 					 userInput -> Text = gcnew String (userEntries.front().c_str());
