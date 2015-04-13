@@ -67,6 +67,16 @@ namespace TMGUI {
 		static String^ DISPLAY_BLANK = "";
 		static String^ LOAD_SUCCESS = "Existing schedule detected. Database is successfully loaded.";
 		static String^ DISPLAY_COMMANDS = "Commands : (A)dd - (D)elete - (E)dit - (C)omplete - (U)ndo - (Se)arch";
+		static String^ INPUT_SEARCH = "se";
+		static String^ INPUT_VIEW = "v";
+		static String^ INPUT_QUIT = "quit";
+		static String^ INPUT_EXIT = "exit";
+		static String^ INPUT_QUIT_SHORT = "q";
+		static String^ INPUT_BLOCK = "b";
+		static String^ INPUT_CLOSE = "close";
+		static String^ INSTRUCTION_BLOCK = "Enter timeslots/dates to block separated by 'and'";
+		static String^ INSTRUCTION_VIEW = "viewd to see default view\nviewdd to see deadlined tasks\nviewa to see archived tasks\nviewu to see undated tasks";
+		static String^ INSTRUCTION_SEARCH = "Enter search keyword";
 
 		void SplashStart(){
 			Application::Run(gcnew TMSplash);
@@ -103,9 +113,7 @@ namespace TMGUI {
 			if(commandType == TMParser :: CommandTypes :: Add){
 				TMTask task = inputParser->parseTaskInfo();
 				statusDisplay -> Text = MESSAGE_ADD + "\n" + printResultRealTime(task);
-			}
-
-			else if(commandType == TMParser :: CommandTypes :: Delete || commandType == TMParser :: CommandTypes :: Complete || commandType == TMParser :: CommandTypes :: Incomplete){
+			} else if(commandType == TMParser :: CommandTypes :: Delete || commandType == TMParser :: CommandTypes :: Complete || commandType == TMParser :: CommandTypes :: Incomplete){
 				std::vector<int> tasksID = inputParser->parseTaskPositionNo();
 				std::vector<int>::iterator iter;
 				std::string idNumbers;
@@ -113,9 +121,7 @@ namespace TMGUI {
 						idNumbers = idNumbers + std :: to_string (*iter) + ", ";
 				} 
 				statusDisplay->Text = MESSAGE_PROCESSING_IDS + gcnew String(idNumbers.c_str());
-			}
-
-			else if(commandType == TMParser :: CommandTypes :: Edit){
+			} else if(commandType == TMParser :: CommandTypes :: Edit){
 				std :: string taskID;
 				taskID = inputParser->extractTokenAfterCommand();
 				statusDisplay -> Text = MESSAGE_TASK_ID;
@@ -650,14 +656,20 @@ private: System::Void userInput_TextChanged(System::Object^  sender, System::Eve
 				 else{
 				 statusDisplay->Text = gcnew String(exe->getResultOfExecution().c_str()) + "\n" + DISPLAY_COMMANDS;
 				 }
+			 } else if(userInput->Text == INPUT_SEARCH){
+				 statusDisplay->Text = INSTRUCTION_SEARCH;
+			 } else if(userInput->Text == INPUT_VIEW){
+				 statusDisplay->Text = INSTRUCTION_VIEW;
+			 } else if(userInput->Text == INPUT_BLOCK){
+				 statusDisplay->Text = INSTRUCTION_BLOCK;
 			 }
 		 }
 
 
 private: System::Void userInput_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
 			
-			 if(e->KeyChar == (char)13){
-				 if (userInput->Text == "quit" || userInput->Text =="exit" || userInput->Text =="q" || userInput->Text =="close"){
+			 if(e->KeyChar == (char)13){ //13 is ACSII code for enter key
+				 if (userInput->Text == INPUT_QUIT || userInput->Text == INPUT_EXIT || userInput->Text == INPUT_QUIT_SHORT || userInput->Text == INPUT_CLOSE){
 					 saveAndQuit();
 					 Application :: Exit();
 				 }
