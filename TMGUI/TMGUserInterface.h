@@ -767,38 +767,41 @@ private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows
 			 } else if(e->KeyCode == Keys:: Up){ //pressing up will show previous user input
 				 if(userEntries.size() == 0){
 					 return;
-				 }
-				 else{
+				 }else{
 					userInput -> Clear();
 					if(originalEntry == ""){
 						userInput -> Text = gcnew String (userEntries.back().c_str());
-					}	 
-					else {
+					} else {
 						int index = findInputIndex(userEntries,originalEntry);
 						if (index == 0){
 							return;
-						}
-						else{
+						}else{
 						userInput -> Text = gcnew String (userEntries[index-1].c_str());
 						}
 					}
 				 }
 			 } else if (e->KeyCode == Keys::Down){ //pressing down will show next user input(if there is one)
 				 userInput -> Clear();
-				 if(originalEntry == ""){
-					 userInput -> Text = gcnew String (userEntries.front().c_str());
-				 }
-				 else{
-					 int index = findInputIndex(userEntries,originalEntry);
-					 if (index == userEntries.size()-1){
-						 return;
-					 }
-					 else{
-					 userInput -> Text = gcnew String (userEntries[index+1].c_str());
+				 if(userEntries.size() == 0){
+					 return;
+				 } else{
+					 if(originalEntry == ""){
+						userInput -> Text = gcnew String (userEntries.front().c_str());
+					 }else{
+						int index = findInputIndex(userEntries,originalEntry);
+						if (index == userEntries.size()-1){
+							return;
+						} else{
+							userInput -> Text = gcnew String (userEntries[index+1].c_str());
+						}
 					 }
 				 }
 			 }
 		 }
+				 
+			 
+			
+		 
 
 
 private: System::Void TMGUserInterface_Deactivate(System::Object^  sender, System::EventArgs^  e) {
