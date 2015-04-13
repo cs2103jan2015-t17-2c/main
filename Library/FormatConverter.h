@@ -30,6 +30,5 @@ public:
 
     TMTask convertStringToTMTask(std::string);
     TaskType convertStringToTaskType(std::string);
-    std::string convertTaskTypeToString(TaskType);
 };
 #endif

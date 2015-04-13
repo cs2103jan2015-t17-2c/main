@@ -274,15 +274,3 @@ TaskType FormatConverter::convertStringToTaskType(std::string taskType){
 
     return taskTypeMap[taskType];
 }
-
-//precondition:: taskType is one of the 5 types
-std::string FormatConverter::convertTaskTypeToString(TaskType taskType){
-    std::map<TaskType, std::string> stringMap = boost::assign::map_list_of
-        (TaskType::WithStartDateTime, "WithStartDateTime")
-        (TaskType::WithEndDateTime, "WithEndDateTime")
-        (TaskType::WithPeriod, "WithPeriod")
-        (TaskType::Undated, "Undated")
-        (TaskType::Invalid, "Invalid");
-
-    return stringMap[taskType];
-}
