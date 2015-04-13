@@ -70,6 +70,7 @@ public:
     //to block task with multiple timings >= 2
     std::vector<TMTask> parseMultipleTimingTaskInfo();
     void configureEndDateTime(int&, std::queue<int>&, std::queue<int>&, std::string&, std::string&);
+    void formatDate(std::string&);
 
     void configureTaskDescription(std::string&);
     void configureTaskDescription(std::string&, std::queue<int>&);
