@@ -1,3 +1,5 @@
+//author @A0114172U
+
 #include "TMGUserInterface.h"
 using namespace System;
 using namespace System::Windows::Forms;
