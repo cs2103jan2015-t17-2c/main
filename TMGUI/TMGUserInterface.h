@@ -799,11 +799,6 @@ private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows
 			 }
 		 }
 				 
-			 
-			
-		 
-
-
 private: System::Void TMGUserInterface_Deactivate(System::Object^  sender, System::EventArgs^  e) {
 			 saveAndQuit();
 		 }
