@@ -35,13 +35,13 @@ namespace TMGUI {
 	public:
 		TMGUserInterface(void)
 		{
-			//Thread^ splash = gcnew Thread( gcnew ThreadStart (this,&TMGUI :: TMGUserInterface :: SplashStart));
-			//splash->Start();
-			//Thread::Sleep(2450);
+			Thread^ splash = gcnew Thread( gcnew ThreadStart (this,&TMGUI :: TMGUserInterface :: SplashStart));
+			splash->Start();
+			Thread::Sleep(2450);
 			InitializeComponent();
-			//splash->Abort();
-			//this->Show();
-			//Activate();
+			splash->Abort();
+			this->Show();
+			Activate();
 		}
 
 	public:
