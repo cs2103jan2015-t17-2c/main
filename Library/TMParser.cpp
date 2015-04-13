@@ -620,14 +620,16 @@ std::vector<TMTask> TMParser::parseMultipleTimingTaskInfo() {
             }
         }
         
-        configureAllDatesAndTimes(startDate,startTime,endDate,endTime,taskType);
-        taskTypes.push_back(taskType);
-        startDate = formatConverter->dateFromNumericToBoostFormat(startDate);
-        endDate = formatConverter->dateFromNumericToBoostFormat(endDate);
+        if (startDate != ""||startTime != ""||endDate != ""||endTime != "") {
+            configureAllDatesAndTimes(startDate,startTime,endDate,endTime,taskType);
+            taskTypes.push_back(taskType);
+            formatDate(startDate);
+            formatDate(endDate);
 
-        if(dateChecker->isValidDate(startDate) && dateChecker->isValidDate(endDate) && isValidInfo(startDate, startTime, endDate, endTime)){
-            TMTaskTime taskTime(startDate, startTime, endDate, endTime);
-            taskTimings.push_back(taskTime);
+            if(dateChecker->isValidDate(startDate) && dateChecker->isValidDate(endDate) && isValidInfo(startDate, startTime, endDate, endTime)){
+                TMTaskTime taskTime(startDate, startTime, endDate, endTime);
+                taskTimings.push_back(taskTime);
+            }
         }
     }
     
@@ -665,6 +667,17 @@ void TMParser::configureEndDateTime(int& index, std::queue<int>& mainIndexOfDate
             }
         }
     }
+    return;
+}
+
+void TMParser::formatDate(std::string& date) {
+    FormatConverter *formatConverter = FormatConverter::getInstance();
+    if (date == "") {
+        return;
+    }
+
+    date = formatConverter->dateFromNumericToBoostFormat(date);
+
     return;
 }
 

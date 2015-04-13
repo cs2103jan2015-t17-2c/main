@@ -709,7 +709,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			 
 			 displayTime->Text = time.ToString(format);	
 
-			 processRealTime();
+			 //processRealTime();
 			
 		 }
 
