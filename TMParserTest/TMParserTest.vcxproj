@@ -94,7 +94,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TMParserTest.cpp" />
-    <ClCompile Include="TMTaskListTest.cpp" />
+    <ClCompile Include="SystemTest.cpp" />
+    <ClCompile Include="TMTaskListUnitTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Library\Library.vcxproj">

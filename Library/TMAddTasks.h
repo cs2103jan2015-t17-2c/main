@@ -15,7 +15,7 @@ public:
 		TMParser *parser = TMParser::getInstance(); 
 		TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
 
-		TMTask task = parser -> parseTaskInfo();
+		TMTask task = parser->parseTaskInfo();
 		TMTaskList taskList = taskListStates->getCurrentTaskList();
 		std::ostringstream oss;
 		int positionIndex;
