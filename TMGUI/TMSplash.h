@@ -1,4 +1,4 @@
-//author @A0114172U
+//@author A0114172U
 #pragma once
 
 namespace TMGUI {
