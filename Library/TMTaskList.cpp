@@ -1,11 +1,7 @@
+//@author A0114130E
 #include "TMTaskList.h"
 
-
-
-	TMTaskList::TMTaskList() {
-		
-		}
-
+	TMTaskList::TMTaskList() {}
 
 	//LOGIC FUNCTIONS//
 	bool TMTaskList::areEquivalent(TMTask task1, TMTask task2) {

@@ -192,6 +192,7 @@ static const bool CHECK_TIME_NO = false;
 static const bool AFTER_TOKEN_YES = true;
 static const bool AFTER_TOKEN_NO = false;
 
+//@author A0114130E
 static const std::string STATUS_DISPLAY_INDEXES = "Tasks ";
 static const std::string STATUS_DISPLAY_INVALID_INDEXES = " is an/are invalid position index(es).";
 static const std::string STATUS_DISPLAY_NEW_INDEX = "New task ";
@@ -203,9 +204,9 @@ static const std::string ADD_INVALID = "The task you have specified has invalid 
 static const std::string CLASH_WARNING = " has clash(es) with tasks on hand.\nTasks involved have been highlighted in blue.";
 static const std::string BLOCK_SUCCESS = " have been blocked.";
 static const std::string BLOCK_FAILURE = "Number of tasks with invalid timings: ";
-static const std::string ARCHIVE_SUCCESS = " tasks(s) successfully marked as completed and archived.";
+static const std::string ARCHIVE_SUCCESS = " task(s) successfully marked as completed and archived.";
 static const std::string CONFIRM_SUCCESS = " is/are confirmed.";
-static const std::string DELETE_SUCCESS = " tasks successfully deleted.";
+static const std::string DELETE_SUCCESS = " task(s) successfully deleted.";
 static const std::string EDIT_SUCCESS = "Successfully edited task.";
 static const std::string INVALID_COMMAND_PROMPT = "The command you have entered is invalid, please enter a valid one.";
 static const std::string CURRENT_DIRECTORY_NAME = "Current file directory is now at: ";
