@@ -64,9 +64,9 @@ namespace TMGUI {
 		static String^ DISPLAY_DUE_DATE = "Due Date: ";
 		static String^ DISPLAY_DUE_TIME = "Due Time: ";
 		static String^ DISPLAY_INVALID = "Invalid time, please re-enter task time.";
-		static String^ DISPLAY_BLANK = "";
+		static String^ BLANK = "";
 		static String^ LOAD_SUCCESS = "Existing schedule detected. Database is successfully loaded.";
-		static String^ DISPLAY_COMMANDS = "Commands : (A)dd - (D)elete - (E)dit - (C)omplete - (U)ndo - (Se)arch";
+		static String^ DISPLAY_COMMANDS = "Commands : (A)dd - (D)elete - (E)dit - (C)omplete - (U)ndo - (R)edo - (V)iew - (Se)arch";
 		static String^ INPUT_SEARCH = "se";
 		static String^ INPUT_VIEW = "v";
 		static String^ INPUT_QUIT = "quit";
@@ -74,6 +74,8 @@ namespace TMGUI {
 		static String^ INPUT_QUIT_SHORT = "q";
 		static String^ INPUT_BLOCK = "b";
 		static String^ INPUT_CLOSE = "close";
+		static String^ INPUT_SAVE_AT = "st";
+		static String^ INSTRUCTION_SAVE_AT = "Enter save directory";
 		static String^ INSTRUCTION_BLOCK = "Enter timeslots/dates to block separated by 'and'";
 		static String^ INSTRUCTION_VIEW = "viewd to see default view\nviewdd to see deadlined tasks\nviewa to see archived tasks\nviewu to see undated tasks";
 		static String^ INSTRUCTION_SEARCH = "Enter search keyword";
@@ -314,16 +316,16 @@ namespace TMGUI {
 			defaultEntry = gcnew ListViewItem(Convert::ToString(index));
 			defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskDescription()).c_str() )));
 			if(taskList[taskPosition].getTaskType() == TaskType ::WithEndDateTime){
-				defaultEntry->SubItems->Add(DISPLAY_BLANK);
-				defaultEntry->SubItems->Add(DISPLAY_BLANK); 
+				defaultEntry->SubItems->Add(BLANK);
+				defaultEntry->SubItems->Add(BLANK); 
 			} else{
 				defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskTime().getStartDate()).c_str() )));
 				defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskTime().getStartTime()).c_str() )));
 			}
 				
 			if(taskList[taskPosition].getTaskType() == TaskType ::WithStartDateTime){
-				defaultEntry->SubItems->Add(DISPLAY_BLANK);
-				defaultEntry->SubItems->Add(DISPLAY_BLANK); 
+				defaultEntry->SubItems->Add(BLANK);
+				defaultEntry->SubItems->Add(BLANK); 
 			} else{
 				defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskTime().getEndDate()).c_str() )));
 				defaultEntry->SubItems->Add(gcnew String(( (taskList[taskPosition].getTaskTime().getEndTime()).c_str() )));
@@ -649,7 +651,7 @@ namespace TMGUI {
 private: System::Void userInput_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 			 TMExecutor* exe = TMExecutor::getInstance();
 		
-			 if(userInput->Text == ""){
+			 if(userInput->Text == BLANK){
 				 if(exe->getResultOfExecution() == ""){
 					 statusDisplay->Text = DISPLAY_COMMANDS;
 				 }
@@ -662,6 +664,8 @@ private: System::Void userInput_TextChanged(System::Object^  sender, System::Eve
 				 statusDisplay->Text = INSTRUCTION_VIEW;
 			 } else if(userInput->Text == INPUT_BLOCK){
 				 statusDisplay->Text = INSTRUCTION_BLOCK;
+			 } else if(userInput->Text == INPUT_SAVE_AT){
+				 statusDisplay->Text = INSTRUCTION_SAVE_AT;
 			 }
 		 }
 
