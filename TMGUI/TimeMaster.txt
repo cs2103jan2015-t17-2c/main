@@ -1,2 +1,2 @@
-C:\Users\Wei Ern\Documents\Visual Studio 2012\Projects\TimeMaster\Debug
+C:\Users\User\Desktop\main\Debug
 This file directs the program where to load existing data from. Please do not delete.

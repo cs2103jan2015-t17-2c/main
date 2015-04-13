@@ -100,7 +100,7 @@
 	}
 
 	bool TMTaskList::isInDated(int positionIndex) {
-		return (positionIndex <= int(_dated.size()));
+		return (positionIndex > 0 && positionIndex <= int(_dated.size()));
 	}
 
 	bool TMTaskList::isInUndated(int positionIndex) {
@@ -255,10 +255,8 @@
 	}	
 
 	TMTask TMTaskList::getTaskFromPositionIndex(int positionIndex) {
-		assert(isValidPositionIndex(positionIndex));
-
 		TMTaskTime taskTime;
-		TMTask invalidTask("No such task", taskTime, TaskType::Invalid);
+		TMTask invalidTask("", taskTime, TaskType::Invalid);
 
 		if (isInDated(positionIndex)) {
 			return _dated[positionIndex - 1];

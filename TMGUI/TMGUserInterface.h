@@ -64,8 +64,9 @@ namespace TMGUI {
 		static String^ DISPLAY_DUE_TIME = "Due Time: ";
 		static String^ DISPLAY_INVALID = "Invalid time, please re-enter task time.";
 		static String^ DISPLAY_BLANK = "";
+		static String^ LOAD_SUCCESS = "Existing schedule detected. Database is successfully loaded.";
 		static String^ DISPLAY_COMMANDS = "Commands : (A)dd - (D)elete - (E)dit - (C)omplete - (U)ndo - (Se)arch";
-		
+
 		void SplashStart(){
 			Application::Run(gcnew TMSplash);
 		}
@@ -698,7 +699,10 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 private: System::Void TMGUserInterface_Load(System::Object^  sender, System::EventArgs^  e) {
 			clearListView();
 			TMTaskList taskList = initiateTaskList();
-
+			int totalExistingTasks = taskList.getDatedSize() + taskList.getUndatedSize() + taskList.getArchivedSize();
+			if (totalExistingTasks > 0) {
+				statusDisplay->Text = gcnew String(LOAD_SUCCESS);
+			}
 			std::vector<TMTask> defaultTasks = initiateDefaultTasks (taskList);
 
 			int defaultCountStart = 0;

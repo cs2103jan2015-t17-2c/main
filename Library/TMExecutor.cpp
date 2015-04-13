@@ -51,6 +51,8 @@ TMDisplay TMExecutor::determineDisplayType(std::string userInput) {
 		return ArchivedTasks;
 	}else if (userInput == CMD_VIEW_SEARCH || userInput == CMD_SHORTCUT_VIEW_SEARCH) {
 		return SearchResults;
+	} else {
+		return Default;
 	}
 }
 

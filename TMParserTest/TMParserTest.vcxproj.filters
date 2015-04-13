@@ -29,7 +29,10 @@
     <ClCompile Include="TMParserTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TMTaskListTest.cpp">
+    <ClCompile Include="TMTaskListUnitTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

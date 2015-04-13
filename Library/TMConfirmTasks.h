@@ -20,7 +20,7 @@ public:
 		std::ostringstream ossValid, ossInvalid;
 
 		if (hasRepeatedIndexes(confirmedTasksIndexes)) {
-			outcome = WARNING_REPEATED_INDEXES_SPECIFIED;
+			handleRepeatedIndexes();
 			return;
 		}
 
@@ -70,16 +70,19 @@ public:
 			positionIndexes.push_back(positionIndex);
 		}
 
-		ossValid << STATUS_DISPLAY_INDEXES;
-		for (intIter = positionIndexes.begin(); intIter != positionIndexes.end(); ++intIter) {
-			ossValid << *intIter << " ";
+		if (hasValidIndexes()) {
+			ossValid << STATUS_DISPLAY_INDEXES;
+			for (intIter = positionIndexes.begin(); intIter != positionIndexes.end(); ++intIter) {
+				ossValid << *intIter << " ";
+			}
+			ossValid << CONFIRM_SUCCESS << '\n';
 		}
-		ossValid << CONFIRM_SUCCESS << std::endl;
-		if (ossInvalid.str().size() != 0) {
+
+		if (hasInvalidIndexes(ossInvalid.str())) {
 			ossInvalid << STATUS_DISPLAY_INVALID_INDEXES; 
 		}
 
-		outcome = ossValid.str() + '\n' + ossInvalid.str();
+		outcome = ossValid.str() + ossInvalid.str();
 		taskListStates->addNewState(taskList);
 	}
 
