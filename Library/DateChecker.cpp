@@ -1,3 +1,5 @@
+//@author A0111712Y
+
 #include "DateChecker.h"
 
 DateChecker* DateChecker::theOne;
@@ -55,19 +57,19 @@ bool DateChecker::isNumericDate(std::string token) {
 
 //Preconditions: dd(delimiter)month(delimiter)(optional:year)
 //Postconditions: returns true if valid date
-bool DateChecker::isOneDelimitedDate(std::string token){
-    if(isDelimitedDate(token, DELIMITER_DASH)) {
+bool DateChecker::isDelimitedDate(std::string token){
+    if(isOneDelimitedDate(token, DELIMITER_DASH)) {
         return true;
-    } else if(isDelimitedDate(token, DELIMITER_FULLSTOP)) {
+    } else if(isOneDelimitedDate(token, DELIMITER_FULLSTOP)) {
         return true;
-    } else if(isDelimitedDate(token, DELIMITER_SLASH)) {
+    } else if(isOneDelimitedDate(token, DELIMITER_SLASH)) {
         return true;
     } else {
         return false;
     }
 }
 
-bool DateChecker::isDelimitedDate(std::string token, char key) {
+bool DateChecker::isOneDelimitedDate(std::string token, char key) {
     FormatConverter *formatConverter = FormatConverter::getInstance();
     std::string day;
     std::string month;
@@ -136,11 +138,11 @@ bool DateChecker::isDelimitedDate(std::string token, char key) {
     return true;    
 }
 
-//preconditions check isOneDelimitedDate first
+//preconditions check isDelimitedDate first
 char DateChecker::returnDelimiter(std::string token) {
-     if(isDelimitedDate(token, DELIMITER_DASH)) {
+     if(isOneDelimitedDate(token, DELIMITER_DASH)) {
         return DELIMITER_DASH;
-    } else if(isDelimitedDate(token, DELIMITER_FULLSTOP)) {
+    } else if(isOneDelimitedDate(token, DELIMITER_FULLSTOP)) {
         return DELIMITER_FULLSTOP;
     } else {
         return DELIMITER_SLASH;
@@ -166,7 +168,7 @@ bool DateChecker::isSpacedDate(int index, std::vector<std::string> tokenizedUser
     }
 
     std::string possibleDate = firstToken + DELIMITER_DASH + secondToken;
-    return isDelimitedDate(possibleDate,DELIMITER_DASH); 
+    return isOneDelimitedDate(possibleDate,DELIMITER_DASH); 
 }
 
 //Preconditions: dd mm yyyy
@@ -402,7 +404,7 @@ bool DateChecker::isDateOrDayOrNextDayOrTomorrow(std::string nextWord, int index
 bool DateChecker::isDateOrDay(std::string nextWord, int index, std::vector<std::string> tokenizedUserEntry) {
     if (isNumericDate(nextWord)||
         isDay(nextWord)||
-        isOneDelimitedDate(nextWord)||
+        isDelimitedDate(nextWord)||
         isSpacedDate(index + 1, tokenizedUserEntry)) {
             return true;
     } else {

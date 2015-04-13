@@ -1,3 +1,5 @@
+//@author A0111712Y
+
 #ifndef DATECHECKER_H
 #define DATECHECKER_H
 
@@ -17,8 +19,8 @@ public:
     
     //Preconditions: Time format DDMMYY DDMMYYYY
     bool isNumericDate(std::string);
-    bool isOneDelimitedDate(std::string);
-    bool isDelimitedDate(std::string, char);
+    bool isDelimitedDate(std::string);
+    bool isOneDelimitedDate(std::string, char);
     char returnDelimiter(std::string);
     bool isSpacedDate(int, std::vector<std::string>);
 

@@ -1,3 +1,5 @@
+//@author A0111712Y
+
 #ifndef FORMATCONVERTER_H
 #define FORMATCONVERTER_H
 
@@ -18,9 +20,6 @@ public:
     std::string returnLowerCase(std::string);
 
     std::string dateFromNumericToBoostFormat(std::string);
-    std::string dateFromNumericToStandardFormat(std::string);
-    std::string dateFromBoostToStandardFormat(const boost::gregorian::date&);
-    std::string dateFromBoostToDelimitedDDMMYYYY(const boost::gregorian::date&);
     std::string dateFromBoostToDDMMYYYY(const boost::gregorian::date&);
 
     std::string monthFromWrittenToNumeric(std::string);
@@ -31,6 +30,5 @@ public:
 
     TMTask convertStringToTMTask(std::string);
     TaskType convertStringToTaskType(std::string);
-    std::string convertTaskTypeToString(TaskType);
 };
 #endif

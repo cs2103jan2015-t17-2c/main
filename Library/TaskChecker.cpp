@@ -1,3 +1,5 @@
+//@author A0111712Y
+
 #include "TaskChecker.h"
 
 TaskChecker* TaskChecker::theOne;
@@ -33,7 +35,7 @@ bool TaskChecker::isDeadlinedTask(std::vector<std::string> tokenizedUserEntry) {
 
             if (dateChecker->isNumericDate(stringAfterBefore)||
                 dateChecker->isDay(stringAfterBefore)||
-                dateChecker->isOneDelimitedDate(stringAfterBefore)||
+                dateChecker->isDelimitedDate(stringAfterBefore)||
                 dateChecker->isSpacedDate(index + 1, tokenizedUserEntry)) {
                 return true;
             } else if (timeChecker->is12HTime(stringAfterBefore)||timeChecker->is24HTime(stringAfterBefore)||timeChecker->isTimeWithoutPeriod(stringAfterBefore)) {
@@ -84,7 +86,7 @@ bool TaskChecker::isTimedTask(std::vector<std::string> tokenizedUserEntry) {
 
             if (dateChecker->isNumericDate(stringAfterToken)||
                 dateChecker->isDay(stringAfterToken)||
-                dateChecker->isOneDelimitedDate(stringAfterToken)||
+                dateChecker->isDelimitedDate(stringAfterToken)||
                 dateChecker->isSpacedDate(index + 1,tokenizedUserEntry)){
                     return true;
             }
@@ -97,7 +99,7 @@ bool TaskChecker::isTimedTask(std::vector<std::string> tokenizedUserEntry) {
 
             if(dateChecker->isNumericDate(stringAfterToken)||
                 dateChecker->isDay(stringAfterToken)||
-                dateChecker->isOneDelimitedDate(stringAfterToken)||
+                dateChecker->isDelimitedDate(stringAfterToken)||
                 dateChecker->isSpacedDate(index + 1, tokenizedUserEntry)) {
                 //check for time after date
                 return true;
@@ -134,6 +136,8 @@ bool TaskChecker::isWordBefore(std::string token) {
     } else if (token == TOKEN_BY) {
         return true;
     } else if (token == TOKEN_SHORTCUT_BEFORE) {
+        return true;
+    } else if (token == TOKEN_B4) {
         return true;
     } else {
         return false;

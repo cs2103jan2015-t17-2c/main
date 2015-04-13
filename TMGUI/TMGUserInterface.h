@@ -65,6 +65,7 @@ namespace TMGUI {
 		static String^ DISPLAY_INVALID = "Invalid time, please re-enter task time.";
 		static String^ DISPLAY_BLANK = "";
 		static String^ LOAD_SUCCESS = "Existing schedule detected. Database is successfully loaded.";
+		static String^ DISPLAY_COMMANDS = "Commands : (A)dd - (D)elete - (E)dit - (C)omplete - (U)ndo - (Se)arch";
 
 		void SplashStart(){
 			Application::Run(gcnew TMSplash);
@@ -113,6 +114,10 @@ namespace TMGUI {
 			taskList.leaveReferenceUponExit();
 		}
 
+		int findInputIndex(std::vector<std::string> userEntries, std::string originalEntry){
+			int index = std::find(userEntries.begin(),userEntries.end(),originalEntry) - userEntries.begin();
+			return index;
+		}
 
 		String^ printResultRealTime(TMTask task){
 			
@@ -180,6 +185,101 @@ namespace TMGUI {
 
 		void clearListView(){
 			defaultView->Items->Clear();
+		}
+
+		void displayDefault(){
+			TMTaskList taskList = initiateTaskList();	
+			std::vector<TMTask> dated = taskList.getDated();
+			std::vector<TMTask> undated = taskList.getUndated();
+			std::vector<TMTask> archived = taskList.getArchived();
+			std::vector<TMTask> defaultTasks = initiateDefaultTasks(taskList);
+
+			int defaultCountStart = 0;
+			int defaultCountEnd = defaultTasks.size();
+
+			DisplayState->Text = DISPLAY_DEFAULT;
+			clearListView();
+
+			for(int i = defaultCountStart; i != defaultCountEnd ; i++){
+				int defaultTaskPosition = i - defaultCountStart;
+				int defaultIndex = i + 1;
+				displayTasks(defaultTasks,defaultIndex,defaultTaskPosition);
+			}
+		}
+
+		void displayDeadlined(){
+			TMTaskList taskList = initiateTaskList();	
+			std::vector<TMTask> dated = taskList.getDated();
+			std::vector<TMTask> undated = taskList.getUndated();
+
+			DisplayState->Text = DISPLAY_DEADLINED;
+			clearListView();
+			for (int l = 0; l != dated.size(); l++){
+				if(dated[l].getTaskType() == TaskType ::WithEndDateTime){
+					int deadlinedTaskPosition = l;
+					int deadlinedIndex = l+1;
+					displayTasks(dated,deadlinedIndex,deadlinedTaskPosition);
+				}
+			}
+		}
+
+		void displayUndated(){
+			TMTaskList taskList = initiateTaskList();	
+			std::vector<TMTask> dated = taskList.getDated();
+			std::vector<TMTask> undated = taskList.getUndated();
+
+			int undatedCountStart = dated.size();
+			int undatedCountEnd = dated.size() + undated.size();
+
+			DisplayState->Text = DISPLAY_UNDATED;
+			clearListView();
+						
+			for(int j = undatedCountStart; j != undatedCountEnd ; j++){
+				int undatedTaskPosition = j - undatedCountStart;
+				int undatedIndex = j + 1;
+				displayTasks(undated,undatedIndex,undatedTaskPosition);
+			}
+		}
+
+		void displayArchived(){
+			TMTaskList taskList = initiateTaskList();	
+			std::vector<TMTask> dated = taskList.getDated();
+			std::vector<TMTask> undated = taskList.getUndated();
+			std::vector<TMTask> archived = taskList.getArchived();
+		
+			int archivedCountStart = dated.size() + undated.size();
+			int archivedCountEnd = dated.size() + undated.size() + archived.size();
+
+			DisplayState->Text = DISPLAY_ARCHIVED;
+			clearListView();
+						
+			for(int k = archivedCountStart; k != archivedCountEnd ; k++){
+				int archivedTaskPosition = k - archivedCountStart;
+				int archivedIndex = k + 1;
+				displayTasks(archived,archivedIndex,archivedTaskPosition);
+			}
+		}
+
+		void displaySearchResult(){
+			TMTaskList taskList = initiateTaskList();	
+			std::vector<TMTask> dated = taskList.getDated();
+			std::vector<TMTask> undated = taskList.getUndated();
+			std::vector<TMTask> archived = taskList.getArchived();
+			std::vector<TMTask> allTasks = initiateAllTasks(taskList);
+			
+			DisplayState->Text = DISPLAY_SEARCH_RESULTS;
+			clearListView();
+			
+			TMExecutor* exe = TMExecutor::getInstance();
+			std::vector<int> indexes = exe->getPositionIndexes();
+			std::vector<int>::iterator iter;
+						
+			for (iter = indexes.begin(); iter != indexes.end(); ++iter) {
+				int searchedTaskPosition = *(iter) - 1;
+				int searchedIndex = *iter;
+				displayTasks(allTasks,searchedIndex,searchedTaskPosition);
+			}
+
 		}
 
 		void displayTasks(std::vector<TMTask> taskList, int index, int taskPosition){
@@ -331,6 +431,7 @@ namespace TMGUI {
 			this->userInput->Name = L"userInput";
 			this->userInput->Size = System::Drawing::Size(1868, 50);
 			this->userInput->TabIndex = 0;
+			this->userInput->TextChanged += gcnew System::EventHandler(this, &TMGUserInterface::userInput_TextChanged);
 			this->userInput->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &TMGUserInterface::userInput_KeyDown);
 			this->userInput->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &TMGUserInterface::userInput_KeyPress);
 			// 
@@ -444,7 +545,7 @@ namespace TMGUI {
 			this->DisplayState->Font = (gcnew System::Drawing::Font(L"Corbel", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->DisplayState->ForeColor = System::Drawing::SystemColors::ButtonFace;
-			this->DisplayState->Location = System::Drawing::Point(283, 582);
+			this->DisplayState->Location = System::Drawing::Point(277, 589);
 			this->DisplayState->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->DisplayState->Name = L"DisplayState";
 			this->DisplayState->Size = System::Drawing::Size(213, 39);
@@ -469,7 +570,7 @@ namespace TMGUI {
 			this->nowShowing->Font = (gcnew System::Drawing::Font(L"Corbel", 10.125F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->nowShowing->ForeColor = System::Drawing::SystemColors::ButtonFace;
-			this->nowShowing->Location = System::Drawing::Point(46, 586);
+			this->nowShowing->Location = System::Drawing::Point(45, 593);
 			this->nowShowing->Name = L"nowShowing";
 			this->nowShowing->Size = System::Drawing::Size(214, 33);
 			this->nowShowing->TabIndex = 13;
@@ -522,6 +623,19 @@ namespace TMGUI {
 		}
 #pragma endregion
 	
+private: System::Void userInput_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+			 TMExecutor* exe = TMExecutor::getInstance();
+		
+			 if(userInput->Text == ""){
+				 if(exe->getResultOfExecution() == ""){
+					 statusDisplay->Text = DISPLAY_COMMANDS;
+				 }
+				 else{
+				 statusDisplay->Text = gcnew String(exe->getResultOfExecution().c_str()) + "\n" + DISPLAY_COMMANDS;
+				 }
+			 }
+		 }
+
 
 private: System::Void userInput_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
 			
@@ -543,88 +657,27 @@ private: System::Void userInput_KeyPress(System::Object^  sender, System::Window
 				
 					 TMDisplay display = exe->getCurrentDisplay();
 					
-					 TMTaskList taskList = initiateTaskList();
-					
-					 std::vector<TMTask> dated = taskList.getDated();
-					 std::vector<TMTask> undated = taskList.getUndated();
-					 std::vector<TMTask> archived = taskList.getArchived();
-
-					 std::vector<TMTask> defaultTasks = initiateDefaultTasks(taskList);
-					 std::vector<TMTask> allTasks = initiateAllTasks(taskList);
-			
-					 int defaultCountStart = 0;
-					 int defaultCountEnd = defaultTasks.size();
-					
-					 int undatedCountStart = dated.size();
-					 int undatedCountEnd = dated.size() + undated.size();
-
-					 int archivedCountStart = dated.size() + undated.size();
-					 int archivedCountEnd = dated.size() + undated.size() + archived.size();
-
-					 std::vector<TMTask>::iterator iter;
-	
 					 switch (display) {
 					 case Default:
-						 DisplayState->Text = DISPLAY_DEFAULT;
-						 clearListView();
-
-						 for(int i = defaultCountStart; i != defaultCountEnd ; i++){
-							 int defaultTaskPosition = i - defaultCountStart;
-							 int defaultIndex = i + 1;
-							 displayTasks(defaultTasks,defaultIndex,defaultTaskPosition);
-						 }
+						 displayDefault();
 						 break;
-
-					 case  DeadlineTasks:
-						 DisplayState->Text = DISPLAY_DEADLINED;
-						 clearListView();
-						 for (int l = 0; l != dated.size(); l++){
-							 if(dated[l].getTaskType() == TaskType ::WithEndDateTime){
-								 int deadlinedTaskPosition = l;
-								 int deadlinedIndex = l+1;
-								 displayTasks(dated,deadlinedIndex,deadlinedTaskPosition);
-							 }
-						 }
+					 case  DeadlineTasks:	
+						 displayDeadlined();
 						 exe->setCurrentDisplay(Default);
 						 break;
 					
 					case UndatedTasks:
-						DisplayState->Text = DISPLAY_UNDATED;
-						clearListView();
-						
-						for(int j = undatedCountStart; j != undatedCountEnd ; j++){
-							int undatedTaskPosition = j - undatedCountStart;
-							int undatedIndex = j + 1;
-							displayTasks(undated,undatedIndex,undatedTaskPosition);
-						}
+						displayUndated();
 						exe->setCurrentDisplay(Default);
 						break;
 					
 					case ArchivedTasks:
-						DisplayState->Text = DISPLAY_ARCHIVED;
-						clearListView();
-						
-						for(int k = archivedCountStart; k != archivedCountEnd ; k++){
-							int archivedTaskPosition = k - archivedCountStart;
-							int archivedIndex = k + 1;
-							displayTasks(archived,archivedIndex,archivedTaskPosition);
-						}
+						displayArchived();
 						exe->setCurrentDisplay(Default);
 						break;
 
 					case SearchResults:
-						DisplayState->Text = DISPLAY_SEARCH_RESULTS;
-						clearListView();
-						
-						std::vector<int> indexes = exe->getPositionIndexes();
-						std::vector<int>::iterator iter;
-						
-						for (iter = indexes.begin(); iter != indexes.end(); ++iter) {
-							int searchedTaskPosition = *(iter) - 1;
-							int searchedIndex = *iter;
-							displayTasks(allTasks,searchedIndex,searchedTaskPosition);
-						}
-
+						displaySearchResult();
 						exe->setCurrentDisplay(Default);
 						break;
 					}
@@ -639,13 +692,12 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			 
 			 displayTime->Text = time.ToString(format);	
 
-			 //processRealTime();
+			 processRealTime();
 			
 		 }
 
 private: System::Void TMGUserInterface_Load(System::Object^  sender, System::EventArgs^  e) {
 			clearListView();
-	
 			TMTaskList taskList = initiateTaskList();
 			int totalExistingTasks = taskList.getDatedSize() + taskList.getUndatedSize() + taskList.getArchivedSize();
 			if (totalExistingTasks > 0) {
@@ -661,6 +713,8 @@ private: System::Void TMGUserInterface_Load(System::Object^  sender, System::Eve
 						int defaultIndex = i + 1;
 						displayTasks(defaultTasks,defaultIndex,defaultTaskPosition);
 			}
+
+			statusDisplay->Text = DISPLAY_COMMANDS;
 		 }
 
 private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
@@ -680,9 +734,8 @@ private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows
 				SendKeys :: SendWait ("{PGUP}");
 				userInput->Focus();
 			 } else if(e->KeyCode == Keys::F1){
-				ShellExecuteA(NULL,"open","..\\readme.pdf",NULL,NULL,0);
-			 } 
-			 else if(e->KeyCode == Keys:: Up){
+				ShellExecuteA(NULL,"open","..\\QuickGuide.jpg",NULL,NULL,0);
+			 } else if(e->KeyCode == Keys:: Up){
 				 if(userEntries.size() == 0){
 					 return;
 				 }
@@ -692,28 +745,27 @@ private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows
 						userInput -> Text = gcnew String (userEntries.back().c_str());
 					}	 
 					else {
-						int i = std::find(userEntries.begin(),userEntries.end(),originalEntry) - userEntries.begin();
-						if (i == 0){
+						int index = findInputIndex(userEntries,originalEntry);
+						if (index == 0){
 							return;
 						}
 						else{
-						userInput -> Text = gcnew String (userEntries[i-1].c_str());
+						userInput -> Text = gcnew String (userEntries[index-1].c_str());
 						}
 					}
 				 }
-			 }
-			 else if (e->KeyCode == Keys::Down){
+			 } else if (e->KeyCode == Keys::Down){
 				 userInput -> Clear();
 				 if(originalEntry == ""){
 					 userInput -> Text = gcnew String (userEntries.front().c_str());
 				 }
 				 else{
-					 int i = std::find(userEntries.begin(),userEntries.end(),originalEntry) - userEntries.begin();
-					 if (i == userEntries.size()-1){
+					 int index = findInputIndex(userEntries,originalEntry);
+					 if (index == userEntries.size()-1){
 						 return;
 					 }
 					 else{
-					 userInput -> Text = gcnew String (userEntries[i+1].c_str());
+					 userInput -> Text = gcnew String (userEntries[index+1].c_str());
 					 }
 				 }
 			 }
@@ -723,5 +775,6 @@ private: System::Void userInput_KeyDown(System::Object^  sender, System::Windows
 private: System::Void TMGUserInterface_Deactivate(System::Object^  sender, System::EventArgs^  e) {
 			 saveAndQuit();
 		 }
+
 };
 }

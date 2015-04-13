@@ -1,3 +1,5 @@
+//@author A0111712Y
+
 #include "TimeChecker.h"
 
 TimeChecker* TimeChecker::theOne;
