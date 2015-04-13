@@ -82,7 +82,7 @@ bool TimeChecker::isAM(std::string token){
 
     std::string lastTwoCharacters = token.substr(token.length()-2,2);
     FormatConverter *formatConverter = FormatConverter::getInstance();
-    lastTwoCharacters = formatConverter->returnLowerCase(lastTwoCharacters);
+    lastTwoCharacters = formatConverter->toLowerCase(lastTwoCharacters);
 
     if(lastTwoCharacters == TIME_PERIOD_AM){
         return true;
@@ -104,7 +104,7 @@ bool TimeChecker::isPM(std::string token){
 
     std::string lastTwoCharacters = token.substr(token.length()-2,2);
     FormatConverter *formatConverter = FormatConverter::getInstance();
-    lastTwoCharacters = formatConverter->returnLowerCase(lastTwoCharacters);
+    lastTwoCharacters = formatConverter->toLowerCase(lastTwoCharacters);
 
     if(lastTwoCharacters == TIME_PERIOD_PM){
         return true;

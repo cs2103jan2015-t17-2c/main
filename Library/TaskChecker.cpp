@@ -28,10 +28,10 @@ bool TaskChecker::isDeadlinedTask(std::vector<std::string> tokenizedUserEntry) {
             break;
         }
         
-        unitString = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
+        unitString = formatConverter->toLowerCase(tokenizedUserEntry[index]);
         
         if (isWordBefore(unitString)||isWordBy(unitString)) {
-            stringAfterBefore = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
+            stringAfterBefore = formatConverter->toLowerCase(tokenizedUserEntry[index + 1]);
 
             if (dateChecker->isNumericDate(stringAfterBefore)||
                 dateChecker->isDay(stringAfterBefore)||
@@ -63,14 +63,14 @@ bool TaskChecker::isTimedTask(std::vector<std::string> tokenizedUserEntry) {
     
     for(int index = 0; index < lengthOfTokenizedUserEntry; index++) {
         
-        unitString = formatConverter->returnLowerCase(tokenizedUserEntry[index]);
+        unitString = formatConverter->toLowerCase(tokenizedUserEntry[index]);
         
         if(isWordAt(unitString)){
             if(index + 1 == lengthOfTokenizedUserEntry){
                 break;
             }
 
-            stringAfterToken = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
+            stringAfterToken = formatConverter->toLowerCase(tokenizedUserEntry[index + 1]);
 
             if (timeChecker->is12HTime(stringAfterToken)||
                 timeChecker->is24HTime(stringAfterToken)||
@@ -82,7 +82,7 @@ bool TaskChecker::isTimedTask(std::vector<std::string> tokenizedUserEntry) {
                 break;
             }
 
-            stringAfterToken = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
+            stringAfterToken = formatConverter->toLowerCase(tokenizedUserEntry[index + 1]);
 
             if (dateChecker->isNumericDate(stringAfterToken)||
                 dateChecker->isDay(stringAfterToken)||
@@ -95,7 +95,7 @@ bool TaskChecker::isTimedTask(std::vector<std::string> tokenizedUserEntry) {
                 break;
             }
             
-            stringAfterToken = formatConverter->returnLowerCase(tokenizedUserEntry[index + 1]);
+            stringAfterToken = formatConverter->toLowerCase(tokenizedUserEntry[index + 1]);
 
             if(dateChecker->isNumericDate(stringAfterToken)||
                 dateChecker->isDay(stringAfterToken)||
