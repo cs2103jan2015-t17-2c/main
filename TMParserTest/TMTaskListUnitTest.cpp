@@ -1,3 +1,4 @@
+//@author A0114130E
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
@@ -438,7 +439,7 @@ namespace LibraryTest
 		TEST_METHOD(TestaddTask_3) {  
 			//test 3 (test if a task of type WithPeriod is added corrected to the dated vector)
 			TMTaskTime time_1("27 03 2015", "1200", "27 03 2015", "1300");
-			TMTask taskA("End date time task", time_1, TaskType::WithPeriod);
+			TMTask taskA("With period", time_1, TaskType::WithPeriod);
 		
 			TMTaskList taskList;
 			
@@ -453,8 +454,8 @@ namespace LibraryTest
 
 		TEST_METHOD(TestaddTask_4) {  
 			//test 4 (test if a task of type Undated is added corrected to the undated vector)
-			TMTaskTime time_1("27 03 2015", "1300", "27 03 2015", "1300");
-			TMTask taskA("End date time task", time_1, TaskType::Undated);
+			TMTaskTime time_1;
+			TMTask taskA("Undated", time_1, TaskType::Undated);
 		
 			TMTaskList taskList;
 			
@@ -468,20 +469,70 @@ namespace LibraryTest
 		}
 
 		TEST_METHOD(TestaddTask_5) {  
-			//test 5 (test if a task of type Undated is added corrected to the undated vector)
-			TMTaskTime time_1("27 03 2015", "1300", "27 03 2015", "1300");
-			TMTask taskA("End date time task", time_1, TaskType::Undated);
+			//test 5 (test whether two period tasks which clashes are marked as clash)
+			TMTaskTime time_1("27 03 2015", "1200", "27 03 2015", "1500");
+			TMTaskTime time_2("27 03 2015", "1000", "27 03 2015", "1900");
+			TMTask taskA("Period task 1", time_1, TaskType::WithPeriod);
+			TMTask taskB("Period task 2", time_2, TaskType::WithPeriod);
 		
 			TMTaskList taskList;
 			
 			taskList.addTask(taskA);
+			taskList.addTask(taskB);
 		
 			std::ostringstream actual;
-			actual << taskList.getDatedSize() << " " << taskList.getUndatedSize() << " " << taskList.getArchivedSize();
-			std::string expected = "0 1 0";
+			TMTask task1 = taskList.getTaskFromPositionIndex(1);
+			TMTask task2 = taskList.getTaskFromPositionIndex(2);
+			actual << task1.isClashed() << " " << task2.isClashed();
+			std::string expected = "1 1";
 			
 			Assert::AreEqual(expected, actual.str(), false);
 		}
+
+		TEST_METHOD(TestaddTask_6) {  
+			//test 6 (test whether a deadline task which ends within the time of the period task clashes with a period task)
+			TMTaskTime time_1("27 03 2015", "1200", "27 03 2015", "1500");
+			TMTaskTime time_2("27 03 2015", "1300", "27 03 2015", "1300");
+			TMTask taskA("Period task", time_1, TaskType::WithPeriod);
+			TMTask taskB("Deadline task", time_2, TaskType::WithEndDateTime);
+		
+			TMTaskList taskList;
+			
+			taskList.addTask(taskA);
+			taskList.addTask(taskB);
+		
+			std::ostringstream actual;
+			TMTask task1 = taskList.getTaskFromPositionIndex(1);
+			TMTask task2 = taskList.getTaskFromPositionIndex(2);
+			actual << task1.isClashed() << " " << task2.isClashed();
+			std::string expected = "0 0";
+			
+			Assert::AreEqual(expected, actual.str(), false);
+		}
+
+		TEST_METHOD(TestaddTask_7) {  
+			//test 7 (test whether a start date time task which starts within the time of the period task clashes with a period task)
+			TMTaskTime time_1("27 03 2015", "1200", "27 03 2015", "1500");
+			TMTaskTime time_2("27 03 2015", "1300", "27 03 2015", "1300");
+			TMTask taskA("Period task", time_1, TaskType::WithPeriod);
+			TMTask taskB("Start date time task", time_2, TaskType::WithStartDateTime);
+		
+			TMTaskList taskList;
+			
+			taskList.addTask(taskA);
+			taskList.addTask(taskB);
+		
+			std::ostringstream actual;
+			TMTask task1 = taskList.getTaskFromPositionIndex(1);
+			TMTask task2 = taskList.getTaskFromPositionIndex(2);
+			actual << task1.isClashed() << " " << task2.isClashed();
+			std::string expected = "0 0";
+			
+			Assert::AreEqual(expected, actual.str(), false);
+		}
+
+		
+
 
 	};
 }

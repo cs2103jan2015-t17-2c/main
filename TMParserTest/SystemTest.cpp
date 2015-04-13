@@ -1,3 +1,4 @@
+//@author A0114130E
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
@@ -9,93 +10,303 @@ namespace LibraryTest
 
 {	public:
 		
-		TEST_METHOD(addFloatingTaskTest) {
-		
-			TMExecutor* exe = TMExecutor::getInstance();
-	
-			std::vector<TMTask> undated;
+		TEST_METHOD(deleteTasksTest_1) {
+			//test 1 all position indexes specified are valid.
+			TMTaskTime time_1("27 03 2015", "1300", "27 03 2015", "1300");
+			TMTaskTime time_2("27 03 2015", "1500", "27 03 2015", "1500");
+			TMTaskTime time_3("27 03 2015", "1200", "27 03 2015", "1700");
+			TMTaskTime time_4;
 
-			std::string userEntry = "add test1";
-			std::string expected = "test1";
-			int expectedUndatedSize = 1;
-		
-
-			exe->executeMain(userEntry);
-				
-			TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
-			TMTaskList taskList = taskListStates->getCurrentTaskList();
-
+			TMTask taskA("Start date time task", time_1, TaskType::WithStartDateTime);
+			TMTask taskB("Deadline", time_2, TaskType::WithEndDateTime);
+			TMTask taskC("Period", time_3, TaskType::WithPeriod);
+			TMTask taskD("Undated", time_4, TaskType::Undated);
 			
+			TMTaskList taskList;
+			
+			taskList.addTask(taskA);
+			taskList.addTask(taskB);
+			taskList.addTask(taskC);
+			taskList.addTask(taskD);
 
-			Assert::AreEqual(expectedUndatedSize,taskList.getUndatedSize());
+			TMTaskListStates *states = TMTaskListStates::getInstance();
+			states->addNewState(taskList);
+			
+			std::string userInput = "delete 1 3";
+			TMExecutor *executor = TMExecutor::getInstance();
+			executor->executeMain(userInput);
+		
+			std::string actual = executor->getResultOfExecution();
+			std::string expected = "2 task(s) successfully deleted.\n";
+			
+			Assert::AreEqual(expected,actual);
 			
 		}
 
-		TEST_METHOD(addDatedTaskDescriptionTest)
-		{
-			TMExecutor* exe = TMExecutor::getInstance();
-	
-			
+		TEST_METHOD(deleteTasksTest_2) {
+			//test 2 not all position indexes specified are valid)
 
-			std::string userEntry = "add test1 on 01012016 at 5pm";
-			std::string expectedDescription = "test1 ";
-			std::string expectedStartDate = "1 Jan 2016";
-			int expectedDatedSize = 1;
+			TMTaskTime time_1("27 03 2015", "1300", "27 03 2015", "1300");
+			TMTaskTime time_2("27 03 2015", "1500", "27 03 2015", "1500");
+			TMTaskTime time_3("27 03 2015", "1200", "27 03 2015", "1700");
+			TMTaskTime time_4;
+
+			TMTask taskA("Start date time task", time_1, TaskType::WithStartDateTime);
+			TMTask taskB("Deadline", time_2, TaskType::WithEndDateTime);
+			TMTask taskC("Period", time_3, TaskType::WithPeriod);
+			TMTask taskD("Undated", time_4, TaskType::Undated);
+			
+			TMTaskList taskList;
+
+			taskList.addTask(taskA);
+			taskList.addTask(taskB);
+			taskList.addTask(taskC);
+			taskList.addTask(taskD);
+
+			TMTaskListStates *states = TMTaskListStates::getInstance();
+			states->addNewState(taskList);
+
+			std::string userInput = "delete 7 3";
+			TMExecutor *executor = TMExecutor::getInstance();
+			executor->executeMain(userInput);
 		
-
-			exe->executeMain(userEntry);
-				
-			TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
-			TMTaskList taskList = taskListStates->getCurrentTaskList();
-			std::vector<TMTask> dated = taskList.getDated();
+			std::string actual = executor->getResultOfExecution();
+			std::string expected = "1 task(s) successfully deleted.\n7 is an/are invalid position index(es).";
 			
-
-			Assert::AreEqual(expectedDescription,dated[0].getTaskDescription());
+			Assert::AreEqual(expected,actual);
+			
 		}
 
-		TEST_METHOD(addDatedTaskStartDateTest)
-		{
-			TMExecutor* exe = TMExecutor::getInstance();
-	
-			
+		TEST_METHOD(deleteTasksTest_3) {
+			//test 3 all position indexes specified are invalid.
+			TMTaskTime time_1("27 03 2015", "1300", "27 03 2015", "1300");
+			TMTaskTime time_2("27 03 2015", "1500", "27 03 2015", "1500");
+			TMTaskTime time_3("27 03 2015", "1200", "27 03 2015", "1700");
+			TMTaskTime time_4;
 
-			std::string userEntry = "add test1 on 01012016 at 5pm";
-			std::string expectedDescription = "test1 ";
-			std::string expectedStartDate = "01 Jan 2016";
-			int expectedDatedSize = 1;
+			TMTask taskA("Start date time task", time_1, TaskType::WithStartDateTime);
+			TMTask taskB("Deadline", time_2, TaskType::WithEndDateTime);
+			TMTask taskC("Period", time_3, TaskType::WithPeriod);
+			TMTask taskD("Undated", time_4, TaskType::Undated);
+			
+			TMTaskList taskList;
+
+			taskList.addTask(taskA);
+			taskList.addTask(taskB);
+			taskList.addTask(taskC);
+			taskList.addTask(taskD);
+
+			TMTaskListStates *states = TMTaskListStates::getInstance();
+			states->addNewState(taskList);
+
+			std::string userInput = "delete 7 8";
+			TMExecutor *executor = TMExecutor::getInstance();
+			executor->executeMain(userInput);
 		
-
-			exe->executeMain(userEntry);
-				
-			TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
-			TMTaskList taskList = taskListStates->getCurrentTaskList();
-			std::vector<TMTask> dated = taskList.getDated();
+			std::string actual = executor->getResultOfExecution();
+			std::string expected = "7 8 is an/are invalid position index(es).";
 			
-
-			Assert::AreEqual(expectedStartDate,dated[0].getTaskTime().getStartDate());
+			Assert::AreEqual(expected,actual);
+			
 		}
 
-		TEST_METHOD(addDatedTaskStartTimeTest)
-		{
-			TMExecutor* exe = TMExecutor::getInstance();
-	
-			std::string userEntry = "a test1 on 01012016 at 5pm";
-			std::string expectedDescription = "test1 ";
-			std::string expectedStartDate = "01 Jan 2016";
-			std::string expectedStartTime = "1700";
-			int expectedDatedSize = 1;
-		
+		TEST_METHOD(deleteTasksTest_4) {
+			//test 4 the position index specified is invalid.
+			TMTaskTime time_1("27 03 2015", "1300", "27 03 2015", "1300");
+			TMTaskTime time_2("27 03 2015", "1500", "27 03 2015", "1500");
+			TMTaskTime time_3("27 03 2015", "1200", "27 03 2015", "1700");
+			TMTaskTime time_4;
 
-			exe->executeMain(userEntry);
-				
-			TMTaskListStates *taskListStates = TMTaskListStates::getInstance();
-			TMTaskList taskList = taskListStates->getCurrentTaskList();
-			std::vector<TMTask> dated = taskList.getDated();
+			TMTask taskA("Start date time task", time_1, TaskType::WithStartDateTime);
+			TMTask taskB("Deadline", time_2, TaskType::WithEndDateTime);
+			TMTask taskC("Period", time_3, TaskType::WithPeriod);
+			TMTask taskD("Undated", time_4, TaskType::Undated);
 			
+			TMTaskList taskList;
 
-			Assert::AreEqual(expectedStartTime,dated[0].getTaskTime().getStartTime());
+			taskList.addTask(taskA);
+			taskList.addTask(taskB);
+			taskList.addTask(taskC);
+			taskList.addTask(taskD);
+
+			TMTaskListStates *states = TMTaskListStates::getInstance();
+			states->addNewState(taskList);
+
+			std::string userInput = "delete 7";
+			TMExecutor *executor = TMExecutor::getInstance();
+			executor->executeMain(userInput);
+		
+			std::string actual = executor->getResultOfExecution();
+			std::string expected = "7 is an/are invalid position index(es).";
+			
+			Assert::AreEqual(expected,actual);
+			
 		}
 
+		TEST_METHOD(deleteTasksTest_5) {
+			//test 5 the position index specified is valid.
+			TMTaskTime time_1("27 03 2015", "1300", "27 03 2015", "1300");
+			TMTaskTime time_2("27 03 2015", "1500", "27 03 2015", "1500");
+			TMTaskTime time_3("27 03 2015", "1200", "27 03 2015", "1700");
+			TMTaskTime time_4;
+
+			TMTask taskA("Start date time task", time_1, TaskType::WithStartDateTime);
+			TMTask taskB("Deadline", time_2, TaskType::WithEndDateTime);
+			TMTask taskC("Period", time_3, TaskType::WithPeriod);
+			TMTask taskD("Undated", time_4, TaskType::Undated);
+			
+			TMTaskList taskList;
+
+			taskList.addTask(taskA);
+			taskList.addTask(taskB);
+			taskList.addTask(taskC);
+			taskList.addTask(taskD);
+
+			TMTaskListStates *states = TMTaskListStates::getInstance();
+			states->addNewState(taskList);
+
+			std::string userInput = "delete 2";
+			TMExecutor *executor = TMExecutor::getInstance();
+			executor->executeMain(userInput);
+		
+			std::string actual = executor->getResultOfExecution();
+			std::string expected = "1 task(s) successfully deleted.\n";
+			
+			Assert::AreEqual(expected,actual);
+			
+		}
+
+		TEST_METHOD(editTaskTest_1) {
+			//test 1 (both position index and updated task details specified are valid)
+			TMTaskTime time_1("27 03 2015", "1300", "27 03 2015", "1300");
+			TMTaskTime time_2("27 03 2015", "1500", "27 03 2015", "1500");
+			TMTaskTime time_3("27 03 2015", "1200", "27 03 2015", "1700");
+			TMTaskTime time_4;
+
+			TMTask taskA("Start date time task", time_1, TaskType::WithStartDateTime);
+			TMTask taskB("Deadline", time_2, TaskType::WithEndDateTime);
+			TMTask taskC("Period", time_3, TaskType::WithPeriod);
+			TMTask taskD("Undated", time_4, TaskType::Undated);
+			
+			TMTaskList taskList;
+
+			taskList.addTask(taskA);
+			taskList.addTask(taskB);
+			taskList.addTask(taskC);
+			taskList.addTask(taskD);
+
+			TMTaskListStates *states = TMTaskListStates::getInstance();
+			states->addNewState(taskList);
+
+			std::string userInput = "edit 4 Undated changed";
+			TMExecutor *executor = TMExecutor::getInstance();
+			executor->executeMain(userInput);
+		
+			std::string actual = executor->getResultOfExecution();
+			std::string expected = "Successfully edited task.";
+			
+			Assert::AreEqual(expected,actual);
+			
+		}
+
+		TEST_METHOD(editTaskTest_2) {
+			//test 2 (both position index and updated task details specified are invalid)
+			TMTaskTime time_1("27 03 2015", "1300", "27 03 2015", "1300");
+			TMTaskTime time_2("27 03 2015", "1500", "27 03 2015", "1500");
+			TMTaskTime time_3("27 03 2015", "1200", "27 03 2015", "1700");
+			TMTaskTime time_4;
+
+			TMTask taskA("Start date time task", time_1, TaskType::WithStartDateTime);
+			TMTask taskB("Deadline", time_2, TaskType::WithEndDateTime);
+			TMTask taskC("Period", time_3, TaskType::WithPeriod);
+			TMTask taskD("Undated", time_4, TaskType::Undated);
+			
+			TMTaskList taskList;
+
+			taskList.addTask(taskA);
+			taskList.addTask(taskB);
+			taskList.addTask(taskC);
+			taskList.addTask(taskD);
+
+			TMTaskListStates *states = TMTaskListStates::getInstance();
+			states->addNewState(taskList);
+
+			std::string userInput = "edit 5 ";
+			TMExecutor *executor = TMExecutor::getInstance();
+			executor->executeMain(userInput);
+		
+			std::string actual = executor->getResultOfExecution();
+			std::string expected = "Missing new task information\nPlease enter an index or the updated task details.";
+			
+			Assert::AreEqual(expected,actual);
+			
+		}
+
+		TEST_METHOD(editTaskTest_3) {
+			//test 3 (invalid position index but valid updated task details specified)
+			TMTaskTime time_1("27 03 2015", "1300", "27 03 2015", "1300");
+			TMTaskTime time_2("27 03 2015", "1500", "27 03 2015", "1500");
+			TMTaskTime time_3("27 03 2015", "1200", "27 03 2015", "1700");
+			TMTaskTime time_4;
+
+			TMTask taskA("Start date time task", time_1, TaskType::WithStartDateTime);
+			TMTask taskB("Deadline", time_2, TaskType::WithEndDateTime);
+			TMTask taskC("Period", time_3, TaskType::WithPeriod);
+			TMTask taskD("Undated", time_4, TaskType::Undated);
+			
+			TMTaskList taskList;
+
+			taskList.addTask(taskA);
+			taskList.addTask(taskB);
+			taskList.addTask(taskC);
+			taskList.addTask(taskD);
+
+			TMTaskListStates *states = TMTaskListStates::getInstance();
+			states->addNewState(taskList);
+
+			std::string userInput = "edit 7 Nonexistent";
+			TMExecutor *executor = TMExecutor::getInstance();
+			executor->executeMain(userInput);
+		
+			std::string actual = executor->getResultOfExecution();
+			std::string expected = "7 is an/are invalid position index(es).";
+			
+			Assert::AreEqual(expected,actual);
+			
+		}
+
+		TEST_METHOD(editTaskTest_4) {
+			//test 4 (valid position index but no updated task details specified)
+			TMTaskTime time_1("27 03 2015", "1300", "27 03 2015", "1300");
+			TMTaskTime time_2("27 03 2015", "1500", "27 03 2015", "1500");
+			TMTaskTime time_3("27 03 2015", "1200", "27 03 2015", "1700");
+			TMTaskTime time_4;
+
+			TMTask taskA("Start date time task", time_1, TaskType::WithStartDateTime);
+			TMTask taskB("Deadline", time_2, TaskType::WithEndDateTime);
+			TMTask taskC("Period", time_3, TaskType::WithPeriod);
+			TMTask taskD("Undated", time_4, TaskType::Undated);
+			
+			TMTaskList taskList;
+
+			taskList.addTask(taskA);
+			taskList.addTask(taskB);
+			taskList.addTask(taskC);
+			taskList.addTask(taskD);
+
+			TMTaskListStates *states = TMTaskListStates::getInstance();
+			states->addNewState(taskList);
+
+			std::string userInput = "edit 2";
+			TMExecutor *executor = TMExecutor::getInstance();
+			executor->executeMain(userInput);
+		
+			std::string actual = executor->getResultOfExecution();
+			std::string expected = "Missing new task information\nPlease enter an index or the updated task details.";
+			
+			Assert::AreEqual(expected,actual);
+			
+		}
 		
 
 	};
